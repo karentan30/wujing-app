@@ -2,101 +2,113 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="description" content="舞镜 - AI舞蹈评分系统。上传舞蹈视频，AI逐帧对比评分、纠错、生成练习计划。">
 <title>舞镜 · AI舞蹈评分</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;background:#0e0e10;color:#e8e6e3;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-.wrap{width:100%;max-width:440px;padding:16px}
-h1{font-size:22px;font-weight:600;text-align:center;padding:24px 0 8px;color:#c8a96e}
+.wrap{width:100%;max-width:440px;min-height:100vh;position:relative;padding:16px 16px 80px}
+h1{font-size:24px;font-weight:600;text-align:center;padding:28px 0 4px;color:#c8a96e;letter-spacing:.04em}
 h1 span{font-weight:300;color:#5a5a60}
-.sub{text-align:center;font-size:13px;color:#5a5a60;margin-bottom:24px}
-.card{background:#141416;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #222}
-.card h2{font-size:15px;font-weight:500;margin-bottom:10px;color:#c8a96e}
-label{display:block;font-size:12px;color:#5a5a60;margin-bottom:4px}
-input{width:100%;padding:10px 12px;background:#1a1a1e;border:1px solid #2a2a30;border-radius:8px;color:#e8e6e3;font-size:14px;margin-bottom:10px;font-family:inherit}
+.sub{text-align:center;font-size:12px;color:#5a5a60;margin-bottom:20px}
+.card{background:linear-gradient(135deg,#141416,#181820);border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #222;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.card h2{font-size:14px;font-weight:500;margin-bottom:12px;color:#c8a96e;letter-spacing:.04em}
+label{display:block;font-size:11px;color:#5a5a60;margin-bottom:4px;letter-spacing:.04em}
+input{width:100%;padding:10px 12px;background:#1a1a1e;border:1px solid #2a2a30;border-radius:8px;color:#e8e6e3;font-size:14px;margin-bottom:10px;font-family:inherit;transition:border-color .2s}
 input:focus{outline:none;border-color:#c8a96e}
-button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
-.btn-gold{background:#c8a96e;color:#0e0e10;width:100%}
-.btn-gold:hover{background:#d4b87a}
-.btn-gold:disabled{opacity:.4}
-.btn-ghost{background:transparent;color:#5a5a60;border:1px solid #2a2a30}
-.btn-ghost:hover{border-color:#c8a96e;color:#e8e6e3}
-.btn-sm{padding:6px 14px;font-size:12px}
+button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s;letter-spacing:.02em}
+.btn-gold{background:linear-gradient(135deg,#c8a96e,#d4b87a);color:#0e0e10;width:100%}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(200,169,110,.2)}
+.btn-gold:disabled{opacity:.4;transform:none;box-shadow:none}
+.btn-ghost{background:transparent;color:#5a5a60;border:1px solid #2a2a30;width:100%}
+.btn-ghost:hover{border-color:#c8a96e44;color:#e8e6e3}
 .hidden{display:none!important}
-.mt8{margin-top:8px}
-.mt16{margin-top:16px}
-.mb8{margin-bottom:8px}
-.text-center{text-align:center}
-.text-muted{color:#5a5a60;font-size:12px}
-.text-gold{color:#c8a96e}
-.text-red{color:#e05050}
-.err{color:#e05050;font-size:12px;margin-bottom:8px;display:none}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.text-center{text-align:center}
+.text-muted{color:#5a5a60;font-size:12px;line-height:1.6}
+.text-gold{color:#c8a96e}.text-red{color:#e05050}
+.err{color:#e05050;font-size:12px;margin-bottom:8px;display:none;padding:8px 12px;background:rgba(224,80,80,.08);border-radius:6px;border:1px solid rgba(224,80,80,.2)}
 .sel{display:flex;gap:8px;margin-bottom:12px}
-.sel-btn{flex:1;padding:8px;border:1px solid #2a2a30;border-radius:8px;background:transparent;color:#5a5a60;font-size:13px;cursor:pointer;text-align:center}
+.sel-btn{flex:1;padding:10px 8px;border:1px solid #2a2a30;border-radius:8px;background:transparent;color:#5a5a60;font-size:13px;cursor:pointer;text-align:center;transition:all .2s}
 .sel-btn.active{border-color:#c8a96e;color:#c8a96e;background:rgba(200,169,110,.08)}
-.sel-btn:hover{border-color:#c8a96e44}
-.upload-zone{border:2px dashed #2a2a30;border-radius:12px;padding:24px;text-align:center;cursor:pointer;margin-bottom:12px}
-.upload-zone:hover{border-color:#c8a96e44}
-.upload-zone .icon{font-size:28px;margin-bottom:6px}
-.upload-zone .label{font-size:13px;color:#5a5a60}
-.file-name{font-size:12px;color:#c8a96e;margin-bottom:8px}
-.switch{text-align:center;font-size:12px;color:#5a5a60;margin-top:8px;cursor:pointer}
+.sel-btn:hover{border-color:#c8a96e44;color:#c8a96e}
+.upload-zone{border:2px dashed #2a2a30;border-radius:12px;padding:28px 24px;text-align:center;cursor:pointer;margin-bottom:12px;transition:all .2s}
+.upload-zone:hover{border-color:#c8a96e44;background:rgba(200,169,110,.02)}
+.upload-zone .icon{font-size:32px;margin-bottom:8px}
+.upload-zone .label{font-size:14px;color:#5a5a60}
+.file-name{font-size:12px;color:#c8a96e;margin-bottom:8px;padding:8px 12px;background:rgba(200,169,110,.06);border-radius:6px}
+.switch{text-align:center;font-size:12px;color:#5a5a60;margin-top:10px;cursor:pointer;padding:4px}
 .switch:hover{color:#c8a96e}
-#review{padding:12px 0}
-.score-big{font-size:48px;font-weight:200;color:#c8a96e;text-align:center;padding:16px 0}
-.dim-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1e;font-size:13px}
-.dim-row .val{font-weight:500;color:#c8a96e}
-.nav{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto}
-.nav button{padding:6px 14px;border:none;border-radius:6px;background:#1a1a1e;color:#5a5a60;font-size:12px;cursor:pointer;white-space:nowrap}
-.nav button.active{background:#c8a96e20;color:#c8a96e}
+.loading{padding:24px;text-align:center}
+.loading .spinner{width:32px;height:32px;border:3px solid #2a2a30;border-top-color:#c8a96e;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading .status{font-size:13px;color:#5a5a60}
+.score-big{font-size:52px;font-weight:200;color:#c8a96e;text-align:center;padding:20px 0 4px;letter-spacing:-.02em}
+.score-label{text-align:center;font-size:12px;color:#5a5a60;margin-bottom:20px}
+.dim-grid{display:grid;gap:8px;margin-bottom:16px}
+.dim-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#1a1a1e;border-radius:8px;font-size:13px}
+.dim-row .val{font-weight:600;font-size:16px}
+.dim-bar{height:3px;background:#2a2a30;border-radius:2px;margin-top:4px;overflow:hidden}
+.dim-bar-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.sec-title{font-size:12px;font-weight:500;margin:16px 0 8px;color:#888;letter-spacing:.06em;text-transform:uppercase}
+.prob-item{padding:10px 12px;background:#1a1a1e;border-radius:8px;margin-bottom:6px;font-size:12px;color:#ccc}
+.prob-item .dot{color:#e05050;margin-right:6px}
+.prob-item .fix{color:#50d282;font-size:11px;margin-top:4px;padding-left:14px}
+.plan-day{background:#1a1a1e;border-radius:8px;padding:12px;margin-bottom:8px}
+.plan-day h3{font-size:13px;color:#c8a96e;margin-bottom:6px}
+.plan-day .task{font-size:12px;color:#5a5a60;padding:4px 0;display:flex;align-items:center;gap:8px}
+.plan-day .task .cb{width:16px;height:16px;border:1px solid #2a2a30;border-radius:3px;flex-shrink:0;cursor:pointer}
+.plan-day .task .cb.done{background:#50d282;border-color:#50d282}
+.footer{padding:20px;text-align:center;font-size:11px;color:#2a2a30;letter-spacing:.06em;position:absolute;bottom:0;left:0;right:0}
 </style>
 </head>
 <body>
 <div class="wrap" id="app">
   <h1>舞镜 <span>· AI</span></h1>
-  <div class="sub">上传舞蹈视频，AI逐帧对比评分</div>
+  <div class="sub">上传视频 · AI评分 · 练习计划</div>
 
-  <!-- NAV -->
-  <div class="nav" id="nav">
-    <button class="active" onclick="showPage('home')">首页</button>
-    <button id="navAuth" onclick="showPage('auth')">登录</button>
-    <button onclick="showPage('upload')">上传</button>
+  <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto" id="nav">
+    <button style="padding:6px 14px;border:none;border-radius:6px;background:#1a1a1e;color:#5a5a60;font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit" class="active" onclick="showPage('home')">🏠 首页</button>
+    <button style="padding:6px 14px;border:none;border-radius:6px;background:#1a1a1e;color:#5a5a60;font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit" id="navAuth" onclick="showPage('auth')">👤 登录</button>
+    <button style="padding:6px 14px;border:none;border-radius:6px;background:#1a1a1e;color:#5a5a60;font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit" onclick="showPage('upload')">📹 上传</button>
+    <button style="padding:6px 14px;border:none;border-radius:6px;background:#1a1a1e;color:#5a5a60;font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit" onclick="showPage('plan')" id="navPlan">📋 计划</button>
   </div>
 
-  <!-- PAGE: HOME -->
+  <!-- HOME -->
   <div id="page-home">
-    <div class="card text-center" style="padding:32px 16px">
-      <div style="font-size:40px;margin-bottom:12px">💃</div>
-      <div style="font-size:16px;font-weight:500;margin-bottom:6px">上传舞蹈视频</div>
-      <div class="text-muted mb8">AI拆句、评分、纠错、生成练习计划</div>
-      <button class="btn-gold" onclick="showPage('upload')">免费拆舞</button>
+    <div class="card text-center" style="padding:36px 16px">
+      <div style="font-size:48px;margin-bottom:12px;opacity:.8">💃</div>
+      <div style="font-size:17px;font-weight:500;margin-bottom:6px">上传舞蹈视频</div>
+      <div class="text-muted mb8">AI自动拆句 + 评分纠错 + 练习计划</div>
+      <button class="btn-gold" onclick="showPage('upload')" style="width:auto;padding:10px 32px">免费拆舞</button>
     </div>
-    <div class="card text-muted" style="font-size:12px;line-height:1.8">
-      支持上传 MP4/MOV 视频，最大500MB。
-      视频仅用于本地AI分析，不会存储或分享。
+    <div class="card text-muted" style="font-size:12px">
+      <div style="font-weight:500;color:#888;margin-bottom:6px">✅ 三步开练</div>
+      <div style="padding:4px 0">1. 上传你的练习视频</div>
+      <div style="padding:4px 0">2. AI 逐帧对比分析</div>
+      <div style="padding:4px 0">3. 获得评分 + 纠错建议 + 定制计划</div>
     </div>
   </div>
 
-  <!-- PAGE: AUTH -->
+  <!-- AUTH -->
   <div id="page-auth" class="hidden">
     <div class="card">
       <h2 id="authTitle">登录</h2>
       <div class="err" id="authErr"></div>
       <label>邮箱</label>
-      <input type="email" id="authEmail" placeholder="your@email.com">
+      <input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email">
       <label>密码</label>
-      <input type="password" id="authPass" placeholder="至少6位">
+      <input type="password" id="authPass" placeholder="至少6位" autocomplete="current-password">
       <button class="btn-gold" id="authBtn" onclick="handleAuth()">登录</button>
       <div class="switch" onclick="toggleAuth()" id="authSwitch">没有账号？注册</div>
     </div>
   </div>
 
-  <!-- PAGE: UPLOAD -->
+  <!-- UPLOAD -->
   <div id="page-upload" class="hidden">
     <div class="card">
-      <h2>上传舞蹈视频</h2>
-      <label>参考舞蹈</label>
+      <h2>上传视频</h2>
+      <label>参考老师</label>
       <div class="sel" id="teacherSel">
         <div class="sel-btn active" data-key="yue">月</div>
         <div class="sel-btn" data-key="yueyuan">月·圆舞</div>
@@ -108,232 +120,132 @@ button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weigh
         <div class="text-muted" style="font-size:11px;margin-top:4px">MP4/MOV · 最大500MB</div>
       </div>
       <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/*" style="display:none">
-      <div id="fileInfo" class="hidden file-name">已选择: <span id="fileName"></span></div>
+      <div id="fileInfo" class="hidden"><div class="file-name" id="fileName"></div></div>
       <button class="btn-gold mt8" id="uploadBtn" disabled onclick="startUpload()">开始分析</button>
-      <div id="uploadStatus" class="hidden text-center text-muted mt8"></div>
+      <div id="uploadStatus" class="hidden mt8" style="text-align:center"></div>
+    </div>
+    <div class="text-muted text-center" style="padding:4px">
+      视频仅用于本地AI分析，不会存储或分享
     </div>
   </div>
 
-  <!-- PAGE: REVIEW -->
+  <!-- REVIEW -->
   <div id="page-review" class="hidden">
     <div class="card" id="reviewContent"></div>
-    <button class="btn-ghost btn-sm mt8" onclick="showPage('upload')">上传另一支舞</button>
+    <button class="btn-ghost mt8" onclick="showPage('upload')">上传另一支舞</button>
+    <button class="btn-gold mt8" id="planBtn" onclick="showPage('plan')" style="display:none">查看练习计划</button>
   </div>
+
+  <!-- PLAN -->
+  <div id="page-plan" class="hidden">
+    <div class="card">
+      <h2>练习计划</h2>
+      <div id="planContent"><div class="text-muted text-center" style="padding:16px">先上传舞蹈完成AI评分</div></div>
+    </div>
+    <button class="btn-ghost mt8" onclick="showPage('review')">返回评分</button>
+  </div>
+
+  <div class="footer">舞镜 · WuJing AI</div>
 </div>
 
 <script>
-// ═══ STATE ═══
-var TOKEN = localStorage.getItem('wj_token') || null;
-var USER = null;
-var FILE = null;
-var TEACHER = 'yue';
-var AUTH_MODE = 'login';
+var TOKEN = localStorage.getItem("wj_token")||null, USER=null, FILE=null, TEACHER="yue", AUTH_MODE="login", LAST_REVIEW=null;
 
-// ═══ NAVIGATION ═══
-function showPage(name) {
-  document.querySelectorAll('[id^=page-]').forEach(function(p) { p.classList.add('hidden'); });
-  var el = document.getElementById('page-' + name);
-  if (el) el.classList.remove('hidden');
-  document.querySelectorAll('#nav button').forEach(function(b) { b.classList.remove('active'); });
-  var navBtns = document.querySelectorAll('#nav button');
-  for (var i = 0; i < navBtns.length; i++) {
-    if (navBtns[i].textContent === '首页' && name === 'home') navBtns[i].classList.add('active');
-    if (navBtns[i].textContent === '登录' && name === 'auth') navBtns[i].classList.add('active');
-    if (navBtns[i].textContent === '上传' && name === 'upload') navBtns[i].classList.add('active');
-    if (navBtns[i].textContent === '上传' && name === 'review') navBtns[i].classList.add('active');
-  }
-  if (TOKEN) {
-    document.getElementById('navAuth').textContent = USER ? USER.email.substring(0,10)+'...' : '已登录';
-  }
+function showPage(n){
+  document.querySelectorAll("[id^=page-]").forEach(function(p){p.classList.add("hidden")});
+  var e=document.getElementById("page-"+n);if(e)e.classList.remove("hidden");
+  document.querySelectorAll("#nav button").forEach(function(b){b.classList.remove("active")});
+  var m={home:"🏠 首页",auth:"👤 登录",upload:"📹 上传",review:"📹 上传",plan:"📋 计划"};
+  document.querySelectorAll("#nav button").forEach(function(b){if(b.textContent===m[n])b.classList.add("active")});
+  if(TOKEN){var nb=document.getElementById("navAuth");nb.textContent=USER?USER.email.substring(0,10)+"...":"👤 已登录"}
 }
-
-// ═══ AUTH ═══
-function toggleAuth() {
-  AUTH_MODE = AUTH_MODE === 'login' ? 'register' : 'login';
-  document.getElementById('authTitle').textContent = AUTH_MODE === 'login' ? '登录' : '注册';
-  document.getElementById('authBtn').textContent = AUTH_MODE === 'login' ? '登录' : '注册';
-  document.getElementById('authSwitch').textContent = AUTH_MODE === 'login' ? '没有账号？注册' : '已有账号？登录';
+function toggleAuth(){AUTH_MODE=AUTH_MODE==="login"?"register":"login";
+  document.getElementById("authTitle").textContent=AUTH_MODE==="login"?"登录":"注册";
+  document.getElementById("authBtn").textContent=AUTH_MODE==="login"?"登录":"注册";
+  document.getElementById("authSwitch").textContent=AUTH_MODE==="login"?"没有账号？注册":"已有账号？登录"}
+function handleAuth(){
+  var e=document.getElementById("authEmail").value.trim(),p=document.getElementById("authPass").value,er=document.getElementById("authErr");
+  if(!e||!p){er.textContent="请填写邮箱和密码";er.style.display="block";return}
+  if(p.length<6){er.textContent="密码至少6位";er.style.display="block";return}
+  var ep=AUTH_MODE==="login"?"login_json":"register_json",btn=document.getElementById("authBtn");
+  btn.disabled=true;btn.textContent="处理中...";
+  fetch("https://wujing.mylumee.cn/api/"+ep,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:e,password:p})})
+  .then(function(r){return r.json()}).then(function(d){
+    if(d.token){TOKEN=d.token;USER=d;localStorage.setItem("wj_token",d.token);er.style.display="none";
+      document.getElementById("navAuth").textContent=e.substring(0,10)+"...";showPage("home")}
+    else{er.textContent=d.detail||"操作失败";er.style.display="block"}
+    btn.disabled=false;btn.textContent=AUTH_MODE==="login"?"登录":"注册"
+  }).catch(function(){er.textContent="网络错误";er.style.display="block";btn.disabled=false})
 }
-
-function handleAuth() {
-  var email = document.getElementById('authEmail').value.trim();
-  var pass = document.getElementById('authPass').value;
-  var err = document.getElementById('authErr');
-  if (!email || !pass) { err.textContent = '请填写邮箱和密码'; err.style.display = 'block'; return; }
-  if (pass.length < 6) { err.textContent = '密码至少6位'; err.style.display = 'block'; return; }
-  
-  var endpoint = AUTH_MODE === 'login' ? 'https://wujing.mylumee.cn/api/login_json' : 'https://wujing.mylumee.cn/api/register_json';
-  var btn = document.getElementById('authBtn');
-  btn.disabled = true; btn.textContent = '处理中...';
-  
-  fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, password: pass })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
-    if (d.token) {
-      TOKEN = d.token; USER = d;
-      localStorage.setItem('wj_token', d.token);
-      err.style.display = 'none';
-      document.getElementById('navAuth').textContent = email.substring(0,10)+'...';
-      showPage('home');
-      btn.textContent = AUTH_MODE === 'login' ? '登录' : '注册';
-    } else {
-      err.textContent = d.detail || '操作失败';
-      err.style.display = 'block';
-    }
-    btn.disabled = false;
-    btn.textContent = AUTH_MODE === 'login' ? '登录' : '注册';
-  })
-  .catch(function(e) {
-    err.textContent = '网络错误，请检查连接';
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = AUTH_MODE === 'login' ? '登录' : '注册';
+document.addEventListener("click",function(e){
+  var tb=e.target.closest("[data-key]");
+  if(tb&&tb.closest("#teacherSel")){document.querySelectorAll("#teacherSel .sel-btn").forEach(function(b){b.classList.remove("active")});tb.classList.add("active");TEACHER=tb.getAttribute("data-key")}
+});
+document.getElementById("uploadZone").addEventListener("click",function(){document.getElementById("fileInput").click()});
+document.getElementById("fileInput").addEventListener("change",function(e){
+  var f=e.target.files&&e.target.files[0];if(!f)return;
+  if(f.size>500*1024*1024){alert("文件超过500MB");return}
+  FILE=f;document.getElementById("fileName").textContent=f.name+" ("+(f.size/1024/1024).toFixed(1)+"MB)";
+  document.getElementById("fileInfo").classList.remove("hidden");document.getElementById("uploadBtn").disabled=false
+});
+function startUpload(){
+  if(!FILE||!TOKEN){if(!TOKEN){alert("请先登录");showPage("auth")}return}
+  var btn=document.getElementById("uploadBtn"),st=document.getElementById("uploadStatus");
+  btn.disabled=true;btn.textContent="上传中...";st.classList.remove("hidden");st.innerHTML='<div class="loading"><div class="spinner"></div><div class="status">上传中...</div></div>';
+  var fd=new FormData();fd.append("video",FILE);fd.append("teacher_key",TEACHER);
+  fetch("https://wujing.mylumee.cn/api/upload",{method:"POST",headers:{"Authorization":"Bearer "+TOKEN},body:fd})
+  .then(function(r){return r.json()}).then(function(d){
+    if(d.review_id){st.innerHTML='<div class="loading"><div class="spinner"></div><div class="status">AI分析中...</div></div>';pollReview(d.review_id)}
+    else{st.innerHTML='<div class="text-muted">'+(d.detail||"上传失败")+"</div>";btn.disabled=false;btn.textContent="开始分析"}
+  }).catch(function(){st.innerHTML='<div class="text-muted">网络错误</div>';btn.disabled=false;btn.textContent="开始分析"})
+}
+function pollReview(id){
+  var st=document.getElementById("uploadStatus"),c=0;
+  var iv=setInterval(function(){c++;
+    fetch("https://wujing.mylumee.cn/api/review/"+id,{headers:{"Authorization":"Bearer "+TOKEN}})
+    .then(function(r){return r.json()}).then(function(d){
+      if(d.status==="completed"||d.score){clearInterval(iv);st.classList.add("hidden");showReview(d)}
+      else if(d.status==="failed"){clearInterval(iv);st.innerHTML='<div class="text-muted">分析失败</div>';document.getElementById("uploadBtn").disabled=false;document.getElementById("uploadBtn").textContent="开始分析"}
+      else{st.innerHTML='<div class="loading"><div class="spinner"></div><div class="status">AI分析中... "+c*3+"s</div></div>'}
+    }).catch(function(){if(c>30){clearInterval(iv);st.innerHTML='<div class="text-muted">连接超时</div>'}})
+  },3000)
+}
+function showReview(d){
+  LAST_REVIEW=d;var dims=d.dims||{},score=d.score||0,problems=d.problems||[],pid=d.id;
+  var html='<div class="score-big">'+score+'</div><div class="score-label">综合评分</div>';
+  html+='<div class="dim-grid">';
+  var dl={beat:"节拍契合度",extend:"动作延展度",mirror:"镜像一致性",emotion:"情感表达力"},dc={beat:"#50d282",extend:"#7ab4ff",mirror:"#ffd166",emotion:"#ff6eb4"};
+  for(var k in dims){var v=dims[k];html+='<div><div class="dim-row"><span>'+(dl[k]||k)+'</span><span class="val" style="color:'+(dc[k]||"#c8a96e")+'">'+v+'</span></div><div class="dim-bar"><div class="dim-bar-fill" style="width:'+v+'%;background:'+(dc[k]||"#c8a96e")+'"></div></div></div>'}
+  html+="</div>";
+  if(problems.length>0){html+='<div class="sec-title">改进建议</div>';
+    for(var i=0;i<problems.length;i++){var p=problems[i];
+      html+='<div class="prob-item"><span class="dot">●</span>'+(p.problem||"")+"";
+      if(p.fix)html+='<div class="fix">→ '+p.fix+"</div>";html+="</div>"}
+  }
+  document.getElementById("reviewContent").innerHTML=html;showPage("review");
+  document.getElementById("planBtn").style.display="block";loadPlan(pid)
+}
+function loadPlan(id){
+  fetch("https://wujing.mylumee.cn/api/plan/"+id,{headers:{"Authorization":"Bearer "+TOKEN}})
+  .then(function(r){return r.json()}).then(function(d){renderPlan(d)}).catch(function(){})
+}
+function renderPlan(data){
+  if(!data||!data.plan){return}
+  var html="";data.plan.forEach(function(day){
+    html+='<div class="plan-day"><h3>第'+day.day+'天</h3>';
+    day.tasks.forEach(function(t,i){var done=t.completed?"done":"";html+='<div class="task"><div class="cb '+done+'" data-day="'+day.day+'" data-task="'+t.index+'"></div><span>'+t.task+"</span></div>"});
+    html+="</div>"
   });
-}
-
-// ═══ TEACHER SELECTOR ═══
-document.addEventListener('click', function(e) {
-  var tb = e.target.closest('[data-key]');
-  if (tb && tb.closest('#teacherSel')) {
-    document.querySelectorAll('#teacherSel .sel-btn').forEach(function(b) { b.classList.remove('active'); });
-    tb.classList.add('active');
-    TEACHER = tb.getAttribute('data-key');
-  }
-});
-
-// ═══ UPLOAD ═══
-document.getElementById('uploadZone').addEventListener('click', function() {
-  document.getElementById('fileInput').click();
-});
-document.getElementById('fileInput').addEventListener('change', function(e) {
-  var f = e.target.files && e.target.files[0];
-  if (!f) return;
-  if (f.size > 500 * 1024 * 1024) { alert('文件超过500MB'); return; }
-  FILE = f;
-  document.getElementById('fileName').textContent = f.name + ' (' + (f.size/1024/1024).toFixed(1) + 'MB)';
-  document.getElementById('fileInfo').classList.remove('hidden');
-  document.getElementById('uploadBtn').disabled = false;
-});
-
-function startUpload() {
-  if (!FILE || !TOKEN) {
-    if (!TOKEN) { alert('请先登录'); showPage('auth'); return; }
-    return;
-  }
-  var btn = document.getElementById('uploadBtn');
-  var status = document.getElementById('uploadStatus');
-  btn.disabled = true; btn.textContent = '上传中...';
-  status.textContent = '上传中...'; status.classList.remove('hidden');
-  
-  var fd = new FormData();
-  fd.append('video', FILE);
-  fd.append('teacher_key', TEACHER);
-  
-  fetch('https://wujing.mylumee.cn/api/upload', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + TOKEN },
-    body: fd
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
-    if (d.review_id) {
-      status.textContent = 'AI分析中...';
-      pollReview(d.review_id);
-    } else {
-      status.textContent = d.detail || '上传失败';
-      btn.disabled = false; btn.textContent = '开始分析';
-    }
-  })
-  .catch(function() {
-    status.textContent = '网络错误';
-    btn.disabled = false; btn.textContent = '开始分析';
-  });
-}
-
-// ═══ POLL RESULTS ═══
-function pollReview(reviewId) {
-  var status = document.getElementById('uploadStatus');
-  var count = 0;
-  var interval = setInterval(function() {
-    count++;
-    fetch('https://wujing.mylumee.cn/api/review/' + reviewId, {
-      headers: { 'Authorization': 'Bearer ' + TOKEN }
+  document.getElementById("planContent").innerHTML=html;
+  document.querySelectorAll("#planContent .cb").forEach(function(cb){
+    cb.addEventListener("click",function(){
+      var day=parseInt(this.getAttribute("data-day")),task=parseInt(this.getAttribute("data-task"));
+      var done=!this.classList.contains("done");this.classList.toggle("done");
+      fetch("https://wujing.mylumee.cn/api/plan/"+LAST_REVIEW.id+"/task",{method:"PUT",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({day:day,task_index:task,completed:done})}).catch(function(){})
     })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.status === 'completed' || d.score) {
-        clearInterval(interval);
-        status.textContent = '分析完成！';
-        showReview(d);
-      } else if (d.status === 'failed') {
-        clearInterval(interval);
-        status.textContent = '分析失败，请重试';
-        document.getElementById('uploadBtn').disabled = false;
-        document.getElementById('uploadBtn').textContent = '开始分析';
-      } else {
-        status.textContent = 'AI分析中... (' + (count * 3) + 's)';
-      }
-    })
-    .catch(function() {
-      if (count > 30) {
-        clearInterval(interval);
-        status.textContent = '连接超时';
-        document.getElementById('uploadBtn').disabled = false;
-        document.getElementById('uploadBtn').textContent = '开始分析';
-      }
-    });
-  }, 3000);
-}
-
-// ═══ SHOW REVIEW ═══
-function showReview(data) {
-  var dims = data.dims || {};
-  var problems = data.problems || [];
-  var score = data.score || 0;
-  var html = '<div class="score-big">' + score + '</div>';
-  html += '<div style="text-align:center;font-size:13px;color:#5a5a60;margin-bottom:16px">综合评分</div>';
-  html += '<div style="font-size:13px;font-weight:500;margin-bottom:8px;color:#c8a96e">四维评分</div>';
-  var dimLabels = {beat:'节拍契合度', extend:'动作延展度', mirror:'镜像一致性', emotion:'情感表达力'};
-  var dimColors = {beat:'#50d282', extend:'#7ab4ff', mirror:'#ffd166', emotion:'#ff6eb4'};
-  for (var k in dims) {
-    var v = dims[k];
-    var label = dimLabels[k] || k;
-    var color = dimColors[k] || '#c8a96e';
-    html += '<div class="dim-row"><span>' + label + '</span><span class="val" style="color:' + color + '">' + v + '</span></div>';
-  }
-  if (problems.length > 0) {
-    html += '<div style="font-size:13px;font-weight:500;margin:16px 0 8px;color:#e05050">改进建议</div>';
-    for (var i = 0; i < problems.length; i++) {
-      var p = problems[i];
-      html += '<div style="font-size:12px;color:#5a5a60;padding:6px 0;border-bottom:1px solid #1a1a1e">';
-      html += '<span style="color:#e05050">●</span> ' + (p.problem || '') + '</div>';
-      if (p.fix) html += '<div style="font-size:11px;color:#50d282;padding:2px 0 6px 12px">→ ' + p.fix + '</div>';
-    }
-  }
-  document.getElementById('reviewContent').innerHTML = html;
-  showPage('review');
-}
-
-// ═══ INIT ═══
-// Restore token
-if (TOKEN) {
-  document.getElementById('navAuth').textContent = '已登录';
-  // Verify token by fetching /api/me
-  fetch('https://wujing.mylumee.cn/api/me', { headers: { 'Authorization': 'Bearer ' + TOKEN } })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
-    if (d.user) { USER = d.user; document.getElementById('navAuth').textContent = d.user.email.substring(0,10)+'...'; }
   })
-  .catch(function() {
-    // Token invalid
-    localStorage.removeItem('wj_token');
-    TOKEN = null;
-  });
 }
+if(TOKEN){fetch("https://wujing.mylumee.cn/api/me",{headers:{"Authorization":"Bearer "+TOKEN}}).then(function(r){return r.json()}).then(function(d){if(d.user){USER=d.user}})["catch"](function(){localStorage.removeItem("wj_token");TOKEN=null})}
 </script>
 </body>
 </html>
