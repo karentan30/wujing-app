@@ -148,6 +148,41 @@ button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weigh
     <button class="btn-ghost mt8" onclick="showPage('review')">返回评分</button>
   </div>
 
+  <!-- FITNESS -->
+  <div id="page-fitness" class="hidden">
+    <div class="card">
+      <h2>🏋️ 5天健身计划 <span style="font-size:11px;color:#b0a898;font-weight:400">所有动作AI可衡量</span></h2>
+      <div style="font-size:12px;color:#b0a898;margin-bottom:12px;line-height:1.6">架手机对着练，AI实时看关节角度，告诉你怎么改。</div>
+      <div id="fitnessDays"></div>
+    </div>
+    <div class="card">
+      <h2>📊 训练日志</h2>
+      <div id="logEntries"></div>
+      <div style="margin-top:8px;font-size:12px;color:#b0a898">每次练完自动记录重量和次数，下次就知道要突破。</div>
+    </div>
+    <button class="btn-ghost mt8" onclick="showPage('home')">返回首页</button>
+  </div>
+
+  <!-- COACH -->
+  <div id="page-coach" class="hidden">
+    <div class="card text-center" style="padding:28px 16px">
+      <div style="font-size:40px;margin-bottom:10px">🎤</div>
+      <h2 style="margin-bottom:8px">实时AI健身教练</h2>
+      <div style="font-size:13px;color:#5a5450;margin-bottom:16px;line-height:1.7">
+        戴耳机 → 架手机 → 开始练<br>
+        AI看着你的动作实时喊：
+      </div>
+      <div style="background:#faf9f7;border-radius:8px;padding:12px;font-size:12px;color:#5a5450;line-height:2;margin-bottom:16px;text-align:left">
+        🗣️ "大腿平行地面，再蹲低一点"<br>
+        🗣️ "膝盖不要内扣！向外打开"<br>
+        🗣️ "动作变形！停下休息！"
+      </div>
+      <a href="ai_fitness_coach.html" style="display:inline-block;padding:12px 32px;background:linear-gradient(135deg,#c8a96e,#d4b87a);color:#fff;border-radius:10px;text-decoration:none;font-weight:500;font-size:15px;box-shadow:0 2px 8px rgba(200,169,110,.2)">🎯 打开实时教练</a>
+      <div style="margin-top:8px;font-size:11px;color:#b0a898">支持：深蹲 · 俯卧撑 · 硬拉 · 划船 · 弓步蹲 · 推举 · 平板 · 臀桥</div>
+    </div>
+    <button class="btn-ghost mt8" onclick="showPage('home')">返回首页</button>
+  </div>
+
   <div class="footer">舞镜 · WuJing AI</div>
 </div>
 
@@ -249,6 +284,63 @@ function renderPlan(data){
   })
 }
 if(TOKEN){fetch("https://wujing.mylumee.cn/api/me",{headers:{"Authorization":"Bearer "+TOKEN}}).then(function(r){return r.json()}).then(function(d){if(d.user){USER=d.user}})["catch"](function(){localStorage.removeItem("wj_token");TOKEN=null})}
+
+// ═══ FITNESS 5-DAY PLAN ═══
+var FIT_PLAN = [
+  {day:"周一 · 胸+三头",exs:[{n:"俯卧撑",g:"4×12",t:"肘角60-100°"},{n:"钻石俯卧撑",g:"3×10",t:"肘角60-90°"},{n:"臂屈伸",g:"3×12",t:"肘角70-100°"}]},
+  {day:"周二 · 背+二头",exs:[{n:"俯身划船",g:"4×12",t:"背角20-40°"},{n:"引体向上(辅助)",g:"3×8",t:"肘<90°"},{n:"二头弯举",g:"3×12",t:"全程0-140°"}]},
+  {day:"周三 · 腿",exs:[{n:"深蹲(自重)",g:"4×15",t:"膝65-90° 背>25°"},{n:"弓步蹲",g:"3×12/腿",t:"前膝<90°"},{n:"臀桥",g:"3×15",t:"髋完全伸展"},{n:"提踵",g:"3×20",t:"踝最大范围"}]},
+  {day:"周四 · 肩+有氧",exs:[{n:"推举(哑铃)",g:"4×10",t:"全程控制"},{n:"侧平举",g:"3×12",t:"水平即可"},{n:"开合跳",g:"3×30s",t:"手脚同步"},{n:"波比跳",g:"3×10",t:"肘<100°"}]},
+  {day:"周五 · 全身",exs:[{n:"硬拉(哑铃)",g:"4×12",t:"背角25-45°"},{n:"深蹲推举",g:"3×10",t:"膝<90°"},{n:"俯卧撑划船",g:"3×8/边",t:"核心锁定"},{n:"平板支撑",g:"3×30s",t:"髋不下塌"}]}
+];
+
+function renderFitnessPlan(){
+  var h="";
+  FIT_PLAN.forEach(function(d,i){
+    h+='<div style="background:#faf9f7;border-radius:8px;padding:12px;margin-bottom:8px">';
+    h+='<div style="font-size:13px;font-weight:500;color:#c8a96e;margin-bottom:6px">'+d.day+'</div>';
+    d.exs.forEach(function(e){
+      var key="fit_"+i+"_"+e.n;
+      var done=localStorage.getItem(key)==="done";
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:#5a5450">';
+      h+='<span class="fit-cb" data-key="'+key+'" style="width:16px;height:16px;border:1px solid '+(done?"#4a8a5c":"#d0ccc4")+';border-radius:3px;flex-shrink:0;cursor:pointer;background:'+(done?"#4a8a5c":"transparent")+'"></span>';
+      h+='<span style="'+(done?"text-decoration:line-through;color:#b0a898":"")+'">'+e.n+' <span style="color:#b0a898">'+e.g+" · "+e.t+"</span></span></div>";
+    });
+    h+="</div>";
+  });
+  document.getElementById("fitnessDays").innerHTML=h;
+  document.querySelectorAll(".fit-cb").forEach(function(cb){
+    cb.addEventListener("click",function(){
+      var k=this.getAttribute("data-key");
+      var done=localStorage.getItem(k)==="done";
+      if(done){localStorage.removeItem(k)}else{localStorage.setItem(k,"done")}
+      renderFitnessPlan();
+    });
+  });
+}
+
+// ═══ TRAINING LOG ═══
+var LOG_KEY="wj_fitness_log";
+function renderLog(){
+  var log=JSON.parse(localStorage.getItem(LOG_KEY)||"[]");
+  var h="";
+  if(log.length===0){h='<div style="font-size:12px;color:#b0a898;padding:8px">还没有训练记录。打开实时教练练完自动记录。</div>'}
+  else{
+    var recent=log.slice(-10).reverse();
+    recent.forEach(function(r){
+      h+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0eeeb;font-size:12px">';
+      h+='<span>'+r.ex+"</span><span>"+r.weight+"kg × "+r.reps+"次 <span style="color:#b0a898">"+r.score+"/10</span></span></div>";
+    });
+  }
+  document.getElementById("logEntries").innerHTML=h;
+}
+
+// Override showPage to render fitness on demand
+var _origShowPage2 = showPage;
+showPage = function(n){
+  if(n==="fitness"){renderFitnessPlan();renderLog()}
+  _origShowPage2(n);
+};
 </script>
 </body>
 </html>
