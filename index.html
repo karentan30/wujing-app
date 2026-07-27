@@ -162,7 +162,7 @@ function handleAuth() {
   if (!email || !pass) { err.textContent = '请填写邮箱和密码'; err.style.display = 'block'; return; }
   if (pass.length < 6) { err.textContent = '密码至少6位'; err.style.display = 'block'; return; }
   
-  var endpoint = AUTH_MODE === 'login' ? '/api/login_json' : '/api/register_json';
+  var endpoint = AUTH_MODE === 'login' ? 'https://wujing.mylumee.cn/api/login_json' : 'https://wujing.mylumee.cn/api/register_json';
   var btn = document.getElementById('authBtn');
   btn.disabled = true; btn.textContent = '处理中...';
   
@@ -233,7 +233,7 @@ function startUpload() {
   fd.append('video', FILE);
   fd.append('teacher_key', TEACHER);
   
-  fetch('/api/upload', {
+  fetch('https://wujing.mylumee.cn/api/upload', {
     method: 'POST',
     headers: { 'Authorization': 'Bearer ' + TOKEN },
     body: fd
@@ -260,7 +260,7 @@ function pollReview(reviewId) {
   var count = 0;
   var interval = setInterval(function() {
     count++;
-    fetch('/api/review/' + reviewId, {
+    fetch('https://wujing.mylumee.cn/api/review/' + reviewId, {
       headers: { 'Authorization': 'Bearer ' + TOKEN }
     })
     .then(function(r) { return r.json(); })
@@ -323,7 +323,7 @@ function showReview(data) {
 if (TOKEN) {
   document.getElementById('navAuth').textContent = '已登录';
   // Verify token by fetching /api/me
-  fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + TOKEN } })
+  fetch('https://wujing.mylumee.cn/api/me', { headers: { 'Authorization': 'Bearer ' + TOKEN } })
   .then(function(r) { return r.json(); })
   .then(function(d) {
     if (d.user) { USER = d.user; document.getElementById('navAuth').textContent = d.user.email.substring(0,10)+'...'; }
