@@ -112,10 +112,15 @@ button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weigh
     <div class="card">
       <h2>上传视频</h2>
       <label>参考老师</label>
+      <label>参考舞蹈（可输入任意舞名）</label>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" id="danceName" placeholder="输入舞蹈名称..." style="flex:1;margin-bottom:0" value="月">
+      </div>
       <div class="sel" id="teacherSel">
-        <div class="sel-btn active" data-key="yue">月</div>
-        <div class="sel-btn" data-key="yueyuan">月·圆舞</div>
-        <div class="sel-btn" data-key="chengmo">成魔</div>
+        <div class="sel-btn active" data-key="yue">🩰 月</div>
+        <div class="sel-btn" data-key="yueyuan">🩰 月·圆舞</div>
+        <div class="sel-btn" data-key="chengmo">🩰 成魔</div>
+        <div class="sel-btn" data-key="custom">🎯 自定义</div>
       </div>
       <div class="upload-zone" id="uploadZone">
         <div class="icon">📹</div>
@@ -217,7 +222,9 @@ function handleAuth(){
 }
 document.addEventListener("click",function(e){
   var tb=e.target.closest("[data-key]");
-  if(tb&&tb.closest("#teacherSel")){document.querySelectorAll("#teacherSel .sel-btn").forEach(function(b){b.classList.remove("active")});tb.classList.add("active");TEACHER=tb.getAttribute("data-key")}
+  if(tb&&tb.closest("#teacherSel")){document.querySelectorAll("#teacherSel .sel-btn").forEach(function(b){b.classList.remove("active")});tb.classList.add("active");var k=tb.getAttribute("data-key");TEACHER=k;
+      if(k==="custom"){var dn=document.getElementById("danceName").value;if(dn)TEACHER=dn;}
+      document.querySelectorAll("#teacherSel .sel-btn").forEach(function(b){b.classList.remove("active")});tb.classList.add("active");}
 });
 document.getElementById("uploadZone").addEventListener("click",function(){document.getElementById("fileInput").click()});
 document.getElementById("fileInput").addEventListener("change",function(e){
@@ -304,7 +311,7 @@ function renderFitnessPlan(){
       var done=localStorage.getItem(key)==="done";
       h+='<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:#5a5450">';
       h+='<span class="fit-cb" data-key="'+key+'" style="width:16px;height:16px;border:1px solid '+(done?"#4a8a5c":"#d0ccc4")+';border-radius:3px;flex-shrink:0;cursor:pointer;background:'+(done?"#4a8a5c":"transparent")+'"></span>';
-      h+='<span style="'+(done?"text-decoration:line-through;color:#b0a898":"")+'">'+e.n+' <span style="color:#b0a898">'+e.g+" · "+e.t+"</span></span></div>";
+      h+='<span style="'+(done?"text-decoration:line-through;color:#b0a898":"")+'">'+e.n+' <span style='color:#b0a898'>'+e.g+" · "+e.t+"</span></span></div>";
     });
     h+="</div>";
   });
@@ -329,7 +336,7 @@ function renderLog(){
     var recent=log.slice(-10).reverse();
     recent.forEach(function(r){
       h+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0eeeb;font-size:12px">';
-      h+='<span>'+r.ex+"</span><span>"+r.weight+"kg × "+r.reps+"次 <span style="color:#b0a898">"+r.score+"/10</span></span></div>";
+      h+='<span>'+r.ex+"</span><span>"+r.weight+"kg x "+r.reps+"次 <span style='color:#b0a898'>"+r.score+"/10</span></span></div>";
     });
   }
   document.getElementById("logEntries").innerHTML=h;
