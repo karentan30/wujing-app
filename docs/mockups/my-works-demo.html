@@ -1,0 +1,312 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舞镜 · 我的作品库（付费存储）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#d6d9de;padding:32px 16px 48px;
+    display:flex;flex-direction:column;align-items:center}
+
+  .page-title{font-size:15px;font-weight:600;color:#3a3f47;margin-bottom:3px;letter-spacing:.3px}
+  .page-sub{font-size:11px;color:#8a94a0;margin-bottom:28px;text-align:center}
+
+  .phone{width:375px;border-radius:40px;overflow:hidden;
+    box-shadow:0 24px 64px rgba(0,0,0,.28),0 4px 12px rgba(0,0,0,.12);
+    border:9px solid #18171c;background:#18171c}
+  .scr{height:760px;overflow-y:auto;scrollbar-width:none;background:#FAF7F0}
+  .scr::-webkit-scrollbar{display:none}
+
+  /* ── 头部 ── */
+  .mw-top{
+    background:linear-gradient(180deg,#F4EDD8 0%,#FAF7F0 100%);
+    padding:18px 20px 4px;position:relative;
+  }
+  .mw-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4px}
+  .mw-title{
+    font-family:"Noto Serif SC",serif;font-size:22px;font-weight:900;
+    color:#1F1A14;letter-spacing:2px;
+  }
+  .mw-count{font-size:12px;color:#9A8768;letter-spacing:.5px}
+  .mw-hero-line{height:1px;margin-top:12px;
+    background:linear-gradient(90deg,transparent,#C4A052 30%,#C4A052 70%,transparent);opacity:.35}
+
+  /* ── 会员 banner ── */
+  .mw-banner{
+    margin:14px 16px 0;border-radius:16px;overflow:hidden;
+    background:linear-gradient(135deg,#2A2418 0%,#4A3820 55%,#6A5028 100%);
+    padding:16px 18px;position:relative;
+    box-shadow:0 6px 20px rgba(74,56,32,.3);
+  }
+  .mw-banner::before{
+    content:"";position:absolute;top:-30px;right:-20px;width:120px;height:120px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(228,200,119,.35),transparent 68%);
+  }
+  .mw-banner .crown{font-size:13px;color:#E4C877;font-weight:700;letter-spacing:1px;
+    display:flex;align-items:center;gap:5px;margin-bottom:6px;position:relative;z-index:1;
+    font-family:"Noto Serif SC",serif}
+  .mw-banner .bt{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:900;color:#FBF6E8;
+    line-height:1.35;margin-bottom:10px;position:relative;z-index:1;letter-spacing:.5px}
+  .mw-banner .feats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;position:relative;z-index:1}
+  .mw-banner .feats span{
+    font-size:11px;color:#E8D9B0;background:rgba(228,200,119,.14);
+    border:1px solid rgba(228,200,119,.3);border-radius:12px;padding:3px 9px;letter-spacing:.3px;
+  }
+  .mw-banner .brow{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+  .mw-banner .price{color:#FBF6E8;font-family:"Noto Serif SC",serif}
+  .mw-banner .price b{font-size:26px;font-weight:900;color:#E4C877}
+  .mw-banner .price small{font-size:12px;color:#C8B488;font-weight:400}
+  .mw-banner .price .old{font-size:11px;color:#9A8768;text-decoration:line-through;margin-left:4px}
+  .mw-banner .cta{
+    margin-left:auto;background:linear-gradient(135deg,#E4C877,#C4A052);
+    color:#2A2418;font-size:13px;font-weight:800;
+    padding:10px 18px;border-radius:22px;letter-spacing:.5px;
+    box-shadow:0 4px 14px rgba(228,200,119,.4);
+  }
+
+  /* ── 过滤条 ── */
+  .mw-filter{display:flex;gap:8px;padding:16px 16px 6px;overflow-x:auto;scrollbar-width:none}
+  .mw-filter::-webkit-scrollbar{display:none}
+  .mw-chip{
+    font-size:12px;color:#9A8768;background:#fff;border:1px solid #EDE4CF;
+    padding:6px 14px;border-radius:16px;white-space:nowrap;font-weight:500;
+  }
+  .mw-chip.on{background:#4A3820;color:#F0E4C4;border-color:#4A3820;font-weight:600}
+
+  /* ── 作品卡 ── */
+  .mw-list{padding:8px 16px 20px}
+  .work{
+    display:flex;gap:13px;background:#fff;border:1px solid #EDE4CF;
+    border-radius:16px;padding:12px;margin-bottom:12px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);position:relative;overflow:hidden;
+  }
+  .work.free::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#D8B65E;opacity:.6;
+  }
+  .work.paid::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,#E4C877,#B5922A);
+  }
+  /* 封面 */
+  .work .thumb{
+    width:78px;flex-shrink:0;border-radius:10px;overflow:hidden;position:relative;
+    background:linear-gradient(160deg,#2a2418,#4a3f2a);aspect-ratio:3/4;
+    border:1px solid rgba(181,146,42,.2);
+  }
+  .work .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .work .thumb::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(181,146,42,.14),transparent 40%,rgba(30,22,10,.4) 100%)}
+  .work .thumb .g{
+    position:absolute;bottom:5px;left:5px;z-index:2;font-size:9px;color:#F0E4C4;
+    background:rgba(31,26,20,.6);padding:2px 6px;border-radius:8px;letter-spacing:.3px;
+  }
+  /* 正文 */
+  .work .bd{flex:1;min-width:0;display:flex;flex-direction:column}
+  .work .wn{font-family:"Noto Serif SC",serif;font-size:16px;font-weight:700;color:#1F1A14;line-height:1.3}
+  .work .meta{font-size:11px;color:#9A8768;margin:3px 0 8px;letter-spacing:.3px}
+  /* 进步曲线占位 */
+  .work .curve{
+    display:flex;align-items:flex-end;gap:3px;height:32px;margin-bottom:8px;
+    padding:0 2px;
+  }
+  .work .curve .b{
+    flex:1;background:linear-gradient(180deg,#E4C877,#B5922A);border-radius:2px 2px 0 0;opacity:.85;
+  }
+  .work .curve-lbl{font-size:10px;color:#B3A488;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+  .work .curve-lbl b{color:#7A5C2A;font-weight:600}
+  /* 存储状态标签 */
+  .work .status{margin-top:auto}
+  .work .status .paid-tag{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:11px;color:#7A5C2A;font-weight:600;
+    background:#FAF5E8;border:1px solid #E4D3A8;
+    padding:5px 11px;border-radius:14px;letter-spacing:.3px;
+  }
+  .work .status .free-tag{
+    font-size:11px;color:#B07A3A;line-height:1.5;
+    background:#FBF3E3;border:1px solid #EAD5A8;
+    border-radius:10px;padding:7px 11px;display:block;
+  }
+  .work .status .free-tag b{color:#9A5A20;font-weight:700}
+  .work .status .free-tag .acts{display:flex;gap:8px;margin-top:7px}
+  .work .status .free-tag .acts a{
+    flex:1;text-align:center;font-size:11px;font-weight:700;padding:6px;border-radius:12px;letter-spacing:.3px;
+  }
+  .work .status .free-tag .acts .dl{border:1px solid #D8CBA8;color:#7A5C2A}
+  .work .status .free-tag .acts .up{background:#B5922A;color:#fff}
+
+  .note2{font-size:11px;color:#9aa4b0;margin-top:16px;max-width:375px;text-align:center;line-height:1.7}
+</style></head>
+<body>
+
+<div class="page-title">舞镜 · 我的作品库</div>
+<div class="page-sub">付费存储 · 免费7天清理 vs 永久保存 · 会员变现 · 清雅国风</div>
+
+<div class="phone">
+  <div class="scr">
+
+    <!-- 头部 -->
+    <div class="mw-top">
+      <div class="mw-head">
+        <div class="mw-title">我的作品</div>
+        <div class="mw-count">共 6 支 · 已保存 2 支</div>
+      </div>
+      <div class="mw-hero-line"></div>
+    </div>
+
+    <!-- 会员 banner -->
+    <div class="mw-banner">
+      <div class="crown">👑 舞镜会员</div>
+      <div class="bt">作品永久保存 + 实时摄像头角度纠错</div>
+      <div class="feats">
+        <span>· 永久云存储</span>
+        <span>· 摄像头实时纠错</span>
+        <span>· 高清导出无水印</span>
+        <span>· 进步曲线追踪</span>
+      </div>
+      <div class="brow">
+        <div class="price"><b>¥39</b><small>/月</small><span class="old">¥59</span></div>
+        <div class="cta">立即升级</div>
+      </div>
+    </div>
+
+    <!-- 过滤 -->
+    <div class="mw-filter">
+      <div class="mw-chip on">全部</div>
+      <div class="mw-chip">已永久保存</div>
+      <div class="mw-chip">即将清理</div>
+      <div class="mw-chip">国风</div>
+      <div class="mw-chip">K-pop</div>
+    </div>
+
+    <!-- 列表 -->
+    <div class="mw-list">
+
+      <!-- 付费·永久 -->
+      <div class="work paid">
+        <div class="thumb">
+          <img src="report_demos/学员1_bg_飞天壁画金绿.png" alt="封面" loading="lazy">
+          <span class="g">国风古典</span>
+        </div>
+        <div class="bd">
+          <div class="wn">清别欢 · 圆月意境</div>
+          <div class="meta">2026.07.28 · 20.7s · 5句</div>
+          <div class="curve-lbl">角度达标度进步 <b>68 → 92%</b> ↑</div>
+          <div class="curve">
+            <div class="b" style="height:45%"></div><div class="b" style="height:52%"></div>
+            <div class="b" style="height:58%"></div><div class="b" style="height:70%"></div>
+            <div class="b" style="height:78%"></div><div class="b" style="height:92%"></div>
+          </div>
+          <div class="status">
+            <span class="paid-tag">✓ 已永久保存 · 会员</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 付费·永久 -->
+      <div class="work paid">
+        <div class="thumb">
+          <img src="report_demos/学员3_original.png" alt="封面" loading="lazy">
+          <span class="g">K-pop</span>
+        </div>
+        <div class="bd">
+          <div class="wn">CHOOM 副歌</div>
+          <div class="meta">2026.07.25 · 24s · 4段</div>
+          <div class="curve-lbl">角度达标度进步 <b>60 → 82%</b> ↑</div>
+          <div class="curve">
+            <div class="b" style="height:40%"></div><div class="b" style="height:48%"></div>
+            <div class="b" style="height:55%"></div><div class="b" style="height:62%"></div>
+            <div class="b" style="height:75%"></div><div class="b" style="height:82%"></div>
+          </div>
+          <div class="status">
+            <span class="paid-tag">✓ 已永久保存 · 会员</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 免费·即将清理 -->
+      <div class="work free">
+        <div class="thumb">
+          <img src="report_demos/学员2_bg_敦煌石窟暖金.png" alt="封面" loading="lazy">
+          <span class="g">民族舞</span>
+        </div>
+        <div class="bd">
+          <div class="wn">敦煌飞天 · 反弹琵琶</div>
+          <div class="meta">2026.07.24 · 31s · 6句</div>
+          <div class="curve-lbl">角度达标度 <b>88%</b>（单次·升级解锁曲线）</div>
+          <div class="curve" style="opacity:.4">
+            <div class="b" style="height:88%"></div>
+          </div>
+          <div class="status">
+            <div class="free-tag">
+              ⏳ <b>还剩 2 天</b>后自动清理 · 免费作品仅保留 7 天
+              <div class="acts">
+                <a class="dl">⬇ 下载带走</a>
+                <a class="up">升级永久保存</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 免费·即将清理 -->
+      <div class="work free">
+        <div class="thumb">
+          <img src="report_demos/学员4_original.png" alt="封面" loading="lazy">
+          <span class="g">手势舞</span>
+        </div>
+        <div class="bd">
+          <div class="wn">《漠河舞厅》手势版</div>
+          <div class="meta">2026.07.22 · 15s · 3段</div>
+          <div class="curve-lbl">角度达标度 <b>95%</b>（单次·升级解锁曲线）</div>
+          <div class="curve" style="opacity:.4">
+            <div class="b" style="height:95%"></div>
+          </div>
+          <div class="status">
+            <div class="free-tag">
+              ⏳ <b>还剩 5 天</b>后自动清理 · 免费作品仅保留 7 天
+              <div class="acts">
+                <a class="dl">⬇ 下载带走</a>
+                <a class="up">升级永久保存</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 免费·即将清理（红色紧迫感） -->
+      <div class="work free">
+        <div class="thumb">
+          <img src="report_demos/学员3_bg_天宫夜宴深蓝.png" alt="封面" loading="lazy">
+          <span class="g">国风古典</span>
+        </div>
+        <div class="bd">
+          <div class="wn">《万疆》水袖片段</div>
+          <div class="meta">2026.07.23 · 28s · 5句</div>
+          <div class="curve-lbl">角度达标度 <b>79%</b>（单次·升级解锁曲线）</div>
+          <div class="curve" style="opacity:.4">
+            <div class="b" style="height:79%"></div>
+          </div>
+          <div class="status">
+            <div class="free-tag" style="background:#FBEBE3;border-color:#EABBA0">
+              ⚠️ <b style="color:#C0501E">仅剩 1 天！</b>清理后无法找回，别丢了你磨过的舞
+              <div class="acts">
+                <a class="dl">⬇ 下载带走</a>
+                <a class="up">升级永久保存</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /list -->
+
+  </div><!-- /scr -->
+</div><!-- /phone -->
+
+<div class="note2">免费作品 7 天后清理，引导「下载带走 or 升级永久保存」；付费作品标「已永久保存」并解锁达标度进步曲线。<br>顶部 ¥39/月 会员 banner = 永久存 + 实时摄像头角度纠错。剩1天用红色紧迫感催升级。假数据填充。</div>
+
+</body></html>

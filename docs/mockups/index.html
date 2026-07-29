@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舞镜 · 营销素材</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#08090f;color:#e8eaf0;font-family:"PingFang SC","Noto Serif SC",sans-serif;padding:24px;max-width:1200px;margin:0 auto}
+h1{color:#c8a96e;font-size:30px;margin-bottom:4px;letter-spacing:.06em}
+h1 small{font-size:14px;color:#5a6480;font-weight:400;letter-spacing:.1em;margin-left:12px}
+h2{color:#e8c98e;font-size:18px;margin:32px 0 16px;letter-spacing:.08em;border-bottom:1px solid #1e2235;padding-bottom:8px}
+.grid{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:32px}
+.card{border:1px solid #1e2235;border-radius:12px;overflow:hidden;background:#0e1018;width:320px;transition:border-color .2s}
+.card:hover{border-color:#c8a96e}
+.card video{width:100%;display:block;max-height:400px}
+.card img{width:100%;display:block}
+.card-body{padding:12px 14px}
+.card-title{font-size:15px;font-weight:600;color:#e8eaf0;margin-bottom:4px}
+.card-sub{font-size:12px;color:#5a6480}
+.card-tag{display:inline-block;padding:2px 10px;border-radius:10px;background:rgba(200,169,110,.12);color:#c8a96e;font-size:11px;margin-left:8px}
+.dl-link{color:#c8a96e;font-size:12px;text-decoration:none;float:right}
+.dl-link:hover{color:#e8c98e}
+.banner{padding:16px 20px;background:linear-gradient(135deg,#0e1018,#12151f);border:1px solid #1e2235;border-radius:14px;margin-bottom:32px;display:flex;align-items:center;gap:20px}
+.banner-text{flex:1}
+.banner-text strong{color:#c8a96e;font-size:16px}
+.banner-text p{color:#5a6480;font-size:13px;margin-top:4px;line-height:1.6}
+.banner-btn{padding:10px 28px;background:linear-gradient(135deg,#b8923e,#e8c98e);border:none;border-radius:10px;color:#08090f;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<h1>舞镜 · WuJing <small>AI 舞蹈评分</small></h1>
+
+<div class="banner">
+  <div class="banner-text">
+    <strong>🎬 Remotion 成品营销视频</strong>
+    <p>AI舞蹈底片 + Remotion叠加评分环/维度条/品牌CTA · 9:16竖屏 · TikTok/小红书/Reels即用</p>
+  </div>
+  <a class="banner-btn" href="https://github.com/karentan30/wujing" target="_blank">查看源码</a>
+</div>
+
+<h2>🎬 Remotion 成品视频</h2>
+<div class="grid" id="videos"></div>
+
+<h2>🃏 小红书设计卡（1080×1350）</h2>
+<div class="grid" id="cards"></div>
+
+<h2>📄 演示页面</h2>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px">
+  <a href="score-demo.html" style="padding:12px 24px;border:1px solid #1e2235;border-radius:10px;color:#7ab4ff;text-decoration:none">🎯 打分 Demo</a>
+  <a href="review-demo.html" style="padding:12px 24px;border:1px solid #1e2235;border-radius:10px;color:#50d282;text-decoration:none">📋 AI点评 Demo</a>
+</div>
+
+<script>
+const videos = [
+  {file:"remotion_01_comparison.mp4",title:"我跳的vs老师跳的",tag:"学员对比",size:"3.2MB"},
+  {file:"remotion_02_ai_teacher.mp4",title:"AI老师比真人还严格",tag:"AI点评",size:"3.9MB"},
+  {file:"remotion_03_wedding_dance.mp4",title:"婚礼第一支舞不用请老师",tag:"婚礼练习",size:"4.1MB"},
+  {file:"remotion_04_kpop_challenge.mp4",title:"K-pop打卡新玩法",tag:"K-pop挑战",size:"4.5MB"},
+];
+const cards = [
+  {file:"card1_final_xhs.png",title:"产品入口卡 · 上传→评分"},
+  {file:"card2_final_xhs.png",title:"三场景 · 婚礼/年会/K-pop"},
+  {file:"card3_final_xhs.png",title:"AI评分报告示样"},
+];
+const vg = document.getElementById("videos");
+videos.forEach(v => {
+  vg.innerHTML += \`<div class="card"><video src="\${v.file}" controls playsinline></video><div class="card-body"><div class="card-title">\${v.title}<span class="card-tag">\${v.tag}</span><a class="dl-link" href="\${v.file}" download>下载</a></div><div class="card-sub">10s · 720×1280 · \${v.size}</div></div></div>\`;
+});
+const cg = document.getElementById("cards");
+cards.forEach(c => {
+  cg.innerHTML += \`<div class="card"><img src="\${c.file}"><div class="card-body"><div class="card-title">\${c.title}<a class="dl-link" href="\${c.file}" download>下载</a></div></div></div>\`;
+});
+</script>
+</body>
+</html>

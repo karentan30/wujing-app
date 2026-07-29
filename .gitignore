@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+node_modules/
+mpvenv/
+_live/__pycache__/
+# 大媒体不入库
+*.mp4
+*.mov
+*.mp3
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.task
+.DS_Store

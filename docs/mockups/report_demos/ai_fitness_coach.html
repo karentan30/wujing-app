@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>舞镜 AI 健身教练</title>
+<style>
+/* ═══ Reset & Base ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:"PingFang SC","Helvetica Neue",system-ui,-apple-system,sans-serif;
+  background:#0a0a0f;color:#f0f0f0;height:100dvh;
+  display:flex;flex-direction:column;overflow:hidden;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* ═══ Loading overlay ═══ */
+#loader{
+  position:fixed;inset:0;z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0a0a1a,#141428);
+  transition:opacity .6s ease,visibility .6s ease;
+}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none}
+#loader .spinner{
+  width:48px;height:48px;border-radius:50%;
+  border:3px solid rgba(80,210,130,.12);border-top-color:#50d282;
+  animation:spin .8s linear infinite;margin-bottom:20px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{font-size:14px;color:#888;letter-spacing:.03em}
+#loader p span{color:#50d282}
+#errMsg{font-size:13px;color:#e84040;margin-top:14px;display:none}
+
+/* ═══ Main wrapper ═══ */
+#wrap{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#080812,#12121f);
+  position:relative;overflow:hidden;
+}
+#wrap video,#wrap canvas{
+  width:100%;height:100%;object-fit:cover;position:absolute;
+  transform:scaleX(-1)
+}
+
+/* ═══ HUD ═══ */
+#hud{
+  position:absolute;top:10px;left:10px;right:10px;
+  display:flex;justify-content:space-between;
+  pointer-events:none;z-index:5;gap:6px;
+}
+.hud-item{
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:5px 11px;border-radius:10px;font-size:11px;
+  border:1px solid rgba(255,255,255,.06);
+  min-width:56px;text-align:center;
+}
+.hud-item .l{font-size:8px;color:#999;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1px}
+.hud-item .v{font-size:17px;font-weight:700;font-feature-settings:"tnum";transition:color .3s}
+.hud-item .v.g{color:#50d282}.hud-item .v.y{color:#f0b840}.hud-item .v.r{color:#e84040}
+#hudEx{font-size:14px!important;font-weight:600!important}
+
+/* ═══ Coach bubble ═══ */
+#bubble{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  width:88%;max-width:420px;z-index:5;pointer-events:none;
+}
+#coach{
+  background:rgba(0,0,0,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:13px 20px;border-radius:14px;font-size:15px;font-weight:500;
+  text-align:center;line-height:1.55;
+  border:1px solid rgba(255,255,255,.07);
+  transition:all .35s ease;
+}
+#coach.safe{color:#50d282;border-color:rgba(80,210,130,.15)}
+#coach.warn{color:#f0b840;border-color:rgba(240,184,64,.15)}
+#coach.danger{color:#e84040;border-color:rgba(232,64,64,.15)}
+#coach.idle{color:#888}
+#coach .hint{font-size:11px;color:#666;font-weight:400;margin-top:4px;display:block}
+
+/* ═══ Rep flash ═══ */
+#repFlash{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:62px;font-weight:800;color:rgba(80,210,130,.18);
+  pointer-events:none;z-index:1;
+  animation:flashUp .5s ease-out forwards;
+}
+@keyframes flashUp{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.9);}
+  100%{opacity:0;transform:translate(-50%,-70%) scale(1.15);}
+}
+
+/* ═══ Camera off hint ═══ */
+#camHint{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:2;pointer-events:none;
+  gap:14px;opacity:0;transition:opacity .5s ease;
+}
+#camHint.show{opacity:1}
+#camHint .icon{font-size:48px;opacity:.3}
+#camHint p{font-size:14px;color:#555;text-align:center;line-height:1.6;max-width:280px}
+
+/* ═══ Controls ═══ */
+#bar{
+  display:flex;gap:5px;padding:8px 10px 10px;
+  background:linear-gradient(0deg,#0e0e18 60%,transparent);
+  justify-content:center;flex-wrap:wrap;overflow-x:auto;
+  scrollbar-width:none;position:relative;z-index:10;
+}
+#bar::-webkit-scrollbar{display:none}
+#bar button{
+  padding:7px 14px;border:none;border-radius:8px;
+  font-size:11px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:all .15s ease;white-space:nowrap;
+  letter-spacing:.02em;flex-shrink:0;
+}
+.btn-start{background:#50d282;color:#0e0e18;box-shadow:0 2px 12px rgba(80,210,130,.25)}
+.btn-start:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(80,210,130,.35)}
+.btn-stop{background:#e84040;color:#fff;box-shadow:0 2px 12px rgba(232,64,64,.25)}
+.btn-stop:hover{transform:translateY(-1px)}
+.btn-plan{
+  background:#1a1a28;color:#999;
+  border:1px solid rgba(255,255,255,.04);
+}
+.btn-plan:hover{background:#22223a;color:#ddd}
+.btn-plan.active{
+  background:rgba(80,210,130,.12);color:#50d282;
+  border-color:rgba(80,210,130,.25);
+  box-shadow:inset 0 0 0 1px rgba(80,210,130,.12);
+}
+#btnStart{min-width:68px}
+
+/* ═══ Panels ═══ */
+.panel{
+  display:none;position:absolute;top:56px;left:50%;
+  transform:translateX(-50%);width:91%;max-width:400px;z-index:30;
+  background:rgba(14,14,24,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-radius:16px;padding:16px;
+  border:1px solid rgba(255,255,255,.07);
+  animation:panelIn .25s ease;
+}
+@keyframes panelIn{
+  from{opacity:0;transform:translateX(-50%) translateY(-8px) scale(.96)}
+  to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+}
+.panel.show{display:block}
+.panel h3{font-size:14px;margin-bottom:12px;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+#planPanel h3{color:#50d282}
+#logPanel h3{color:#f0b840}
+.panel .day{
+  font-size:12px;color:#ccc;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);
+  cursor:pointer;transition:color .2s,background .2s;
+  border-radius:6px;padding:8px 10px;margin:0 -6px;
+}
+.panel .day:last-child{border-bottom:none}
+.panel .day:hover{color:#50d282;background:rgba(80,210,130,.06)}
+.panel .day .ex{font-size:10px;color:#777;margin-top:2px}
+.panel .close-btn{
+  display:block;margin-top:10px;padding:7px;background:transparent;
+  border:none;color:#777;font-size:12px;cursor:pointer;width:100%;border-radius:6px;
+  font-family:inherit;transition:color .2s,background .2s;
+}
+.panel .close-btn:hover{color:#aaa;background:rgba(255,255,255,.04)}
+
+/* Log panel specific */
+#logContent{font-size:12px;color:#aaa;max-height:180px;overflow-y:auto;margin-bottom:8px;line-height:1.7}
+#logContent .entry{padding:5px 8px;border-radius:4px;margin-bottom:2px;display:flex;justify-content:space-between}
+#logContent .entry:nth-child(odd){background:rgba(255,255,255,.02)}
+#logContent .entry .d{color:#666;font-size:10px}
+.log-row{display:flex;gap:8px;margin-top:6px}
+.log-row input{
+  flex:1;background:#1a1a28;border:1px solid #333;border-radius:8px;
+  padding:9px 12px;color:#fff;font-size:14px;font-family:inherit;
+  outline:none;transition:border .2s;
+}
+.log-row input:focus{border-color:#f0b840}
+.log-row button{
+  padding:8px 18px;background:#f0b840;border:none;border-radius:8px;
+  color:#0e0e18;font-weight:700;font-size:12px;cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+  font-family:inherit;
+}
+.log-row button:hover{transform:translateY(-1px);box-shadow:0 2px 12px rgba(240,184,64,.25)}
+#lastLog{font-size:11px;color:#555;margin-top:6px}
+#lastLog span{color:#f0b840}
+
+/* ═══ Session summary ═══ */
+#summaryPanel{
+  display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:88%;max-width:380px;z-index:40;
+  background:rgba(14,14,24,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:20px;padding:28px 24px 20px;
+  border:1px solid rgba(255,255,255,.08);
+  text-align:center;animation:panelIn .35s ease;
+}
+#summaryPanel.show{display:block}
+#summaryPanel h2{font-size:20px;color:#50d282;margin-bottom:6px}
+#summaryPanel .sub{font-size:12px;color:#888;margin-bottom:18px}
+#summaryPanel .stat{display:flex;justify-content:space-around;margin-bottom:20px;gap:8px}
+#summaryPanel .stat-item{text-align:center}
+#summaryPanel .stat-item .n{font-size:28px;font-weight:700;color:#fff}
+#summaryPanel .stat-item .l{font-size:10px;color:#888}
+#summaryPanel .btn-close{
+  background:rgba(255,255,255,.06);border:none;border-radius:10px;
+  padding:10px 24px;color:#ccc;font-size:13px;cursor:pointer;
+  font-family:inherit;transition:background .2s;width:100%;
+}
+#summaryPanel .btn-close:hover{background:rgba(255,255,255,.1)}
+
+/* ═══ Rep bonus dot ═══ */
+#repIndicator{
+  position:absolute;bottom:90px;right:16px;z-index:5;
+  display:flex;gap:4px;pointer-events:none;
+}
+#repIndicator .dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(80,210,130,.15);
+  transition:all .3s ease;
+}
+#repIndicator .dot.lit{background:#50d282;box-shadow:0 0 8px rgba(80,210,130,.4)}
+</style>
+</head>
+<body>
+
+<!-- ═══ Loading ═══ -->
+<div id="loader">
+  <div class="spinner"></div>
+  <p>AI教练加载中 <span>·</span> 请稍候</p>
+  <div id="errMsg"></div>
+</div>
+
+<!-- ═══ Main ═══ -->
+<div id="wrap">
+  <video id="video" playsinline></video>
+  <canvas id="canvas"></canvas>
+
+  <!-- Camera-off hint -->
+  <div id="camHint" class="show">
+    <div class="icon">🏋️</div>
+    <p>打开摄像头 <br>AI 实时分析动作</p>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div><div class="hud-item"><div class="l">动作</div><div class="v" id="hudEx">待开始</div></div></div>
+    <div style="text-align:center"><div class="hud-item"><div class="l">次数</div><div class="v g" id="hudReps">0</div></div></div>
+    <div style="text-align:right"><div class="hud-item"><div class="l">评分</div><div class="v" id="hudScore">-</div></div></div>
+  </div>
+
+  <!-- Rep dots -->
+  <div id="repIndicator"></div>
+
+  <!-- Coach -->
+  <div id="bubble">
+    <div id="coach" class="idle">🎯 选动作，开摄像头，开始训练</div>
+  </div>
+
+  <!-- Plan panel -->
+  <div id="planPanel" class="panel">
+    <h3>📋 周计划</h3>
+    <div class="day" onclick="loadDay(0)"><strong>周一 · 胸+三头</strong><div class="ex">俯卧撑 · 钻石俯卧撑 · 臂屈伸</div></div>
+    <div class="day" onclick="loadDay(1)"><strong>周二 · 背+二头</strong><div class="ex">俯身划船 · 引体向上 · 二头弯举</div></div>
+    <div class="day" onclick="loadDay(2)"><strong>周三 · 腿</strong><div class="ex">深蹲 · 弓步蹲 · 臀桥 · 提踵</div></div>
+    <div class="day" onclick="loadDay(3)"><strong>周四 · 肩+有氧</strong><div class="ex">推举 · 侧平举 · 开合跳 · 波比跳</div></div>
+    <div class="day" onclick="loadDay(4)"><strong>周五 · 全身</strong><div class="ex">硬拉 · 深蹲推举 · 俯卧撑划船 · 平板支撑</div></div>
+    <button class="close-btn" onclick="closePanel('planPanel')">关闭</button>
+  </div>
+
+  <!-- Log panel -->
+  <div id="logPanel" class="panel">
+    <h3>📊 训练日志</h3>
+    <div id="logContent">暂无记录</div>
+    <div class="log-row">
+      <input id="logWeight" type="number" placeholder="重量 (kg)" min="0" step="0.5">
+      <button onclick="saveLog()">记录</button>
+    </div>
+    <div id="lastLog">上次练此动作: <span>无记录</span></div>
+    <button class="close-btn" onclick="closePanel('logPanel')">关闭</button>
+  </div>
+
+  <!-- Session summary -->
+  <div id="summaryPanel">
+    <h2>🎉 训练完成</h2>
+    <div class="sub" id="summaryEx">深蹲</div>
+    <div class="stat">
+      <div class="stat-item"><div class="n" id="sumReps">0</div><div class="l">完成次数</div></div>
+      <div class="stat-item"><div class="n" id="sumAvgScore">-</div><div class="l">平均评分</div></div>
+      <div class="stat-item"><div class="n" id="sumDuration">0s</div><div class="l">训练时长</div></div>
+    </div>
+    <button class="btn-close" onclick="closeSummary()">继续</button>
+  </div>
+</div>
+
+<!-- ═══ Control bar ═══ -->
+<div id="bar">
+  <button class="btn-start" id="btnStart" onclick="toggleTraining()">🎯 开始</button>
+  <button class="btn-plan" onclick="showPanel('planPanel')">📋 计划</button>
+  <button class="btn-plan" data-ex="squat" onclick="pickEx('squat',this)">🏋️ 深蹲</button>
+  <button class="btn-plan" data-ex="pushup" onclick="pickEx('pushup',this)">💪 俯卧撑</button>
+  <button class="btn-plan" data-ex="deadlift" onclick="pickEx('deadlift',this)">🏋️ 硬拉</button>
+  <button class="btn-plan" data-ex="row" onclick="pickEx('row',this)">💪 划船</button>
+  <button class="btn-plan" data-ex="lunge" onclick="pickEx('lunge',this)">🦵 弓步蹲</button>
+  <button class="btn-plan" data-ex="ohp" onclick="pickEx('ohp',this)">🏋️ 推举</button>
+  <button class="btn-plan" data-ex="plank" onclick="pickEx('plank',this)">🧘 平板</button>
+  <button class="btn-plan" data-ex="bridge" onclick="pickEx('bridge',this)">🦵 臀桥</button>
+  <button class="btn-plan" id="btnWebcam" onclick="toggleWebcam()">📷 开摄像头</button>
+  <button class="btn-plan" onclick="showPanel('logPanel')">📊 日志</button>
+</div>
+
+<!-- ═══ Scripts ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+//  AI 健身教练 — 动作数据库
+// ═══════════════════════════════════════════════════
+
+const EXERCISES = {
+  squat:{
+    name:'深蹲',
+    // knee angle (hip-knee-ankle) — 站姿~180°, 底部~65-95°
+    target:[65,95],
+    // 计数阈值: 低于此值=进入动作, 高于此值+3=完成一个rep
+    repThreshold:110,
+    warnKneeValgus:14,
+    coachFail:{low:'再蹲低一点，大腿与地面平行', high:'蹲太浅了，屁股往后坐', valgus:'膝盖不要内扣！对准脚尖方向'},
+    coachOk:'深度完美，核心收紧',
+    coachDanger:'动作变形！膝盖压力过大，停下调整',
+  },
+  pushup:{
+    name:'俯卧撑',
+    // elbow angle (肩-肘-腕) — 伸直~180°, 底部~60-100°
+    target:[60,100],
+    repThreshold:120,
+    warnKneeValgus:0,
+    coachFail:{low:'再下去，胸口接近地面', high:'推到底再下来', valgus:''},
+    coachOk:'幅度标准，核心锁住保持身体笔直',
+    coachDanger:'身体开始抖了，这组做完休息',
+  },
+  deadlift:{
+    name:'硬拉',
+    // back angle vs vertical — 直立~90°, 硬拉位~25-50°
+    target:[25,50],
+    repThreshold:65,
+    warnKneeValgus:0,
+    coachFail:{low:'背太水平了！挺胸收紧', high:'背太直立了，屁股往后坐', valgus:''},
+    coachOk:'背部挺直，杠铃沿腿走',
+    coachDanger:'背部圆了！放下！腰会受伤',
+  },
+  row:{
+    name:'俯身划船',
+    // back angle vs vertical — 直立~90°, 划船位~20-45°
+    target:[20,45],
+    repThreshold:60,
+    warnKneeValgus:0,
+    coachFail:{low:'背太低了，挺起来', high:'背太高了，俯身多一点', valgus:''},
+    coachOk:'背部角度正确，用背发力拉',
+    coachDanger:'背部在晃，核心锁住',
+  },
+  lunge:{
+    name:'弓步蹲',
+    // front knee angle — 站姿~180°, 底部~60-95°
+    target:[60,95],
+    repThreshold:110,
+    warnKneeValgus:12,
+    coachFail:{low:'前腿再蹲深一点', high:'蹲太浅了', valgus:'膝盖内扣了！对准脚尖'},
+    coachOk:'弓步标准，重心在前后脚中间',
+    coachDanger:'膝盖超过脚尖太多，停！',
+  },
+  ohp:{
+    name:'推举',
+    // elbow angle — 锁定~180°, 底部~70-155°
+    target:[75,155],
+    repThreshold:168,
+    warnKneeValgus:0,
+    coachFail:{low:'推到头顶锁定', high:'再放低一点到肩膀', valgus:''},
+    coachOk:'推举幅度标准，核心收紧',
+    coachDanger:'腰部后仰了！收核心 夹屁股',
+  },
+  plank:{
+    name:'平板支撑',
+    // body straightness (踝-髋-肩) — 笔直~180°
+    target:[165,195],
+    warnKneeValgus:0,
+    coachFail:{low:'塌腰了！收紧核心夹屁股', high:'臀部抬太高了 放低', valgus:''},
+    coachOk:'身体成直线，保持呼吸',
+    coachDanger:'腰塌了 先休息',
+  },
+  bridge:{
+    name:'臀桥',
+    // hip angle (肩-髋-膝) — 躺平~180°, 顶起~150-175°
+    target:[150,175],
+    repThreshold:177,
+    warnKneeValgus:0,
+    coachFail:{low:'再推高一点 用臀部发力', high:'不要过度挺腰 用臀', valgus:''},
+    coachOk:'臀部发力感正确 夹紧',
+    coachDanger:'腰部代偿了 收一收',
+  },
+};
+
+const WEEK = [
+  {name:'周一·胸+三头', exs:['pushup','pushup','pushup']},
+  {name:'周二·背+二头', exs:['row','row','row']},
+  {name:'周三·腿', exs:['squat','lunge','bridge']},
+  {name:'周四·肩+有氧', exs:['ohp','ohp','plank']},
+  {name:'周五·全身', exs:['deadlift','squat','pushup','plank']},
+];
+
+// ═══════════════════════════════════════════════════
+//  状态
+// ═══════════════════════════════════════════════════
+
+let activeEx   = 'squat';
+let training   = false;
+let stream     = null;
+let pose       = null;
+let camReady   = false;
+let camLoading = false;
+let modelReady = false;
+
+// 计数
+let repCount    = 0;
+let repPhase    = 'up';    // 'up'|'down' — 过零计数
+let repFlashEl = null;
+
+// 形态评分历史（用于疲劳检测）
+let formHistory   = [];
+let fatigueWarn   = false;
+let fatigueCooldown = 0;
+
+// 膝内扣保护
+let kneeWarnCount = 0;
+
+// 教练语音节流
+let lastCoach = 0;
+
+// 计划
+let dayPlan = [];
+let exQueue = [];
+let exIdx   = 0;
+
+// 训练会话
+let sessionStart  = 0;
+let sessionScoreSum = 0;
+let sessionScoreN  = 0;
+let sessionScores  = [];
+
+// 平板支撑计时
+let plankHold    = 0;
+let plankRunning = false;
+let plankLastIn  = 0;
+
+// ═══════════════════════════════════════════════════
+//  DOM
+// ═══════════════════════════════════════════════════
+
+const $ = id => document.getElementById(id);
+const video    = $('video');
+const canvas   = $('canvas');
+const ctx      = canvas.getContext('2d');
+const coach    = $('coach');
+const hudEx    = $('hudEx');
+const hudReps  = $('hudReps');
+const hudScore = $('hudScore');
+const btnStart = $('btnStart');
+const camHint  = $('camHint');
+const loader   = $('loader');
+const errMsg   = $('errMsg');
+const repInd   = $('repIndicator');
+
+function closePanel(id){ $(id).classList.remove('show') }
+function showPanel(id){ $(id).classList.add('show'); if(id==='logPanel') renderLog() }
+
+// ═══════════════════════════════════════════════════
+//  角度计算
+// ═══════════════════════════════════════════════════
+
+function angle3(a,b,c){
+  const ab={x:a.x-b.x,y:a.y-b.y,z:a.z-b.z};
+  const cb={x:c.x-b.x,y:c.y-b.y,z:c.z-b.z};
+  const d=ab.x*cb.x+ab.y*cb.y+ab.z*cb.z;
+  const m=Math.hypot(ab.x,ab.y,ab.z)*Math.hypot(cb.x,cb.y,cb.z);
+  return m?Math.acos(Math.max(-1,Math.min(1,d/m)))*180/Math.PI:0;
+}
+
+function jAngle(lm,i,j,k){ return angle3(lm[i],lm[j],lm[k]) }
+
+// 计算躯干与垂直方向夹角（直立~90°, 水平~0°）
+function backAngle(lm){
+  // 用右肩(12)和右髋(24)计算
+  const dx = Math.abs(lm[12].x - lm[24].x);
+  const dy = Math.abs(lm[12].y - lm[24].y);
+  return 90 - Math.atan2(dx, dy) * 180 / Math.PI;
+}
+
+// ═══════════════════════════════════════════════════
+//  MediaPipe 初始化
+// ═══════════════════════════════════════════════════
+
+function initMP(){
+  try{
+    pose = new Pose({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}`});
+    pose.setOptions({
+      modelComplexity:1,
+      smoothLandmarks:true,
+      minDetectionConfidence:.6,
+      minTrackingConfidence:.5,
+    });
+    pose.onResults(onPose);
+    modelReady = true;
+    loader.classList.add('hide');
+  }catch(e){
+    errMsg.textContent = '⚠️ MediaPipe加载失败: '+e.message;
+    errMsg.style.display = 'block';
+    console.error('MediaPipe init error:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  摄像头
+// ═══════════════════════════════════════════════════
+
+async function toggleWebcam(){
+  if(stream){ stopCam(); return }
+  if(camLoading) return;
+  camLoading = true;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'user',width:{ideal:480},height:{ideal:640}},
+      audio:false,
+    });
+    video.srcObject = stream;
+    await video.play();
+    canvas.width  = video.videoWidth  || 480;
+    canvas.height = video.videoHeight || 640;
+    camReady = true;
+    camHint.classList.remove('show');
+    $('btnWebcam').textContent = '📷 关摄像头';
+    // 如果正在训练则启动loop
+    if(training) requestAnimationFrame(loop);
+  }catch(e){
+    errMsg.textContent = '⚠️ 摄像头权限被拒，请在浏览器设置中允许';
+    errMsg.style.display = 'block';
+    say('请允许摄像头权限');
+    setTimeout(()=>{ errMsg.style.display = 'none' }, 4000);
+  }finally{
+    camLoading = false;
+  }
+}
+
+function stopCam(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  camReady = false;
+  camHint.classList.add('show');
+  $('btnWebcam').textContent = '📷 开摄像头';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+// ═══════════════════════════════════════════════════
+//  动作自动识别（根据关键点推测动作）
+// ═══════════════════════════════════════════════════
+
+function autoDetectEx(lm){
+  if(!lm||!lm[11]) return activeEx;
+  if(exQueue.length>0 && exIdx<exQueue.length) return exQueue[exIdx];
+
+  const elbow   = (jAngle(lm,11,13,15)+jAngle(lm,12,14,16))/2;
+  const knee    = (jAngle(lm,23,25,27)+jAngle(lm,24,26,28))/2;
+  const minKnee = Math.min(jAngle(lm,23,25,27), jAngle(lm,24,26,28));
+  const back    = backAngle(lm);
+  const hip     = (jAngle(lm,11,23,25)+jAngle(lm,12,24,26))/2;
+
+  // 俯卧撑:身体水平(back<30),肘弯,腿直
+  if(elbow<110 && knee>120 && back<30)  return 'pushup';
+  // 深蹲:双膝弯,手臂伸,上身直
+  if(knee<110 && elbow>130 && back>30)  return 'squat';
+  // 硬拉:髋屈,腿直,躯干直线
+  if(back<50 && knee>120 && hip>150)    return 'deadlift';
+  // 划船:髋屈+俯身,腿直
+  if(back<45 && knee>110 && hip<140)    return 'row';
+  // 弓步蹲:单膝弯(minKnee),前倾
+  if(minKnee<110 && elbow>130 && back<30) return 'lunge';
+  // 推举:肘弯于肩水平,腿直
+  if(elbow<110 && knee>140 && back>60)  return 'ohp';
+  // 平板:身体笔直(髋角>150),水平
+  if(hip>150 && hip<195 && back<20)     return 'plank';
+  // 臀桥:髋角小,膝弯站稳
+  if(hip<155 && knee>100)               return 'bridge';
+
+  return activeEx;
+}
+
+// ═══════════════════════════════════════════════════
+//  绘制骨架
+// ═══════════════════════════════════════════════════
+
+function drawSkel(lm){
+  const connections = [
+    [11,12],[12,24],[24,23],[23,11],
+    [11,13],[13,15],[12,14],[14,16],
+    [23,25],[25,27],[24,26],[26,28],
+    [11,23],[12,24],[15,17],[15,19],[15,21],
+    [16,18],[16,20],[16,22],
+    [27,29],[29,31],[28,30],[30,32],
+    [25,27],[26,28],
+  ];
+  ctx.strokeStyle='rgba(80,210,130,.7)'; ctx.lineWidth=2.5;
+  ctx.lineCap='round';
+  for(const [i,j] of connections){
+    if(lm[i].visibility>.5&&lm[j].visibility>.5){
+      ctx.beginPath();
+      ctx.moveTo(lm[i].x*canvas.width,lm[i].y*canvas.height);
+      ctx.lineTo(lm[j].x*canvas.width,lm[j].y*canvas.height);
+      ctx.stroke();
+    }
+  }
+  for(let i=0;i<33;i++){
+    if(lm[i].visibility>.5){
+      ctx.beginPath();
+      ctx.arc(lm[i].x*canvas.width,lm[i].y*canvas.height,3.5,0,2*Math.PI);
+      ctx.fillStyle=i<11?'#7ab4ff':'#50d282';
+      ctx.fill();
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  教练语音 TTS
+// ═══════════════════════════════════════════════════
+
+function say(t){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang='zh-CN'; u.rate=.85; u.pitch=.9; u.volume=1;
+  const vs = window.speechSynthesis.getVoices();
+  const zv = vs.find(v=>v.lang.startsWith('zh'));
+  if(zv) u.voice=zv;
+  window.speechSynthesis.speak(u);
+}
+
+function coachSay(msg,cls){
+  coach.textContent = msg;
+  coach.className = cls||'safe';
+  lastCoach = Date.now();
+}
+
+// ═══════════════════════════════════════════════════
+//  Rep 计数 — 统一状态机
+// ═══════════════════════════════════════════════════
+//  所有动作（除平板）都用同一个逻辑：
+//    phase 'up'  → 角度低于 repThreshold → phase 'down'
+//    phase 'down' → 角度高于 repThreshold+3 → count +1, phase 'up'
+//  平板支撑：累计保持秒数
+
+function countReps(mainAngle, ex){
+  if(ex.name==='平板支撑') return false;
+
+  if(repPhase==='up' && mainAngle < ex.repThreshold){
+    repPhase = 'down';
+  }
+  if(repPhase==='down' && mainAngle > ex.repThreshold + 3){
+    repCount++;
+    repPhase = 'up';
+    showRepFlash();
+    updateRepDots();
+    return true; // 计了一次
+  }
+  return false;
+}
+
+// ═══════════════════════════════════════════════════
+//  Rep 闪动 + 指示点
+// ═══════════════════════════════════════════════════
+
+function showRepFlash(){
+  const el = document.createElement('div');
+  el.id = 'repFlash';
+  el.textContent = repCount;
+  $('wrap').appendChild(el);
+  setTimeout(()=>el.remove(), 550);
+}
+
+function updateRepDots(){
+  const n = Math.min(repCount, 10);
+  repInd.innerHTML = '';
+  for(let i=0;i<Math.min(n,10);i++){
+    const d = document.createElement('div');
+    d.className = 'dot lit';
+    repInd.appendChild(d);
+  }
+  // 填充剩余
+  for(let i=n;i<10;i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    repInd.appendChild(d);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  主处理帧
+// ═══════════════════════════════════════════════════
+
+function onPose(results){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(results.image,0,0,canvas.width,canvas.height);
+
+  // 自动检测（未训练时也在检测）
+  if(!training&&results.poseLandmarks){
+    const detected = autoDetectEx(results.poseLandmarks);
+    if(detected && detected!==activeEx){
+      activeEx = detected;
+      hudEx.textContent = EXERCISES[activeEx].name;
+    }
+    drawSkel(results.poseLandmarks);
+    return;
+  }
+
+  if(!training||!camReady||!results.poseLandmarks) return;
+
+  const lm = results.poseLandmarks;
+  drawSkel(lm);
+
+  const ex = EXERCISES[activeEx];
+  if(!ex) return;
+
+  // ── 计算主角度 ──
+  let mainAngle = 0;
+  const extra = { kneeDiff: 0 };
+
+  switch(activeEx){
+    case 'squat':
+    case 'lunge':{
+      const kl=jAngle(lm,23,25,27), kr=jAngle(lm,24,26,28);
+      mainAngle = (kl+kr)/2;
+      // 膝内扣：双膝间距（归一化x差）
+      const kdL = Math.abs(lm[23].x - lm[27].x)*100;
+      const kdR = Math.abs(lm[24].x - lm[28].x)*100;
+      extra.kneeDiff = (kdL+kdR)/2;
+      break;
+    }
+    case 'pushup':
+    case 'ohp':{
+      const el=(jAngle(lm,11,13,15)+jAngle(lm,12,14,16))/2;
+      mainAngle = el;
+      break;
+    }
+    case 'deadlift':
+    case 'row':{
+      mainAngle = backAngle(lm);
+      break;
+    }
+    case 'plank':{
+      // 身体直线度：踝-髋-肩角度
+      const al = jAngle(lm,27,23,11);
+      const ar = jAngle(lm,28,24,12);
+      mainAngle = (al+ar)/2;
+      break;
+    }
+    case 'bridge':{
+      const hl = jAngle(lm,11,23,25);
+      const hr = jAngle(lm,12,24,26);
+      mainAngle = (hl+hr)/2;
+      break;
+    }
+  }
+
+  // ── 评分 ──
+  const [tLo, tHi] = ex.target;
+  let score = 5;
+  let inZone = false;
+  if(mainAngle >= tLo && mainAngle <= tHi){ score = 9; inZone = true; }
+  else if(mainAngle >= tLo-15 && mainAngle <= tHi+15){ score = 7; }
+  else if(mainAngle >= tLo-30 && mainAngle <= tHi+30){ score = 5; }
+  else { score = 3; }
+
+  // 膝内扣扣分
+  if(ex.warnKneeValgus>0 && extra.kneeDiff > ex.warnKneeValgus){
+    score -= 2;
+  }
+  if(score<1) score=1;
+
+  // ── 统计历史（疲劳检测） ──
+  formHistory.push(score);
+  if(formHistory.length>20) formHistory.shift();
+  if(formHistory.length>=12){
+    const recent = formHistory.slice(-6).reduce((a,b)=>a+b,0)/6;
+    const older  = formHistory.slice(0,6).reduce((a,b)=>a+b,0)/6;
+    if(older - recent > 1.5 && !fatigueWarn && Date.now()>fatigueCooldown+15000){
+      fatigueWarn = true;
+      fatigueCooldown = Date.now();
+      const msg = ex.coachDanger;
+      coachSay('⚠️ '+msg,'danger');
+      say(msg);
+    }else if(older - recent < 0.4 && Date.now()>fatigueCooldown+10000){
+      fatigueWarn = false;
+    }
+  }
+
+  // ── 膝内扣保护 ──
+  if(ex.warnKneeValgus>0 && extra.kneeDiff > ex.warnKneeValgus + 4){
+    kneeWarnCount++;
+    if(kneeWarnCount > 6){
+      const msg = ex.coachFail.valgus || '膝盖危险！停！';
+      coachSay('🚨 '+msg,'danger');
+      say(msg);
+      kneeWarnCount = 0;
+    }
+  }else{
+    kneeWarnCount = Math.max(0, kneeWarnCount-1);
+  }
+
+  // ── Rep 计数 ──
+  if(activeEx==='plank'){
+    // 平板：累计保持秒数
+    if(inZone){
+      if(!plankRunning){
+        plankRunning = true;
+        plankLastIn = Date.now();
+      }else{
+        plankHold = (Date.now() - plankLastIn)/1000;
+      }
+    }else{
+      plankRunning = false;
+    }
+    // 显示秒数
+    hudReps.textContent = Math.floor(plankHold)+'s';
+  }else{
+    const counted = countReps(mainAngle, ex);
+    if(counted){
+      sessionScoreSum += score;
+      sessionScoreN++;
+    }
+  }
+
+  // ── HUD 更新 ──
+  hudEx.textContent = ex.name;
+  if(activeEx!=='plank') hudReps.textContent = repCount;
+  const displayScore = Math.round(score*10)/10;
+  hudScore.textContent = displayScore+'/10';
+  hudScore.style.color = score>=7?'#50d282':(score>=5?'#f0b840':'#e84040');
+
+  // ── 教练语音 ──
+  const now = Date.now();
+  if(!fatigueWarn && now - lastCoach > 3000 && now - lastCoach > 0){
+    let msg='', cls='safe';
+
+    if(activeEx==='plank'){
+      if(!inZone && plankHold<0.5){
+        msg = ex.coachFail.low;
+        cls = 'warn';
+      }else if(inZone){
+        msg = ex.coachOk + ' · '+Math.floor(plankHold)+'s';
+        cls = 'safe';
+      }else{
+        msg = ex.coachFail.low;
+        cls = 'warn';
+      }
+    }else{
+      if(mainAngle < tLo - 15){
+        msg = ex.coachFail.low;
+        cls = 'warn';
+      }else if(mainAngle > tHi + 15){
+        msg = ex.coachFail.high;
+        cls = 'warn';
+      }else if(ex.warnKneeValgus>0 && extra.kneeDiff > ex.warnKneeValgus){
+        msg = ex.coachFail.valgus;
+        cls = 'warn';
+      }else if(inZone){
+        msg = ex.coachOk;
+        cls = 'safe';
+      }else{
+        msg = ex.coachFail.low;
+        cls = 'warn';
+      }
+    }
+
+    if(msg && Math.random()>0.25){
+      coachSay('🗣️ '+msg, cls);
+      say(msg);
+    }
+  }
+
+  // ── 无教练消息时的鼓励 ──
+  if(now - lastCoach > 5000 && !fatigueWarn){
+    const praises = [
+      '👏 保持节奏 集中注意力',
+      '💪 感受肌肉发力 稳一点',
+      '🔥 这组状态不错 继续',
+      '🎯 质量比数量重要 慢一点',
+      '✅ 核心收紧不要松',
+      '✨ 找到节奏了 保持',
+    ];
+    coachSay(praises[Math.floor(Math.random()*praises.length)], 'safe');
+  }
+
+  // ── 画角度标注 ──
+  ctx.font='12px system-ui'; ctx.fillStyle='rgba(255,255,255,.7)';
+  ctx.shadowColor='rgba(0,0,0,.8)'; ctx.shadowBlur=4;
+  const label = activeEx==='plank' ? Math.floor(plankHold)+'s' : Math.round(mainAngle)+'°';
+  ctx.fillText(label, 14, 28);
+  ctx.shadowBlur=0;
+}
+
+// ═══════════════════════════════════════════════════
+//  循环
+// ═══════════════════════════════════════════════════
+
+let loopRunning = false;
+
+function loop(){
+  if(!training||!camReady){ loopRunning=false; return }
+  loopRunning = true;
+  if(video.readyState>=2 && pose && modelReady){
+    pose.send({image:video}).catch(()=>{});
+  }
+  requestAnimationFrame(loop);
+}
+
+// ═══════════════════════════════════════════════════
+//  训练控制
+// ═══════════════════════════════════════════════════
+
+function toggleTraining(){
+  if(training){
+    endTraining();
+    return;
+  }
+  if(!camReady){
+    coachSay('📷 正在开摄像头...','idle');
+    toggleWebcam();
+    // 等摄像头就绪后自动开始
+    const check = setInterval(()=>{
+      if(camReady){
+        clearInterval(check);
+        startTraining();
+      }
+    }, 200);
+    setTimeout(()=>clearInterval(check), 12000);
+    return;
+  }
+  startTraining();
+}
+
+function startTraining(){
+  training = true;
+  btnStart.textContent = '⏹️ 结束';
+  btnStart.className = 'btn-stop';
+  repCount = 0; repPhase = 'up';
+  formHistory = []; fatigueWarn = false;
+  kneeWarnCount = 0;
+  plankHold = 0; plankRunning = false;
+  sessionStart = Date.now();
+  sessionScoreSum = 0; sessionScoreN = 0;
+  sessionScores = [];
+  coachSay('🎯 开始训练！保持专注','safe');
+  say('开始训练');
+  if(!pose||!modelReady) initMP();
+  updateRepDots();
+  if(!loopRunning) requestAnimationFrame(loop);
+}
+
+function endTraining(){
+  training = false;
+  btnStart.textContent = '🎯 开始';
+  btnStart.className = 'btn-start';
+  window.speechSynthesis.cancel();
+
+  // 展示会话总结
+  if(repCount>0 || plankHold>1){
+    showSummary();
+  }else{
+    coachSay('⏸️ 已暂停','idle');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  选动作 / 计划
+// ═══════════════════════════════════════════════════
+
+function pickEx(name, btn){
+  // 训练中不能切换
+  if(training){
+    coachSay('⏸️ 先结束当前训练再切换','warn');
+    return;
+  }
+  document.querySelectorAll('[data-ex]').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  activeEx = name;
+  hudEx.textContent = EXERCISES[name].name;
+  coachSay('已选: '+EXERCISES[name].name,'safe');
+  repCount = 0; repPhase = 'up';
+  plankHold = 0; plankRunning = false;
+  hudReps.textContent = '0';
+  updateRepDots();
+  closePanel('planPanel');
+}
+
+function loadDay(idx){
+  if(training){
+    coachSay('⏸️ 先结束当前训练','warn');
+    return;
+  }
+  const d = WEEK[idx];
+  exQueue = [...d.exs];
+  exIdx = 0;
+  closePanel('planPanel');
+  pickEx(exQueue[0], document.querySelector(`[data-ex="${exQueue[0]}"]`));
+  say('已加载'+d.name);
+  coachSay('📋 '+d.name+' 已加载','safe');
+}
+
+// 计划模式：自动切换到下一个动作
+function advanceEx(){
+  exIdx++;
+  if(exIdx >= exQueue.length){
+    coachSay('🎉 计划完成！太棒了','safe');
+    say('计划完成');
+    return;
+  }
+  const next = exQueue[exIdx];
+  activeEx = next;
+  repCount = 0; repPhase = 'up';
+  plankHold = 0; plankRunning = false;
+  formHistory = []; fatigueWarn = false;
+  const btn = document.querySelector(`[data-ex="${next}"]`);
+  if(btn){
+    document.querySelectorAll('[data-ex]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  hudEx.textContent = EXERCISES[next].name;
+  hudReps.textContent = '0';
+  updateRepDots();
+  coachSay('➡️ 下一动作: '+EXERCISES[next].name,'safe');
+  say('换动作: '+EXERCISES[next].name);
+}
+
+// ═══════════════════════════════════════════════════
+//  会话总结
+// ═══════════════════════════════════════════════════
+
+function showSummary(){
+  const dur = Math.floor((Date.now()-sessionStart)/1000);
+  const mins = Math.floor(dur/60);
+  const secs = dur%60;
+  const avgScore = sessionScoreN>0 ? (sessionScoreSum/sessionScoreN).toFixed(1) : '-';
+  $('summaryEx').textContent = EXERCISES[activeEx].name+' · '+(mins>0?mins+'分'+secs+'秒':secs+'秒');
+  $('sumReps').textContent = repCount;
+  $('sumAvgScore').textContent = avgScore+'/10';
+  $('sumDuration').textContent = dur+'s';
+  $('summaryPanel').classList.add('show');
+}
+
+function closeSummary(){
+  $('summaryPanel').classList.remove('show');
+  coachSay('已结束 找个好动作再开','idle');
+}
+
+// ═══════════════════════════════════════════════════
+//  训练日志（localStorage）
+// ═══════════════════════════════════════════════════
+
+const LOG_KEY = 'wirjing_fitness_log';
+
+function getLogs(){
+  try{
+    return JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+  }catch(e){ return [] }
+}
+
+function saveLog(){
+  const weight = parseFloat($('logWeight').value);
+  if(!weight || weight<=0){
+    coachSay('⚠️ 请输入有效的重量','warn');
+    return;
+  }
+  if(repCount===0 && plankHold<1){
+    coachSay('⚠️ 还没有记录到次数，先训练','warn');
+    return;
+  }
+  const exName = EXERCISES[activeEx].name;
+  const reps = activeEx==='plank' ? Math.floor(plankHold)+'s' : repCount;
+  const entry = {
+    date: new Date().toISOString(),
+    ex: exName,
+    key: activeEx,
+    weight: weight,
+    reps: reps,
+  };
+  const logs = getLogs();
+  logs.push(entry);
+  localStorage.setItem(LOG_KEY, JSON.stringify(logs));
+  $('logWeight').value = '';
+  renderLog();
+  coachSay('✅ 已记录 '+exName+' · '+weight+'kg × '+reps,'safe');
+  say('记录成功');
+  showPanel('logPanel');
+}
+
+function renderLog(){
+  const logs = getLogs();
+  const container = $('logContent');
+  if(logs.length===0){
+    container.textContent = '暂无记录';
+    $('lastLog').querySelector('span').textContent = '无记录';
+    return;
+  }
+
+  // 显示最近20条
+  const recent = logs.slice(-20).reverse();
+  container.innerHTML = recent.map(e=>{
+    const d = new Date(e.date);
+    const ds = (d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    return `<div class="entry"><span>${e.ex} · ${e.weight}kg × ${e.reps}</span><span class="d">${ds}</span></div>`;
+  }).join('');
+
+  // 上次练此动作
+  const prev = logs.slice().reverse().find(e=>e.key===activeEx);
+  if(prev){
+    const d = new Date(prev.date);
+    $('lastLog').querySelector('span').textContent = d.getMonth()+1+'/'+d.getDate()+' · '+prev.weight+'kg × '+prev.reps;
+  }else{
+    $('lastLog').querySelector('span').textContent = '无记录';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  初始化
+// ═══════════════════════════════════════════════════
+
+// 预加载语音
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = ()=>{ window.speechSynthesis.getVoices() };
+}
+
+// 启动MediaPipe
+initMP();
+
+// 键盘快捷键
+document.addEventListener('keydown', e=>{
+  if(e.key===' '){ e.preventDefault(); toggleTraining(); }
+  if(e.key==='c'||e.key==='C'){ toggleWebcam(); }
+});
+
+// 主动画循环（用于空闲态）
+function idleLoop(){
+  if(!training && camReady && pose){
+    pose.send({image:video}).catch(()=>{});
+  }
+  requestAnimationFrame(idleLoop);
+}
+setTimeout(idleLoop, 2000);
+
+console.log('🏋️ 舞镜 AI 健身教练已加载');
+console.log('📌 快捷键: [Space] 开始/结束 · [C] 摄像头');
+</script>
+</body>
+</html>

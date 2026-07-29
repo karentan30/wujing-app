@@ -1,0 +1,407 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舞镜 · 作品广场（UGC 增长飞轮）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#d6d9de;padding:32px 16px 48px;
+    display:flex;flex-direction:column;align-items:center}
+
+  .page-title{font-size:15px;font-weight:600;color:#3a3f47;margin-bottom:3px;letter-spacing:.3px}
+  .page-sub{font-size:11px;color:#8a94a0;margin-bottom:28px;text-align:center}
+
+  /* 手机外壳 */
+  .phone{width:375px;border-radius:40px;overflow:hidden;
+    box-shadow:0 24px 64px rgba(0,0,0,.28),0 4px 12px rgba(0,0,0,.12);
+    border:9px solid #18171c;background:#18171c}
+  .scr{height:760px;overflow-y:auto;scrollbar-width:none;background:#FAF7F0;position:relative}
+  .scr::-webkit-scrollbar{display:none}
+
+  /* ── 顶部 sticky 头 ── */
+  .pz-top{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(180deg,#F4EDD8 0%,#FAF7F0 100%);
+    padding:16px 18px 0;
+    border-bottom:1px solid rgba(196,160,82,.18);
+  }
+  .pz-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .pz-brand{
+    font-family:"Noto Serif SC",serif;font-size:20px;font-weight:900;
+    color:#1F1A14;letter-spacing:2px;display:flex;align-items:center;gap:7px;
+  }
+  .pz-brand small{font-size:11px;color:#9A8768;font-weight:400;letter-spacing:1px}
+  .pz-post{
+    display:flex;align-items:center;gap:5px;
+    background:#B5922A;color:#fff;font-size:12px;font-weight:600;
+    padding:7px 13px;border-radius:20px;letter-spacing:.5px;
+    box-shadow:0 3px 10px rgba(181,146,42,.3);
+  }
+  /* 搜索 */
+  .pz-search{
+    display:flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid #EDE4CF;border-radius:22px;
+    padding:9px 14px;margin-bottom:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .pz-search svg{flex-shrink:0}
+  .pz-search span{font-size:13px;color:#B3A488;letter-spacing:.3px}
+  /* tabs */
+  .pz-tabs{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding-bottom:0}
+  .pz-tabs::-webkit-scrollbar{display:none}
+  .pz-tab{
+    font-size:14px;color:#9A8768;padding:8px 1px 12px;
+    white-space:nowrap;position:relative;font-weight:500;letter-spacing:.5px;
+  }
+  .pz-tab.on{color:#4A3820;font-weight:700;font-family:"Noto Serif SC",serif}
+  .pz-tab.on::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
+    background:#B5922A;border-radius:3px;
+  }
+
+  /* ── 瀑布流 ── */
+  .pz-feed{
+    columns:2;column-gap:10px;padding:12px;
+  }
+  .card{
+    break-inside:avoid;margin-bottom:10px;
+    background:#fff;border:1px solid #EDE4CF;border-radius:14px;
+    overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);
+    position:relative;
+  }
+  /* 封面帧 */
+  .card .cover{
+    position:relative;width:100%;overflow:hidden;
+    background:linear-gradient(160deg,#2a2418,#4a3f2a);
+  }
+  .card .cover img{width:100%;display:block;object-fit:cover}
+  .card .cover::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(181,146,42,.1) 0%,transparent 30%,rgba(30,22,10,.42) 100%);
+    pointer-events:none;
+  }
+  /* 舞种角标 */
+  .card .genre{
+    position:absolute;top:8px;left:8px;z-index:2;
+    background:rgba(31,26,20,.62);backdrop-filter:blur(4px);
+    color:#F0E4C4;font-size:10px;font-weight:600;
+    padding:3px 8px;border-radius:10px;letter-spacing:.5px;
+    border:1px solid rgba(240,228,196,.25);
+  }
+  /* 评分/达标度标签 */
+  .card .score{
+    position:absolute;top:8px;right:8px;z-index:2;
+    display:flex;align-items:center;gap:3px;
+    background:rgba(181,146,42,.92);color:#fff;
+    font-size:11px;font-weight:700;
+    padding:3px 8px;border-radius:10px;letter-spacing:.3px;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);
+  }
+  /* 时长 */
+  .card .dur{
+    position:absolute;bottom:8px;right:8px;z-index:2;
+    background:rgba(0,0,0,.5);color:#fff;font-size:10px;
+    padding:2px 6px;border-radius:8px;
+  }
+  /* 达标度进度条 */
+  .card .達標{
+    position:absolute;bottom:0;left:0;right:0;z-index:2;height:3px;
+    background:rgba(255,255,255,.25);
+  }
+  .card .達標 i{display:block;height:100%;background:linear-gradient(90deg,#E4C877,#B5922A)}
+
+  .card .bd{padding:10px 12px 12px}
+  .card .dname{
+    font-family:"Noto Serif SC",serif;font-size:15px;font-weight:700;
+    color:#1F1A14;line-height:1.35;margin-bottom:8px;
+  }
+  /* 作者 */
+  .card .author{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+  .card .avatar{
+    width:22px;height:22px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#E4C877,#B5922A);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:11px;font-weight:700;
+    font-family:"Noto Serif SC",serif;
+    border:1px solid rgba(196,160,82,.4);
+  }
+  .card .aname{font-size:11.5px;color:#6A5638;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card .follow{
+    font-size:10px;color:#B5922A;font-weight:600;
+    border:1px solid #D8CBA8;border-radius:12px;padding:2px 8px;
+    flex-shrink:0;letter-spacing:.3px;
+  }
+  .card .follow.on{background:#B5922A;color:#fff;border-color:#B5922A}
+  /* 底部数据 + 钩子 */
+  .card .foot{display:flex;align-items:center;gap:12px;
+    border-top:1px solid #F0E9DA;padding-top:9px}
+  .card .stat{display:flex;align-items:center;gap:4px;font-size:11px;color:#9A8768;font-weight:500}
+  .card .stat svg{flex-shrink:0}
+  .card .stat.liked{color:#C46A6A}
+  .card .go{
+    margin-left:auto;
+    background:#FAF5E8;border:1px solid #E4D3A8;
+    color:#7A5C2A;font-size:11px;font-weight:700;
+    padding:5px 12px;border-radius:16px;letter-spacing:.5px;
+    display:flex;align-items:center;gap:4px;
+  }
+
+  /* 置顶飞轮引导条 */
+  .pz-invite{
+    margin:12px 12px 2px;
+    background:linear-gradient(135deg,#F4EDD8,#FBF6E8);
+    border:1px solid #E4D3A8;border-radius:14px;
+    padding:13px 16px;display:flex;align-items:center;gap:12px;
+    position:relative;overflow:hidden;
+  }
+  .pz-invite::before{
+    content:"";position:absolute;top:-20px;right:-10px;width:80px;height:80px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(228,200,119,.35),transparent 70%);
+  }
+  .pz-invite .ii{font-size:26px;flex-shrink:0}
+  .pz-invite .it{flex:1;position:relative;z-index:1}
+  .pz-invite .it b{font-family:"Noto Serif SC",serif;font-size:14px;color:#4A3820;display:block;letter-spacing:.5px}
+  .pz-invite .it span{font-size:11px;color:#9A8768;line-height:1.5}
+  .pz-invite .ib{
+    background:#B5922A;color:#fff;font-size:12px;font-weight:600;
+    padding:8px 14px;border-radius:20px;flex-shrink:0;letter-spacing:.5px;
+    position:relative;z-index:1;box-shadow:0 3px 10px rgba(181,146,42,.3);
+  }
+
+  /* 底部 tabbar */
+  .pz-nav{
+    position:sticky;bottom:0;z-index:20;
+    display:flex;background:#fff;
+    border-top:1px solid #EDE4CF;padding:8px 0 10px;
+    box-shadow:0 -2px 12px rgba(0,0,0,.05);
+  }
+  .pz-nav a{flex:1;text-align:center;font-size:10px;color:#B3A488;
+    display:flex;flex-direction:column;align-items:center;gap:3px}
+  .pz-nav a.on{color:#B5922A;font-weight:600}
+  .pz-nav .plus{
+    width:44px;height:44px;border-radius:50%;margin-top:-18px;
+    background:linear-gradient(135deg,#E4C877,#B5922A);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:26px;font-weight:300;line-height:1;
+    box-shadow:0 6px 16px rgba(181,146,42,.4);
+  }
+
+  .note2{font-size:11px;color:#9aa4b0;margin-top:16px;max-width:375px;text-align:center;line-height:1.7}
+</style></head>
+<body>
+
+<div class="page-title">舞镜 · 作品广场</div>
+<div class="page-sub">UGC 增长飞轮 · 看到就想跟练 · 跟练就想自己传 · 清雅国风</div>
+
+<div class="phone">
+  <div class="scr">
+
+    <!-- 顶部 -->
+    <div class="pz-top">
+      <div class="pz-head">
+        <div class="pz-brand">舞镜广场 <small>· 发现好舞</small></div>
+        <div class="pz-post">＋ 传作品</div>
+      </div>
+      <div class="pz-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B3A488" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>搜舞名 / 歌名 / 作者，如「青莲」「BABYMONSTER」</span>
+      </div>
+      <div class="pz-tabs">
+        <div class="pz-tab on">推荐</div>
+        <div class="pz-tab">国风古典</div>
+        <div class="pz-tab">K-pop</div>
+        <div class="pz-tab">手势舞</div>
+        <div class="pz-tab">民族舞</div>
+        <div class="pz-tab">爵士</div>
+      </div>
+    </div>
+
+    <!-- 飞轮引导条 -->
+    <div class="pz-invite">
+      <div class="ii">🪞</div>
+      <div class="it">
+        <b>传一支你拆过的舞</b>
+        <span>自动生成八拍卡 + AI 角度点评，收获跟练与关注</span>
+      </div>
+      <div class="ib">去上传</div>
+    </div>
+
+    <!-- 瀑布流 -->
+    <div class="pz-feed">
+
+      <!-- 卡1 -->
+      <div class="card">
+        <div class="cover">
+          <span class="genre">国风古典</span>
+          <span class="score">◆ 达标 92%</span>
+          <img src="report_demos/学员1_bg_飞天壁画金绿.png" alt="封面" loading="lazy">
+          <span class="dur">20.7s · 5句</span>
+          <div class="達標"><i style="width:92%"></i></div>
+        </div>
+        <div class="bd">
+          <div class="dname">清别欢 · 圆月意境</div>
+          <div class="author">
+            <div class="avatar">禾</div>
+            <div class="aname">禾苗小满</div>
+            <div class="follow on">已关注</div>
+          </div>
+          <div class="foot">
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>1.2k 跟练</div>
+            <div class="stat liked"><svg width="13" height="13" viewBox="0 0 24 24" fill="#C46A6A" stroke="#C46A6A" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>3.4k</div>
+            <div class="go">跟练 ›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卡2 -->
+      <div class="card">
+        <div class="cover">
+          <span class="genre">K-pop</span>
+          <span class="score">◆ 达标 82%</span>
+          <img src="report_demos/学员3_original.png" alt="封面" loading="lazy">
+          <span class="dur">24s · 4段</span>
+          <div class="達標"><i style="width:82%"></i></div>
+        </div>
+        <div class="bd">
+          <div class="dname">BABYMONSTER — CHOOM 副歌</div>
+          <div class="author">
+            <div class="avatar">A</div>
+            <div class="aname">Ari跳给你看</div>
+            <div class="follow">＋关注</div>
+          </div>
+          <div class="foot">
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>5.8k 跟练</div>
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>9.1k</div>
+            <div class="go">跟练 ›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卡3 -->
+      <div class="card">
+        <div class="cover">
+          <span class="genre">民族舞</span>
+          <span class="score">◆ 达标 88%</span>
+          <img src="report_demos/学员2_bg_敦煌石窟暖金.png" alt="封面" loading="lazy">
+          <span class="dur">31s · 6句</span>
+          <div class="達標"><i style="width:88%"></i></div>
+        </div>
+        <div class="bd">
+          <div class="dname">敦煌飞天 · 反弹琵琶</div>
+          <div class="author">
+            <div class="avatar">莲</div>
+            <div class="aname">莲步生香</div>
+            <div class="follow">＋关注</div>
+          </div>
+          <div class="foot">
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>842 跟练</div>
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>2.1k</div>
+            <div class="go">跟练 ›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卡4 -->
+      <div class="card">
+        <div class="cover">
+          <span class="genre">手势舞</span>
+          <span class="score">◆ 达标 95%</span>
+          <img src="report_demos/学员4_original.png" alt="封面" loading="lazy">
+          <span class="dur">15s · 3段</span>
+          <div class="達標"><i style="width:95%"></i></div>
+        </div>
+        <div class="bd">
+          <div class="dname">《漠河舞厅》手势版</div>
+          <div class="author">
+            <div class="avatar">阿</div>
+            <div class="aname">阿星手势教学</div>
+            <div class="follow">＋关注</div>
+          </div>
+          <div class="foot">
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>12k 跟练</div>
+            <div class="stat liked"><svg width="13" height="13" viewBox="0 0 24 24" fill="#C46A6A" stroke="#C46A6A" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>18k</div>
+            <div class="go">跟练 ›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卡5 -->
+      <div class="card">
+        <div class="cover">
+          <span class="genre">国风古典</span>
+          <span class="score">◆ 达标 79%</span>
+          <img src="report_demos/学员3_bg_天宫夜宴深蓝.png" alt="封面" loading="lazy">
+          <span class="dur">28s · 5句</span>
+          <div class="達標"><i style="width:79%"></i></div>
+        </div>
+        <div class="bd">
+          <div class="dname">《万疆》水袖片段</div>
+          <div class="author">
+            <div class="avatar">青</div>
+            <div class="aname">青衫舞影</div>
+            <div class="follow">＋关注</div>
+          </div>
+          <div class="foot">
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>631 跟练</div>
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>1.5k</div>
+            <div class="go">跟练 ›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卡6 -->
+      <div class="card">
+        <div class="cover">
+          <span class="genre">K-pop</span>
+          <span class="score">◆ 达标 90%</span>
+          <img src="report_demos/学员1_original.png" alt="封面" loading="lazy">
+          <span class="dur">18s · 4段</span>
+          <div class="達標"><i style="width:90%"></i></div>
+        </div>
+        <div class="bd">
+          <div class="dname">NewJeans — Supernatural</div>
+          <div class="author">
+            <div class="avatar">兔</div>
+            <div class="aname">兔兔爱跳舞</div>
+            <div class="follow on">已关注</div>
+          </div>
+          <div class="foot">
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>7.3k 跟练</div>
+            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>6.7k</div>
+            <div class="go">跟练 ›</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /feed -->
+
+    <!-- 底部导航 -->
+    <div class="pz-nav">
+      <a class="on">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        广场
+      </a>
+      <a>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        发现
+      </a>
+      <a><div class="plus">＋</div></a>
+      <a>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        跟练
+      </a>
+      <a>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+        我的
+      </a>
+    </div>
+
+  </div><!-- /scr -->
+</div><!-- /phone -->
+
+<div class="note2">增长飞轮：广场看到高分作品 → 一键跟练 → 自己拆解上传 → 被别人跟练/关注 → 更多创作。<br>顶部按舞种切 tab，封面帧+AI 达标度是主要吸引力信号。假数据填充。</div>
+
+</body></html>
