@@ -1,0 +1,587 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舞镜 · 结果页重设计（分舞种主题 · 内容全在）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#d6d9de;padding:32px 16px 48px;display:flex;flex-direction:column;align-items:center}
+
+  /* ── page header ── */
+  .page-title{font-size:15px;font-weight:600;color:#3a3f47;margin-bottom:3px;letter-spacing:.3px}
+  .page-sub{font-size:11px;color:#8a94a0;margin-bottom:28px;text-align:center}
+
+  /* ── phone shell ── */
+  .stage{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .col{display:flex;flex-direction:column;align-items:center}
+  .tag{font-size:12px;font-weight:600;margin-bottom:10px;padding:4px 14px;border-radius:20px;letter-spacing:.3px}
+  .tag.gf{background:#f0e8d4;color:#7a5c2a}
+  .tag.kp{background:#1a0d30;color:#cc7aff}
+  .phone{width:360px;border-radius:38px;overflow:hidden;
+    box-shadow:0 24px 64px rgba(0,0,0,.28),0 4px 12px rgba(0,0,0,.12);
+    border:8px solid #18171c}
+  .scr{height:720px;overflow-y:auto;scrollbar-width:none}
+  .scr::-webkit-scrollbar{display:none}
+
+  /* ══════════════════════════════════════════
+     主题A · 清雅国风
+  ══════════════════════════════════════════ */
+  .guofeng{background:#FAF7F0;position:relative}
+
+  /* 顶部装饰区 */
+  .gf-hero{
+    position:relative;padding:28px 20px 0;
+    background:linear-gradient(180deg,#F4EDD8 0%,#FAF7F0 100%);
+    overflow:hidden;
+  }
+  .gf-hero-moon{
+    position:absolute;top:14px;right:16px;width:52px;height:52px;
+    opacity:.55;
+  }
+  .gf-hero-line{
+    position:absolute;bottom:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,#C4A052 30%,#C4A052 70%,transparent);
+    opacity:.35;
+  }
+  .gf-title{
+    font-family:"Noto Serif SC","STSong","SimSun",serif;
+    font-size:28px;font-weight:900;color:#1F1A14;
+    letter-spacing:3px;line-height:1.2;margin-bottom:6px;
+  }
+  .gf-sub{
+    font-size:11px;color:#9A8768;letter-spacing:1.5px;
+    padding-bottom:20px;
+  }
+
+  /* 评分卡 */
+  .gf-score{
+    display:flex;align-items:center;gap:16px;
+    background:#fff;border:1px solid #EDE4CF;
+    border-radius:16px;padding:18px 20px;
+    margin:16px 20px 0;
+    box-shadow:0 2px 12px rgba(0,0,0,.06);
+  }
+  .gf-ring-wrap{flex-shrink:0;width:64px;height:64px;position:relative}
+  .gf-ring-wrap svg{width:64px;height:64px;transform:rotate(-90deg)}
+  .gf-ring-wrap .ring-num{
+    position:absolute;inset:0;display:flex;align-items:center;
+    justify-content:center;font-size:22px;font-weight:700;color:#B5922A;
+    font-family:"Noto Serif SC","STSong",serif;
+  }
+  .gf-score-text .t{font-size:15px;font-weight:600;color:#1F1A14;line-height:1.3}
+  .gf-score-text .d{font-size:12px;color:#9A8768;margin-top:4px;line-height:1.7}
+
+  /* section 标题 */
+  .gf-sec{
+    display:flex;align-items:center;gap:8px;
+    margin:24px 20px 10px;
+  }
+  .gf-sec-bar{width:3px;height:16px;background:#B5922A;border-radius:2px;flex-shrink:0}
+  .gf-sec-dot{width:5px;height:5px;border-radius:50%;background:#B5922A;flex-shrink:0;margin-left:-1px}
+  .gf-sec-label{
+    font-family:"Noto Serif SC","STSong",serif;
+    font-size:14px;font-weight:700;color:#4A3820;letter-spacing:2px;
+  }
+
+  /* 老师点评卡 */
+  .gf-coach{
+    background:#fff;border:1px solid #EDE4CF;
+    border-radius:16px;padding:18px 20px;
+    margin:0 20px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+  }
+  .gf-coach .cm{
+    font-size:13px;color:#4A3820;line-height:1.85;
+    font-style:italic;margin-bottom:12px;
+    border-bottom:1px solid #EDE4CF;padding-bottom:12px;
+  }
+  .gf-coach .tp{
+    font-size:12px;color:#6A5638;
+    padding:5px 0 5px 14px;position:relative;line-height:1.75;
+  }
+  .gf-coach .tp::before{
+    content:"";position:absolute;left:0;top:11px;
+    width:5px;height:5px;border-radius:50%;
+    background:#B5922A;
+  }
+
+  /* 八拍卡 */
+  .gf-beat{
+    background:#fff;border:1px solid #EDE4CF;
+    border-radius:16px;margin:0 20px 12px;
+    overflow:hidden;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+  }
+  .gf-beat .grid{
+    display:flex;gap:3px;padding:12px 12px 0;
+    background:#FAF7F0;
+    border-bottom:1px solid #EDE4CF;
+  }
+  .gf-beat .fr{
+    flex:1;aspect-ratio:3/4;border-radius:5px;
+    overflow:hidden;position:relative;
+    border:1px solid rgba(181,146,42,.2);
+    background:linear-gradient(160deg,#2a2418,#4a3f2a);
+  }
+  .gf-beat .fr img{
+    width:100%;height:100%;object-fit:cover;
+    display:block;
+  }
+  /* 电影胶片感：金色顶部高光 */
+  .gf-beat .fr::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(181,146,42,.18) 0%,transparent 35%,rgba(30,22,10,.22) 100%);
+    pointer-events:none;
+  }
+  .gf-beat .bd{padding:14px 16px 16px}
+  .gf-beat .nm{
+    font-family:"Noto Serif SC","STSong",serif;
+    font-size:20px;font-weight:900;color:#1F1A14;
+    display:flex;align-items:baseline;gap:10px;line-height:1.2;
+  }
+  .gf-beat .nm i{font-size:11px;color:#9A8768;font-style:normal;letter-spacing:.5px}
+  .gf-beat .full{font-size:12px;color:#9A8768;margin:4px 0 10px;letter-spacing:.5px}
+  .gf-beat .row{font-size:12px;color:#4A3820;line-height:1.75;margin-top:2px}
+  .gf-beat .row b{color:#B5922A;font-weight:600;margin-right:6px;font-size:11px}
+  .gf-beat .kou{
+    background:#FAF5E8;border:1px solid #EDE4CF;
+    border-radius:8px;padding:8px 12px;margin-top:10px;
+    font-size:12px;color:#7A5C2A;line-height:1.6;
+  }
+  .gf-beat .play{display:flex;gap:8px;margin-top:10px}
+  .gf-beat .play span{
+    flex:1;text-align:center;font-size:12px;
+    padding:8px;border-radius:20px;cursor:pointer;
+    border:1px solid #D8CBA8;color:#7A5C2A;
+    letter-spacing:.3px;transition:all .15s;
+  }
+  .gf-beat .play span.on{
+    background:#B5922A;color:#fff;border-color:#B5922A;
+  }
+
+  /* 故事卡 */
+  .gf-story{
+    background:#fff;border:1px solid #EDE4CF;
+    border-radius:16px;padding:18px 20px;
+    margin:0 20px 28px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+  }
+  .gf-story .h{font-size:11px;color:#9A8768;font-weight:600;letter-spacing:1.5px;margin-bottom:8px;text-transform:uppercase}
+  .gf-story .lyr{
+    font-family:"Noto Serif SC","STSong",serif;
+    font-size:15px;color:#1F1A14;
+    line-height:2.2;text-align:center;
+    padding:12px 0;border-bottom:1px solid #EDE4CF;margin-bottom:14px;
+    letter-spacing:1px;
+  }
+  .gf-story .p{font-size:13px;color:#4A3820;line-height:1.85}
+
+
+  /* ══════════════════════════════════════════
+     主题B · K-pop 潮酷暗底
+  ══════════════════════════════════════════ */
+  .kpop{background:#0D0A1A;position:relative}
+
+  /* 顶部英雄区 */
+  .kp-hero{
+    padding:28px 20px 20px;position:relative;
+    background:linear-gradient(160deg,#180F2E 0%,#0D0A1A 100%);
+    overflow:hidden;
+  }
+  /* 霓虹纹理光斑 */
+  .kp-hero::before{
+    content:"";position:absolute;
+    top:-30px;right:-20px;width:160px;height:160px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(155,94,245,.18) 0%,transparent 65%);
+    pointer-events:none;
+  }
+  .kp-hero::after{
+    content:"";position:absolute;
+    bottom:-10px;left:-10px;width:120px;height:120px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,45,120,.12) 0%,transparent 65%);
+    pointer-events:none;
+  }
+  .kp-title{
+    font-size:22px;font-weight:900;color:#fff;
+    letter-spacing:-1px;line-height:1.2;margin-bottom:6px;
+    position:relative;z-index:1;
+  }
+  /* 霓虹底线 */
+  .kp-neon-line{
+    height:2px;width:72px;
+    background:linear-gradient(90deg,#FF2D78,#9B5EF5);
+    border-radius:2px;margin-bottom:8px;
+    position:relative;z-index:1;
+  }
+  .kp-sub{font-size:11px;color:#9B5EF5;letter-spacing:2px;font-weight:600;position:relative;z-index:1}
+
+  /* 评分卡 */
+  .kp-score{
+    display:flex;align-items:center;gap:16px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,45,120,.28);
+    border-radius:16px;padding:16px 20px;
+    margin:0 20px 0;
+    backdrop-filter:blur(6px);
+  }
+  .kp-ring-wrap{flex-shrink:0;width:64px;height:64px;position:relative}
+  .kp-ring-wrap svg{width:64px;height:64px;transform:rotate(-90deg)}
+  .kp-ring-wrap .ring-num{
+    position:absolute;inset:0;display:flex;align-items:center;
+    justify-content:center;font-size:22px;font-weight:800;color:#FF2D78;
+  }
+  .kp-score .t{font-size:15px;font-weight:700;color:#fff;line-height:1.3}
+  .kp-score .d{font-size:12px;color:#B09EC8;margin-top:4px;line-height:1.7}
+
+  /* section 标题 */
+  .kp-sec{
+    display:flex;align-items:center;gap:8px;
+    margin:24px 20px 10px;
+  }
+  .kp-sec-sq{
+    width:8px;height:8px;background:#FF2D78;
+    flex-shrink:0;
+  }
+  .kp-sec-label{
+    font-size:13px;font-weight:800;color:#FF2D78;
+    letter-spacing:1.5px;text-transform:uppercase;
+  }
+
+  /* 老师点评 */
+  .kp-coach{
+    background:rgba(255,45,120,.07);
+    border:1px solid rgba(255,45,120,.2);
+    border-radius:16px;padding:18px 20px;
+    margin:0 20px;
+  }
+  .kp-coach .cm{
+    font-size:13px;color:#EDE0FF;line-height:1.85;
+    margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08);
+    padding-bottom:12px;
+  }
+  .kp-coach .tp{
+    font-size:12px;color:#C4B0E0;
+    padding:4px 0 4px 14px;position:relative;line-height:1.75;
+  }
+  .kp-coach .tp::before{
+    content:"▹";position:absolute;left:0;top:4px;
+    color:#FF2D78;font-size:11px;
+  }
+
+  /* 八拍卡 */
+  .kp-beat{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;margin:0 20px 12px;
+    overflow:hidden;
+    /* 锐角切角效果 */
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);
+  }
+  .kp-beat .grid{
+    display:flex;gap:3px;padding:12px 12px 0;
+    background:rgba(0,0,0,.2);
+  }
+  .kp-beat .fr{
+    flex:1;aspect-ratio:3/4;border-radius:4px;
+    overflow:hidden;position:relative;
+    background:linear-gradient(160deg,#3a1a4a,#2a1038);
+  }
+  .kp-beat .fr img{
+    width:100%;height:100%;object-fit:cover;
+    display:block;
+    filter:contrast(1.1) saturate(1.2);
+  }
+  /* 粉色光晕叠层 */
+  .kp-beat .fr::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(
+      180deg,
+      rgba(155,94,245,.12) 0%,
+      transparent 40%,
+      rgba(255,45,120,.2) 100%
+    );
+    pointer-events:none;
+  }
+  .kp-beat .bd{padding:14px 16px 16px}
+  .kp-beat .nm{
+    font-size:19px;font-weight:900;color:#fff;
+    display:flex;align-items:baseline;gap:10px;
+    letter-spacing:-.3px;line-height:1.2;
+  }
+  .kp-beat .nm i{font-size:11px;color:#9B5EF5;font-style:normal;font-weight:600;letter-spacing:.5px}
+  .kp-beat .full{font-size:12px;color:#8A7AAA;margin:4px 0 10px}
+  .kp-beat .row{font-size:12px;color:#C4B0E0;line-height:1.75;margin-top:2px}
+  .kp-beat .row b{color:#FF2D78;font-weight:700;margin-right:6px;font-size:11px}
+  .kp-beat .kou{
+    background:rgba(255,45,120,.1);
+    border:1px solid rgba(255,45,120,.18);
+    border-radius:8px;padding:8px 12px;margin-top:10px;
+    font-size:12px;color:#FFB0CC;line-height:1.6;
+  }
+  .kp-beat .play{display:flex;gap:8px;margin-top:10px}
+  .kp-beat .play span{
+    flex:1;text-align:center;font-size:12px;
+    padding:8px;border-radius:20px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.15);color:#9B86C8;
+    letter-spacing:.3px;transition:all .15s;
+  }
+  .kp-beat .play span.on{
+    background:linear-gradient(90deg,#FF2D78,#9B5EF5);
+    color:#fff;border:none;
+    box-shadow:0 0 12px rgba(255,45,120,.4);
+  }
+
+  /* 故事卡 */
+  .kp-story{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;padding:18px 20px;
+    margin:0 20px 28px;
+  }
+  .kp-story .h{font-size:11px;color:#9B5EF5;font-weight:700;letter-spacing:1.5px;margin-bottom:8px;text-transform:uppercase}
+  .kp-story .p{font-size:13px;color:#C4B0E0;line-height:1.85}
+
+  /* ── footnote ── */
+  .note2{font-size:11px;color:#9aa4b0;margin-top:12px;max-width:360px;text-align:center;line-height:1.65}
+</style></head>
+<body>
+
+<div class="page-title">舞镜 · 结果页重设计</div>
+<div class="page-sub">同一套内容，按舞种切主题 · 真评分 / 老师点评 / 八拍定格照 / 故事 / 慢放 全部保留</div>
+
+<div class="stage">
+
+  <!-- ══════ 国风 ══════ -->
+  <div class="col">
+    <div class="tag gf">古典 / 国风 → 清雅国风主题</div>
+    <div class="phone">
+      <div class="scr guofeng">
+
+        <!-- 英雄区 -->
+        <div class="gf-hero">
+          <!-- 月亮 SVG 线描 -->
+          <svg class="gf-hero-moon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="22.5" stroke="#B5922A" stroke-width="1" fill="#B5922A" fill-opacity=".05"/>
+            <path d="M 33 6 A 22.5 22.5 0 0 1 33 46 A 17 17 0 0 0 33 6 Z" fill="#B5922A" fill-opacity=".14"/>
+            <circle cx="14" cy="12" r="1.1" fill="#B5922A" opacity=".5"/>
+            <circle cx="10" cy="20" r=".8" fill="#B5922A" opacity=".4"/>
+          </svg>
+          <div class="gf-title">清别欢</div>
+          <div class="gf-sub">古典舞 · 圆月意境 · 5句 · 20.7s</div>
+          <div class="gf-hero-line"></div>
+        </div>
+
+        <!-- 评分 -->
+        <div class="gf-score">
+          <div class="gf-ring-wrap">
+            <svg viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="28" fill="none" stroke="#EDE4CF" stroke-width="5"/>
+              <!-- 74% = 175.93 / 238 -->
+              <circle cx="32" cy="32" r="28" fill="none" stroke="#B5922A" stroke-width="5"
+                stroke-dasharray="175.93 62.07" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-num">74</div>
+          </div>
+          <div class="gf-score-text">
+            <div class="t">身姿舒展，韵味在了</div>
+            <div class="d">节奏与气息在线；重心与手臂延伸是打磨点。</div>
+          </div>
+        </div>
+
+        <!-- 老师点评 -->
+        <div class="gf-sec">
+          <div class="gf-sec-bar"></div>
+          <div class="gf-sec-dot"></div>
+          <div class="gf-sec-label">老师点评</div>
+        </div>
+        <div class="gf-coach">
+          <div class="cm">你的舞感很自然，尤其气息的收放有了古典韵味。旋身时重心再压住一点，手臂的延伸线条会更漂亮，我们一起把质感磨出来。</div>
+          <div class="tp">旋身前先沉住重心：想象头顶一根线上提、主力腿踩实，再转。</div>
+          <div class="tp">大二位摊手：从腋窝向指尖送远，手腕放松走弧线（配合"云手"要领）。</div>
+          <div class="tp">收势定格给足1.3秒，气息沉下来，别急着散。</div>
+        </div>
+
+        <!-- 八拍卡 -->
+        <div class="gf-sec">
+          <div class="gf-sec-bar"></div>
+          <div class="gf-sec-dot"></div>
+          <div class="gf-sec-label">八拍卡 · 跟练</div>
+        </div>
+
+        <div class="gf-beat">
+          <div class="grid">
+            <div class="fr"><img src="report_demos/学员1_original.png" alt="定格1" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员2_original.png" alt="定格2" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员3_original.png" alt="定格3" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员4_original.png" alt="定格4" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员1_original.png" alt="定格5" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员2_original.png" alt="定格6" loading="lazy"></div>
+          </div>
+          <div class="bd">
+            <div class="nm">起 <i>0.0–4.83s</i></div>
+            <div class="full">举一望一转踢</div>
+            <div class="row"><b>动作</b>举臂·望月 → 转身踢腿</div>
+            <div class="row"><b>脚下</b>左脚支撑，右脚点地转体</div>
+            <div class="row"><b>意图</b>静中起势，如月初升</div>
+            <div class="kou">怎么记 · 举—望—转踢</div>
+            <div class="play">
+              <span class="on">慢放 0.5×</span>
+              <span>▷ 正常速</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="gf-beat">
+          <div class="grid">
+            <div class="fr"><img src="report_demos/学员3_original.png" alt="定格1" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员4_original.png" alt="定格2" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员1_original.png" alt="定格3" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员2_original.png" alt="定格4" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员3_original.png" alt="定格5" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员4_original.png" alt="定格6" loading="lazy"></div>
+          </div>
+          <div class="bd">
+            <div class="nm">探 <i>4.83–9.66s</i></div>
+            <div class="full">探一沉一开（胸腰）</div>
+            <div class="row"><b>动作</b>探腿 → 下沉 → 大开胸腰 ★高潮</div>
+            <div class="kou">怎么记 · 探—沉—开</div>
+            <div class="play">
+              <span>慢放 0.5×</span>
+              <span class="on">▷ 正常速</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 故事卡 -->
+        <div class="gf-sec">
+          <div class="gf-sec-bar"></div>
+          <div class="gf-sec-dot"></div>
+          <div class="gf-sec-label">故事卡</div>
+        </div>
+        <div class="gf-story">
+          <div class="h">歌词全文</div>
+          <div class="lyr">青莲与水多相见<br>山川也羡羡<br>莺啼燕语 浓情连</div>
+          <div class="h">意境解读</div>
+          <div class="p">青莲喻纯洁深情，连山川都为之心动。整首以自然意象托情，含而不露——典型的中式情感美学。跳的是叙事，不是动作。</div>
+        </div>
+
+      </div><!-- /scr -->
+    </div><!-- /phone -->
+  </div><!-- /col -->
+
+
+  <!-- ══════ K-pop ══════ -->
+  <div class="col">
+    <div class="tag kp">K-pop / 爆款 → 潮酷暗底主题</div>
+    <div class="phone">
+      <div class="scr kpop">
+
+        <!-- 英雄区 -->
+        <div class="kp-hero">
+          <div class="kp-title">BABYMONSTER — CHOOM</div>
+          <div class="kp-neon-line"></div>
+          <div class="kp-sub">K-POP · 女团挑战 · 4段 · 24s</div>
+        </div>
+
+        <!-- 评分 -->
+        <div style="padding:16px 20px 0">
+          <div class="kp-score">
+            <div class="kp-ring-wrap">
+              <svg viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(155,94,245,.25)" stroke-width="5"/>
+                <!-- 82% = 194.78 / 238 -->
+                <circle cx="32" cy="32" r="28" fill="none" stroke="#FF2D78" stroke-width="5"
+                  stroke-dasharray="194.78 43.22" stroke-linecap="round"/>
+              </svg>
+              <div class="ring-num">82</div>
+            </div>
+            <div>
+              <div class="t">卡点稳，气场出来了🔥</div>
+              <div class="d">节奏点很准；手势幅度和落地干脆度再拉满。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 老师点评 -->
+        <div class="kp-sec">
+          <div class="kp-sec-sq"></div>
+          <div class="kp-sec-label">老师点评</div>
+        </div>
+        <div class="kp-coach">
+          <div class="cm">你的节奏抓得很准，Monster Claw 那下已经有内味了！手势幅度再打开、落地更干脆，气场直接拉满。</div>
+          <div class="tp">Claw 手势：手指张到最大再定住，别软，卡在重拍上。</div>
+          <div class="tp">落地干脆：膝盖缓冲后立刻锁住，别拖泥带水。</div>
+          <div class="tp">对镜练前奏那8拍，表情跟上动作，气场是练出来的。</div>
+        </div>
+
+        <!-- 八拍卡 -->
+        <div class="kp-sec">
+          <div class="kp-sec-sq"></div>
+          <div class="kp-sec-label">八拍卡 · 跟练</div>
+        </div>
+
+        <div class="kp-beat">
+          <div class="grid">
+            <div class="fr"><img src="report_demos/学员1_original.png" alt="定格1" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员2_original.png" alt="定格2" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员3_original.png" alt="定格3" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员4_original.png" alt="定格4" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员1_original.png" alt="定格5" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员2_original.png" alt="定格6" loading="lazy"></div>
+          </div>
+          <div class="bd">
+            <div class="nm">Intro <i>0.0–6.0s</i></div>
+            <div class="full">Monster Claw 起手</div>
+            <div class="row"><b>动作</b>双手爪形上提，重拍定住甩头</div>
+            <div class="row"><b>脚下</b>开步与肩同宽，压重心</div>
+            <div class="kou">怎么记 · 爪—提—甩</div>
+            <div class="play">
+              <span class="on">慢放 0.5×</span>
+              <span>▷ 正常速</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kp-beat">
+          <div class="grid">
+            <div class="fr"><img src="report_demos/学员3_original.png" alt="定格1" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员4_original.png" alt="定格2" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员1_original.png" alt="定格3" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员2_original.png" alt="定格4" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员3_original.png" alt="定格5" loading="lazy"></div>
+            <div class="fr"><img src="report_demos/学员4_original.png" alt="定格6" loading="lazy"></div>
+          </div>
+          <div class="bd">
+            <div class="nm">Verse <i>6.0–12.0s</i></div>
+            <div class="full">扭胯律动 + 点手</div>
+            <div class="row"><b>动作</b>胯部左右律动，手指跟拍点</div>
+            <div class="kou">怎么记 · 扭—点—收</div>
+            <div class="play">
+              <span>慢放 0.5×</span>
+              <span class="on">▷ 正常速</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 故事卡 -->
+        <div class="kp-sec">
+          <div class="kp-sec-sq"></div>
+          <div class="kp-sec-label">故事卡</div>
+        </div>
+        <div class="kp-story">
+          <div class="h">舞曲气质</div>
+          <div class="p">CHOOM 讲的是"野性又高级"的怪兽美学——不是可爱，是掌控全场的气场。每个 claw 手势都在说"看我"。跳它，就是把自信穿在身上。</div>
+        </div>
+
+      </div><!-- /scr -->
+    </div><!-- /phone -->
+  </div><!-- /col -->
+
+</div><!-- /stage -->
+
+<div class="note2">同一套结构，古典舞走清雅国风、K-pop走潮酷暗底。真评分 / 老师点评 / 八拍定格照 / 故事 / 慢放全在。<br>定稿后接进线上按舞种 category 自动切主题。</div>
+
+</body></html>

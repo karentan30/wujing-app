@@ -1,1 +1,11 @@
-.vercel
+venv/
+__pycache__/
+*.pyc
+*.db
+*.mp4
+start.sh
+.env
+data/
+*.bak*
+.DS_Store
+node_modules/

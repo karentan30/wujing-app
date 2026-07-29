@@ -1,0 +1,94 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舞镜 · 结果页前端预览（真实CSS）</title>
+<style>
+  :root{--silver-deep:#8a9bb0;--silver-mid:#aab7c6;--silver-dim:#b8c2ce}
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#e9ecf1;padding:28px 12px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:17px;color:#444;margin-bottom:4px}
+  .note{font-size:12px;color:#8a94a0;margin-bottom:20px}
+  .phone{width:390px;background:#f7f9fc;border-radius:34px;box-shadow:0 12px 40px rgba(0,0,0,.16);padding:16px 16px 30px;border:8px solid #1c2530}
+  .rv{padding:6px 6px 0}
+  /* 评分头 */
+  .score-bar{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+  .score-ring{width:74px;height:74px;border-radius:50%;background:conic-gradient(#8a9bb0 0 65%,#e3e8ef 65% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .score-ring-inner{width:60px;height:60px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-ring-inner .num{font-size:26px;font-weight:700;color:var(--silver-deep);line-height:1}
+  .score-ring-inner .lbl{font-size:8px;color:var(--silver-mid);letter-spacing:1px}
+  .score-info .score-label{font-size:17px;font-weight:600}
+  .score-info .score-desc{font-size:12px;color:var(--silver-deep);margin-top:3px;line-height:1.6}
+  .score-teacher{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--silver-dim);margin-top:6px}
+  .score-teacher .dot{width:6px;height:6px;border-radius:50%;background:var(--silver-mid)}
+  /* 问题(节选一条) */
+  .prob{background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #eef1f5}
+  .prob .h{font-size:14px;font-weight:600;color:#3a4a5a}
+  .prob .d{font-size:12.5px;color:#5a6a7a;line-height:1.6;margin-top:4px}
+  /* ===== Agent1 真实写入的卡片CSS ===== */
+  .cards-section{margin-top:20px}
+  .cards-section-title{font-size:15px;font-weight:700;color:var(--silver-deep,#8a9bb0);letter-spacing:1px;margin:18px 0 10px;padding-left:4px}
+  .coach-block{background:linear-gradient(135deg,#fff8f0,#fff3e8);border-left:3px solid #e8a87c;border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .coach-comment{font-size:15px;color:#5a3a1a;line-height:1.7;font-style:italic}
+  .coach-tips{margin-top:10px;padding:0;list-style:none;counter-reset:coach-tip}
+  .coach-tips li{font-size:13px;color:#7a5a3a;padding:3px 0 3px 20px;position:relative}
+  .coach-tips li::before{content:counter(coach-tip);counter-increment:coach-tip;position:absolute;left:0;font-weight:700;color:#e8a87c}
+  .beat-card{background:rgba(255,255,255,0.6);border:1px solid rgba(180,200,220,0.3);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+  .beat-card-header{font-size:13px;color:var(--silver-deep,#8a9bb0);margin-bottom:4px}
+  .beat-card-name{font-size:15px;font-weight:600;color:#3a4a5a}
+  .beat-card-move{font-size:13px;color:#5a6a7a;line-height:1.5;margin-top:4px}
+  .beat-card-tip{font-size:12px;color:#9aabb8;margin-top:4px;letter-spacing:0.5px}
+  .story-card{background:linear-gradient(135deg,#f0f4ff,#e8f0ff);border-radius:12px;padding:16px;margin-bottom:14px}
+  .story-title{font-size:16px;font-weight:700;color:#3a4a7a;margin-bottom:8px}
+  .story-body{font-size:14px;color:#4a5a7a;line-height:1.8}
+  .memory-card{background:linear-gradient(135deg,#f0fff4,#e8fff0);border-radius:12px;padding:16px;margin-bottom:14px}
+  .memory-title{font-size:16px;font-weight:700;color:#2a5a3a;margin-bottom:8px}
+  .memory-chain{font-size:16px;font-weight:600;color:#3a7a4a;letter-spacing:1px;line-height:1.6;margin-bottom:10px;padding:10px 12px;background:rgba(255,255,255,0.7);border-radius:8px}
+  .memory-tips{padding:0;list-style:none;margin:0}
+  .memory-tips li{font-size:13px;color:#4a6a4a;padding:3px 0 3px 16px;position:relative}
+  .memory-tips li::before{content:"\00B7";position:absolute;left:4px;color:#5a9a6a;font-weight:700}
+</style></head><body>
+<h1>舞镜 · 上传后结果页（前端真实预览）</h1>
+<div class="note">用 Agent1 实际写进 design-upgrade.html 的 CSS 还原 · 数据=科目三真实分析</div>
+<div class="phone"><div class="rv">
+
+  <div class="score-bar">
+    <div class="score-ring"><div class="score-ring-inner"><div class="num">65</div><div class="lbl">SCORE</div></div></div>
+    <div class="score-info"><div class="score-label">还不错，继续打磨</div>
+      <div class="score-desc">整体舞感自然，节奏在线；重心与手臂线条是提升重点。</div>
+      <div class="score-teacher"><span class="dot"></span>参考老师：科目三</div></div>
+  </div>
+
+  <div class="prob"><div class="h">⚠️ 主力腿重心偏移</div><div class="d">主力腿未直立导致重心偏移，抬起的小腿高度不足。匹配度 61%。</div></div>
+
+  <div class="cards-section">
+    <div class="cards-section-title">🎓 老师点评</div>
+    <div class="coach-block">
+      <div class="coach-comment">你的舞感很自然，这次看到了你的努力，尤其在节奏把握上有进步。不过细节上还有提升空间，我们一起把动作质感打磨得更漂亮。</div>
+      <ul class="coach-tips">
+        <li>练单腿站立时想象头顶有根线向上拉，主力腿膝盖伸直、脚掌踩实，先稳住重心再抬小腿。</li>
+        <li>旁侧手从腋窝开始延伸，指尖向斜下远处送，手臂呈流畅弧线，别过早弯肘。</li>
+        <li>双脚并拢时从大腿内侧夹到脚踝，先半蹲再伸直，同步左手张开再放松。</li>
+      </ul>
+    </div>
+
+    <div class="cards-section-title">🩰 八拍卡</div>
+    <div class="beat-card"><div class="beat-card-header">第1个八拍</div><div class="beat-card-name">丝滑摇花手</div><div class="beat-card-move">双手体前交替翻花，手腕引领画圆，重心随手左右微移。</div><div class="beat-card-tip">口诀：柔腕—画圆—松肩</div></div>
+    <div class="beat-card"><div class="beat-card-header">第2个八拍</div><div class="beat-card-name">左右摇摆</div><div class="beat-card-move">上身随节拍左右律动，胯部发力带动，膝盖微弹。</div><div class="beat-card-tip">口诀：沉胯—弹膝—卡拍</div></div>
+    <div class="beat-card"><div class="beat-card-header">第3个八拍</div><div class="beat-card-name">踮脚扭胯</div><div class="beat-card-move">踮起脚尖，胯部画横∞，上身保持稳定不晃。</div><div class="beat-card-tip">口诀：踮脚—扭胯—稳肩</div></div>
+
+    <div class="cards-section-title">📖 故事卡</div>
+    <div class="story-card"><div class="story-title">丝滑江湖·一步一摇</div>
+      <div class="story-body">别把它当广播体操——科目三是种松弛的痞帅。手是水、胯是浪，踩着拍子晃出你自己的节奏。越松，越丝滑；越稳，越带感。跳的是随性，不是较劲。</div></div>
+
+    <div class="cards-section-title">🧠 记忆卡</div>
+    <div class="memory-card"><div class="memory-title">科目三记忆口诀</div>
+      <div class="memory-chain">摇花手起 → 左右晃 → 踮脚扭 → 丝滑收</div>
+      <ul class="memory-tips">
+        <li>先记"手—身—脚"三层：手花手、身左右、脚踮扭，分层练不乱。</li>
+        <li>卡在重拍上做最大动作，弱拍过渡，节奏就对了。</li>
+        <li>对着镜子练摇花手，手腕松了整支舞就丝滑了。</li>
+      </ul>
+    </div>
+  </div>
+
+</div></div>
+</body></html>

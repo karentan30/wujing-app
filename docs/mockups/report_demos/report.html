@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>舞镜 · AI 敦煌舞评分报告</title>
+<style>
+/* ═══ 敦煌金缮 · 色系 ═══ */
+:root{
+  --gold:#C8A45C; --gold-light:#E8D5A0; --gold-pale:#F5EDD0; --gold-ghost:rgba(200,164,92,0.08);
+  --gold-foil:linear-gradient(135deg,#E8D5A0,#C8A45C,#B8923E,#C8A45C);
+  --cinnabar:#A0522D; --cinnabar-light:#D4784A; --cinnabar-ghost:rgba(160,82,45,0.08);
+  --ink:#2c2418; --ink-80:#4a3f30; --ink-60:#6a5a42; --ink-40:#9a8a72; --ink-20:#c0b8a8;
+  --cream:#fdf8f0; --cream-dim:#f5f0e6; --cream-border:#e8e0d4; --cream-warm:#faf3e4;
+  --green:#5a8a5c; --green-light:#8ab88a; --yellow:#c49028; --red:#c43a30;
+  --shadow:0 2px 8px rgba(44,36,24,0.06),0 1px 3px rgba(44,36,24,0.04);
+  --shadow-lg:0 8px 30px rgba(44,36,24,0.08),0 2px 8px rgba(44,36,24,0.04);
+  --radius:10px; --radius-sm:6px;
+  --font-serif:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif;
+  --font-sans:"PingFang SC","SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --max-w:800px;
+}
+
+/* ═══ RESET & BASE ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-sans);
+  background:var(--cream);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+  min-height:100vh;
+}
+::selection{background:var(--gold-light);color:var(--ink)}
+
+/* ═══ SCROLL MOTIF — 敦煌云纹装饰 ═══ */
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;height:4px;
+  background:var(--gold-foil);z-index:100;
+}
+body::after{
+  content:'';position:fixed;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold-light),var(--gold),var(--gold-light),transparent);
+  z-index:100;
+}
+
+/* ═══ HEADER ═══ */
+.header{
+  background:rgba(253,248,240,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--cream-border);position:sticky;top:0;z-index:50;
+}
+.header-inner{max-width:var(--max-w);margin:0 auto;padding:12px 20px}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.logo{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:.05em;display:flex;align-items:center;gap:6px}
+.logo-symbol{
+  display:inline-flex;width:26px;height:26px;border-radius:50%;
+  background:var(--gold-foil);align-items:center;justify-content:center;
+  color:#fff;font-size:13px;font-weight:700;box-shadow:0 1px 4px rgba(200,164,92,0.3);
+}
+.logo span{font-weight:300;color:var(--gold);font-family:var(--font-serif)}
+.logo .tag{
+  display:inline-block;font-size:8px;background:var(--gold);color:#fff;
+  padding:1px 7px;border-radius:2px;margin-left:4px;letter-spacing:.08em;font-weight:600;
+  line-height:1.7;
+}
+.header-meta{display:flex;align-items:center;gap:10px}
+.date{font-size:11px;color:var(--ink-40);white-space:nowrap}
+.settings-btn{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--cream-border);
+  background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:var(--ink-40);transition:all .25s;flex-shrink:0;
+}
+.settings-btn:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 3px var(--gold-ghost)}
+
+/* ═══ TAB NAV ═══ */
+.tab-wrap{display:flex;gap:3px;overflow-x:auto;padding-bottom:1px;scrollbar-width:none}
+.tab-wrap::-webkit-scrollbar{display:none}
+.tab-btn{
+  flex-shrink:0;padding:6px 16px;border:none;background:var(--cream-dim);
+  border-radius:var(--radius-sm);font-size:12px;color:var(--ink-60);cursor:pointer;
+  font-family:inherit;white-space:nowrap;transition:all .25s;position:relative;
+}
+.tab-btn:hover{background:var(--gold-pale);color:var(--ink)}
+.tab-btn.active{background:var(--ink);color:#fff;font-weight:500}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+  width:60%;height:2px;background:var(--gold);border-radius:1px;
+}
+
+/* ═══ PAGES ═══ */
+.pages{max-width:var(--max-w);margin:0 auto;padding:16px 20px 40px}
+.page{display:none;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ ACTION BAR ═══ */
+.action-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.action-btn{
+  padding:8px 18px;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:500;
+  cursor:pointer;font-family:inherit;transition:all .25s;display:inline-flex;align-items:center;gap:5px;
+}
+.btn-gold{background:var(--gold-foil);color:#fff;box-shadow:0 2px 8px rgba(200,164,92,0.25)}
+.btn-gold:hover{box-shadow:0 4px 14px rgba(200,164,92,0.35);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid var(--cream-border);color:var(--ink-60)}
+.btn-outline:hover{border-color:var(--gold);color:var(--ink);background:var(--gold-ghost)}
+
+/* ═══ BRAND — 机构品牌定制区 ═══ */
+.school-brand{
+  display:flex;align-items:center;gap:14px;padding:16px 0;margin-bottom:20px;
+  border-bottom:1px solid var(--cream-border);position:relative;
+}
+.school-logo-wrap{
+  width:48px;height:48px;border-radius:var(--radius);overflow:hidden;
+  flex-shrink:0;position:relative;
+}
+.school-logo-img{width:100%;height:100%;object-fit:cover;display:none}
+.school-logo-placeholder{
+  width:100%;height:100%;background:var(--gold-foil);display:flex;
+  align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;
+}
+.school-info .sname{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.school-info .ssub{font-size:11px;color:var(--ink-40);margin-top:1px}
+.school-info .steacher{font-size:11px;color:var(--ink-60);margin-top:1px}
+.school-brand .edit-hint{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  font-size:10px;color:var(--ink-20);display:flex;align-items:center;gap:3px;cursor:pointer;transition:color .2s;
+}
+.school-brand .edit-hint:hover{color:var(--gold)}
+
+/* ═══ INSIGHT ═══ */
+.insight-card{
+  background:linear-gradient(135deg,#fff,var(--cream-warm));border-radius:var(--radius);
+  padding:18px 20px;font-size:13px;color:var(--ink-60);line-height:1.9;
+  margin-bottom:20px;border:1px solid var(--cream-border);box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.insight-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  background:var(--gold-foil);border-radius:0 2px 2px 0;
+}
+.insight-card strong{color:var(--ink);font-weight:600}
+
+/* ═══ SECTION TITLES ═══ */
+.section-title{
+  font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px;
+  letter-spacing:.02em;display:flex;align-items:center;gap:8px;
+}
+.section-title .accent{
+  display:inline-block;width:3px;height:14px;border-radius:2px;background:var(--gold-foil);flex-shrink:0;
+}
+
+/* ═══ VIDEO CARDS ═══ */
+.video-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+@media(max-width:500px){.video-row{grid-template-columns:1fr}}
+.video-card{
+  background:#fff;border-radius:var(--radius);overflow:hidden;position:relative;cursor:pointer;
+  border:1px solid var(--cream-border);box-shadow:var(--shadow);transition:box-shadow .25s,transform .25s;
+}
+.video-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.video-card video{width:100%;display:block;aspect-ratio:9/16;object-fit:cover;background:var(--cream-dim)}
+.video-card .poster-frame{
+  width:100%;aspect-ratio:9/16;object-fit:cover;display:block;background:var(--cream-dim);
+  position:absolute;top:0;left:0;z-index:2;transition:opacity .4s;
+}
+.video-card .poster-frame.hidden{opacity:0;pointer-events:none}
+.video-card .play-overlay{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:52px;height:52px;background:rgba(44,36,24,0.65);backdrop-filter:blur(4px);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:18px;border:2px solid rgba(255,255,255,0.2);pointer-events:none;
+  z-index:3;transition:all .3s;box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.video-card:hover .play-overlay{background:rgba(200,164,92,0.8);border-color:var(--gold-light);transform:translate(-50%,-50%) scale(1.05)}
+.video-card .play-overlay.hidden{opacity:0;transform:translate(-50%,-50%) scale(.8)}
+.video-label{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;font-size:12px;background:#fff;position:relative;z-index:4;
+}
+.video-label .name{font-weight:500;color:var(--ink);font-size:12px}
+.video-label .tag{font-size:10px;color:var(--ink-40)}
+.video-card .video-error{
+  display:none;position:absolute;top:0;left:0;right:0;bottom:0;
+  background:var(--cream-dim);z-index:5;align-items:center;justify-content:center;
+  flex-direction:column;color:var(--ink-40);font-size:12px;gap:4px;
+}
+.video-card .video-error .err-icon{font-size:28px;opacity:.5}
+
+/* ═══ METERS — 六维敦煌量表 ═══ */
+.meter-section{margin-bottom:22px}
+.meter-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:520px){.meter-grid{grid-template-columns:1fr 1fr}}
+.meter{
+  background:#fff;border-radius:var(--radius);padding:16px;
+  border:1px solid var(--cream-border);box-shadow:var(--shadow);transition:box-shadow .2s;
+}
+.meter:hover{box-shadow:var(--shadow-lg)}
+.meter .l{font-size:10px;color:var(--ink-40);margin-bottom:3px;letter-spacing:.04em}
+.meter .v{font-size:24px;font-weight:500;line-height:1.2;letter-spacing:-.02em}
+.meter .v .unit{font-size:12px;font-weight:400;color:var(--ink-40);margin-left:2px}
+.meter .v .target{font-size:10px;font-weight:400;color:var(--ink-40);margin-left:6px}
+.meter .bar{
+  height:4px;background:var(--cream-dim);border-radius:2px;margin-top:10px;
+  overflow:hidden;position:relative;
+}
+.meter .fill{height:100%;border-radius:2px;transition:width .8s ease}
+.meter .fill.gold{background:var(--gold-foil)}
+.meter .fill.green{background:linear-gradient(90deg,var(--green-light),var(--green))}
+.meter .fill.yellow{background:linear-gradient(90deg,#e8c878,var(--yellow))}
+.meter .fill.red{background:linear-gradient(90deg,#e87868,var(--red))}
+.meter .m-target{
+  position:absolute;top:-3px;width:2px;height:10px;background:var(--ink);
+  border-radius:1px;opacity:.4;transition:left .8s ease;
+}
+
+/* ═══ RADAR ═══ */
+.chart-section{margin-bottom:22px}
+.chart-wrap{
+  background:#fff;border-radius:var(--radius);padding:18px;border:1px solid var(--cream-border);
+  display:flex;justify-content:center;box-shadow:var(--shadow);
+}
+.chart-wrap svg{width:100%;max-width:280px;height:auto}
+
+/* ═══ BG SWITCHER ═══ */
+.bg-section{margin-bottom:22px}
+.bg-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;
+}
+@media(max-width:480px){.bg-strip{grid-template-columns:repeat(2,1fr)}}
+.bg-card{
+  border:2px solid transparent;border-radius:var(--radius-sm);overflow:hidden;
+  cursor:pointer;background:#fff;transition:all .25s;position:relative;
+}
+.bg-card:hover{border-color:var(--gold-light)}
+.bg-card.active{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-pale)}
+.bg-card img{width:100%;aspect-ratio:9/16;object-fit:cover;display:block}
+.bg-card .l{
+  font-size:10px;padding:6px 4px;color:var(--ink-60);text-align:center;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.bg-card .check{
+  position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;
+  background:var(--gold);color:#fff;font-size:10px;display:none;
+  align-items:center;justify-content:center;z-index:2;
+}
+.bg-card.active .check{display:flex}
+.bg-preview{
+  width:100%;aspect-ratio:16/9;border-radius:var(--radius-sm);
+  object-fit:cover;border:1px solid var(--cream-border);margin-top:4px;
+}
+
+/* ═══ FEEDBACK ═══ */
+.feedback-section{margin-bottom:22px}
+.fb-list{display:grid;gap:10px}
+.fb-item{
+  background:#fff;border-radius:var(--radius);padding:16px 18px;
+  border:1px solid var(--cream-border);box-shadow:var(--shadow);position:relative;
+  overflow:hidden;transition:box-shadow .2s;
+}
+.fb-item:hover{box-shadow:var(--shadow-lg)}
+.fb-item::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  border-radius:0 2px 2px 0;
+}
+.fb-item.p0::before{background:var(--red)}
+.fb-item.p1::before{background:var(--yellow)}
+.fb-item.p2::before{background:var(--ink-20)}
+.fb-item .tag{
+  display:inline-block;font-size:10px;font-weight:600;padding:2px 10px;
+  border-radius:3px;margin-bottom:8px;
+}
+.fb-item.p0 .tag{background:#fde8e5;color:var(--red)}
+.fb-item.p1 .tag{background:#fef0d5;color:var(--yellow)}
+.fb-item.p2 .tag{background:var(--cream-dim);color:var(--ink-40)}
+.fb-item .title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.fb-item .desc{font-size:12px;color:var(--ink-60);line-height:1.7}
+
+/* ═══ PLAN ═══ */
+.plan-section{margin-bottom:22px}
+.plan-card{
+  background:linear-gradient(135deg,#fff,var(--cream-warm));border-radius:var(--radius);
+  padding:20px 22px;border:1px solid var(--cream-border);box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.plan-card::before{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  background:radial-gradient(circle at 100% 0,var(--gold-ghost),transparent 70%);
+  pointer-events:none;
+}
+.plan-card h4{
+  font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px;
+  font-family:var(--font-serif);
+}
+.plan-card ol{padding-left:18px}
+.plan-card li{font-size:13px;color:var(--ink-60);line-height:2;margin-bottom:2px}
+.plan-card li strong{color:var(--ink)}
+
+/* ═══ TEACHER NOTES ═══ */
+.notes-section{margin-bottom:22px}
+.notes-box{
+  background:#fff;border-radius:var(--radius);padding:16px 18px;
+  border:1px solid var(--cream-border);min-height:56px;font-size:13px;
+  color:var(--ink);line-height:1.8;cursor:text;box-shadow:var(--shadow);
+  transition:border-color .25s,box-shadow .25s;
+}
+.notes-box:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-ghost),var(--shadow)}
+.notes-box:empty::before{
+  content:attr(data-placeholder);color:var(--ink-20);pointer-events:none;
+}
+.notes-toolbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:6px;font-size:11px;color:var(--ink-40);
+}
+.notes-toolbar .save-hint{display:flex;align-items:center;gap:4px;transition:color .3s}
+.notes-toolbar .save-hint.saved{color:var(--green)}
+.notes-toolbar .reset-note{
+  background:none;border:none;font-size:10px;color:var(--ink-20);
+  cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:3px;transition:all .2s;
+}
+.notes-toolbar .reset-note:hover{color:var(--red);background:rgba(196,58,48,0.06)}
+
+/* ═══ RANK TABLE ═══ */
+.table-section{margin-bottom:22px}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius)}
+.rank-table{
+  width:100%;border-collapse:collapse;background:#fff;overflow:hidden;
+  border:1px solid var(--cream-border);border-radius:var(--radius);
+  box-shadow:var(--shadow);font-size:13px;
+}
+.rank-table th{
+  background:var(--cream-dim);padding:10px 10px;font-size:10px;color:var(--ink-40);
+  font-weight:500;text-align:center;border-bottom:1px solid var(--cream-border);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.rank-table td{
+  padding:10px 10px;text-align:center;border-bottom:1px solid var(--cream-border);
+  color:var(--ink-60);white-space:nowrap;
+}
+.rank-table tr:last-child td{border-bottom:none}
+.rank-table tr.highlight{background:var(--gold-ghost)}
+.rank-table tr:hover{background:var(--cream-dim)}
+.rank-table td.name{font-weight:500;color:var(--ink);text-align:left}
+.rank-table td.rank-num{font-weight:600;color:var(--ink)}
+.rank-table .tag{
+  display:inline-block;padding:2px 10px;border-radius:3px;font-size:11px;font-weight:500;color:#fff;
+}
+.rank-table .tag.g{background:var(--green)}
+.rank-table .tag.y{background:var(--yellow)}
+.rank-table .tag.r{background:var(--red)}
+.rank-table .mini-bar{
+  display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-right:4px;
+  background:var(--gold-foil);
+}
+
+/* ═══ STUDENT HEADER ═══ */
+.student-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:18px;flex-wrap:wrap;gap:8px;
+}
+.student-header .sh-left h2{
+  font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.01em;
+  font-family:var(--font-serif);
+}
+.student-header .sh-left h2 small{
+  font-weight:400;color:var(--ink-40);font-size:13px;margin-left:8px;
+  font-family:var(--font-sans);
+}
+.student-header .sh-right{text-align:right}
+.student-header .sh-score{
+  font-size:32px;font-weight:600;color:var(--gold);line-height:1;
+  font-family:var(--font-serif);
+}
+.student-header .sh-score small{
+  font-size:14px;font-weight:400;color:var(--ink-40);margin-left:4px;
+  font-family:var(--font-sans);
+}
+.student-header .sh-rank{font-size:12px;color:var(--ink-40);margin-top:2px}
+
+/* ═══ FOOTER ═══ */
+.footer{
+  text-align:center;padding:32px 20px;color:var(--ink-40);font-size:11px;
+  border-top:1px solid var(--cream-border);max-width:var(--max-w);margin:0 auto;
+}
+.footer .brand{font-size:14px;font-weight:600;color:var(--gold);margin-bottom:2px;letter-spacing:.06em}
+.footer .brand span{color:var(--ink-60)}
+.footer .powered{margin-top:4px;font-size:10px}
+
+/* ═══ SETTINGS MODAL ═══ */
+.modal-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(44,36,24,0.3);backdrop-filter:blur(4px);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+  animation:modalFade .25s ease;
+}
+.modal-overlay.open{display:flex}
+@keyframes modalFade{from{opacity:0}to{opacity:1}}
+.modal-panel{
+  background:#fff;border-radius:14px;padding:28px 32px;max-width:440px;width:100%;
+  box-shadow:0 20px 60px rgba(44,36,24,0.15);max-height:90vh;overflow-y:auto;
+  animation:modalSlide .3s ease;
+}
+@keyframes modalSlide{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-panel h3{
+  font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px;font-family:var(--font-serif);
+}
+.modal-panel .modal-sub{font-size:12px;color:var(--ink-40);margin-bottom:20px}
+.modal-field{margin-bottom:16px}
+.modal-field label{
+  display:block;font-size:11px;font-weight:500;color:var(--ink-60);
+  margin-bottom:5px;letter-spacing:.03em;
+}
+.modal-field input[type="text"],.modal-field input[type="file"]{
+  width:100%;padding:10px 12px;border:1px solid var(--cream-border);border-radius:var(--radius-sm);
+  font-size:13px;font-family:inherit;color:var(--ink);background:#fff;transition:border-color .2s;
+}
+.modal-field input[type="text"]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-ghost)}
+.modal-field .logo-preview{
+  width:56px;height:56px;border-radius:var(--radius-sm);overflow:hidden;
+  border:1px solid var(--cream-border);margin-top:8px;position:relative;
+  background:var(--cream-dim);display:flex;align-items:center;justify-content:center;
+}
+.modal-field .logo-preview img{width:100%;height:100%;object-fit:cover}
+.modal-field .logo-preview .placeholder{
+  color:var(--ink-20);font-size:20px;font-weight:700;
+}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.modal-actions button{
+  flex:1;padding:10px;border:none;border-radius:var(--radius-sm);font-size:13px;
+  font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s;
+}
+.modal-actions .btn-save{background:var(--gold-foil);color:#fff}
+.modal-actions .btn-save:hover{opacity:.9}
+.modal-actions .btn-cancel{background:var(--cream-dim);color:var(--ink-60)}
+.modal-actions .btn-cancel:hover{background:var(--cream-border)}
+.modal-close{
+  position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;
+  border:none;background:var(--cream-dim);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:14px;color:var(--ink-40);transition:all .2s;
+}
+.modal-close:hover{background:var(--cream-border);color:var(--ink)}
+
+/* ═══ TOAST ═══ */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
+  background:rgba(44,36,24,0.9);backdrop-filter:blur(8px);
+  color:#fff;font-size:12px;padding:10px 20px;border-radius:8px;z-index:300;
+  opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1}
+
+/* ═══ PRINT STYLES ═══ */
+@media print{
+  @page{margin:12mm 15mm}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .header{position:static;border-bottom:1px solid #ddd;backdrop-filter:none;background:#fff}
+  .modal-overlay,.toast,.settings-btn,.action-bar,.tab-wrap{display:none!important}
+  .page{display:block!important;padding:8px 0;opacity:1!important;animation:none!important}
+  .page.active{display:block!important}
+  .video-card,.meter,.fb-item,.plan-card,.chart-wrap,.insight-card,.rank-table,.notes-box{break-inside:avoid;page-break-inside:avoid}
+  .video-card{border:1px solid #e0d8c8}
+  .meter{border:1px solid #e0d8c8}
+  .fb-item{border:1px solid #e0d8c8}
+  .notes-box{min-height:0;border:1px dashed #ccc}
+  .notes-box:empty::before{content:attr(data-placeholder)}
+  .rank-table{border:1px solid #e0d8c8}
+  .school-brand{border-bottom:1px solid #ddd}
+  .footer{margin-top:0;border-top:1px solid #ddd}
+  .student-header .sh-score{color:var(--gold)!important}
+  .chart-wrap svg{max-width:240px}
+  .section-title,.insight-card,.plan-card h4{font-size:12px!important}
+  .meter .v{font-size:20px!important}
+  *{box-shadow:none!important;text-shadow:none!important}
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:600px){
+  .header{padding:0}
+  .header-inner{padding:10px 14px}
+  .header-top{margin-bottom:6px}
+  .logo{font-size:15px}
+  .logo .tag{font-size:7px;padding:1px 5px}
+  .date{font-size:10px}
+  .pages{padding:12px 14px 30px}
+  .school-brand{padding:12px 0;margin-bottom:16px;gap:10px}
+  .school-logo-wrap{width:40px;height:40px}
+  .school-info .sname{font-size:14px}
+  .section-title{font-size:13px}
+  .meter-grid{gap:8px}
+  .meter{padding:12px}
+  .meter .v{font-size:20px}
+  .student-header .sh-left h2{font-size:16px}
+  .student-header .sh-score{font-size:26px}
+  .fb-item{padding:12px 14px}
+  .modal-panel{padding:20px;margin:10px}
+  .plan-card{padding:16px}
+  .action-bar{gap:6px}
+  .action-btn{padding:7px 14px;font-size:11px}
+}
+@media(min-width:601px)and (max-width:1024px){
+  .meter-grid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:400px){
+  .meter-grid{grid-template-columns:1fr}
+  .video-row{gap:8px}
+  .student-header{flex-direction:column}
+  .student-header .sh-right{text-align:left;width:100%}
+  .bg-strip{grid-template-columns:repeat(2,1fr)}
+  .modal-panel{padding:16px}
+}
+
+/* ═══ PRINT BUTTON UTILITY ═══ */
+@media print{
+  .no-print{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo">
+        <span class="logo-symbol">镜</span>
+        舞镜 <span>· 评分报告</span><span class="tag">机构版</span>
+      </div>
+      <div class="header-meta">
+        <span class="date">报告生成 · 2026.07.27</span>
+        <button class="settings-btn" onclick="toggleSettings()" title="机构品牌设置" aria-label="设置">&#9881;</button>
+      </div>
+    </div>
+    <div class="tab-wrap" id="tabWrap"></div>
+  </div>
+</div>
+
+<!-- ═══ PAGES ═══ -->
+<div class="pages" id="pages"></div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <div class="brand"><span id="footerSchoolName">舞镜</span> <span>· WuJing</span></div>
+  <div class="powered">专业AI舞蹈评分系统 · wujing.mylumee.cn</div>
+</div>
+
+<!-- ═══ SETTINGS MODAL ═══ -->
+<div class="modal-overlay" id="settingsModal" onclick="if(event.target===this) toggleSettings()">
+  <div class="modal-panel">
+    <h3>机构品牌定制</h3>
+    <div class="modal-sub">设置信息将保存至浏览器，下次自动加载</div>
+    <div class="modal-field">
+      <label>机构名称</label>
+      <input type="text" id="schoolNameInput" placeholder="例如：敦煌艺术舞蹈学院" maxlength="40">
+    </div>
+    <div class="modal-field">
+      <label>授课老师</label>
+      <input type="text" id="teacherNameInput" placeholder="例如：王老师" maxlength="20">
+    </div>
+    <div class="modal-field">
+      <label>机构标语（选填）</label>
+      <input type="text" id="schoolMottoInput" placeholder="例如：传承敦煌文化，舞出千年之美" maxlength="50">
+    </div>
+    <div class="modal-field">
+      <label>机构Logo</label>
+      <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
+      <div class="logo-preview" id="logoPreview"><span class="placeholder">镜</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="toggleSettings()">取消</button>
+      <button class="btn-save" onclick="saveSettings()">保存设置</button>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button style="background:none;border:none;font-size:10px;color:var(--ink-20);cursor:pointer;font-family:inherit" onclick="resetSettings()">恢复默认设置</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════
+//  DATA — 学员数据
+// ════════════════════════════════════════════════
+const DATA = [
+  {name:'张雨欣', score:'5.2', rank:0,
+   sc:{v:1.1,pct:'11%'}, ah:{v:75,pct:'75%'}, sp:{v:10,pct:'50%'},
+   as_:{v:0.310,pct:'62%'}, kn:{v:0.93,pct:'70%'}, mv:{v:0.140,pct:'48%'},
+   radar:[11,75,50,62,70,48],
+   v1:'学员1_东非大裂谷_h264.mp4', v2:'学员1_故宫_h264.mp4',
+   poster:'学员1_original.png',
+   bg:{原背景:'学员1_original.png',敦煌石窟:'学员1_bg_敦煌石窟暖金.png',天宫夜宴:'学员1_bg_天宫夜宴深蓝.png',飞天壁画:'学员1_bg_飞天壁画金绿.png'},
+   fb:[
+     ['P0','S曲线—最需要攻克','推右胯→沉左肩→头右倾，对镜10秒×10组/天。身体太直(1.1%)，敦煌舞的三道弯是灵魂。'],
+     ['P1','增加身体起伏','纵向波动仅0.026，几乎平推。敦煌舞靠身体起落表达呼吸感。'],
+     ['P2','手指延伸+眼神方向','兰花指/佛手交替，指尖发力延伸。眼神追手走，不要看地板。'],
+   ]},
+  {name:'李雨桐', score:'7.8', rank:0,
+   sc:{v:2.0,pct:'20%'}, ah:{v:83,pct:'83%'}, sp:{v:11,pct:'55%'},
+   as_:{v:0.274,pct:'55%'}, kn:{v:0.94,pct:'60%'}, mv:{v:0.159,pct:'53%'},
+   radar:[20,83,55,55,60,53],
+   v1:'学员2_东非大裂谷_h264.mp4', v2:'学员2_故宫_h264.mp4',
+   poster:'学员2_original.png',
+   bg:{原背景:'学员2_original.png',敦煌石窟:'学员2_bg_敦煌石窟暖金.png',天宫夜宴:'学员2_bg_天宫夜宴深蓝.png',飞天壁画:'学员2_bg_飞天壁画金绿.png'},
+   fb:[
+     ['P0','S曲线—差一步突破','全班最高(2.0%)！推到6%就有敦煌味。重点：胯推出幅度加大+上身后倾。'],
+     ['P1','手臂再打开','0.274偏中。飞天手位大胆展开，想"抱大球再释放"。'],
+     ['P2','旋转完接S曲线定住','旋转好，但落地接三道弯定2拍效果翻倍。'],
+   ]},
+  {name:'王若溪', score:'6.5', rank:0,
+   sc:{v:1.6,pct:'16%'}, ah:{v:72,pct:'72%'}, sp:{v:9,pct:'45%'},
+   as_:{v:0.295,pct:'59%'}, kn:{v:0.92,pct:'80%'}, mv:{v:0.148,pct:'49%'},
+   radar:[16,72,45,59,80,49],
+   v1:'学员3_东非大裂谷_h264.mp4', v2:'学员3_故宫_h264.mp4',
+   poster:'学员3_original.png',
+   bg:{原背景:'学员3_original.png',敦煌石窟:'学员3_bg_敦煌石窟暖金.png',天宫夜宴:'学员3_bg_天宫夜宴深蓝.png',飞天壁画:'学员3_bg_飞天壁画金绿.png'},
+   fb:[
+     ['P0','S曲线+屈膝','1.6%+0.92屈膝已可，但S曲线需再推。联合练：微屈膝推出胯。'],
+     ['P1','旋转控制','旋转后保持S曲线亮相定2拍。'],
+     ['P2','手臂线条','手指延伸不够，关注指尖到手腕的连线流畅度。'],
+   ]},
+  {name:'陈悠然', score:'8.1', rank:0,
+   sc:{v:2.1,pct:'21%'}, ah:{v:77,pct:'77%'}, sp:{v:10,pct:'50%'},
+   as_:{v:0.286,pct:'57%'}, kn:{v:0.94,pct:'60%'}, mv:{v:0.157,pct:'52%'},
+   radar:[21,77,50,57,60,52],
+   v1:'学员4_东非大裂谷_h264.mp4', v2:'学员4_故宫_h264.mp4',
+   poster:'学员4_original.png',
+   bg:{原背景:'学员4_original.png',敦煌石窟:'学员4_bg_敦煌石窟暖金.png',天宫夜宴:'学员4_bg_天宫夜宴深蓝.png',飞天壁画:'学员4_bg_飞天壁画金绿.png'},
+   fb:[
+     ['P0','S曲线攻到6%','你最好(2.1%)！加胯推出+上身后倾，到6%出真正的敦煌体态。'],
+     ['P1','旋转后站稳','旋转完保持S曲线亮相定2拍。'],
+     ['P2','眼神强化','眼神追手，敦煌舞里眼和手是一体的。'],
+   ]},
+  {name:'赵希言', score:'4.3', rank:0,
+   sc:{v:0.8,pct:'8%'}, ah:{v:65,pct:'65%'}, sp:{v:7,pct:'35%'},
+   as_:{v:0.240,pct:'48%'}, kn:{v:0.97,pct:'30%'}, mv:{v:0.120,pct:'40%'},
+   radar:[8,65,35,48,30,40],
+   v1:'学员1_东非大裂谷_h264.mp4', v2:'学员1_故宫_h264.mp4',
+   poster:'学员1_original.png',
+   bg:{原背景:'学员1_original.png',敦煌石窟:'学员1_bg_敦煌石窟暖金.png',天宫夜宴:'学员1_bg_天宫夜宴深蓝.png',飞天壁画:'学员1_bg_飞天壁画金绿.png'},
+   fb:[
+     ['P0','S曲线+屈膝双练','0.8%+0.97膝盖过直。屈膝下沉同时推胯出S，这是你的核心瓶颈。'],
+     ['P1','手臂高度','65%偏中偏低，先练手臂上提至肩线。'],
+     ['P2','旋转练习','7次略少，加平转和踏步翻训练。'],
+   ]},
+];
+
+// ═══ Compute Rankings ═══
+DATA.sort((a,b)=>b.sc.v-a.sc.v).forEach((x,i)=>x.rank=i+1);
+
+// ═══ Helpers ═══
+function scClr(v){return v<1.5?'#c43a30':v<3?'#c49028':'#5a8a5c'}
+function rankCls(r){return r<=1?'g':r<=3?'y':'r'}
+const toastTimer = {id:null};
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  if(toastTimer.id){clearTimeout(toastTimer.id)}
+  t.textContent=msg;t.classList.add('show');
+  toastTimer.id=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ═══ Radar Chart ═══
+function createRadar(data,w=280,h=280){
+  const cx=w/2, cy=h/2, R=Math.min(w,h)/2-30;
+  const n=data.length;
+  const labels=['S曲线','臂高','旋转','臂展','屈膝','动作量'];
+  const svg=[`<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`];
+  // Grid rings
+  for(let ri=1;ri<=4;ri++){
+    const r=R*ri/4; const pts=[];
+    for(let i=0;i<n;i++){const a=Math.PI/2-i*2*Math.PI/n;pts.push(`${cx+r*Math.cos(a)},${cy-r*Math.sin(a)}`);}
+    svg.push(`<polygon points="${pts.join(' ')}" fill="none" stroke="#e8e0d4" stroke-width="1" stroke-opacity="${ri===4?0.3:0.5}"/>`);
+  }
+  // Axis lines + labels
+  for(let i=0;i<n;i++){
+    const a=Math.PI/2-i*2*Math.PI/n;
+    const ex=cx+R*Math.cos(a), ey=cy-R*Math.sin(a);
+    svg.push(`<line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" stroke="#e8e0d4" stroke-width="1" stroke-opacity="0.4"/>`);
+    const lx=cx+(R+19)*Math.cos(a), ly=cy-(R+19)*Math.sin(a);
+    svg.push(`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#6a5a42" font-family="PingFang SC,sans-serif" font-weight="500">${labels[i]}</text>`);
+  }
+  // Data fill
+  const pts=[], dots=[];
+  for(let i=0;i<n;i++){
+    const a=Math.PI/2-i*2*Math.PI/n;
+    const val=Math.max(0,Math.min(100,data[i]))/100;
+    const r2=R*val;
+    const x=cx+r2*Math.cos(a), y=cy-r2*Math.sin(a);
+    pts.push(`${x},${y}`);
+    dots.push(`<circle cx="${x}" cy="${y}" r="3.5" fill="#C8A45C" stroke="#fff" stroke-width="1.5"/>`);
+  }
+  svg.push(`<polygon points="${pts.join(' ')}" fill="rgba(200,164,92,0.12)" stroke="url(#goldGrad)" stroke-width="2.5"/>`);
+  svg.push(dots.join(''));
+  // Gradient def
+  svg.push(`<defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8D5A0"/><stop offset="100%" stop-color="#C8A45C"/></linearGradient></defs>`);
+  // Center label
+  svg.push(`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#9a8a72" font-family="PingFang SC,sans-serif">能力</text>`);
+  svg.push('</svg>');
+  return svg.join('\n');
+}
+
+// ═══ BUILD PAGES ═══
+const tabWrap = document.getElementById('tabWrap');
+const pagesWrap = document.getElementById('pages');
+
+// -- Action Bar --
+const actionBar = document.createElement('div');
+actionBar.className = 'action-bar';
+actionBar.innerHTML = `
+  <button class="action-btn btn-gold" onclick="window.print()">&#9751; 打印 / 导出PDF</button>
+  <button class="action-btn btn-outline" onclick="exportJSON()">&#8600; 导出数据</button>
+`;
+pagesWrap.appendChild(actionBar);
+
+// ── CLASS OVERVIEW ──
+const avgSc = DATA.reduce((s,x)=>s+x.sc.v,0)/DATA.length;
+const cp = document.createElement('div');
+cp.className = 'page active';
+cp.id = 'page-class';
+cp.innerHTML = `
+  <div class="school-brand" id="schoolBrand">
+    <div class="school-logo-wrap">
+      <img class="school-logo-img" id="schoolLogoImg" src="" alt="机构Logo" style="display:none">
+      <div class="school-logo-placeholder" id="schoolLogoPlaceholder">镜</div>
+    </div>
+    <div class="school-info">
+      <div class="sname" id="schoolNameDisplay">敦煌舞《千年一顾》班级报告</div>
+      <div class="ssub" id="schoolMottoDisplay">5名学员 · 舞镜AI评分系统</div>
+      <div class="steacher" id="teacherNameDisplay"></div>
+    </div>
+    <span class="edit-hint" onclick="toggleSettings()">&#9998; 定制品牌</span>
+  </div>
+
+  <h3 class="section-title"><span class="accent"></span>班级总评</h3>
+  <div class="insight-card">
+    <strong>班级总评：</strong>基于MediaPipe姿态分析引擎，从S曲线、臂高、旋转、臂展、屈膝、动作量六个维度量化评估。<br><br>
+    &#10004; <strong>优势：</strong>全员臂高达标（65-83%），旋转基础扎实。<br>
+    &#128308; <strong>统一短板：</strong>S曲线（肩髋错位）全班均值 <strong>${avgSc.toFixed(1)}%</strong>，距敦煌舞标准6%有较大差距。<br>
+    &#129351; <strong>第一名：</strong>${DATA[0].name}（${DATA[0].sc.v}% · 综合${DATA[0].score}/10）<br>
+    &#128200; <strong>建议本周重点：</strong>S曲线专项训练（见下方方案）
+  </div>
+
+  <h3 class="section-title"><span class="accent"></span>全班排名</h3>
+  <div class="table-scroll">
+    <table class="rank-table">
+      <tr><th>排名</th><th>姓名</th><th>S曲线</th><th>臂高</th><th>旋转</th><th>臂展</th><th>综合</th></tr>
+      ${DATA.map((s,i)=>'<tr>'+
+        '<td class="rank-num">'+(i+1)+'</td>'+
+        '<td class="name">'+s.name+'</td>'+
+        '<td><span class="tag '+rankCls(s.rank)+'">'+s.sc.v+'%</span></td>'+
+        '<td>'+s.ah.v+'% <span class="mini-bar" style="width:'+(s.ah.v*.6)+'px"></span></td>'+
+        '<td>'+s.sp.v+'次</td>'+
+        '<td>'+s.as_.v.toFixed(3)+'</td>'+
+        '<td style="font-weight:600;color:var(--gold)">'+s.score+'/10</td>'+
+      '</tr>').join('')}
+    </table>
+  </div>
+
+  <h3 class="section-title"><span class="accent"></span>各维度班级分布</h3>
+  <div class="chart-wrap">
+    ${createRadar([
+      avgSc/10*100,
+      DATA.reduce((s,x)=>s+x.ah.v,0)/DATA.length,
+      DATA.reduce((s,x)=>s+x.sp.v,0)/DATA.length/20*100,
+      DATA.reduce((s,x)=>s+x.as_.v,0)/DATA.length/0.5*100,
+      100-(DATA.reduce((s,x)=>s+x.kn.v,0)/DATA.length-0.8)/0.2*100,
+      DATA.reduce((s,x)=>s+x.mv.v,0)/DATA.length/0.3*100
+    ])}
+  </div>
+
+  <h3 class="section-title"><span class="accent"></span>统一训练方案</h3>
+  <div class="plan-card">
+    <h4>&#128214; 敦煌舞S曲线 · 每天15分钟</h4>
+    <ol>
+      <li><strong>准备</strong>（2分钟）— 丁字步，右脚前，沉肩放松</li>
+      <li><strong>推胯</strong>（3分钟）— 右髋向右前推出，左髋后收。10秒×5组</li>
+      <li><strong>反向延伸</strong>（3分钟）— 保持推胯，左肩沉后，头偏右</li>
+      <li><strong>完整三道弯</strong>（5分钟）— 推胯+沉肩+头倾+微屈膝。15秒×10组</li>
+      <li><strong>融入舞蹈</strong>（2分钟）— 放《千年一顾》，每个乐句结尾落S曲线</li>
+    </ol>
+  </div>
+`;
+pagesWrap.appendChild(cp);
+
+// ── INDIVIDUAL PAGES ──
+DATA.forEach((s,i)=>{
+  const div = document.createElement('div');
+  div.className = 'page';
+  div.id = 'page-'+i;
+
+  const rankRows = DATA.map((x,j)=>'<tr class="'+(x.name===s.name?'highlight':'')+'">'+
+    '<td class="rank-num">'+(j+1)+'</td>'+
+    '<td class="name">'+x.name+'</td>'+
+    '<td><span class="tag '+rankCls(j+1)+'">'+x.sc.v+'%</span></td>'+
+    '<td>'+x.ah.v+'%</td>'+
+    '<td>'+x.sp.v+'次</td>'+
+    '<td>'+x.as_.v.toFixed(3)+'</td>'+
+    '<td style="font-weight:600">'+x.score+'/10</td>'+
+  '</tr>').join('');
+
+  div.innerHTML = `
+    <div class="student-header">
+      <div class="sh-left">
+        <h2>${s.name} · 个人评分报告 <small>班级第${s.rank}名</small></h2>
+      </div>
+      <div class="sh-right">
+        <div class="sh-score">${s.score}<small>/10</small></div>
+        <div class="sh-rank">S曲线 ${s.sc.v}% · 目标≥6%</div>
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div class="video-row">
+      <div class="video-card" id="vc-${i}-0">
+        <img class="poster-frame" src="${s.poster}" alt="预览" onerror="this.style.display='none'">
+        <video src="${s.v1}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
+        <div class="play-overlay">&#9654;</div>
+        <div class="video-error"><span class="err-icon">&#9888;</span> 视频加载失败<br><span style="font-size:10px">请检查文件路径</span></div>
+        <div class="video-label"><span class="name">东非大裂谷 · AI生成背景</span><span class="tag" id="vc-tag-${i}-0">点击播放</span></div>
+      </div>
+      <div class="video-card" id="vc-${i}-1">
+        <img class="poster-frame" src="${s.poster}" alt="预览" onerror="this.style.display='none'">
+        <video src="${s.v2}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
+        <div class="play-overlay">&#9654;</div>
+        <div class="video-error"><span class="err-icon">&#9888;</span> 视频加载失败<br><span style="font-size:10px">请检查文件路径</span></div>
+        <div class="video-label"><span class="name">故宫紫禁城 · AI生成背景</span><span class="tag" id="vc-tag-${i}-1">点击播放</span></div>
+      </div>
+    </div>
+
+    <!-- Meters -->
+    <div class="meter-section">
+      <h3 class="section-title"><span class="accent"></span>六维评分</h3>
+      <div class="meter-grid">
+        <div class="meter">
+          <div class="l">S曲线 <span style="font-weight:400;color:#b0a898">（满分10%）</span></div>
+          <div class="v" style="color:${scClr(s.sc.v)}">${s.sc.v}<span class="unit">%</span><span class="target">目标≥6%</span></div>
+          <div class="bar"><div class="fill ${s.sc.v<1.5?'red':s.sc.v<3?'yellow':'green'}" style="width:${s.sc.v/10*100}%"></div><div class="m-target" style="left:${6/10*100}%"></div></div>
+        </div>
+        <div class="meter">
+          <div class="l">臂高过肩率 <span style="font-weight:400;color:#b0a898">（满分100%）</span></div>
+          <div class="v" style="color:#5a8a5c">${s.ah.v}<span class="unit">%</span><span class="target">目标≥80%</span></div>
+          <div class="bar"><div class="fill green" style="width:${s.ah.v}%"></div><div class="m-target" style="left:80%"></div></div>
+        </div>
+        <div class="meter">
+          <div class="l">旋转次数 <span style="font-weight:400;color:#b0a898">（满分20次）</span></div>
+          <div class="v" style="color:${s.sp.v<8?'#c43a30':s.sp.v<12?'#c49028':'#5a8a5c'}">${s.sp.v}<span class="unit">次</span><span class="target">目标≥12次</span></div>
+          <div class="bar"><div class="fill ${s.sp.v<8?'red':s.sp.v<12?'yellow':'green'}" style="width:${s.sp.v/20*100}%"></div><div class="m-target" style="left:${12/20*100}%"></div></div>
+        </div>
+        <div class="meter">
+          <div class="l">臂展幅度 <span style="font-weight:400;color:#b0a898">（满分0.5）</span></div>
+          <div class="v" style="color:${s.as_.v<0.25?'#c43a30':s.as_.v<0.35?'#c49028':'#5a8a5c'}">${s.as_.v.toFixed(3)}<span class="target">目标≥0.35</span></div>
+          <div class="bar"><div class="fill ${s.as_.v<0.25?'red':s.as_.v<0.35?'yellow':'green'}" style="width:${s.as_.v/0.5*100}%"></div><div class="m-target" style="left:${0.35/0.5*100}%"></div></div>
+        </div>
+        <div class="meter">
+          <div class="l">屈膝值 <span style="font-weight:400;color:#b0a898">（1=完全直）</span></div>
+          <div class="v" style="color:${s.kn.v>0.95?'#c43a30':'#5a8a5c'}">${s.kn.v.toFixed(2)}<span class="target">目标≤0.92</span></div>
+          <div class="bar"><div class="fill ${s.kn.v>0.95?'red':'green'}" style="width:${(1-s.kn.v)/0.15*100}%"></div><div class="m-target" style="left:${(1-0.92)/0.15*100}%"></div></div>
+        </div>
+        <div class="meter">
+          <div class="l">动作活跃度 <span style="font-weight:400;color:#b0a898">（满分0.3）</span></div>
+          <div class="v" style="color:${s.mv.v<0.12?'#c43a30':s.mv.v<0.18?'#c49028':'#5a8a5c'}">${s.mv.v.toFixed(3)}<span class="target">目标≥0.18</span></div>
+          <div class="bar"><div class="fill ${s.mv.v<0.12?'red':s.mv.v<0.18?'yellow':'green'}" style="width:${s.mv.v/0.3*100}%"></div><div class="m-target" style="left:${0.18/0.3*100}%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radar -->
+    <div class="chart-section">
+      <h3 class="section-title"><span class="accent"></span>能力雷达图 <small style="font-weight:400;color:var(--ink-40);font-size:11px">外圈=满分 · 金色=你的水平</small></h3>
+      <div class="chart-wrap">${createRadar(s.radar)}</div>
+    </div>
+
+    <!-- Background Switcher -->
+    <div class="bg-section">
+      <h3 class="section-title"><span class="accent"></span>可选背景预览</h3>
+      <div class="bg-strip">
+        ${Object.entries(s.bg).map(([k,v],bi)=>'<div class="bg-card '+(bi===0?'active':'')+'" onclick="switchBg('+i+','+bi+',this)">'+
+          '<img src="'+v+'" onerror="this.style.display=\'none\'" loading="lazy">'+
+          '<div class="check">&#10003;</div>'+
+          '<div class="l">'+k+'</div>'+
+        '</div>').join('')}
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback-section">
+      <h3 class="section-title"><span class="accent"></span>针对性提升建议</h3>
+      <div class="fb-list">
+        ${s.fb.map(f=>'<div class="fb-item '+f[0].toLowerCase()+'">'+
+          '<span class="tag">'+(f[0]==='P0'?'&#9888; 优先攻克':f[0]==='P1'?'&#9650; 逐步提升':'&#9670; 进阶打磨')+'</span>'+
+          '<div class="title">'+f[1]+'</div>'+
+          '<div class="desc">'+f[2]+'</div>'+
+        '</div>').join('')}
+      </div>
+    </div>
+
+    <!-- Ranking -->
+    <div class="table-section">
+      <h3 class="section-title"><span class="accent"></span>班级排名</h3>
+      <div class="table-scroll">
+        <table class="rank-table">
+          <tr><th>排名</th><th>姓名</th><th>S曲线</th><th>臂高</th><th>旋转</th><th>臂展</th><th>综合</th></tr>
+          ${rankRows}
+        </table>
+      </div>
+    </div>
+
+    <!-- Teacher Notes -->
+    <div class="notes-section">
+      <h3 class="section-title"><span class="accent"></span>老师备注</h3>
+      <div class="notes-box" contenteditable="true" data-placeholder="点击添加教师评语…例如：本周专注练习S曲线，推胯有明显进步，下周继续。" id="notes-${i}"></div>
+      <div class="notes-toolbar">
+        <span class="save-hint" id="notes-hint-${i}">&#9998; 自动保存</span>
+        <button class="reset-note" onclick="resetNote(${i})">清空</button>
+      </div>
+    </div>
+  `;
+  pagesWrap.appendChild(div);
+});
+
+// ═══ TAB GENERATION ═══
+function buildTabs(){
+  const tabs = [
+    {id:'page-class', label:'班级总览'}
+  ];
+  DATA.forEach((s,i)=>{
+    tabs.push({id:'page-'+i, label:s.name});
+  });
+
+  tabs.forEach((t,ti)=>{
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn'+(ti===0?' active':'');
+    btn.textContent = t.label;
+    btn.dataset.page = t.id;
+    btn.onclick = function(){switchTab(t.id,this)};
+    tabWrap.appendChild(btn);
+  });
+}
+
+function switchTab(pageId, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target = document.getElementById(pageId);
+  if(target){target.classList.add('active')}
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══ VIDEO HANDLING ═══
+document.addEventListener('click',function(e){
+  const card = e.target.closest('.video-card');
+  if(!card) return;
+  const vid = card.querySelector('video');
+  const poster = card.querySelector('.poster-frame');
+  const overlay = card.querySelector('.play-overlay');
+  const tag = card.querySelector('.video-label .tag');
+  const errDiv = card.querySelector('.video-error');
+  if(!vid || errDiv.style.display==='flex') return;
+
+  if(vid.paused){
+    // Pause any other playing videos
+    document.querySelectorAll('.video-card video').forEach(v=>{if(v!==vid&&!v.paused){v.pause()}});
+    poster.classList.add('hidden');
+    overlay.classList.add('hidden');
+    vid.play().catch(()=>{});
+    if(tag) tag.textContent='正在播放…';
+  } else {
+    vid.pause();
+  }
+});
+
+function onVideoPlay(vid){
+  const card = vid.closest('.video-card');
+  if(!card) return;
+  const poster = card.querySelector('.poster-frame');
+  const overlay = card.querySelector('.play-overlay');
+  const tag = card.querySelector('.video-label .tag');
+  poster.classList.add('hidden');
+  overlay.classList.add('hidden');
+  if(tag) tag.textContent='正在播放…';
+}
+
+function onVideoPause(vid){
+  const card = vid.closest('.video-card');
+  if(!card) return;
+  const overlay = card.querySelector('.play-overlay');
+  const tag = card.querySelector('.video-label .tag');
+  overlay.classList.remove('hidden');
+  if(tag) tag.textContent='已暂停';
+}
+
+function onVideoEnd(vid){
+  const card = vid.closest('.video-card');
+  if(!card) return;
+  const poster = card.querySelector('.poster-frame');
+  const overlay = card.querySelector('.play-overlay');
+  const tag = card.querySelector('.video-label .tag');
+  poster.classList.remove('hidden');
+  overlay.classList.remove('hidden');
+  if(tag) tag.textContent='点击重播';
+}
+
+function handleVideoErr(vid){
+  const card = vid.closest('.video-card');
+  if(!card) return;
+  const errDiv = card.querySelector('.video-error');
+  const poster = card.querySelector('.poster-frame');
+  const overlay = card.querySelector('.play-overlay');
+  if(errDiv) errDiv.style.display='flex';
+  if(poster) poster.style.display='none';
+  if(overlay) overlay.style.display='none';
+}
+
+// ═══ BG SWITCHER ═══
+function switchBg(studentIdx, bgIdx, el){
+  el.closest('.bg-strip').querySelectorAll('.bg-card').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ═══ TEACHER NOTES — Auto-save to localStorage ═══
+document.addEventListener('input',function(e){
+  if(e.target.classList.contains('notes-box')){
+    const id = e.target.id;
+    if(!id) return;
+    const idx = id.replace('notes-','');
+    localStorage.setItem('wujing-note-'+idx, e.target.innerHTML);
+    const hint = document.getElementById('notes-hint-'+idx);
+    if(hint){
+      hint.textContent = '✓ 已保存';
+      hint.classList.add('saved');
+      clearTimeout(hint._timer);
+      hint._timer = setTimeout(()=>{
+        hint.textContent = '✎ 自动保存';
+        hint.classList.remove('saved');
+      },3000);
+    }
+  }
+});
+
+function resetNote(idx){
+  if(confirm('确定清空本条备注？')){
+    const box = document.getElementById('notes-'+idx);
+    if(box){box.innerHTML='';}
+    localStorage.removeItem('wujing-note-'+idx);
+    const hint = document.getElementById('notes-hint-'+idx);
+    if(hint){hint.textContent='✎ 已清空';hint.classList.remove('saved');}
+  }
+}
+
+// Restore saved notes
+function restoreNotes(){
+  DATA.forEach((_,i)=>{
+    const saved = localStorage.getItem('wujing-note-'+i);
+    if(saved){
+      const box = document.getElementById('notes-'+i);
+      if(box) box.innerHTML = saved;
+    }
+  });
+}
+
+// ═══ BRAND SETTINGS — localStorage ═══
+function toggleSettings(){
+  const modal = document.getElementById('settingsModal');
+  modal.classList.toggle('open');
+  if(modal.classList.contains('open')){
+    loadSettingsToForm();
+  }
+}
+
+function handleLogoUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const preview = document.getElementById('logoPreview');
+    preview.innerHTML = '<img src="'+ev.target.result+'" alt="Logo">';
+    // Store as data URL in hidden field
+    document.getElementById('logoPreview').dataset.url = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadSettingsToForm(){
+  const s = JSON.parse(localStorage.getItem('wujing-brand')||'{}');
+  document.getElementById('schoolNameInput').value = s.schoolName || '';
+  document.getElementById('teacherNameInput').value = s.teacherName || '';
+  document.getElementById('schoolMottoInput').value = s.schoolMotto || '';
+  const preview = document.getElementById('logoPreview');
+  if(s.logoDataUrl){
+    preview.innerHTML = '<img src="'+s.logoDataUrl+'" alt="Logo">';
+    preview.dataset.url = s.logoDataUrl;
+  } else {
+    preview.innerHTML = '<span class="placeholder">镜</span>';
+    delete preview.dataset.url;
+  }
+}
+
+function saveSettings(){
+  const schoolName = document.getElementById('schoolNameInput').value.trim();
+  const teacherName = document.getElementById('teacherNameInput').value.trim();
+  const schoolMotto = document.getElementById('schoolMottoInput').value.trim();
+  const logoPreview = document.getElementById('logoPreview');
+  const logoDataUrl = logoPreview.dataset.url || '';
+
+  const data = {schoolName, teacherName, schoolMotto, logoDataUrl};
+  localStorage.setItem('wujing-brand', JSON.stringify(data));
+  applyBrandSettings(data);
+  toggleSettings();
+  showToast('品牌设置已保存');
+}
+
+function applyBrandSettings(s){
+  // School name
+  const nameEl = document.getElementById('schoolNameDisplay');
+  if(nameEl) nameEl.textContent = s.schoolName || '敦煌舞《千年一顾》班级报告';
+
+  // School motto
+  const mottoEl = document.getElementById('schoolMottoDisplay');
+  if(mottoEl){
+    const base = '5名学员 · 舞镜AI评分系统';
+    mottoEl.textContent = s.schoolMotto ? s.schoolMotto + ' · ' + base : base;
+  }
+
+  // Teacher name
+  const teacherEl = document.getElementById('teacherNameDisplay');
+  if(teacherEl) teacherEl.textContent = s.teacherName ? '授课老师：' + s.teacherName : '';
+
+  // Logo
+  const logoImg = document.getElementById('schoolLogoImg');
+  const logoPlace = document.getElementById('schoolLogoPlaceholder');
+  if(s.logoDataUrl){
+    logoImg.src = s.logoDataUrl;
+    logoImg.style.display = 'block';
+    logoPlace.style.display = 'none';
+  } else {
+    logoImg.style.display = 'none';
+    logoPlace.style.display = 'flex';
+  }
+
+  // Footer
+  const footerEl = document.getElementById('footerSchoolName');
+  if(footerEl) footerEl.textContent = s.schoolName || '舞镜';
+}
+
+function resetSettings(){
+  if(!confirm('恢复默认设置？将清除已保存的品牌信息。')) return;
+  localStorage.removeItem('wujing-brand');
+  const defaultData = {schoolName:'', teacherName:'', schoolMotto:'', logoDataUrl:''};
+  applyBrandSettings(defaultData);
+  loadSettingsToForm();
+  toggleSettings();
+  showToast('已恢复默认');
+}
+
+// ═══ EXPORT JSON ═══
+function exportJSON(){
+  const exportData = DATA.map(s=>({
+    name:s.name, score:s.score, rank:s.rank,
+    sCurve:s.sc.v, armHeight:s.ah.v, spins:s.sp.v,
+    armSpan:s.as_.v, kneeBend:s.kn.v, movement:s.mv.v,
+    feedback:s.fb.map(f=>({priority:f[0],title:f[1],detail:f[2]}))
+  }));
+  const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'wujing-export-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('数据已导出');
+}
+
+// ═══ INIT ═══
+buildTabs();
+restoreNotes();
+
+// Apply saved brand settings
+const savedBrand = JSON.parse(localStorage.getItem('wujing-brand')||'null');
+if(savedBrand){applyBrandSettings(savedBrand)}
+</script>
+</body>
+</html>
