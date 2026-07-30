@@ -509,7 +509,7 @@ function initMP(){
     modelReady = true;
     loader.classList.add('hide');
   }catch(e){
-    errMsg.textContent = '⚠️ MediaPipe加载失败: '+e.message;
+    errMsg.textContent = '⚠️ AI姿态引擎加载失败: '+e.message;
     errMsg.style.display = 'block';
     console.error('MediaPipe init error:', e);
   }

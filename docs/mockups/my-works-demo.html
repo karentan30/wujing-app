@@ -1,6 +1,14 @@
 <!doctype html><html lang="zh"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>舞镜 · 我的作品库（付费存储）</title>
+<!-- 埋点 WJ 封装：生产由后端 analytics.render_frontend_snippet 注入真 PostHog key；
+     此处放安全兜底 stub，无 key 时 WJ.track 静默不报错（本页所有埋点调用已 if(window.WJ) 守卫）。 -->
+<script>
+  window.WJ = window.WJ || {
+    setUser:function(){}, reset:function(){},
+    track:function(e,p){ try{ if(window.posthog&&posthog.capture) posthog.capture(e,p||{}); }catch(_){} }
+  };
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -182,131 +190,122 @@
       <div class="mw-chip">K-pop</div>
     </div>
 
-    <!-- 列表 -->
-    <div class="mw-list">
-
-      <!-- 付费·永久 -->
-      <div class="work paid">
-        <div class="thumb">
-          <img src="report_demos/学员1_bg_飞天壁画金绿.png" alt="封面" loading="lazy">
-          <span class="g">国风古典</span>
-        </div>
-        <div class="bd">
-          <div class="wn">清别欢 · 圆月意境</div>
-          <div class="meta">2026.07.28 · 20.7s · 5句</div>
-          <div class="curve-lbl">角度达标度进步 <b>68 → 92%</b> ↑</div>
-          <div class="curve">
-            <div class="b" style="height:45%"></div><div class="b" style="height:52%"></div>
-            <div class="b" style="height:58%"></div><div class="b" style="height:70%"></div>
-            <div class="b" style="height:78%"></div><div class="b" style="height:92%"></div>
-          </div>
-          <div class="status">
-            <span class="paid-tag">✓ 已永久保存 · 会员</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 付费·永久 -->
-      <div class="work paid">
-        <div class="thumb">
-          <img src="report_demos/学员3_original.png" alt="封面" loading="lazy">
-          <span class="g">K-pop</span>
-        </div>
-        <div class="bd">
-          <div class="wn">CHOOM 副歌</div>
-          <div class="meta">2026.07.25 · 24s · 4段</div>
-          <div class="curve-lbl">角度达标度进步 <b>60 → 82%</b> ↑</div>
-          <div class="curve">
-            <div class="b" style="height:40%"></div><div class="b" style="height:48%"></div>
-            <div class="b" style="height:55%"></div><div class="b" style="height:62%"></div>
-            <div class="b" style="height:75%"></div><div class="b" style="height:82%"></div>
-          </div>
-          <div class="status">
-            <span class="paid-tag">✓ 已永久保存 · 会员</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 免费·即将清理 -->
-      <div class="work free">
-        <div class="thumb">
-          <img src="report_demos/学员2_bg_敦煌石窟暖金.png" alt="封面" loading="lazy">
-          <span class="g">民族舞</span>
-        </div>
-        <div class="bd">
-          <div class="wn">敦煌飞天 · 反弹琵琶</div>
-          <div class="meta">2026.07.24 · 31s · 6句</div>
-          <div class="curve-lbl">角度达标度 <b>88%</b>（单次·升级解锁曲线）</div>
-          <div class="curve" style="opacity:.4">
-            <div class="b" style="height:88%"></div>
-          </div>
-          <div class="status">
-            <div class="free-tag">
-              ⏳ <b>还剩 2 天</b>后自动清理 · 免费作品仅保留 7 天
-              <div class="acts">
-                <a class="dl">⬇ 下载带走</a>
-                <a class="up">升级永久保存</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 免费·即将清理 -->
-      <div class="work free">
-        <div class="thumb">
-          <img src="report_demos/学员4_original.png" alt="封面" loading="lazy">
-          <span class="g">手势舞</span>
-        </div>
-        <div class="bd">
-          <div class="wn">《漠河舞厅》手势版</div>
-          <div class="meta">2026.07.22 · 15s · 3段</div>
-          <div class="curve-lbl">角度达标度 <b>95%</b>（单次·升级解锁曲线）</div>
-          <div class="curve" style="opacity:.4">
-            <div class="b" style="height:95%"></div>
-          </div>
-          <div class="status">
-            <div class="free-tag">
-              ⏳ <b>还剩 5 天</b>后自动清理 · 免费作品仅保留 7 天
-              <div class="acts">
-                <a class="dl">⬇ 下载带走</a>
-                <a class="up">升级永久保存</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 免费·即将清理（红色紧迫感） -->
-      <div class="work free">
-        <div class="thumb">
-          <img src="report_demos/学员3_bg_天宫夜宴深蓝.png" alt="封面" loading="lazy">
-          <span class="g">国风古典</span>
-        </div>
-        <div class="bd">
-          <div class="wn">《万疆》水袖片段</div>
-          <div class="meta">2026.07.23 · 28s · 5句</div>
-          <div class="curve-lbl">角度达标度 <b>79%</b>（单次·升级解锁曲线）</div>
-          <div class="curve" style="opacity:.4">
-            <div class="b" style="height:79%"></div>
-          </div>
-          <div class="status">
-            <div class="free-tag" style="background:#FBEBE3;border-color:#EABBA0">
-              ⚠️ <b style="color:#C0501E">仅剩 1 天！</b>清理后无法找回，别丢了你磨过的舞
-              <div class="acts">
-                <a class="dl">⬇ 下载带走</a>
-                <a class="up">升级永久保存</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /list -->
+    <!-- 列表（由 loadMyWorks() 用 /api/my-works 真数据动态渲染，进步曲线按 curve[] 生成） -->
+    <div class="mw-list" id="mwList"></div>
+    <div class="mw-empty" id="mwEmpty" style="display:none;text-align:center;padding:48px 24px;color:#9A8768">
+      <div style="font-size:34px;margin-bottom:10px">🪞</div>
+      <div style="font-family:'Noto Serif SC',serif;font-size:16px;color:#4A3820;margin-bottom:6px">还没有拆过的舞</div>
+      <div style="font-size:12px;line-height:1.7">上传一支舞自动拆成八拍卡，跟练两次就解锁你的<b style="color:#7A5C2A">进步曲线</b></div>
+    </div>
 
   </div><!-- /scr -->
 </div><!-- /phone -->
 
-<div class="note2">免费作品 7 天后清理，引导「下载带走 or 升级永久保存」；付费作品标「已永久保存」并解锁达标度进步曲线。<br>顶部 ¥39/月 会员 banner = 永久存 + 实时摄像头角度纠错。剩1天用红色紧迫感催升级。假数据填充。</div>
+<div class="note2">免费作品 7 天后清理，引导「下载带走 or 升级永久保存」；付费作品标「已永久保存」并解锁达标度进步曲线。<br>顶部 ¥39/月 会员 banner = 永久存 + 实时摄像头角度纠错。剩1天用红色紧迫感催升级。<br>接线：GET /api/my-works 真数据渲染，进步曲线按 curve[] 动态生成（≥2 次才显曲线）。</div>
+
+<script>
+  // ── 舞镜 · 我的作品库 接线 ──
+  // 数据源：GET /api/my-works（登录后能力，带 Authorization: Bearer <wj_token>）。
+  // 进步曲线 = work.curve[]（历次跟练真达标度）；curve.length>=2 才显曲线，==1 显「单次·再练一次解锁」，
+  // ==0 显「还没练过·去跟练」。绝不编造分数：没练过 best_score=null → 显 --。
+  const API = (window.WJ_API || '');   // 生产同源留空；跨域时前端注入完整域名
+
+  const GENRE_CN = { guofeng:'国风古典', kpop:'K-pop', minzu:'民族舞', shoushi:'手势舞', jazz:'爵士' };
+
+  function fmtDate(s){
+    if(!s) return '';
+    // 后端 datetime('now') 形如 '2026-07-28 09:21:06'
+    return String(s).slice(0,10).replace(/-/g,'.');
+  }
+  function daysLeft(expire){
+    if(!expire) return null;
+    const ms = new Date(expire.replace(' ','T')).getTime() - Date.now();
+    return Math.max(0, Math.ceil(ms / 86400000));
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+  // 进步曲线柱状：按真分数生成，高度=分数值。curve.length>=2 才显，否则空串。
+  function renderBars(curve){
+    if(!(curve && curve.length >= 2)) return '';
+    return curve.map(s => `<div class="b" style="height:${Math.max(6,Math.min(100,s))}%"></div>`).join('');
+  }
+  // 曲线文案：>=2 显「首→最佳%↑」；==1 显「单次·再练一次解锁曲线」；==0 显「还没练过·去跟练」。
+  function renderCurveLbl(w){
+    if(w.curve && w.curve.length >= 2)
+      return `角度达标度进步 <b>${w.first_score} → ${w.best_score}%</b> ↑`;
+    if(w.curve && w.curve.length === 1)
+      return `角度达标度 <b>${w.best_score ?? '--'}%</b>（单次·再练一次解锁曲线）`;
+    return `<b style="color:#B07A3A">还没练过</b> · 点「继续练」解锁进步曲线`;
+  }
+
+  function renderWorkCard(w){
+    const cover = (API + w.cover);
+    const genreCn = GENRE_CN[w.genre] || w.genre || '';
+    const meta = `${fmtDate(w.created_at)}${w.duration_s ? ' · '+(+w.duration_s).toFixed(1)+'s' : ''}${w.n_phrases ? ' · '+w.n_phrases+'句' : ''}`;
+    const bars = renderBars(w.curve);
+    const curveWrap = bars
+      ? `<div class="curve">${bars}</div>`
+      : `<div class="curve" style="opacity:.4">${ (w.curve&&w.curve.length===1) ? `<div class="b" style="height:${Math.max(6,Math.min(100,w.best_score||6))}%"></div>` : '' }</div>`;
+
+    let statusHtml;
+    if(w.is_paid){
+      statusHtml = `<span class="paid-tag">✓ 已永久保存 · 会员</span>`;
+    }else{
+      const dl = daysLeft(w.expire_at);
+      const urgent = (dl!=null && dl<=1);
+      statusHtml = `<div class="free-tag"${urgent?' style="background:#FBEBE3;border-color:#EABBA0"':''}>
+          ${ urgent
+              ? `⚠️ <b style="color:#C0501E">仅剩 ${dl} 天！</b>清理后无法找回，别丢了你磨过的舞`
+              : `⏳ <b>还剩 ${dl==null?'--':dl} 天</b>后自动清理 · 免费作品仅保留 7 天` }
+          <div class="acts">
+            <a class="dl" href="#" data-dl="${esc(w.dance_id)}">⬇ 下载带走</a>
+            <a class="up" href="#">升级永久保存</a>
+          </div>
+        </div>`;
+    }
+
+    return `<div class="work ${w.is_paid?'paid':'free'}" data-did="${esc(w.dance_id)}">
+      <div class="thumb">
+        <img src="${esc(cover)}" alt="封面" loading="lazy" onerror="this.style.display='none'">
+        <span class="g">${esc(genreCn)}</span>
+      </div>
+      <div class="bd">
+        <div class="wn">${esc(w.title||'我的舞')}</div>
+        <div class="meta">${esc(meta)}</div>
+        <div class="curve-lbl">${renderCurveLbl(w)}</div>
+        ${curveWrap}
+        <div class="status">${statusHtml}
+          <a class="go-practice" href="${API}/?dance_id=${esc(w.dance_id)}"
+             style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#7A5C2A">继续练 ›</a>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  async function loadMyWorks(){
+    const token = localStorage.getItem('wj_token');
+    if(!token){ location.href = (API + '/login.html?next=/my-works'); return; }
+    let data;
+    try{
+      const r = await fetch(API + '/api/my-works', { headers:{ Authorization:'Bearer '+token } });
+      if(r.status === 401){ location.href = (API + '/login.html?next=/my-works'); return; }
+      data = await r.json();
+    }catch(e){ console.error('my-works load failed', e); return; }
+
+    const { works=[], count=0, saved=0 } = data || {};
+    if(window.WJ) WJ.track('library_revisit', { works_count: count });
+
+    const cntEl = document.querySelector('.mw-count');
+    if(cntEl) cntEl.textContent = `共 ${count} 支 · 已保存 ${saved} 支`;
+
+    const list = document.getElementById('mwList');
+    const empty = document.getElementById('mwEmpty');
+    if(!count){ list.innerHTML=''; empty.style.display='block'; return; }
+    empty.style.display='none';
+    list.innerHTML = works.map(renderWorkCard).join('');
+  }
+
+  document.addEventListener('DOMContentLoaded', loadMyWorks);
+</script>
 
 </body></html>

@@ -579,9 +579,51 @@ body::after{
 
 <script>
 // ════════════════════════════════════════════════
-//  DATA — 学员数据
+//  数据接入：优先后端班级报告(?class=<id>)，无则用下方内置演示数据(离线兜底)。
+//  后端契约见 group_review.build_report：{class:{...,brand,commonWeakness,unifiedPlan}, students:[...]}
+//  学员字段(name/score/sc/ah/sp/as_/kn/mv/radar/fb/videoUrl/poster/bg)与内置 DATA[] 完全同口径。
 // ════════════════════════════════════════════════
-const DATA = [
+const __WJ_QS = new URLSearchParams(location.search);
+const __WJ_CLASS_ID = __WJ_QS.get('class') || __WJ_QS.get('class_id');
+// 后端优先的品牌/总评上下文（无后端时保持内置默认）
+let BACKEND_BRAND = null;      // {schoolName,teacherName,motto,logoUrl}
+let BACKEND_CLASS = null;      // {danceName,genre,commonWeakness,unifiedPlan,disclaimer,studentCount}
+
+// 后端 student -> 内置 DATA[] 行（字段口径已对齐，缺项给安全默认，绝不崩）
+function __wjMapStudent(s){
+  return {
+    name: s.name || '学员', score: String(s.score ?? '0'), rank: s.rank || 0,
+    sc: s.sc || {v:0,pct:'0%'}, ah: s.ah || {v:0,pct:'0%'}, sp: s.sp || {v:0,pct:'0%'},
+    as_: s.as_ || {v:0,pct:'0%'}, kn: s.kn || {v:1,pct:'0%'}, mv: s.mv || {v:0,pct:'0%'},
+    radar: Array.isArray(s.radar) && s.radar.length===6 ? s.radar : [0,0,0,0,0,0],
+    // 视频卡：后端只给一路 videoUrl（学员自己那段），v1/v2 用同一路兜底(背景切换 P2 再接)
+    v1: s.videoUrl || s.v1 || '', v2: s.v2 || s.videoUrl || '',
+    poster: s.poster || '',
+    bg: s.bg || {},
+    fb: Array.isArray(s.fb) ? s.fb : [],
+    teacher_note: s.teacher_note || ''
+  };
+}
+
+async function __wjLoadBackend(){
+  if(!__WJ_CLASS_ID) return null;
+  try{
+    const r = await fetch('/api/class/'+encodeURIComponent(__WJ_CLASS_ID)+'/report');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const rep = await r.json();
+    BACKEND_CLASS = rep.class || null;
+    if(BACKEND_CLASS && BACKEND_CLASS.brand) BACKEND_BRAND = BACKEND_CLASS.brand;
+    return (rep.students || []).map(__wjMapStudent);
+  }catch(e){
+    console.error('[舞镜] 拉取班级报告失败，回退演示数据：', e);
+    const t = document.getElementById('toast');
+    if(t){ t.textContent='班级报告加载失败，请刷新重试'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+    return null;
+  }
+}
+
+// DATA 用 let：后端有数据则整体替换为后端结果
+let DATA = [
   {name:'张雨欣', score:'5.2', rank:0,
    sc:{v:1.1,pct:'11%'}, ah:{v:75,pct:'75%'}, sp:{v:10,pct:'50%'},
    as_:{v:0.310,pct:'62%'}, kn:{v:0.93,pct:'70%'}, mv:{v:0.140,pct:'48%'},
@@ -644,8 +686,15 @@ const DATA = [
    ]},
 ];
 
-// ═══ Compute Rankings ═══
-DATA.sort((a,b)=>b.sc.v-a.sc.v).forEach((x,i)=>x.rank=i+1);
+// ═══ Compute Rankings（若后端已给 rank 则尊重后端，否则按 S 曲线降序算，与后端同口径）═══
+function __wjComputeRanks(){
+  const hasRank = DATA.length && DATA.every(x=>x.rank>0);
+  if(hasRank){ DATA.sort((a,b)=>a.rank-b.rank); }
+  else { DATA.sort((a,b)=>b.sc.v-a.sc.v).forEach((x,i)=>x.rank=i+1); }
+}
+
+// tabWrap/pagesWrap 提升为模块作用域（buildTabs / 个人页 forEach 都要用），在渲染时赋值
+let tabWrap = null, pagesWrap = null;
 
 // ═══ Helpers ═══
 function scClr(v){return v<1.5?'#c43a30':v<3?'#c49028':'#5a8a5c'}
@@ -699,9 +748,12 @@ function createRadar(data,w=280,h=280){
   return svg.join('\n');
 }
 
-// ═══ BUILD PAGES ═══
-const tabWrap = document.getElementById('tabWrap');
-const pagesWrap = document.getElementById('pages');
+// ═══ BUILD PAGES ═══（整段包进 __wjRenderAll，等后端数据就绪后再执行）
+function __wjRenderAll(){
+tabWrap = document.getElementById('tabWrap');
+pagesWrap = document.getElementById('pages');
+// 幂等：重渲染前清空（正常只跑一次）
+tabWrap.innerHTML = ''; pagesWrap.innerHTML = '';
 
 // -- Action Bar --
 const actionBar = document.createElement('div');
@@ -733,7 +785,7 @@ cp.innerHTML = `
 
   <h3 class="section-title"><span class="accent"></span>班级总评</h3>
   <div class="insight-card">
-    <strong>班级总评：</strong>基于MediaPipe姿态分析引擎，从S曲线、臂高、旋转、臂展、屈膝、动作量六个维度量化评估。<br><br>
+    <strong>班级总评：</strong>基于舞镜AI姿态引擎，从S曲线、臂高、旋转、臂展、屈膝、动作量六个维度量化评估。<br><br>
     &#10004; <strong>优势：</strong>全员臂高达标（65-83%），旋转基础扎实。<br>
     &#128308; <strong>统一短板：</strong>S曲线（肩髋错位）全班均值 <strong>${avgSc.toFixed(1)}%</strong>，距敦煌舞标准6%有较大差距。<br>
     &#129351; <strong>第一名：</strong>${DATA[0].name}（${DATA[0].sc.v}% · 综合${DATA[0].score}/10）<br>
@@ -917,6 +969,7 @@ DATA.forEach((s,i)=>{
   `;
   pagesWrap.appendChild(div);
 });
+} // ← 结束 __wjRenderAll()
 
 // ═══ TAB GENERATION ═══
 function buildTabs(){
@@ -1170,13 +1223,30 @@ function exportJSON(){
   showToast('数据已导出');
 }
 
-// ═══ INIT ═══
-buildTabs();
-restoreNotes();
+// ═══ INIT ═══（后端优先：先拉班级报告，再渲染）
+(async function __wjBoot(){
+  const backendStudents = await __wjLoadBackend();
+  if(backendStudents && backendStudents.length){
+    DATA = backendStudents;            // 整体替换为后端真数据
+  }
+  __wjComputeRanks();                  // 尊重后端 rank，否则本地按 S 曲线算
+  __wjRenderAll();                     // 构建总览页 + 各学员页
+  buildTabs();
+  restoreNotes();
 
-// Apply saved brand settings
-const savedBrand = JSON.parse(localStorage.getItem('wujing-brand')||'null');
-if(savedBrand){applyBrandSettings(savedBrand)}
+  // 品牌：后端建班时设过的优先；无则回退 localStorage（离线/演示）
+  const localBrand = JSON.parse(localStorage.getItem('wujing-brand')||'null');
+  if(BACKEND_BRAND && (BACKEND_BRAND.schoolName || BACKEND_BRAND.teacherName || BACKEND_BRAND.motto || BACKEND_BRAND.logoUrl)){
+    applyBrandSettings({
+      schoolName: BACKEND_BRAND.schoolName || '',
+      teacherName: BACKEND_BRAND.teacherName || '',
+      schoolMotto: BACKEND_BRAND.motto || '',
+      logoDataUrl: BACKEND_BRAND.logoUrl || ''
+    });
+  } else if(localBrand){
+    applyBrandSettings(localBrand);
+  }
+})();
 </script>
 </body>
 </html>

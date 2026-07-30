@@ -7,7 +7,7 @@
 import os, json, math, base64, subprocess, tempfile, traceback, urllib.request
 import concurrent.futures as cf
 
-BASE_DIR = "/www/wujing-api"
+BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 ARK_URL = "https://ark.cn-beijing.volces.com/api/v3/responses"
 EP = os.environ.get("ARK_VISION_EP", "ep-20260729155405-5l7dj")

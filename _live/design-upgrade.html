@@ -2675,7 +2675,7 @@ function startDecompose(){
     })
     .catch(function(){ btn.disabled=false; btn.textContent='开始拆解'; toast('网络错误'); });
 }
-var DC_STEPS=['读取视频 · 按八拍切分','AI 逐段识别动作 · 脚下 · 口诀','MediaPipe 逐帧测量关节角度','生成八拍卡 · 故事卡 · 老师点评'];
+var DC_STEPS=['读取视频 · 按八拍切分','AI 逐段识别动作 · 脚下 · 口诀','AI 逐帧测量关节角度','生成八拍卡 · 故事卡 · 老师点评'];
 var DC_LOAD_TIMER=null;
 function dcLoading(){
   var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span></div>';}).join('');
@@ -2726,7 +2726,7 @@ function dcAngHtml(a){
       '<span class="gv '+(ok?'ok':'off')+'">'+val+'°</span></div>'+
       '<div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
   });
-  return cells?'<div class="ang"><span class="glb">MediaPipe 逐帧实测 · 对照理想角度</span><div class="grid">'+cells+'</div></div>':'';
+  return cells?'<div class="ang"><span class="glb">AI 逐帧实测 · 对照理想角度</span><div class="grid">'+cells+'</div></div>':'';
 }
 function renderDecompose(d){
   DC_ID=d.id; DC_DATA=d;

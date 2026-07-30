@@ -1,6 +1,14 @@
 <!doctype html><html lang="zh"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>舞镜 · 作品广场（UGC 增长飞轮）</title>
+<!-- 埋点 WJ 封装：生产由后端 analytics.render_frontend_snippet 注入真 PostHog key；
+     此处放安全兜底 stub，无 key 时 WJ.track 静默不报错（本页所有埋点调用已 if(window.WJ) 守卫）。 -->
+<script>
+  window.WJ = window.WJ || {
+    setUser:function(){}, reset:function(){},
+    track:function(e,p){ try{ if(window.posthog&&posthog.capture) posthog.capture(e,p||{}); }catch(_){} }
+  };
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -229,153 +237,12 @@
       <div class="ib">去上传</div>
     </div>
 
-    <!-- 瀑布流 -->
-    <div class="pz-feed">
-
-      <!-- 卡1 -->
-      <div class="card">
-        <div class="cover">
-          <span class="genre">国风古典</span>
-          <span class="score">◆ 达标 92%</span>
-          <img src="report_demos/学员1_bg_飞天壁画金绿.png" alt="封面" loading="lazy">
-          <span class="dur">20.7s · 5句</span>
-          <div class="達標"><i style="width:92%"></i></div>
-        </div>
-        <div class="bd">
-          <div class="dname">清别欢 · 圆月意境</div>
-          <div class="author">
-            <div class="avatar">禾</div>
-            <div class="aname">禾苗小满</div>
-            <div class="follow on">已关注</div>
-          </div>
-          <div class="foot">
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>1.2k 跟练</div>
-            <div class="stat liked"><svg width="13" height="13" viewBox="0 0 24 24" fill="#C46A6A" stroke="#C46A6A" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>3.4k</div>
-            <div class="go">跟练 ›</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 卡2 -->
-      <div class="card">
-        <div class="cover">
-          <span class="genre">K-pop</span>
-          <span class="score">◆ 达标 82%</span>
-          <img src="report_demos/学员3_original.png" alt="封面" loading="lazy">
-          <span class="dur">24s · 4段</span>
-          <div class="達標"><i style="width:82%"></i></div>
-        </div>
-        <div class="bd">
-          <div class="dname">BABYMONSTER — CHOOM 副歌</div>
-          <div class="author">
-            <div class="avatar">A</div>
-            <div class="aname">Ari跳给你看</div>
-            <div class="follow">＋关注</div>
-          </div>
-          <div class="foot">
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>5.8k 跟练</div>
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>9.1k</div>
-            <div class="go">跟练 ›</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 卡3 -->
-      <div class="card">
-        <div class="cover">
-          <span class="genre">民族舞</span>
-          <span class="score">◆ 达标 88%</span>
-          <img src="report_demos/学员2_bg_敦煌石窟暖金.png" alt="封面" loading="lazy">
-          <span class="dur">31s · 6句</span>
-          <div class="達標"><i style="width:88%"></i></div>
-        </div>
-        <div class="bd">
-          <div class="dname">敦煌飞天 · 反弹琵琶</div>
-          <div class="author">
-            <div class="avatar">莲</div>
-            <div class="aname">莲步生香</div>
-            <div class="follow">＋关注</div>
-          </div>
-          <div class="foot">
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>842 跟练</div>
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>2.1k</div>
-            <div class="go">跟练 ›</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 卡4 -->
-      <div class="card">
-        <div class="cover">
-          <span class="genre">手势舞</span>
-          <span class="score">◆ 达标 95%</span>
-          <img src="report_demos/学员4_original.png" alt="封面" loading="lazy">
-          <span class="dur">15s · 3段</span>
-          <div class="達標"><i style="width:95%"></i></div>
-        </div>
-        <div class="bd">
-          <div class="dname">《漠河舞厅》手势版</div>
-          <div class="author">
-            <div class="avatar">阿</div>
-            <div class="aname">阿星手势教学</div>
-            <div class="follow">＋关注</div>
-          </div>
-          <div class="foot">
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>12k 跟练</div>
-            <div class="stat liked"><svg width="13" height="13" viewBox="0 0 24 24" fill="#C46A6A" stroke="#C46A6A" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>18k</div>
-            <div class="go">跟练 ›</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 卡5 -->
-      <div class="card">
-        <div class="cover">
-          <span class="genre">国风古典</span>
-          <span class="score">◆ 达标 79%</span>
-          <img src="report_demos/学员3_bg_天宫夜宴深蓝.png" alt="封面" loading="lazy">
-          <span class="dur">28s · 5句</span>
-          <div class="達標"><i style="width:79%"></i></div>
-        </div>
-        <div class="bd">
-          <div class="dname">《万疆》水袖片段</div>
-          <div class="author">
-            <div class="avatar">青</div>
-            <div class="aname">青衫舞影</div>
-            <div class="follow">＋关注</div>
-          </div>
-          <div class="foot">
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>631 跟练</div>
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>1.5k</div>
-            <div class="go">跟练 ›</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 卡6 -->
-      <div class="card">
-        <div class="cover">
-          <span class="genre">K-pop</span>
-          <span class="score">◆ 达标 90%</span>
-          <img src="report_demos/学员1_original.png" alt="封面" loading="lazy">
-          <span class="dur">18s · 4段</span>
-          <div class="達標"><i style="width:90%"></i></div>
-        </div>
-        <div class="bd">
-          <div class="dname">NewJeans — Supernatural</div>
-          <div class="author">
-            <div class="avatar">兔</div>
-            <div class="aname">兔兔爱跳舞</div>
-            <div class="follow on">已关注</div>
-          </div>
-          <div class="foot">
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a4 4 0 0 1 0 8H7a4 4 0 0 1 0-8"/><path d="M12 11v10"/></svg>7.3k 跟练</div>
-            <div class="stat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>6.7k</div>
-            <div class="go">跟练 ›</div>
-          </div>
-        </div>
-      </div>
-
+    <!-- 瀑布流（由 loadPlaza() 用 /api/plaza 真数据渲染 is_public=1 的作品·无假互动数） -->
+    <div class="pz-feed" id="pzFeed"></div>
+    <div class="pz-empty" id="pzEmpty" style="display:none;text-align:center;padding:48px 24px;color:#9A8768">
+      <div style="font-size:34px;margin-bottom:10px">🪞</div>
+      <div style="font-family:'Noto Serif SC',serif;font-size:16px;color:#4A3820;margin-bottom:6px">广场还很安静</div>
+      <div style="font-size:12px;line-height:1.7">从「我的作品」里选一支<b style="color:#7A5C2A">发到广场</b>，成为第一个被跟练的人</div>
     </div><!-- /feed -->
 
     <!-- 底部导航 -->
@@ -402,6 +269,77 @@
   </div><!-- /scr -->
 </div><!-- /phone -->
 
-<div class="note2">增长飞轮：广场看到高分作品 → 一键跟练 → 自己拆解上传 → 被别人跟练/关注 → 更多创作。<br>顶部按舞种切 tab，封面帧+AI 达标度是主要吸引力信号。假数据填充。</div>
+<div class="note2">增长飞轮：广场看到高分作品 → 一键跟练 → 自己拆解上传 → 被别人跟练/关注 → 更多创作。<br>顶部按舞种切 tab，封面帧 + 舞镜AI 达标度是主要吸引力信号。<br>接线：GET /api/plaza 真数据（my_works.is_public=1），只显真实达标度，已删除假互动数（跟练/点赞计数在有真实数据前不展示）。</div>
+
+<script>
+  // ── 舞镜 · 作品广场 接线 ──
+  // 数据源：GET /api/plaza?genre=<tab>（公开作品·my_works.is_public=1）。
+  // 诚实红线：只展示真实字段（封面/舞种/达标度/时长）。跟练数、点赞数在有真实计数系统前
+  // 一律不展示，绝不编造 1.2k/3.4k/18k 之类的假数字。best_score 来自 practice_scores 真数据。
+  const API = (window.WJ_API || '');
+  const GENRE_CN = { guofeng:'国风古典', kpop:'K-pop', minzu:'民族舞', shoushi:'手势舞', jazz:'爵士' };
+  const TAB_TO_GENRE = { '推荐':'recommend', '国风古典':'guofeng', 'K-pop':'kpop',
+                         '手势舞':'shoushi', '民族舞':'minzu', '爵士':'jazz' };
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+  function renderCard(p){
+    const cover = API + p.cover;
+    const genreCn = GENRE_CN[p.genre] || p.genre || '';
+    const durTxt = `${p.duration_s ? (+p.duration_s).toFixed(1)+'s' : ''}${p.n_phrases ? ' · '+p.n_phrases+'句' : ''}`;
+    // 达标度：真数据才显。没练过 best_score=null → 不显分数、不显进度条（不假造）。
+    const hasScore = (p.best_score != null);
+    const scoreBadge = hasScore ? `<span class="score">◆ 达标 ${p.best_score}%</span>` : '';
+    const scoreBar   = hasScore ? `<div class="達標"><i style="width:${Math.max(3,Math.min(100,p.best_score))}%"></i></div>` : '';
+    return `<div class="card" data-did="${esc(p.dance_id)}">
+      <div class="cover">
+        <span class="genre">${esc(genreCn)}</span>
+        ${scoreBadge}
+        <img src="${esc(cover)}" alt="封面" loading="lazy" onerror="this.style.display='none'">
+        ${ durTxt ? `<span class="dur">${esc(durTxt)}</span>` : '' }
+        ${scoreBar}
+      </div>
+      <div class="bd">
+        <div class="dname">${esc(p.title||'我的舞')}</div>
+        <div class="foot">
+          <a class="go" href="${API}/?dance_id=${esc(p.dance_id)}" data-go="${esc(p.dance_id)}">跟练 ›</a>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  async function loadPlaza(genre){
+    const g = genre || 'recommend';
+    let data;
+    try{
+      const r = await fetch(`${API}/api/plaza?genre=${encodeURIComponent(g)}`);
+      data = await r.json();
+    }catch(e){ console.error('plaza load failed', e); return; }
+    const { posts=[], count=0 } = data || {};
+    const feed = document.getElementById('pzFeed');
+    const empty = document.getElementById('pzEmpty');
+    if(!count){ feed.innerHTML=''; empty.style.display='block'; return; }
+    empty.style.display='none';
+    feed.innerHTML = posts.map(renderCard).join('');
+    // 「跟练 ›」→ 埋 new_dance_from_lib（从广场拉动下一支的关键转化）
+    feed.querySelectorAll('[data-go]').forEach(a=>{
+      a.addEventListener('click', ()=>{
+        if(window.WJ) WJ.track('new_dance_from_lib', { source_dance_id: a.getAttribute('data-go') });
+      });
+    });
+  }
+
+  // tab 切舞种
+  document.addEventListener('DOMContentLoaded', ()=>{
+    document.querySelectorAll('.pz-tab').forEach(tab=>{
+      tab.addEventListener('click', ()=>{
+        document.querySelectorAll('.pz-tab').forEach(t=>t.classList.remove('on'));
+        tab.classList.add('on');
+        loadPlaza(TAB_TO_GENRE[tab.textContent.trim()] || 'recommend');
+      });
+    });
+    loadPlaza('recommend');
+  });
+</script>
 
 </body></html>

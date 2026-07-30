@@ -12,7 +12,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from models import init_db, create_user, get_user_by_email, get_user_by_id, create_review, get_review, get_user_reviews, update_review_status, get_practice_progress, upsert_practice_task, get_user_stats
 from auth import hash_password, verify_password, create_token, decode_token
-from payment import router as pay_router, init_orders_table, check_analysis_access, get_db as _pay_get_db
+# 支付统一走 pay.py（微信 NATIVE / 支付宝当面付 / Stripe Checkout，含幂等+验签+履约）。
+# 旧 payment.py 的支付桩已废弃：不再 import；订单表/DB 连接改用 pay.py 提供的实现。
+# check_analysis_access（旧「每月免费+付费」额度门）在新产品逻辑下作废——
+# 产品拍板：上传免费无需登录，要拆解才付 9.9（付费门在 /api/decompose + pay.py 履约）。
+from pay import router as pay_router, init_orders_table, get_db as _pay_get_db
 from auto_decompose import run_decompose, get_decompose
 app = FastAPI(title="WuJing Dance API", version="1.0.0")
 app.add_middleware(
@@ -22,15 +26,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Serve demo static files
-app.mount("/demo", StaticFiles(directory="/www/wujing-api/static/demo", html=True), name="demo")
-app.mount("/static", StaticFiles(directory="/www/wujing-api/static"), name="static")
-app.mount("/clips", StaticFiles(directory="/www/wujing-api/clips"), name="clips")
-app.mount("/clips2", StaticFiles(directory="/www/wujing-api/clips2"), name="clips2")
-app.mount("/clips3", StaticFiles(directory="/www/wujing-api/clips3"), name="clips3")
-app.mount("/clips4", StaticFiles(directory="/www/wujing-api/clips4"), name="clips4")
-BASE_DIR = "/www/wujing-api"
+# BASE_DIR 支持 env 覆盖（生产默认 /www/wujing-api；staging/本地测试可指向副本，不碰生产库/数据）
+BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
 DATA_DIR = os.path.join(BASE_DIR, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+# Serve static/clips 目录——只在存在时挂载（本地/staging 缺目录不致启动崩溃）
+def _mount_if_exists(url, directory, name, html=False):
+    if os.path.isdir(directory):
+        app.mount(url, StaticFiles(directory=directory, html=html), name=name)
+_mount_if_exists("/demo", os.path.join(BASE_DIR, "static", "demo"), "demo", html=True)
+_mount_if_exists("/static", os.path.join(BASE_DIR, "static"), "static")
+_mount_if_exists("/clips", os.path.join(BASE_DIR, "clips"), "clips")
+_mount_if_exists("/clips2", os.path.join(BASE_DIR, "clips2"), "clips2")
+_mount_if_exists("/clips3", os.path.join(BASE_DIR, "clips3"), "clips3")
+_mount_if_exists("/clips4", os.path.join(BASE_DIR, "clips4"), "clips4")
 # Initialize database on startup
 init_db()
 init_orders_table()
@@ -49,6 +58,20 @@ def get_current_user(authorization: str = Header(None)):
         return user
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+
+def get_optional_user(authorization: str = Header(None)):
+    """可选登录：有合法 token 返回 user，否则返回 None（不抛 401）。
+    用于「上传免费无需登录」的游客链路——登录用户绑到其账号，游客走匿名 dance。"""
+    if not authorization:
+        return None
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        return None
+    try:
+        payload = decode_token(token)
+        return get_user_by_id(payload["user_id"])
+    except Exception:
+        return None
 # ---------- Phase 1: User System ----------
 @app.post("/api/register")
 def register(email: str = Form(...), password: str = Form(...)):
@@ -178,7 +201,7 @@ def _valid_teacher_keys():
 async def upload_video(
     video: UploadFile = File(...),
     teacher_key: str = Form(...),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_optional_user)   # 上传免费·无需登录（游客可传）
 ):
     if teacher_key not in _valid_teacher_keys():
         raise HTTPException(
@@ -188,45 +211,19 @@ async def upload_video(
     review_id = str(uuid.uuid4())
     review_dir = os.path.join(DATA_DIR, review_id)
     os.makedirs(review_dir, exist_ok=True)
-    # Save uploaded video
+    # Save uploaded video（大小兜底：防 OOM / 任意大文件）
     video_path = os.path.join(review_dir, "input.mp4")
     content = await video.read()
+    if len(content) > 500 * 1024 * 1024:
+        import shutil as _sh
+        _sh.rmtree(review_dir, ignore_errors=True)
+        raise HTTPException(status_code=413, detail="视频过大，请压到 500MB 以内")
     with open(video_path, "wb") as f:
         f.write(content)
-    # Create review record in DB
-    create_review(review_id, user["id"], teacher_key)
-    # ---- 付费门骨架：每月1次免费，超出需付费(single/¥9.9 或 monthly/¥39) ----
-    try:
-        _access = check_analysis_access(user["id"])
-    except Exception:
-        _access = {"allowed": True, "type": "free", "reason": "access-check-skip"}
-    if not _access.get("allowed", True):
-        raise HTTPException(status_code=402, detail=_access.get("reason", "需要付费"))
-    # 单次付费：标记消耗一次（钩子留好）
-    if _access.get("type") == "single":
-        try:
-            with _pay_get_db() as _c:
-                _c.execute(
-                    "UPDATE orders SET consumed_at=CURRENT_TIMESTAMP WHERE id=("
-                    "SELECT id FROM orders WHERE user_id=? AND product='single' AND status='paid'"
-                    " AND (consumed_at IS NULL OR consumed_at='') ORDER BY paid_at LIMIT 1)",
-                    (user["id"],)
-                )
-        except Exception:
-            pass
-    # 免费额度：记一条 free 占位行，作为每月免费计数依据
-    if _access.get("type") == "free":
-        try:
-            import datetime as _dt, uuid as _uuid
-            with _pay_get_db() as _c:
-                _c.execute(
-                    "INSERT INTO orders(out_trade_no,user_id,product,amount,currency,channel,status,created_at)"
-                    " VALUES(?,?,'free','0.00','cny','free','paid',?)",
-                    ("WJF" + _dt.datetime.now().strftime("%Y%m%d%H%M%S") + _uuid.uuid4().hex[:6],
-                     user["id"], _dt.datetime.now().isoformat())
-                )
-        except Exception:
-            pass
+    # Create review record in DB（游客 user_id=None，登录用户绑账号）
+    create_review(review_id, (user["id"] if user else None), teacher_key)
+    # 上传免费、无需登录：不再有每月额度门（旧 check_analysis_access 已作废）。
+    # 此流程是老「对镜评分」，与「付费拆解出卡」是两条链路，此处保持免费即时分析。
     # Run analysis in background
     thread = threading.Thread(
         target=run_analysis,
@@ -342,13 +339,9 @@ def generate_bg(data: dict, user: dict = Depends(get_current_user)):
     prompt = data.get("prompt", "")
     if not prompt:
         raise HTTPException(status_code=400, detail="prompt is required")
-    # ⚠️额度门：生图=最大烧钱坑·防登录用户无限调用烧豆包余额
-    try:
-        _acc = check_analysis_access(user["id"])
-    except Exception:
-        _acc = {"allowed": True}
-    if not _acc.get("allowed", True):
-        raise HTTPException(status_code=402, detail=_acc.get("reason", "生图需要付费额度"))
+    # ⚠️生图=最大烧钱坑：仍要求登录（get_current_user）防匿名无限调用烧豆包余额。
+    # 旧 check_analysis_access 额度门已随 payment.py 作废；此处以「必须登录」作为最低门槛，
+    # 更严格的每日配额留待后续（TODO：加登录用户每日生图上限）。
     key = os.environ.get("ARK_API_KEY")
     if not key:
         raise HTTPException(status_code=500, detail="ARK_API_KEY not configured")
@@ -372,21 +365,28 @@ def list_teachers():
     return {"teachers": _teacher_list()}
 
 # ---------- 任意舞自动拆解（免选老师·上传即出八拍卡/故事卡/记忆卡） ----------
+def _dance_is_paid(dance_id):
+    """该 dance 是否已存在一条 paid 订单（付费门判定，复用 pay.py orders 表）。"""
+    try:
+        with _pay_get_db() as _c:
+            row = _c.execute(
+                "SELECT 1 FROM orders WHERE dance_id=? AND status='paid' LIMIT 1",
+                (dance_id,)).fetchone()
+            return bool(row)
+    except Exception:
+        return False
+
+
 @app.post("/api/decompose")
 async def decompose_video(
     video: UploadFile = File(...),
     title: str = Form("我的舞"),
     genre: str = Form("guofeng"),
-    user: dict = Depends(get_current_user),
+    user: dict = Depends(get_optional_user),   # 上传免费·无需登录（游客可传）
 ):
-    # 免费额度门（复用付费门骨架，防刷烧钱）
-    try:
-        _access = check_analysis_access(user["id"])
-    except Exception:
-        _access = {"allowed": True, "type": "free"}
-    if not _access.get("allowed", True):
-        raise HTTPException(status_code=402, detail=_access.get("reason", "需要付费"))
-
+    """上传免费（游客可传）：存源视频 + 建 dance 记录，但**不自动拆解**。
+    用户点「拆开这支舞」→ /api/pay/*/create 付 9.9 → 支付回调履约触发 run_decompose。
+    这里只落地 dance_id + 源视频，返回 awaiting_payment，前端据此展示付费按钮。"""
     # 上传校验：类型 + 大小（防 OOM / 任意文件）。放行 video/* 和 octet-stream(浏览器/curl常用)，只拒明确非视频
     _ct = (video.content_type or "").lower()
     if _ct and not (_ct.startswith("video/") or _ct == "application/octet-stream"):
@@ -403,31 +403,66 @@ async def decompose_video(
     with open(video_path, "wb") as f:
         f.write(content)
 
-    # 记一条 free 占位（每月免费计数）
-    if _access.get("type") == "free":
-        try:
-            import datetime as _dt
-            with _pay_get_db() as _c:
-                _c.execute(
-                    "INSERT INTO orders(out_trade_no,user_id,product,amount,currency,channel,status,created_at)"
-                    " VALUES(?,?,'free','0.00','cny','free','paid',?)",
-                    ("WJD" + _dt.datetime.now().strftime("%Y%m%d%H%M%S") + uuid.uuid4().hex[:6],
-                     user["id"], _dt.datetime.now().isoformat()))
-        except Exception:
-            pass
+    # 落一份「待付费」占位卡（前端可立即 GET /api/decompose/{did} 拿到 awaiting_payment 态）
+    uid = (user["id"] if user else None)
+    try:
+        _write_awaiting = os.path.join(ddir, "decompose.json")
+        with open(_write_awaiting, "w", encoding="utf-8") as f:
+            json.dump({"id": did, "user_id": uid, "title": title, "genre": genre,
+                       "status": "awaiting_payment",
+                       "message": "上传成功。点「拆开这支舞」付 9.9 生成完整拆解卡。"},
+                      f, ensure_ascii=False)
+    except Exception:
+        pass
 
+    # 免费模式(WJ_FREE_MODE=1·支付商户号未就位时先免费拉新)：上传即拆·不收费。
+    # 商户号到位后设 WJ_FREE_MODE=0，自动恢复「要拆付 9.9」。
+    if os.environ.get("WJ_FREE_MODE") == "1":
+        uid2 = (user["id"] if user else None)
+        threading.Thread(target=run_decompose,
+                         args=(did, video_path, uid2, title, genre), daemon=True).start()
+        return {"decompose_id": did, "dance_id": did, "status": "processing",
+                "message": "上传成功，正在为你拆解…"}
+
+    return {"decompose_id": did, "dance_id": did, "status": "awaiting_payment",
+            "price_cny": float(os.environ.get("WJ_DANCE_PRICE_CNY", "9.9")),
+            "message": "上传成功。点「拆开这支舞」付 9.9 生成完整拆解卡。"}
+
+
+@app.post("/api/decompose/{did}/run")
+async def decompose_run_if_paid(did: str, user: dict = Depends(get_optional_user)):
+    """兜底触发：已付费但拆解未生成时手动重跑（幂等）。未付费拒。
+    正常路径由支付回调 pay.py._apply_paid_dance_unlock 自动触发，这里仅作重试入口。"""
+    ddir = os.path.join(DATA_DIR, did)
+    video_path = os.path.join(ddir, "input.mp4")
+    if not os.path.exists(video_path):
+        raise HTTPException(status_code=404, detail="源视频不存在，请重新上传")
+    if os.environ.get("WJ_FREE_MODE") != "1" and not _dance_is_paid(did):
+        raise HTTPException(status_code=402, detail="尚未付费，请先付 9.9 解锁拆解")
+    # 已完成则不重复跑（幂等）
+    d = get_decompose(did)
+    if d and d.get("status") == "completed":
+        return {"decompose_id": did, "status": "completed", "message": "已生成，无需重复。"}
+    title = (d or {}).get("title", "我的舞")
+    genre = (d or {}).get("genre", "guofeng")
+    uid = (d or {}).get("user_id") or (user["id"] if user else None)
     t = threading.Thread(target=run_decompose,
-                         args=(did, video_path, user["id"], title, genre), daemon=True)
+                         args=(did, video_path, uid, title, genre), daemon=True)
     t.start()
-    return {"decompose_id": did, "status": "processing", "message": "上传成功，自动拆解已开始。"}
+    return {"decompose_id": did, "status": "processing", "message": "已付费，拆解已开始。"}
 
 @app.get("/api/decompose/{did}")
-def get_decompose_endpoint(did: str, user: dict = Depends(get_current_user)):
+def get_decompose_endpoint(did: str, user: dict = Depends(get_optional_user)):
+    """游客可读（上传免费、无需登录）：拿拆解卡 / awaiting_payment 态。
+    若该 dance 绑定了某登录用户，则仅该用户可读；匿名 dance（user_id=None）任何人可读。"""
     d = get_decompose(did)
     if not d:
         raise HTTPException(status_code=404, detail="Not found")
-    if d.get("user_id") not in (None, user["id"]):
-        raise HTTPException(status_code=403, detail="Access denied")
+    owner = d.get("user_id")
+    # None / 'guest' 视为匿名，任何人可读；绑定了真实登录用户的才校验归属
+    if owner not in (None, "", "guest"):
+        if not user or owner != user["id"]:
+            raise HTTPException(status_code=403, detail="Access denied")
     return d
 
 @app.get("/api/decompose/{did}/clip/{name}")
@@ -453,7 +488,10 @@ def get_decompose_frame(did: str, name: str):
 @app.get("/")
 @app.get("/design-upgrade.html")
 def serve_app():
-    return FileResponse("/www/wujing-api/static/design-upgrade.html")
+    _app_html = os.path.join(BASE_DIR, "static", "design-upgrade.html")
+    if not os.path.exists(_app_html):
+        return JSONResponse({"service": "wujing-api", "note": "app html not deployed here"})
+    return FileResponse(_app_html)
 # ---------- Payment routes ----------
 app.include_router(pay_router)
 # ---------- Health Check ----------

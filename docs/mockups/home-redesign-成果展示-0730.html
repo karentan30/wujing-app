@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舞镜 · 首页重设计（成果展示 · 成魔样板）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF7F0;      /* 浅米金背景 */
+    --card:#fff;
+    --border:#EDE4CF;
+    --gold:#B5922A;     /* 金色高亮 */
+    --ink:#1F1A14;      /* 正文字 */
+    --muted:#9A8E7A;    /* 辅助银灰 */
+    --hair:#F0E9DA;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#d9d3c5}
+  body{
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink);
+    padding:26px 0 60px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .serif{font-family:"Noto Serif SC","STSong","SimSun",serif;}
+
+  .page-note{font-size:12px;color:#7a7264;margin-bottom:18px;text-align:center;letter-spacing:.3px}
+
+  /* 手机外壳 */
+  #app{
+    width:440px;background:var(--bg);
+    border-radius:40px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(60,48,20,.28),0 6px 16px rgba(0,0,0,.12);
+    border:9px solid #17140e;
+  }
+
+  /* ─────────── HERO ─────────── */
+  .hero{
+    position:relative;
+    padding:36px 26px 30px;
+    background:
+      radial-gradient(120% 80% at 82% 8%, #F6EED6 0%, rgba(246,238,214,0) 55%),
+      linear-gradient(180deg,#F3EAD2 0%, var(--bg) 78%);
+    overflow:hidden;
+  }
+  .hero-moon{
+    position:absolute;top:20px;right:22px;width:66px;height:66px;
+    border-radius:50%;
+    background:radial-gradient(circle at 38% 35%, #fff 0%, #F3E4B8 45%, #E4CF93 100%);
+    box-shadow:0 0 30px rgba(212,180,110,.5);opacity:.9;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;position:relative}
+  .brand .logo{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:34px;
+    color:var(--ink);letter-spacing:4px;
+  }
+  .brand .en{font-size:11px;color:var(--muted);letter-spacing:2px;font-weight:600}
+  .hero h1{
+    font-family:"Noto Serif SC",serif;font-weight:700;
+    font-size:24px;line-height:1.5;color:var(--ink);
+    margin-bottom:12px;position:relative;max-width:300px;
+  }
+  .hero h1 em{color:var(--gold);font-style:normal}
+  .hero-desc{font-size:13.5px;line-height:1.75;color:#6b6152;max-width:320px;margin-bottom:22px}
+  .hero-desc b{color:var(--ink);font-weight:600}
+
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;padding:16px;border-radius:16px;
+    font-size:16px;font-weight:700;letter-spacing:.5px;
+    cursor:pointer;border:none;
+  }
+  .btn-primary{
+    background:linear-gradient(180deg,#C9A63A,#B5922A);
+    color:#fff;box-shadow:0 8px 22px rgba(181,146,42,.38);
+  }
+  .btn-primary .sub{font-size:11px;font-weight:500;opacity:.9}
+  .btn-ghost{
+    background:#fff;color:var(--gold);
+    border:1.5px solid #E3D3A6;font-size:15px;
+  }
+  .hero-cta-note{font-size:11px;color:var(--muted);text-align:center;margin-top:11px;letter-spacing:.3px}
+
+  /* ─────────── 信任条 ─────────── */
+  .trust{
+    display:flex;justify-content:center;gap:0;
+    background:#fff;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+    padding:13px 8px;
+  }
+  .trust .t{flex:1;text-align:center;position:relative;padding:0 4px}
+  .trust .t + .t::before{content:"";position:absolute;left:0;top:14%;height:72%;width:1px;background:var(--hair)}
+  .trust .ti{font-size:14px;margin-bottom:5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#FAF3DF;border:1px solid #EDE0BC;filter:grayscale(.15) saturate(.85)}
+  .trust .tl{font-size:10.5px;color:#7a7264;line-height:1.35;letter-spacing:.2px}
+
+  /* ─────────── 通用区块 ─────────── */
+  .sec{padding:34px 24px 6px}
+  .sec-kicker{font-size:11px;color:var(--gold);letter-spacing:3px;font-weight:700;margin-bottom:7px}
+  .sec-title{font-family:"Noto Serif SC",serif;font-weight:700;font-size:21px;color:var(--ink);line-height:1.4;margin-bottom:8px}
+  .sec-lead{font-size:12.5px;color:#7a7264;line-height:1.7;margin-bottom:20px}
+  .sec-lead b{color:var(--gold);font-weight:600}
+
+  /* 成果展示 · 分割背景 */
+  .showcase{background:linear-gradient(180deg,#F5EEDD 0%, var(--bg) 320px)}
+
+  /* 样板舞标签 */
+  .sample-badge{
+    display:inline-flex;align-items:center;gap:7px;
+    background:#fff;border:1px solid var(--border);border-radius:20px;
+    padding:6px 13px;font-size:11.5px;color:#6b6152;margin-bottom:18px;
+  }
+  .sample-badge b{font-family:"Noto Serif SC",serif;color:var(--ink);font-weight:700;letter-spacing:1px}
+  .sample-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+
+  /* 产物卡 */
+  .out-card{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:18px 16px 16px;margin-bottom:16px;
+    box-shadow:0 6px 18px rgba(120,96,40,.06);
+  }
+  .out-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .out-num{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:13px;color:#fff;
+    background:var(--gold);width:24px;height:24px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .out-name{font-family:"Noto Serif SC",serif;font-weight:700;font-size:16px;color:var(--ink)}
+  .out-tag{margin-left:auto;font-size:10px;color:var(--gold);background:#FAF3DF;border:1px solid #EDE0BC;padding:3px 8px;border-radius:10px}
+  .out-note{font-size:11.5px;color:#8a8072;line-height:1.6;margin:2px 0 14px}
+
+  /* ── 胶片条：一个八拍连续帧 ── */
+  .film{
+    display:flex;background:#151109;border-radius:12px;overflow:hidden;
+    padding:9px 8px 9px 0;position:relative;
+  }
+  .film-rail{
+    width:7px;flex-shrink:0;margin-right:8px;border-radius:0 4px 4px 0;
+    background:linear-gradient(180deg,#4A90D9 0%,#4CAF7A 26%,#D4B24E 52%,#E48DBE 76%,#9B6FD4 100%);
+  }
+  .film-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+  .film-strip::-webkit-scrollbar{display:none}
+  .frame{width:78px;flex-shrink:0;text-align:center}
+  .frame .pic{
+    height:96px;border-radius:8px;position:relative;overflow:hidden;
+    background:linear-gradient(160deg,#3a2f52,#5b4a6e 55%,#7d5f7a);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .frame .pic.k{background:linear-gradient(160deg,#2f3a52,#4a5b6e)}
+  .frame .pic .beat{
+    position:absolute;top:5px;left:6px;font-size:10px;font-weight:800;
+    color:#fff;background:rgba(0,0,0,.35);border-radius:6px;padding:1px 6px;font-family:"Noto Serif SC",serif;
+  }
+  .frame .pic .ts{position:absolute;bottom:5px;right:6px;font-size:9px;color:rgba(255,255,255,.85)}
+  .frame .pic.kick{border:1.5px solid #E24B4B;box-shadow:inset 0 0 0 1px rgba(226,75,75,.4)}
+  .frame .pic.kick .beat{background:#E24B4B}
+  .frame .act{font-size:10.5px;color:#efe8d8;margin-top:6px;line-height:1.35;font-weight:600}
+  .frame .cue{font-size:10px;color:var(--gold);margin-top:2px;line-height:1.3}
+  .film-meta{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-top:12px;font-size:10.5px;color:#8a8072;
+  }
+  .film-meta .m{display:flex;align-items:center;gap:4px}
+  .film-meta .k-legend{width:9px;height:9px;border-radius:2px;border:1.5px solid #E24B4B;background:#fff}
+  .beat-title{
+    display:flex;align-items:baseline;gap:8px;margin-bottom:9px;
+  }
+  .beat-title .cn{font-family:"Noto Serif SC",serif;font-weight:700;font-size:14px;color:var(--ink)}
+  .beat-title .cn::before{content:"「";color:var(--gold)}
+  .beat-title .cn::after{content:"」";color:var(--gold)}
+  .beat-title .rng{font-size:10.5px;color:var(--muted)}
+
+  /* ── 故事卡 ── */
+  .story-flow{
+    display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
+    margin:2px 0 14px;
+  }
+  .story-flow .node{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:14px;color:var(--ink);
+    background:#FAF3DF;border:1px solid #EDE0BC;border-radius:9px;padding:5px 11px;
+  }
+  .story-flow .arw{color:var(--gold);font-size:13px}
+  .story-quote{
+    font-family:"Noto Serif SC",serif;font-size:14px;color:var(--gold);
+    text-align:center;letter-spacing:1px;margin-bottom:12px;
+  }
+  .story-list{list-style:none}
+  .story-list li{
+    display:flex;gap:10px;padding:9px 0;border-top:1px dashed var(--hair);
+    font-size:12px;line-height:1.6;color:#5f5647;
+  }
+  .story-list li:first-child{border-top:none}
+  .story-list .ch{
+    font-family:"Noto Serif SC",serif;font-weight:700;color:var(--ink);
+    flex-shrink:0;width:52px;
+  }
+  .story-list .ch small{display:block;font-size:9.5px;color:var(--muted);font-weight:400;margin-top:1px}
+  .story-list em{color:var(--gold);font-style:normal;font-weight:600}
+
+  /* ── 慢放/镜像 ── */
+  .practice-grid{display:flex;gap:12px}
+  .pr{
+    flex:1;border-radius:14px;overflow:hidden;position:relative;
+    height:150px;border:1px solid var(--border);
+    background:linear-gradient(160deg,#453a5e,#6a5580);
+  }
+  .pr.mir{background:linear-gradient(160deg,#3a4a5e,#557080)}
+  .pr .play{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.92);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(0,0,0,.3);
+  }
+  .pr .play::after{content:"";border-left:14px solid var(--gold);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:3px}
+  .pr .pr-lab{position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent);color:#fff}
+  .pr .pr-lab b{font-size:12.5px;font-weight:700;display:block}
+  .pr .pr-lab span{font-size:9.5px;opacity:.85}
+  .pr .speed{position:absolute;top:8px;left:8px;font-size:10px;font-weight:800;color:#fff;background:var(--gold);border-radius:7px;padding:2px 8px}
+  .pr .mirror-ico{position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;color:#fff;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);border-radius:7px;padding:2px 8px}
+
+  /* ── 记忆卡（浅米金）── */
+  .memcard{
+    background:linear-gradient(165deg,#FBF6E7 0%,#F7F0DC 100%);
+    border:1px solid #EADCB6;border-radius:16px;
+    padding:17px 17px 15px;position:relative;overflow:hidden;
+  }
+  .memcard::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 90% at 92% 0%,rgba(212,180,110,.16),transparent 52%)}
+  .memcard .mc-t{position:relative;font-family:"Noto Serif SC",serif;font-size:15px;font-weight:700;color:var(--gold);margin-bottom:13px;letter-spacing:1px}
+  .memcard .mc-grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .memcard .mc-cell{background:#fff;border:1px solid #EDE0BC;border-radius:10px;padding:10px 12px}
+  .memcard .mc-cell .step{font-family:"Noto Serif SC",serif;font-size:13.5px;font-weight:700;color:var(--ink)}
+  .memcard .mc-cell .step span{font-size:9.5px;color:var(--muted);margin-left:5px;font-weight:400}
+  .memcard .mc-cell .verse{font-size:10.5px;color:#7a7060;margin-top:4px;line-height:1.55}
+  .memcard .mc-cell .verse em{color:var(--gold);font-style:normal;font-weight:600}
+  .memcard .mc-foot{position:relative;font-size:10.5px;color:#9a8e6f;margin-top:12px;text-align:center;letter-spacing:.4px}
+
+  .ai-note{
+    display:flex;align-items:center;gap:8px;justify-content:center;
+    font-size:11.5px;color:#7a7264;margin:6px 0 18px;
+  }
+  .ai-note .spark{color:var(--gold)}
+  .full-link{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    width:100%;padding:13px;border-radius:14px;
+    background:#fff;border:1.5px solid #E3D3A6;color:var(--gold);
+    font-size:14px;font-weight:700;margin-bottom:6px;
+  }
+
+  /* ─────────── 三步 ─────────── */
+  .steps{display:flex;flex-direction:column;gap:0;margin-top:4px}
+  .step-row{display:flex;gap:14px;position:relative;padding-bottom:20px}
+  .step-row:last-child{padding-bottom:0}
+  .step-row .line{position:absolute;left:16px;top:34px;bottom:-2px;width:1.5px;background:var(--hair)}
+  .step-row:last-child .line{display:none}
+  .step-row .n{
+    width:33px;height:33px;border-radius:50%;flex-shrink:0;z-index:1;
+    background:#fff;border:1.5px solid var(--gold);color:var(--gold);
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .step-row .stx b{font-size:14.5px;color:var(--ink);font-weight:700}
+  .step-row .stx p{font-size:12px;color:#8a8072;line-height:1.6;margin-top:3px}
+
+  /* ─────────── 对比 ─────────── */
+  .compare{display:flex;gap:0;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:#fff;margin-top:4px}
+  .compare .side{flex:1;padding:16px 15px}
+  .compare .side.a{background:#F6F1E6}
+  .compare .side .sh{font-size:12px;font-weight:700;margin-bottom:12px;letter-spacing:.5px}
+  .compare .side.a .sh{color:#a99a7c}
+  .compare .side.b .sh{color:var(--gold)}
+  .compare .side ul{list-style:none}
+  .compare .side li{font-size:11.5px;line-height:1.5;color:#6b6152;padding:6px 0;display:flex;gap:7px}
+  .compare .side.a li{color:#9a8f7c}
+  .compare .side li .ic{flex-shrink:0}
+  .compare .side.a li .ic{color:#c3b699}
+  .compare .side.b li .ic{color:var(--gold);font-weight:700}
+  .vs{width:1px;background:var(--border);position:relative}
+
+  /* ─────────── 底部 CTA ─────────── */
+  .foot-cta{padding:34px 24px 40px;text-align:center}
+  .foot-cta .fc-title{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:6px}
+  .foot-cta .fc-sub{font-size:12px;color:#8a8072;margin-bottom:20px;line-height:1.6}
+  .foot-legal{font-size:10px;color:#b0a68f;text-align:center;line-height:1.6;padding:0 30px 8px}
+</style>
+</head>
+<body>
+<div class="page-note">舞镜 · 首页重设计样图 &nbsp;|&nbsp; 成果展示区（成魔样板）&nbsp;|&nbsp; 440px · 2026-07-30</div>
+
+<div id="app">
+
+  <!-- ══════════ HERO ══════════ -->
+  <section class="hero">
+    <div class="hero-moon"></div>
+    <div class="brand">
+      <span class="logo serif">舞镜</span>
+      <span class="en">DANCE&nbsp;MIRROR</span>
+    </div>
+    <h1 class="serif">上传任意一支舞，<br>AI 把它<em>逐句拆开</em>给你看</h1>
+    <p class="hero-desc">不是给你打个分就完事——舞镜把整支舞拆成能跟着练的<b>八拍卡</b>，
+      每一拍<b>量化到拍点、动作要点、口诀</b>，再串成一条好记的故事线。</p>
+    <button class="btn btn-primary">
+      <span>上传你的舞</span>
+      <span class="sub">· AI 自动拆成八拍卡</span>
+    </button>
+    <div class="hero-cta-note">支持任意舞种 · 一段视频，1 分钟拆完</div>
+  </section>
+
+  <!-- ══════════ 信任条 ══════════ -->
+  <div class="trust">
+    <div class="t"><div class="ti">🔒</div><div class="tl">视频仅用于<br>AI 分析</div></div>
+    <div class="t"><div class="ti">🗑️</div><div class="tl">不存储<br>不分享</div></div>
+    <div class="t"><div class="ti">⚡</div><div class="tl">拆完即走<br>随拆随删</div></div>
+  </div>
+
+  <!-- ══════════ 核心：成果展示 ══════════ -->
+  <section class="sec showcase">
+    <div class="sec-kicker">SAMPLE&nbsp;·&nbsp;样板拆解</div>
+    <div class="sec-title serif">看看一支舞<br>被拆成什么样</div>
+    <p class="sec-lead">下面这四类产物，全是 AI 从一支舞视频里<b>自动生成</b>的。
+      你上传的舞，也会得到同样一套——</p>
+
+    <div class="sample-badge">
+      <span class="dot"></span>
+      样板舞&nbsp;·&nbsp;古典舞 <b>《成魔》</b>&nbsp;·&nbsp;147.7&nbsp;BPM&nbsp;·&nbsp;4 个八拍
+    </div>
+
+    <!-- ① 八拍卡 -->
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-num">1</span>
+        <span class="out-name">八拍卡</span>
+        <span class="out-tag">连拍帧 · 逐拍</span>
+      </div>
+      <p class="out-note">一个八拍 = 8 个定格帧，每帧标好<b style="color:#B5922A">拍号 · 时间戳 · 动作要点 · 口诀</b>，红框帧 = 该踢腿了。</p>
+
+      <!-- 八拍一 -->
+      <div class="beat-title">
+        <span class="cn serif">勾引</span>
+        <span class="rng">第一个八拍 · 2–8s</span>
+      </div>
+      <div class="film">
+        <div class="film-rail"></div>
+        <div class="film-strip">
+          <div class="frame"><div class="pic kick"><span class="beat">1</span><span class="ts">1.6s</span></div><div class="act">举袖右腿踢</div><div class="cue">你啊妖娆</div></div>
+          <div class="frame"><div class="pic"><span class="beat">2</span><span class="ts">2.6s</span></div><div class="act">翻腕左手下</div><div class="cue">入骨</div></div>
+          <div class="frame"><div class="pic"><span class="beat">3</span><span class="ts">3.7s</span></div><div class="act">钻头手上举</div><div class="cue">情欲</div></div>
+          <div class="frame"><div class="pic"><span class="beat">4</span><span class="ts">4.1s</span></div><div class="act">顶胯转正</div><div class="cue">滔天</div></div>
+          <div class="frame"><div class="pic"><span class="beat">5</span><span class="ts">5.6s</span></div><div class="act">弯腰含情</div><div class="cue">&nbsp;</div></div>
+          <div class="frame"><div class="pic"><span class="beat">6</span><span class="ts">6.2s</span></div><div class="act">扭屁股</div><div class="cue">&nbsp;</div></div>
+          <div class="frame"><div class="pic"><span class="beat">7</span><span class="ts">6.6s</span></div><div class="act">露香肩</div><div class="cue">&nbsp;</div></div>
+          <div class="frame"><div class="pic"><span class="beat">8</span><span class="ts">7.9s</span></div><div class="act">提沉勾人</div><div class="cue">&nbsp;</div></div>
+        </div>
+      </div>
+
+      <!-- 八拍四 -->
+      <div class="beat-title" style="margin-top:16px">
+        <span class="cn serif">成魔</span>
+        <span class="rng">第四个八拍 · 20–26s</span>
+      </div>
+      <div class="film">
+        <div class="film-rail"></div>
+        <div class="film-strip">
+          <div class="frame"><div class="pic"><span class="beat">1</span><span class="ts">20.5s</span></div><div class="act">左手带转两圈</div><div class="cue">轻吐</div></div>
+          <div class="frame"><div class="pic"><span class="beat">2</span><span class="ts">21.3s</span></div><div class="act">转两圈</div><div class="cue">爱意</div></div>
+          <div class="frame"><div class="pic"><span class="beat">3</span><span class="ts">22.1s</span></div><div class="act">左手上右胸前</div><div class="cue">我半生</div></div>
+          <div class="frame"><div class="pic"><span class="beat">4</span><span class="ts">23.0s</span></div><div class="act">抓</div><div class="cue">禅定</div></div>
+          <div class="frame"><div class="pic"><span class="beat">5</span><span class="ts">23.8s</span></div><div class="act">转</div><div class="cue">瞬间</div></div>
+          <div class="frame"><div class="pic"><span class="beat">6</span><span class="ts">24.6s</span></div><div class="act">面前小五花</div><div class="cue">崩</div></div>
+          <div class="frame"><div class="pic kick"><span class="beat">7</span><span class="ts">25.4s</span></div><div class="act">展开左上造型</div><div class="cue">毁 ★</div></div>
+          <div class="frame"><div class="pic"><span class="beat">8</span><span class="ts">26.0s</span></div><div class="act">成魔亮相</div><div class="cue">定住</div></div>
+        </div>
+      </div>
+
+      <div class="film-meta">
+        <span class="m"><span class="k-legend"></span> 红框帧 = 该踢腿了</span>
+        <span class="m">← 左右滑看全 8 帧</span>
+      </div>
+    </div>
+
+    <!-- ② 故事卡 -->
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-num">2</span>
+        <span class="out-name">故事卡</span>
+        <span class="out-tag">串成一条故事线</span>
+      </div>
+      <p class="out-note">整支舞被 AI 串成 4 章情绪，<b style="color:#B5922A">跟着「他在干嘛」走，不用背左右手</b>。</p>
+
+      <div class="story-flow">
+        <span class="node serif">勾引</span><span class="arw">→</span>
+        <span class="node serif">展示</span><span class="arw">→</span>
+        <span class="node serif">破戒</span><span class="arw">→</span>
+        <span class="node serif">成魔</span>
+      </div>
+      <div class="story-quote serif">一佛为你堕魔</div>
+
+      <ul class="story-list">
+        <li><span class="ch serif">勾引<small>2–8s</small></span>
+          <span>清修的僧，背对红尘打坐。你出现——他<em>忍不住伸手去够</em>你。</span></li>
+        <li><span class="ch serif">展示<small>8–14s</small></span>
+          <span>光勾脸不够，他要<em>展示全部</em>：甩袖转大圈、单腿旋转秀平衡。</span></li>
+        <li><span class="ch serif">破戒<small>14–20s</small></span>
+          <span>只那一吻，落在头顶——眉间戒疤<em>一吻焕化</em>，法衣旋落成尘。</span></li>
+        <li><span class="ch serif">成魔<small>20–26s</small></span>
+          <span>半生禅定一瞬崩塌，天塌下来他<em>张开双臂死死撑住</em>——甘愿，成魔。★</span></li>
+      </ul>
+    </div>
+
+    <!-- ③ 慢放 + 镜像 -->
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-num">3</span>
+        <span class="out-name">慢放 + 镜像跟练</span>
+        <span class="out-tag">对着屏幕练</span>
+      </div>
+      <p class="out-note">每个八拍都能 <b style="color:#B5922A">0.5× 慢放</b> 看清细节，或 <b style="color:#B5922A">左右镜像</b> 像照镜子一样跟着做。</p>
+      <div class="practice-grid">
+        <div class="pr">
+          <span class="speed">0.5×</span>
+          <div class="play"></div>
+          <div class="pr-lab"><b>慢放跟练</b><span>成魔 · 八拍一「勾引」</span></div>
+        </div>
+        <div class="pr mir">
+          <span class="mirror-ico">⇋ 镜像</span>
+          <div class="play"></div>
+          <div class="pr-lab"><b>镜像模式</b><span>左右翻转 · 对着做</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ 记忆卡 -->
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-num">4</span>
+        <span class="out-name">记忆卡</span>
+        <span class="out-tag">整支口诀速记</span>
+      </div>
+      <p class="out-note">一张卡背下整支舞的<b style="color:#B5922A">记忆口诀</b>，睡前脑子里过一遍就行。</p>
+      <div class="memcard">
+        <div class="mc-t serif">《成魔》记忆诀 · 一佛为你堕魔</div>
+        <div class="mc-grid">
+          <div class="mc-cell"><div class="step serif">勾引<span>2–8s</span></div><div class="verse"><em>举袖踢腿</em>·妖娆入骨</div></div>
+          <div class="mc-cell"><div class="step serif">展示<span>8–14s</span></div><div class="verse"><em>甩袖转圈</em>·头脑空空</div></div>
+          <div class="mc-cell"><div class="step serif">破戒<span>14–20s</span></div><div class="verse"><em>一吻焕化</em>·戒疤落尘</div></div>
+          <div class="mc-cell"><div class="step serif">成魔<span>20–26s</span></div><div class="verse"><em>展臂撑住</em>·甘愿成魔</div></div>
+        </div>
+        <div class="mc-foot">金字 = 动作，黑字 = 情绪 · 记 4 章，动作自来</div>
+      </div>
+    </div>
+
+    <div class="ai-note"><span class="spark">✦</span> 以上八拍卡 / 故事卡 / 记忆卡，全部由 AI 自动生成</div>
+    <a class="full-link">看《成魔》完整拆解&nbsp;→</a>
+  </section>
+
+  <!-- ══════════ 三步怎么用 ══════════ -->
+  <section class="sec">
+    <div class="sec-kicker">HOW&nbsp;IT&nbsp;WORKS</div>
+    <div class="sec-title serif">三步，把任意舞变成练习卡</div>
+    <div class="steps" style="margin-top:14px">
+      <div class="step-row">
+        <div class="line"></div><div class="n serif">1</div>
+        <div class="stx"><b>上传</b><p>一段舞蹈视频，抖音 / 相册里的都行，无需任何标注。</p></div>
+      </div>
+      <div class="step-row">
+        <div class="line"></div><div class="n serif">2</div>
+        <div class="stx"><b>AI 逐句拆解 + 评分</b><p>自动识别 BPM 与拍点，切成八拍卡、标动作要点、配口诀，串成故事线。</p></div>
+      </div>
+      <div class="step-row">
+        <div class="n serif">3</div>
+        <div class="stx"><b>跟练</b><p>慢放 0.5× / 镜像模式对着屏幕练，一个八拍一个八拍拿下。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 对比 ══════════ -->
+  <section class="sec">
+    <div class="sec-kicker">WHY&nbsp;舞镜</div>
+    <div class="sec-title serif">和自己对着教程练，差在哪</div>
+    <div class="compare">
+      <div class="side a">
+        <div class="sh">对着教程练</div>
+        <ul>
+          <li><span class="ic">·</span>只能靠感觉，跟不上就倒回去重看</li>
+          <li><span class="ic">·</span>「这里手抬多高」全靠猜</li>
+          <li><span class="ic">·</span>动作记不住，练完就忘</li>
+          <li><span class="ic">·</span>不知道自己错在哪一拍</li>
+        </ul>
+      </div>
+      <div class="vs"></div>
+      <div class="side b">
+        <div class="sh">用舞镜</div>
+        <ul>
+          <li><span class="ic">✓</span>量化到<b>拍点</b>，几秒该做什么写死</li>
+          <li><span class="ic">✓</span>动作要点 + 口诀，跟着念就对</li>
+          <li><span class="ic">✓</span>故事线记忆，一遍就记住</li>
+          <li><span class="ic">✓</span>逐拍定位，哪拍卡了一眼看到</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 底部 CTA ══════════ -->
+  <section class="foot-cta">
+    <div class="fc-title serif">你的那支舞，拆开会长什么样？</div>
+    <div class="fc-sub">上传试试，1 分钟就能看到属于你的八拍卡。</div>
+    <button class="btn btn-primary" style="margin-bottom:10px">
+      <span>上传你的舞 · 免费拆一支</span>
+    </button>
+    <button class="btn btn-ghost">先看《成魔》完整样板</button>
+  </section>
+
+  <div class="foot-legal">视频仅用于 AI 分析，不存储、不分享，拆完即走 · 舞镜 wujing.mylumee.app</div>
+
+</div>
+</body>
+</html>
