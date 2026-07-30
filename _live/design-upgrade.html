@@ -13,144 +13,49 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --silver-light:#f0f2f8;
-  --silver:#dce0ec;
-  --silver-mid:#b8c0d4;
-  --silver-dim:#5a6075;
-  --silver-deep:#3d4254;
-  --glass-bg:rgba(255,255,255,.6);
-  --glass-border:rgba(255,255,255,.4);
-  --frost:rgba(255,255,255,.2);
-  --text:#0b0d14;
-  --green-done:#5a7a68;
+  --bg:#FAF7F0;
+  --card:#ffffff;
+  --edge:#EDE4CF;
+  --gold:#B5922A;
+  --gold-soft:#C9A94A;
+  --ink:#1F1A14;
+  --mute:#8C857A;
+  --dark:#0E0B14;
+  --green-done:#7AA84E;
+  --shadow-card:0 2px 12px rgba(120,92,30,.08),0 4px 24px rgba(120,92,30,.04);
+  --shadow-lift:0 4px 20px rgba(120,92,30,.12),0 8px 40px rgba(120,92,30,.06);
   --blur:12px;
-  --warm:#c9a07e;
-  --warm-light:#e8d0b8;
-  --warm-dim:#b08860;
-  --warm-glow:rgba(200,160,120,.15);
-  --shadow-card:0 2px 12px rgba(200,208,224,.12),0 4px 24px rgba(200,180,160,.06),0 8px 40px rgba(200,180,160,.03);
-  --shadow-lift:0 4px 20px rgba(200,180,160,.12),0 8px 40px rgba(200,180,160,.06);
+  /* ── 旧变量映射（兼容遗留 CSS · 指向金色主题） ── */
+  --silver-deep: #6B6050;
+  --silver-dim: var(--mute);
+  --silver-mid: #A09078;
+  --silver-light: var(--card);
+  --silver: var(--card);
+  --frost: var(--edge);
+  --glass-bg: var(--card);
+  --glass-border: var(--edge);
+  --warm-dim: var(--gold-soft);
+  --warm: var(--gold);
+  --warm-light: #F3E3AE;
+  --warm-glow: rgba(181,146,42,.12);
+  --text: var(--ink);
+  --green-done: #7AA84E;
 }
-
-/* ═══ @PROPERTY — Animate gradient angles (liquid metal core) ═══ */
-@property --flow-rot { syntax: '<angle>'; initial-value: 0deg;   inherits: false; }
-@property --flow-sweep { syntax: '<angle>'; initial-value: 45deg;  inherits: false; }
-@property --flow-pool-x { syntax: '<percentage>'; initial-value: 30%; inherits: false; }
-@property --flow-pool-y { syntax: '<percentage>'; initial-value: 40%; inherits: false; }
 
 html,body{height:100%}
 body{
-  background:#f0f2f8;color:#14161e;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",sans-serif;
+  background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
   line-height:1.6;-webkit-font-smoothing:antialiased;
   display:flex;justify-content:center;
 }
+.serif{font-family:"Noto Serif SC","STSong","SimSun",serif;}
 #app{
-  width:100%;max-width:440px;min-height:100vh;position:relative;overflow:clip;
+  width:100%;max-width:440px;min-height:100vh;position:relative;overflow-y:auto;overflow-x:hidden;
+  background:var(--bg);
 }
 
-/* ═══ LIQUID METAL SURFACE BACKGROUND ═══ */
-#app::before{
-  content:'';position:absolute;top:0;left:0;
-  width:100%;height:100%;z-index:0;overflow:hidden;
-  background:
-    /* Rotating conic pool — wider luminance range for true liquid metal */
-    conic-gradient(
-      from var(--flow-rot) at 50% 50%,
-      #f5f7fc 0deg,   #ffffff 35deg,  #c0c8d8 70deg,
-      #586078 105deg, #a0a8c0 135deg, #dce0ee 160deg,
-      #ffffff 185deg, #e8ecf6 225deg, #b8c0d0 260deg,
-      #687090 295deg, #f0f2f8 325deg, #ffffff 355deg,
-      #f5f7fc 360deg
-    ),
-    /* Tight moving light pool for visible drift */
-    radial-gradient(
-      280px 200px at var(--flow-pool-x) var(--flow-pool-y),
-      rgba(255,255,255,.75) 0%, rgba(200,208,224,.2) 30%, transparent 55%
-    ),
-    /* Warm accent pool — subtle rose-gold undertone */
-    radial-gradient(
-      160px 160px at 70% 80%,
-      rgba(200,160,120,.12) 0%, transparent 60%
-    ),
-    radial-gradient(
-      180px 180px at 20% 60%,
-      rgba(220,190,170,.08) 0%, transparent 55%
-    ),
-    /* Animated base gradient */
-    linear-gradient(var(--flow-sweep),
-      #f5f7fc 0%, #e8ecf6 20%, #dce0ee 40%, #f0f2f8 60%, #ffffff 78%, #dce0ee 100%
-    );
-  animation: bgFlow 40s linear infinite;
-  transition: filter 0.3s;
-}
-
-@keyframes bgFlow {
-  0%   { --flow-rot: 0deg;   --flow-sweep: 168deg; --flow-pool-x: 25%;  --flow-pool-y: 30%; }
-  25%  { --flow-rot: 90deg;  --flow-sweep: 165deg; --flow-pool-x: 40%;  --flow-pool-y: 40%; }
-  50%  { --flow-rot: 180deg; --flow-sweep: 172deg; --flow-pool-x: 55%;  --flow-pool-y: 35%; }
-  75%  { --flow-rot: 270deg; --flow-sweep: 175deg; --flow-pool-x: 40%;  --flow-pool-y: 45%; }
-  100% { --flow-rot: 360deg; --flow-sweep: 168deg; --flow-pool-x: 25%;  --flow-pool-y: 30%; }
-}
-
-/* ═══ SPECULAR BAND SWEEP — visible "liquid light" ═══ */
-#app::after{
-  content:'';position:absolute;top:0;left:0;
-  width:100%;height:100%;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.35) 0%, transparent 50%);
-}
-
-/* ═══ STATIC LIGHT OVERLAYS (no animation — was causing motion sickness) ═══ */
-.light-sweep{
-  position:absolute;pointer-events:none;z-index:1;border-radius:0;
-}
-
-/* ═══ SURFACE RIPPLES ═══ */
-@keyframes rippleBloom{
-  0%   { transform:scale(.4); opacity:.15; }
-  50%  { opacity:.06; }
-  100% { transform:scale(1.5); opacity:0; }
-}
-.ripple-wrap{
-  position:absolute;top:0;left:0;
-  width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;
-}
-.ripple-dot{
-  position:absolute;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.4) 0%,transparent 65%);
-  animation:rippleBloom 12s ease-out infinite;will-change:transform,opacity;
-}
-.ripple-dot:nth-child(1){left:15%; top:22%; width:100px; height:100px; animation-delay:0s;}
-.ripple-dot:nth-child(2){left:65%; top:55%; width:80px;  height:80px;  animation-delay:6s;}
-
-/* ===== GLASS CARDS WITH ANIMATED GRADIENT ===== */
-.glass{
-  background:linear-gradient(
-    145deg,
-    rgba(255,255,255,.7)  0%,
-    rgba(255,255,255,.45) 25%,
-    rgba(220,224,236,.5)  50%,
-    rgba(255,255,255,.55) 65%,
-    rgba(200,208,224,.3)  80%,
-    rgba(255,255,255,.6)  100%
-  );
-  background-size:200% 200%;
-  animation:gradFlow 15s ease-in-out infinite;
-  backdrop-filter:blur(var(--blur));
-  -webkit-backdrop-filter:blur(var(--blur));
-  border:1px solid var(--glass-border);
-  box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.55);
-}
-@keyframes gradFlow{
-  0%   { background-position:0% 0%; }
-  50%  { background-position:40% 30%; }
-  100% { background-position:0% 0%; }
-}
-
-/* ===== CARD SHIMMER (disabled — was causing visual noise) ===== */
-.shimmer{
-  position:relative;overflow:hidden;
-}
+/* ═══ SAFE AREA ═══ */
 
 /* ═══ SAFE AREA ═══ */
 .safe-pad{
@@ -166,34 +71,25 @@ body{
   display:flex;align-items:center;gap:10px;
   padding:max(24px,env(safe-area-inset-top,24px)) max(20px,env(safe-area-inset-right,20px)) 12px max(20px,env(safe-area-inset-left,20px));
   position:sticky;top:0;z-index:20;
-  background:linear-gradient(180deg,rgba(240,242,248,.92) 60%,transparent);
+  background:linear-gradient(180deg,rgba(250,247,240,.95) 60%,transparent);
 }
 .brand-wrap{display:flex;align-items:center;gap:10px}
 .brand-icon{
   width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,#fff,rgba(220,224,236,.4) 40%,rgba(200,208,224,.2) 60%,#f0f2f8);
+  background:radial-gradient(circle at 35% 30%,#F3E3AE,var(--gold));
   display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.04),0 0 20px rgba(255,255,255,.3);
-  position:relative;overflow:hidden;
+  flex-shrink:0;box-shadow:0 2px 10px rgba(181,146,42,.3);
 }
-.brand-icon-inner{
-  width:22px;height:22px;border-radius:50%;background:var(--silver-light);
-  display:flex;align-items:center;justify-content:center;z-index:1;
-}
-.brand-icon-inner::after{
-  content:'';width:9px;height:9px;border-radius:50%;
-  background:linear-gradient(135deg,#fff,rgba(220,224,236,.5),#f0f2f8);
-}
-.brandname{font-size:20px;font-weight:700;letter-spacing:1px;background:linear-gradient(135deg,#606880,#8890a8 40%,var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.brandsub{font-size:10px;letter-spacing:3px;color:var(--silver-dim);text-transform:uppercase;font-weight:500}
+.brand-icon::after{content:'镜';font-size:16px;font-weight:900;color:#fff;}
+.brandname{font-size:22px;font-weight:900;letter-spacing:.12em;color:var(--ink);font-family:"Noto Serif SC",serif}
+.brandsub{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;font-weight:700}
 .back{
-  margin-left:auto;font-size:12px;color:var(--silver-deep);
-  border:1px solid var(--glass-border);border-radius:100px;
-  padding:5px 14px;cursor:pointer;background:var(--glass-bg);font-family:inherit;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  margin-left:auto;font-size:12px;color:var(--mute);
+  border:1px solid var(--edge);border-radius:100px;
+  padding:5px 14px;cursor:pointer;background:var(--card);font-family:inherit;
   transition:border-color .3s,box-shadow .3s;
 }
-.back:hover{border-color:var(--silver-mid);box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.back:hover{border-color:var(--gold-soft);box-shadow:0 1px 8px rgba(0,0,0,.06)}
 .back:active{transform:scale(.96)}
 .back.hidden{display:none}
 
@@ -208,36 +104,30 @@ body{
 
 /* ═══ HOME ═══ */
 .home-heading{
-  margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1.25;position:relative;z-index:2;
-  background:linear-gradient(135deg,#1a1c24,#606880 40%,var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:heroFloat 4s ease-in-out infinite;
+  margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.3;position:relative;z-index:2;
+  color:var(--ink);font-family:"Noto Serif SC",serif;
 }
-.home-sub{font-size:13px;color:var(--silver-deep);margin:6px 0 24px;line-height:1.6;position:relative;z-index:2}
-.home-section-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--warm-dim);text-transform:uppercase;margin:2px 0 12px;position:relative;z-index:2;display:flex;align-items:center;gap:8px}
-.home-section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--warm-glow),transparent)}
+.home-sub{font-size:13px;color:var(--mute);margin:6px 0 24px;line-height:1.6;position:relative;z-index:2}
+.home-section-label{font-size:11px;font-weight:700;letter-spacing:.28em;color:var(--gold);margin:2px 0 12px;position:relative;z-index:2;display:flex;align-items:center;gap:8px}
+.home-section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--edge),transparent)}
 
-/* entry card */
-.entry-card{
+/* card */
+.entry-card,.piece-card,.plan-card{
   display:flex;align-items:center;gap:16px;
   border-radius:16px;padding:16px 18px;margin-bottom:16px;cursor:pointer;
-  background:linear-gradient(145deg,rgba(255,255,255,.7),rgba(255,255,255,.45) 30%,rgba(220,224,236,.4) 55%,rgba(255,255,255,.55) 75%,rgba(240,242,248,.3));
-  background-size:200% 200%;
-  animation:gradFlow 6s ease-in-out infinite reverse;
-  animation-delay:-2s;
-  backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));
-  border:1px solid var(--glass-border);
+  background:var(--card);border:1px solid var(--edge);
   transition:border-color .3s,transform .2s,box-shadow .3s;
-  position:relative;overflow:hidden;
-  box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.5);
+  position:relative;box-shadow:var(--shadow-card);
 }
-.entry-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border-color:rgba(200,160,120,.2)}
+.entry-card:hover,.piece-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border-color:var(--gold-soft)}
 .entry-card:active{transform:scale(.97)}
-.entry-icon{flex-shrink:0;position:relative;z-index:2}
+.entry-icon{flex-shrink:0}
 .entry-icon svg{filter:drop-shadow(0 1px 3px rgba(0,0,0,.06))}
-.entry-info{flex:1;position:relative;z-index:2}
-.entry-title{font-size:16px;font-weight:600;letter-spacing:.2px;color:var(--text)}
-.entry-desc{font-size:12px;color:var(--silver-deep);margin-top:2px;line-height:1.5}
-.entry-arrow{flex-shrink:0;color:var(--silver-dim);position:relative;z-index:2}
+.entry-icon svg path,.entry-icon svg circle,.entry-icon svg rect,.entry-icon svg polygon{opacity:1 !important;stroke:var(--gold) !important;fill:var(--gold-soft) !important;}
+.entry-info{flex:1}
+.entry-title{font-size:16px;font-weight:600;color:var(--ink)}
+.entry-desc{font-size:12px;color:var(--mute);margin-top:2px;line-height:1.5}
+.entry-arrow{flex-shrink:0;color:var(--gold)}
 
 /* piece cards */
 
@@ -245,22 +135,19 @@ body{
 .upload-card{
   display:flex;align-items:center;gap:14px;
   border-radius:16px;padding:18px 20px;margin-bottom:16px;cursor:pointer;
-  background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(200,180,160,.15));
-  border:1.5px solid rgba(200,160,120,.3);
+  background:linear-gradient(135deg,rgba(255,253,246,.9),rgba(255,255,255,.6));
+  border:1.5px solid var(--gold-soft);
   transition:border-color .3s,transform .2s,box-shadow .3s;
-  position:relative;overflow:hidden;z-index:2;
-  box-shadow:var(--shadow-card);
+  position:relative;z-index:2;
+  box-shadow:0 4px 18px rgba(181,146,42,.12);
 }
-.upload-card:hover{transform:translateY(-2px);border-color:rgba(200,160,120,.5);box-shadow:var(--shadow-lift)}
+.upload-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 6px 24px rgba(181,146,42,.2)}
 .upload-card:active{transform:scale(.97)}
 .upload-card-icon{font-size:32px;flex-shrink:0}
 .upload-card-info{flex:1}
-.upload-card-title{font-size:15px;font-weight:600;color:var(--text)}
-.upload-card-desc{font-size:12px;color:var(--silver-deep);margin-top:2px}
-.upload-card-arrow{font-size:18px;color:var(--warm-dim);flex-shrink:0}
-.upload-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--warm-light),var(--warm),transparent);
-  opacity:.4}
+.upload-card-title{font-size:15px;font-weight:600;color:var(--ink)}
+.upload-card-desc{font-size:12px;color:var(--mute);margin-top:2px}
+.upload-card-arrow{font-size:18px;color:var(--gold);flex-shrink:0}
 
 .piece-card{
   border-radius:16px;overflow:hidden;margin-bottom:14px;cursor:pointer;position:relative;
@@ -292,35 +179,21 @@ body{
 .progress-meta .val.dim{color:var(--silver-mid)}
 
 /* ═══ HERO ═══ */
-.hero{text-align:center;padding:18px 0 28px;position:relative;z-index:2}
-.hero-brand{font-size:30px;font-weight:800;letter-spacing:2px;background:linear-gradient(135deg,#1a1c24,#606880 40%,var(--warm) 70%,rgba(200,160,120,.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
-.hero-tagline{font-size:14px;color:var(--silver-deep);font-weight:500;letter-spacing:1px;margin-bottom:12px}
-.hero-desc{font-size:12.5px;color:var(--silver-dim);line-height:1.7;max-width:340px;margin:0 auto 20px}
-.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:11px 28px;border-radius:100px;
-  background:linear-gradient(135deg,rgba(220,224,236,.6),rgba(200,208,224,.3));
-  border:1px solid var(--glass-border);cursor:pointer;font-size:14px;font-weight:600;
-  color:var(--silver-deep);transition:all .25s;box-shadow:0 2px 12px rgba(200,208,224,.15);
-  font-family:inherit;letter-spacing:1px}
-.hero-cta:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,208,224,.2);border-color:var(--silver-mid)}
+.hero{text-align:center;padding:28px 0 30px;position:relative;z-index:2;
+  background:radial-gradient(120% 80% at 50% -10%, #FFFBF0 0%, transparent 60%);}
+.hero-brand{font-size:36px;font-weight:900;letter-spacing:.12em;color:var(--ink);margin-bottom:4px;font-family:"Noto Serif SC",serif}
+.hero-tagline{font-size:14px;color:var(--mute);font-weight:500;letter-spacing:.08em;margin-bottom:12px}
+.hero-desc{font-size:13px;color:var(--mute);line-height:1.7;max-width:340px;margin:0 auto 20px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;border-radius:100px;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  border:none;cursor:pointer;font-size:15px;font-weight:700;
+  color:#fff;transition:all .25s;box-shadow:0 6px 20px rgba(181,146,42,.28);
+  font-family:inherit;letter-spacing:.04em}
+.hero-cta:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(181,146,42,.35)}
 .hero-cta:active{transform:scale(.96)}
 .hero-cta-icon{font-size:16px}
-/* Hero warm accent stripe */
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--warm-light),var(--warm),var(--warm-light),transparent);opacity:.6;animation:heroStripe 3s ease-in-out infinite}
-@keyframes heroStripe{0%,100%{width:40px;opacity:.3}50%{width:80px;opacity:.8}}
-/* Hero title subtle float */
-.hero-brand{animation:heroFloat 6s ease-in-out infinite}
-@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-/* Hero CTA warm accent */
-.hero-cta{border-color:rgba(200,160,120,.3);background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(200,180,160,.15))}
-.hero-cta:hover{border-color:rgba(200,160,120,.5);box-shadow:0 4px 20px rgba(200,160,120,.15),0 2px 12px rgba(200,208,224,.15)}
-
-/* ═══ TRUST BANNER ═══ */
-.trust-banner{display:flex;align-items:center;gap:8px;padding:10px 14px;margin:0 0 18px;border-radius:12px;
-  background:linear-gradient(135deg,rgba(200,160,120,.08),rgba(200,160,120,.03));
-  border:1px solid rgba(200,160,120,.15);position:relative;z-index:2}
-.trust-icon{font-size:13px;flex-shrink:0;color:var(--silver-deep)}
-.trust-text{font-size:11px;color:var(--silver-dim);line-height:1.5}
-.trust-text strong{color:var(--silver-deep);font-weight:700}
+.hero-cta.secondary{background:var(--card);color:var(--ink);border:1px solid var(--edge);box-shadow:var(--shadow-card)}
+.hero-cta.secondary:hover{border-color:var(--gold-soft);box-shadow:var(--shadow-lift)}
 
 /* ═══ STEPS ═══ */
 .steps{display:flex;flex-direction:column;gap:10px;margin:0 0 24px;position:relative;z-index:2}
@@ -909,17 +782,13 @@ body{
       <span class="hero-cta-icon">✦</span>
       <span>上传你的舞 · AI自动拆成八拍卡</span>
     </div>
-    <div class="hero-cta" onclick="showView('review')" tabindex="0" role="button" aria-label="对着老师舞打分" style="margin-top:10px;background:rgba(255,255,255,.55);color:var(--silver-deep)">
-      <span class="hero-cta-icon">◎</span>
-      <span>对着老师舞打分纠错</span>
+    <div class="hero-cta secondary" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传即可AI拆解">
+      <span class="hero-cta-icon">✦</span>
+      <span>上传即可AI拆成八拍卡</span>
     </div>
   </div>
 
-  <!-- Trust banner -->
-  <div class="trust-banner">
-    <span class="trust-icon">✦</span>
-    <span class="trust-text">已有 <strong>2,300+</strong> 舞者使用 · 视频仅用于本地AI分析，不会存储或分享</span>
-  </div>
+  <!-- 已去除虚假社交证明 -->
 
   <!-- How it works -->
   <div class="home-section-label">三步开练</div>
@@ -978,7 +847,7 @@ body{
 
   <!-- Upload video directly from home -->
   <div class="home-section-label">上传舞蹈视频</div>
-  <div class="upload-card" onclick="showView('review')" tabindex="0" role="button" aria-label="上传舞蹈视频，AI分析">
+  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
     <div class="upload-card-icon">📹</div>
     <div class="upload-card-info">
       <div class="upload-card-title">点此上传或选一个视频</div>
@@ -1016,29 +885,28 @@ body{
     <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>
 
-  <!-- Dance repertoire -->
+  <!-- Dance repertoire / 真实拆解记录 -->
   <div class="home-section-label">我的舞库</div>
-  <div class="entry-card shimmer" onclick="showView('detail',0)" tabindex="0" role="button" aria-label="查看月分解卡">
-    <div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--silver-deep)" stroke-width="1.2" opacity=".35"/><path d="M12 11v12l10-6z" fill="var(--silver-deep)" opacity=".5"/></svg></div>
-    <div class="entry-info"><div class="entry-title">月 · 分解卡</div><div class="entry-desc">古典舞 · 第一段 · 9句 · 中快板</div></div>
-    <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  </div>
-  <div class="entry-card shimmer" onclick="showView('detail',1)" tabindex="0" role="button" aria-label="查看月第二段分解卡">
-    <div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--silver-deep)" stroke-width="1.2" opacity=".35"/><path d="M12 11v12l10-6z" fill="var(--silver-deep)" opacity=".5"/></svg></div>
-    <div class="entry-info"><div class="entry-title">月 · 第二段</div><div class="entry-desc">古典舞 · 自动拆·待复核 · 12句 · 快板</div></div>
-    <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  </div>
-  <div class="entry-card shimmer" onclick="showView('detail',2)" tabindex="0" role="button" aria-label="查看成魔分解卡">
-    <div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--silver-deep)" stroke-width="1.2" opacity=".35"/><path d="M12 11v12l10-6z" fill="var(--silver-deep)" opacity=".5"/></svg></div>
-    <div class="entry-info"><div class="entry-title">成魔</div><div class="entry-desc">古典舞 · 水袖 · 4句 · 快板</div></div>
-    <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  </div>
-  <div class="entry-card shimmer" onclick="showView('detail',3)" tabindex="0" role="button" aria-label="查看月圆舞分解卡">
-    <div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--silver-deep)" stroke-width="1.2" opacity=".35"/><path d="M12 11v12l10-6z" fill="var(--silver-deep)" opacity=".5"/></svg></div>
-    <div class="entry-info"><div class="entry-title">月 · 圆舞</div><div class="entry-desc">当代舞 · 圆月背景 · 5句 · 中板</div></div>
-    <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div id="wjWorksList">
+    <div class="entry-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传你的第一支舞">
+      <div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--gold)" stroke-width="1.2" opacity=".5"/><path d="M12 11v12l10-6z" fill="var(--gold-soft)" opacity=".7"/></svg></div>
+      <div class="entry-info"><div class="entry-title">上传你的第一支舞</div><div class="entry-desc">上传任意舞蹈视频，AI 自动拆解</div></div>
+      <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
   </div>
 </div>
+<script>/* 页面加载时从 localStorage 恢复舞库列表 */
+(function(){
+  var list = []; try{ list = JSON.parse(localStorage.getItem('wj_works') || '[]'); }catch(e){}
+  if(list.length){
+    var html = '';
+    list.forEach(function(w){
+      var icon = '<svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--gold)" stroke-width="1.2" opacity=".5"/><path d="M12 11v12l10-6z" fill="var(--gold-soft)" opacity=".7"/></svg>';
+      html += '<div class="entry-card" onclick="window.DC_ID='+w.id+';dcLoading();pollDecompose(\''+w.id+'\')" tabindex="0" role="button" aria-label="查看拆解"><div class="entry-icon">'+icon+'</div><div class="entry-info"><div class="entry-title">'+(w.title||'我的舞')+'</div><div class="entry-desc">'+(w.n||'?')+'句 · '+(w.dur||'?')+'s</div></div><div class="entry-arrow">→</div></div>';
+    });
+    document.getElementById('wjWorksList').innerHTML = html;
+  }
+})();</script>
 
 <!-- ══════ REVIEW ══════ -->
 <div class="view hidden" id="view-review">
@@ -2924,6 +2792,8 @@ function payClose(){
 }
 function payCreate(channel){
   if(!DC_ID){ toast('未找到拆解记录，请重新上传'); return; }
+  // Stripe跳转前保存DC_ID到localStorage，防止跳转回来丢失状态
+  try{ localStorage.setItem('wj_dc_id', DC_ID); }catch(e){}
   document.getElementById('payChannels').style.display='none';
   if(channel==='stripe'){
     document.getElementById('payStripe').style.display='block';
@@ -2945,17 +2815,17 @@ function payCreate(channel){
     if(d.out_trade_no){
       PAY_OUT_TRADE_NO=d.out_trade_no;
       if(channel==='stripe'){
-        if(d.redirect_url){ window.location.href=d.redirect_url; }
+        if(d.url){ window.location.href=d.url; }
         else { toast('Stripe跳转链接获取失败'); payClose(); }
-      } else if(channel==='wechat'||channel==='alipay'){
+      } else {
         document.getElementById('payQrLoad').classList.add('hide');
-        if(d.qr_url){
-          document.getElementById('payQrImg').src=d.qr_url;
+        var qrSrc = d.code_url || d.qr_code || d.qr_url;
+        if(qrSrc){
+          document.getElementById('payQrImg').src=qrSrc;
           document.getElementById('payQrImg').style.display='block';
           var chName=channel==='wechat'?'微信':'支付宝';
           document.getElementById('payQrHint').innerHTML='打开 <b>'+chName+'</b> 扫一扫 · 支付 <b>¥9.9</b>';
           document.getElementById('payQrStatus').textContent='等待扫码…';
-          // 开始轮询支付结果
           payPoll(d.out_trade_no);
         } else { toast('二维码生成失败'); payClose(); }
       }
@@ -2973,7 +2843,9 @@ function payPoll(outTradeNo){
   var tries=0;
   PAY_POLL_TIMER=setInterval(function(){
     tries++;
-    fetch('api/pay/'+outTradeNo+'/status')
+    if(tries>80){ clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
+      toast('支付超时，请重新尝试'); payClose(); return; }
+    fetch('api/pay/status?out_trade_no='+outTradeNo)
       .then(function(r){return r.json();})
       .then(function(d){
         if(d.status==='paid'){
@@ -2995,6 +2867,35 @@ function payPoll(outTradeNo){
       }).catch(function(){});
   },2500);
 }
+
+/* ── 页面加载时从 Stripe 返回后恢复拆解状态 ── */
+(function(){
+  var saved = null;
+  try{ saved = localStorage.getItem('wj_dc_id'); }catch(e){}
+  if(saved && !DC_ID){
+    DC_ID = saved;
+    try{ localStorage.removeItem('wj_dc_id'); }catch(e){}
+    dcLoading();
+    pollDecompose(saved);
+  }
+})();
+/* ── 拆解结果保存到 localStorage（刷新不丢） ── */
+var _origRenderDeco = renderDecompose;
+renderDecompose = function(d){
+  if(d && d.id){
+    try{
+      localStorage.setItem('wj_dc_data_' + d.id, JSON.stringify({
+        id: d.id, title: d.title, n: (d.phrases||[]).length, dur: d.dur || 0, ts: Date.now()
+      }));
+      var list = JSON.parse(localStorage.getItem('wj_works') || '[]');
+      list = list.filter(function(w){ return w.id !== d.id; });
+      list.unshift({id:d.id, title:d.title||'我的舞', n:(d.phrases||[]).length, dur:d.dur||0});
+      if(list.length > 10) list.length = 10;
+      localStorage.setItem('wj_works', JSON.stringify(list));
+    }catch(e){}
+  }
+  return _origRenderDeco(d);
+};
 </script>
 </body>
 </html>
