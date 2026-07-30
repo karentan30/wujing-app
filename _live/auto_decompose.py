@@ -50,8 +50,9 @@ def _clip(src, t0, t1, out, slow=None):
               "-filter:v", f"setpts={mult}*PTS", "-an",
               "-c:v", "libx264", "-preset", "veryfast", "-crf", "26", out])
     else:
-        _run(["ffmpeg", "-y", "-i", src, "-ss", f"{t0}", "-t", f"{dur}",
-              "-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-c:a", "aac", out])
+        # -ss 在 -i 前=快速seek·-c copy 不重编码(慢放/镜像是前端做的·段切片不需重编码)。45s→20s
+        _run(["ffmpeg", "-y", "-ss", f"{t0}", "-i", src, "-t", f"{dur}",
+              "-c", "copy", "-avoid_negative_ts", "make_zero", out])
 
 
 def _b64(path):
@@ -67,8 +68,9 @@ def _run_pose(frame_paths):
         r = subprocess.run([MPVENV, POSE_SCRIPT] + frame_paths,
                            capture_output=True, text=True, timeout=120)
         data = json.loads(r.stdout.strip().splitlines()[-1])
+        # 只信高置信度的角度(护城河:不可信的角度比没有更伤·模糊/无人过滤掉)
         return {k: v.get("angles") for k, v in data.items()
-                if isinstance(v, dict) and v.get("ok")}
+                if isinstance(v, dict) and v.get("ok") and (v.get("visibility") or 0) >= 0.55}
     except Exception:
         return {}
 

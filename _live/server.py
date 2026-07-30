@@ -342,6 +342,13 @@ def generate_bg(data: dict, user: dict = Depends(get_current_user)):
     prompt = data.get("prompt", "")
     if not prompt:
         raise HTTPException(status_code=400, detail="prompt is required")
+    # ⚠️额度门：生图=最大烧钱坑·防登录用户无限调用烧豆包余额
+    try:
+        _acc = check_analysis_access(user["id"])
+    except Exception:
+        _acc = {"allowed": True}
+    if not _acc.get("allowed", True):
+        raise HTTPException(status_code=402, detail=_acc.get("reason", "生图需要付费额度"))
     key = os.environ.get("ARK_API_KEY")
     if not key:
         raise HTTPException(status_code=500, detail="ARK_API_KEY not configured")
@@ -380,11 +387,19 @@ async def decompose_video(
     if not _access.get("allowed", True):
         raise HTTPException(status_code=402, detail=_access.get("reason", "需要付费"))
 
+    # 上传校验：类型 + 大小（防 OOM / 任意文件）。放行 video/* 和 octet-stream(浏览器/curl常用)，只拒明确非视频
+    _ct = (video.content_type or "").lower()
+    if _ct and not (_ct.startswith("video/") or _ct == "application/octet-stream"):
+        raise HTTPException(status_code=400, detail="请上传视频文件（MP4 / MOV）")
     did = str(uuid.uuid4())
     ddir = os.path.join(DATA_DIR, did)
     os.makedirs(ddir, exist_ok=True)
     video_path = os.path.join(ddir, "input.mp4")
     content = await video.read()
+    if len(content) > 500 * 1024 * 1024:
+        import shutil as _sh
+        _sh.rmtree(ddir, ignore_errors=True)
+        raise HTTPException(status_code=413, detail="视频过大，请压到 500MB 以内")
     with open(video_path, "wb") as f:
         f.write(content)
 
@@ -418,7 +433,7 @@ def get_decompose_endpoint(did: str, user: dict = Depends(get_current_user)):
 @app.get("/api/decompose/{did}/clip/{name}")
 def get_decompose_clip(did: str, name: str):
     """服务拆解切片：name='full'→整片·'pN'→第N段。慢放/镜像前端处理。"""
-    safe = "".join(ch for ch in name if ch.isalnum())
+    safe = "".join(ch for ch in name if ch.isalnum() or ch == "_")
     if safe == "full":
         path = os.path.join(DATA_DIR, did, "input.mp4")
     else:
@@ -429,8 +444,8 @@ def get_decompose_clip(did: str, name: str):
 
 @app.get("/api/decompose/{did}/frame/{name}")
 def get_decompose_frame(did: str, name: str):
-    """服务某段定格帧图 pN.jpg。"""
-    safe = "".join(ch for ch in name if ch.isalnum())
+    """服务某段定格帧图 pN.jpg / pN_k.jpg（胶片条帧）。"""
+    safe = "".join(ch for ch in name if ch.isalnum() or ch == "_")
     path = os.path.join(DATA_DIR, did, "frames", f"{safe}.jpg")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Frame not found")

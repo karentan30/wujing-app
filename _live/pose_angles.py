@@ -45,11 +45,22 @@ def main():
         opts = vision.PoseLandmarkerOptions(
             base_options=python.BaseOptions(model_asset_path=MODEL), num_poses=1)
         det = vision.PoseLandmarker.create_from_options(opts)
+        import numpy as np
         for f in frames:
             name = os.path.splitext(os.path.basename(f))[0]
             try:
                 img = mp.Image.create_from_file(f)
                 res = det.detect(img)
+                if not res.pose_landmarks:
+                    # 暗场/低对比重试：提亮+增对比（K-pop暗场舞台常检不到骨架）
+                    try:
+                        arr = img.numpy_view()
+                        bright = np.clip(arr.astype(np.int16) * 1.6 + 45, 0, 255).astype(np.uint8)
+                        img2 = mp.Image(image_format=mp.ImageFormat.SRGB,
+                                        data=np.ascontiguousarray(bright))
+                        res = det.detect(img2)
+                    except Exception:
+                        pass
                 if not res.pose_landmarks:
                     out[name] = {"ok": False, "reason": "no_pose"}; continue
                 lm = res.pose_landmarks[0]

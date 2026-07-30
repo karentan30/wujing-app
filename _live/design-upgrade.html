@@ -2478,78 +2478,123 @@ function renderDetailArchive(p){
 
 <!-- ══════════ 任意舞自动拆解模块（上传即出八拍卡/故事卡/记忆卡·慢速/镜像/一键分享） ══════════ -->
 <style>
-/* ===== 浅米金衬线 + 胶片条结构（Karen认可的颜色 + 现有内容结构）===== */
+/* ===== 浅米金衬线 + 电影胶片条（Karen认可的浅米金 · 精修至可截图发圈）===== */
 .dc-up,.dc-load,.dc-res{font-family:"Noto Serif SC","PingFang SC",serif;background:#FAF7F0;min-height:100%;color:#1F1A14}
-.dc-up{padding:26px 20px 48px}
-.dc-up-h{font-size:24px;font-weight:900;letter-spacing:.02em;color:#1F1A14}
-.dc-up-s{font-size:13px;color:#9A8768;margin:8px 0 26px;line-height:1.7}
+.dc-up *,.dc-load *,.dc-res *{box-sizing:border-box}
+.dc-up{padding:28px 22px 48px}
+.dc-up-h{font-size:25px;font-weight:900;letter-spacing:.02em;color:#1F1A14}
+.dc-up-s{font-size:13px;color:#9A8768;margin:9px 0 28px;line-height:1.75}
 .dc-field{margin-bottom:16px}
-.dc-label{font-size:10px;letter-spacing:.2em;color:#B5922A;text-transform:uppercase;margin-bottom:9px;font-weight:700}
-.dc-input{width:100%;padding:13px 15px;border:1px solid #E4D9BE;border-radius:12px;font-size:15px;background:#fff;color:#1F1A14;font-family:inherit}
+.dc-label{font-size:10px;letter-spacing:.22em;color:#B5922A;text-transform:uppercase;margin-bottom:9px;font-weight:700}
+.dc-input{width:100%;padding:13px 15px;border:1px solid #E4D9BE;border-radius:12px;font-size:15px;background:#fff;color:#1F1A14;font-family:inherit;transition:border-color .2s,box-shadow .2s}
+.dc-input:focus{outline:none;border-color:#C9A94E;box-shadow:0 0 0 3px rgba(201,169,78,.14)}
 .dc-input::placeholder{color:#B6A984}
-.dc-zone{border:1.5px dashed #D8C89A;border-radius:14px;padding:34px 20px;text-align:center;cursor:pointer;background:#fff;transition:all .2s}
+.dc-zone{border:1.5px dashed #D8C89A;border-radius:16px;padding:34px 20px;text-align:center;cursor:pointer;background:#fff;transition:all .2s}
 .dc-zone:active,.dc-zone:hover{border-color:#B5922A;background:#FBF7EC}
 .dc-zone .ic{font-size:36px;margin-bottom:10px}
 .dc-zone .l{font-size:15px;color:#1F1A14;font-weight:600}
 .dc-zone .h{font-size:12px;color:#9A8768;margin-top:5px}
 .dc-fname{font-size:13px;color:#5a7a4a;margin:12px 2px;word-break:break-all}
-.dc-btn{display:block;width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#B5922A,#D8B65E);color:#fff;font-size:16px;font-weight:700;letter-spacing:.06em;margin-top:22px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(181,146,42,.25)}
+.dc-btn{display:block;width:100%;padding:16px;border:none;border-radius:13px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:16px;font-weight:700;letter-spacing:.08em;margin-top:22px;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 .dc-btn:disabled{opacity:.35;box-shadow:none}
-.dc-load{padding:80px 24px;text-align:center}
+.dc-load{padding:64px 24px;text-align:center}
 .dc-load-t{font-size:17px;font-weight:700;margin-top:20px;color:#1F1A14}
 .dc-load-d{font-size:12px;color:#9A8768;margin-top:8px;line-height:1.7}
-/* 结果页 */
-.dc-res{padding-bottom:40px}
-.dc-hero{padding:26px 20px 20px;border-bottom:1px solid #EDE4CF;background:linear-gradient(180deg,#F4EDD8,#FAF7F0)}
-.dc-hero .t{font-size:28px;font-weight:900;letter-spacing:.06em;color:#1F1A14;line-height:1.15}
-.dc-hero .s{font-size:12px;color:#9A8768;margin-top:8px;letter-spacing:.06em}
-.dc-sec{font-size:10px;letter-spacing:.22em;color:#B5922A;text-transform:uppercase;margin:26px 20px 12px;font-weight:700}
-/* 八拍卡 · 胶片条 */
-.dc-strip{background:#fff;border:1px solid #EDE4CF;border-radius:14px;margin:0 16px 12px;overflow:hidden;position:relative;box-shadow:0 2px 14px rgba(90,70,20,.06)}
-.dc-strip .lbar{position:absolute;left:0;top:0;bottom:0;width:4px}
-.dc-strip .hd{display:flex;align-items:baseline;gap:9px;padding:14px 16px 11px 18px}
-.dc-strip .no{font-size:26px;font-weight:900;line-height:1}
-.dc-strip .nm{font-size:20px;font-weight:900;color:#1F1A14}
-.dc-strip .tm{font-size:11px;color:#B6A984}
-.dc-strip .kou{margin-left:auto;font-size:13px;color:#B5922A;font-weight:700;letter-spacing:.05em;align-self:center}
-.dc-strip .film{display:flex;gap:2px;padding:0 2px;background:#EAE2D0}
-.dc-strip .film .fr{flex:1;aspect-ratio:9/16;overflow:hidden;background:#DcD3BE}
+.dc-load-d b{color:#B5922A}
+.dc-steps{max-width:290px;margin:34px auto 0;text-align:left}
+.dc-step{display:flex;align-items:center;gap:12px;padding:10px 0;opacity:.38;transition:opacity .45s}
+.dc-step.on,.dc-step.done{opacity:1}
+.dc-step .dot{width:22px;height:22px;border-radius:50%;border:2px solid #E4D9BE;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#B6A984;transition:all .3s}
+.dc-step.on .dot{border-color:#B5922A;color:#B5922A;animation:dcpulse 1.1s infinite}
+.dc-step.done .dot{border-color:#7aa35a;background:#7aa35a;color:#fff;font-size:0}
+.dc-step.done .dot::after{content:"✓";font-size:12px}
+.dc-step .tx{font-size:13px;color:#7A5C2A}
+.dc-step.on .tx{color:#1F1A14;font-weight:600}
+.dc-step.done .tx{color:#4A3820}
+@keyframes dcpulse{0%,100%{box-shadow:0 0 0 4px rgba(181,146,42,.12)}50%{box-shadow:0 0 0 8px rgba(181,146,42,.02)}}
+/* ===== 结果页 ===== */
+.dc-res{padding-bottom:44px}
+.dc-hero{padding:30px 22px 24px;border-bottom:1px solid #EDE4CF;background:linear-gradient(174deg,#F6EFD9 0%,#FAF7F0 78%);position:relative;overflow:hidden}
+.dc-hero::before{content:"";position:absolute;top:-40px;right:-30px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(216,182,94,.16),transparent 68%);pointer-events:none}
+.dc-hero .brand{font-size:10px;letter-spacing:.34em;color:#B5922A;text-transform:uppercase;font-weight:700;margin-bottom:11px}
+.dc-hero .t{font-size:30px;font-weight:900;letter-spacing:.05em;color:#1F1A14;line-height:1.18}
+.dc-hero .rule{width:38px;height:2.5px;border-radius:2px;background:linear-gradient(90deg,#C79E3B,#E4C878);margin:13px 0 12px}
+.dc-hero .s{font-size:12px;color:#8F7C58;letter-spacing:.04em}
+.dc-hero .s b{color:#B5922A;font-weight:700}
+.dc-sec{display:flex;align-items:center;gap:9px;font-size:10.5px;letter-spacing:.24em;color:#B5922A;text-transform:uppercase;margin:30px 20px 13px;font-weight:700}
+.dc-sec::before{content:"";width:16px;height:2px;border-radius:2px;background:linear-gradient(90deg,#C79E3B,#E4C878)}
+/* ===== 八拍卡 · 电影胶片条 ===== */
+.dc-strip{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px 14px;overflow:hidden;position:relative;box-shadow:0 4px 20px rgba(120,92,30,.07),0 1px 3px rgba(120,92,30,.05)}
+.dc-strip .lbar{position:absolute;left:0;top:0;bottom:0;width:4px;z-index:2}
+.dc-strip .hd{display:flex;align-items:center;gap:11px;padding:16px 16px 13px 20px}
+.dc-strip .no{font-size:30px;font-weight:900;line-height:1;font-family:"Noto Serif SC",serif;flex-shrink:0;letter-spacing:-.02em}
+.dc-strip .hd .txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.dc-strip .nm{font-size:19px;font-weight:900;color:#1F1A14;letter-spacing:.01em;line-height:1.1}
+.dc-strip .tm{font-size:10.5px;color:#B6A984;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.dc-strip .kou{margin-left:auto;flex-shrink:0;align-self:center;font-size:12.5px;color:#8A6B22;font-weight:700;letter-spacing:.14em;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border:1px solid #EBDCB0;border-radius:20px;padding:6px 13px;white-space:nowrap}
+/* 胶片：深炭色片基 + 白色齿孔轨 + 帧间白发丝线 */
+.dc-strip .film{position:relative;display:flex;gap:2.5px;padding:12px 12px;margin:0 12px;background:linear-gradient(180deg,#242019,#1a1712);border-radius:12px;box-shadow:inset 0 1px 6px rgba(0,0,0,.5)}
+.dc-strip .film::before,.dc-strip .film::after{content:"";position:absolute;left:8px;right:8px;height:5px;background-image:repeating-linear-gradient(90deg,transparent 0,transparent 6px,rgba(255,255,255,.5) 6px,rgba(255,255,255,.5) 11px);opacity:.55;pointer-events:none;border-radius:2px}
+.dc-strip .film::before{top:3.5px}
+.dc-strip .film::after{bottom:3.5px}
+.dc-strip .film .fr{position:relative;flex:1;aspect-ratio:9/13;overflow:hidden;background:#0d0b08;border-radius:4px}
 .dc-strip .film .fr img{width:100%;height:100%;object-fit:cover;display:block}
-.dc-strip .dt{padding:12px 16px 15px 18px}
-.dc-strip .dt .act{font-size:13px;color:#4A3820;line-height:1.65}
-.dc-strip .dt .int{font-size:12px;color:#9A8768;margin-top:4px;line-height:1.6}
-.dc-strip .ang{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
-.dc-strip .ang .glb{width:100%;font-size:10px;letter-spacing:.14em;color:#B5922A;text-transform:uppercase;margin-bottom:2px;font-weight:700}
-.dc-strip .ang .chip{font-size:11px;color:#6A5638;background:#FAF5E8;border:1px solid #EDE4CF;border-radius:10px;padding:2px 9px}
-.dc-strip .ang .chip b{color:#B5922A;font-weight:700}
-.dc-strip .ctl{display:flex;gap:6px;margin-top:12px}
-.dc-strip .ctl span{flex:1;text-align:center;font-size:12px;padding:9px;border-radius:9px;border:1px solid #E4D9BE;color:#7A5C2A;cursor:pointer;background:#FBF7EC}
-.dc-strip .ctl span:active{border-color:#B5922A;background:#F4EAD2}
-.dc-strip .shr{text-align:right;font-size:11px;color:#B5922A;margin-top:10px;cursor:pointer}
-/* 点评 */
-.dc-coach{background:#fff;border:1px solid #EDE4CF;border-radius:14px;margin:0 16px;padding:17px 18px;box-shadow:0 2px 14px rgba(90,70,20,.06)}
-.dc-coach .cm{font-size:14px;color:#3A2E1C;line-height:1.8;padding-bottom:12px;border-bottom:1px solid #EDE4CF;margin-bottom:12px}
-.dc-coach .tp{font-size:13px;line-height:1.7;padding:4px 0 4px 14px;border-left:2px solid #EDE4CF;margin-bottom:5px}
-.dc-coach .tp.g{border-color:#7aa35a;color:#4d6a3a}
-.dc-coach .tp.i{border-color:#B5922A;color:#7A5C2A}
-.dc-coach .shr{text-align:right;font-size:11px;color:#B5922A;margin-top:9px;cursor:pointer}
-/* 故事卡 */
-.dc-story{background:#fff;border:1px solid #EDE4CF;border-radius:14px;margin:0 16px;padding:19px 20px;box-shadow:0 2px 14px rgba(90,70,20,.06)}
-.dc-story .h{font-size:19px;font-weight:900;color:#1F1A14;margin-bottom:11px;letter-spacing:.02em}
-.dc-story .p{font-size:14px;color:#4A3820;line-height:1.95}
-.dc-story .chain{margin-top:14px;padding-top:13px;border-top:1px solid #EDE4CF;font-size:12px;color:#7A5C2A;line-height:1.85}
-.dc-story .shr{text-align:right;font-size:11px;color:#B5922A;margin-top:11px;cursor:pointer}
-/* 记忆卡 */
-.dc-mem{background:#fff;border:1px solid #EDE4CF;border-radius:14px;margin:0 16px;overflow:hidden;box-shadow:0 2px 14px rgba(90,70,20,.06)}
+.dc-strip .film .fr::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08);border-radius:4px;pointer-events:none}
+.dc-strip .film .fr .fno{position:absolute;left:4px;bottom:3px;font-size:8.5px;color:rgba(255,255,255,.72);letter-spacing:.1em;font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(0,0,0,.7);font-family:ui-monospace,monospace}
+.dc-strip .film .fcap{position:absolute;top:12px;right:14px;z-index:3;font-size:8.5px;letter-spacing:.16em;color:rgba(255,255,255,.55);text-transform:uppercase;font-family:ui-monospace,monospace}
+.dc-strip .dt{padding:15px 18px 17px 20px}
+.dc-strip .dt .act{font-size:13.5px;color:#3A2E1C;line-height:1.72}
+.dc-strip .dt .int{font-size:12px;color:#9A8768;margin-top:6px;line-height:1.62;padding-left:14px;position:relative}
+.dc-strip .dt .int::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:#D8C79A}
+.dc-strip .dt .int.mood::before{background:#C7A0D8}
+/* 测评角度 · 当前° vs 目标° */
+.dc-strip .ang{margin-top:14px;background:#FBF7EC;border:1px solid #EFE6CF;border-radius:12px;padding:11px 13px 12px}
+.dc-strip .ang .glb{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.16em;color:#A98A3A;text-transform:uppercase;margin-bottom:9px;font-weight:700}
+.dc-strip .ang .glb::before{content:"";width:6px;height:6px;border-radius:50%;background:#C79E3B;box-shadow:0 0 0 3px rgba(199,158,59,.16)}
+.dc-strip .ang .grid{display:flex;flex-wrap:wrap;gap:6px}
+.dc-strip .ang .g{flex:1 1 calc(50% - 3px);min-width:0;background:#fff;border:1px solid #EDE4CF;border-radius:9px;padding:6px 9px}
+.dc-strip .ang .g .gr{display:flex;align-items:baseline;justify-content:space-between}
+.dc-strip .ang .g .gn{font-size:11px;color:#7A6A46}
+.dc-strip .ang .g .gv{font-size:13px;font-weight:900;color:#4A3820;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.dc-strip .ang .g .gv.ok{color:#5C8A3E}
+.dc-strip .ang .g .gv.off{color:#C79030}
+.dc-strip .ang .g .bar{height:3px;border-radius:2px;background:#EEE6D2;margin-top:6px;overflow:hidden}
+.dc-strip .ang .g .bar i{display:block;height:100%;border-radius:2px}
+.dc-strip .ctl{display:flex;gap:7px;margin-top:14px}
+.dc-strip .ctl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:10px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
+.dc-strip .ctl span:active{border-color:#C79E3B;background:#F4EAD2}
+.dc-strip .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:12px;cursor:pointer;letter-spacing:.02em}
+/* ===== 老师点评 · AI 测评 ===== */
+.dc-coach{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:19px 19px 17px;box-shadow:0 4px 20px rgba(120,92,30,.07)}
+.dc-coach .cm{font-size:14.5px;color:#2E2416;line-height:1.85;padding:12px 15px;margin-bottom:15px;background:linear-gradient(135deg,#FBF4E1,#F8F0DB);border-radius:12px;border-left:3px solid #C79E3B;font-weight:600}
+.dc-coach .csub{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin:0 0 9px 2px}
+.dc-coach .csub.g{color:#5C8A3E}
+.dc-coach .csub.i{color:#B5922A}
+.dc-coach .tp{font-size:13px;line-height:1.72;padding:9px 12px 9px 13px;margin-bottom:7px;border-radius:10px;position:relative}
+.dc-coach .tp.g{background:#F3F7EC;color:#4B6A38;border:1px solid #E1EBD2}
+.dc-coach .tp.i{background:#FBF6E9;color:#6E5622;border:1px solid #EFE4C9}
+.dc-coach .tp b{font-weight:900}
+.dc-coach .tp.i b{color:#B5892A}
+.dc-coach .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:11px;cursor:pointer}
+/* ===== 故事卡 ===== */
+.dc-story{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:22px 21px 19px;box-shadow:0 4px 20px rgba(120,92,30,.07);position:relative;overflow:hidden}
+.dc-story::before{content:"”";position:absolute;top:2px;right:16px;font-size:80px;color:rgba(199,158,59,.1);font-family:Georgia,serif;line-height:1;pointer-events:none}
+.dc-story .h{font-size:20px;font-weight:900;color:#1F1A14;margin-bottom:13px;letter-spacing:.03em}
+.dc-story .p{font-size:14px;color:#4A3820;line-height:2}
+.dc-story .chain{margin-top:16px;padding-top:15px;border-top:1px dashed #E6DABA;font-size:12px;color:#7A5C2A;line-height:1.9}
+.dc-story .chain b{color:#B5922A;letter-spacing:.1em;font-weight:700}
+.dc-story .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:13px;cursor:pointer}
+/* ===== 记忆卡 ===== */
+.dc-mem{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;overflow:hidden;box-shadow:0 4px 20px rgba(120,92,30,.07)}
 .dc-mem video{width:100%;display:block;background:#000;transition:transform .15s}
 .dc-mem video.mir{transform:scaleX(-1)}
-.dc-mem .bd{padding:14px 16px 16px}
-.dc-mem .h{font-size:14px;color:#1F1A14;font-weight:700;margin-bottom:4px}
-.dc-mem .hint{font-size:12px;color:#9A8768;line-height:1.6;margin-bottom:11px}
-.dc-mem .ctrl{display:flex;gap:6px}
-.dc-mem .ctrl span{flex:1;text-align:center;font-size:12px;padding:9px;border-radius:9px;border:1px solid #E4D9BE;color:#7A5C2A;cursor:pointer;background:#FBF7EC}
-.dc-mem .ctrl span.on{background:linear-gradient(135deg,#B5922A,#D8B65E);color:#fff;border-color:transparent;font-weight:700}
-.dc-share-all{margin:24px 16px 10px;padding:15px;text-align:center;border-radius:12px;background:linear-gradient(135deg,#B5922A,#D8B65E);color:#fff;font-size:15px;font-weight:700;letter-spacing:.06em;cursor:pointer;box-shadow:0 6px 18px rgba(181,146,42,.25)}
+.dc-mem .bd{padding:16px 17px 17px}
+.dc-mem .h{font-size:15px;color:#1F1A14;font-weight:900;margin-bottom:5px}
+.dc-mem .hint{font-size:12px;color:#9A8768;line-height:1.65;margin-bottom:13px}
+.dc-mem .ctrl{display:flex;gap:7px}
+.dc-mem .ctrl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:10px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
+.dc-mem .ctrl span.on{background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 3px 10px rgba(181,146,42,.24)}
+.dc-share-all{margin:26px 16px 12px;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:15px;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 /* 视频弹层 */
 .dc-modal{position:fixed;inset:0;background:rgba(4,5,10,.93);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
 .dc-modal.on{display:flex}
@@ -2603,7 +2648,7 @@ function showDecomposeUpload(){
       '<div class="dc-up-s">任意一支舞都行——自己跳的、想学的博主的。AI 自动拆成八拍卡 + 故事卡 + 记忆卡（慢速/镜像跟练）。无需选参考。</div>'+
       '<div class="dc-field"><div class="dc-label">舞名（可留空）</div><input class="dc-input" id="dcTitle" placeholder="例如：只此青绿"></div>'+
       '<div class="dc-zone" onclick="document.getElementById(\'dcInput\').click()">'+
-        '<div class="ic">📹</div><div class="l">点击选择视频</div><div class="h">MP4 / MOV · 最大 500MB · 建议 15–30 秒</div>'+
+        '<div class="ic">📹</div><div class="l">点击选择视频</div><div class="h">MP4 / MOV · 单人出镜 · 光线清晰 · 15–30 秒最佳</div>'+
         '<input type="file" id="dcInput" accept="video/*" style="display:none" onchange="dcPick(this)">'+
       '</div>'+
       '<div class="dc-fname" id="dcFname"></div>'+
@@ -2630,10 +2675,18 @@ function startDecompose(){
     })
     .catch(function(){ btn.disabled=false; btn.textContent='开始拆解'; toast('网络错误'); });
 }
+var DC_STEPS=['读取视频 · 按八拍切分','AI 逐段识别动作 · 脚下 · 口诀','MediaPipe 逐帧测量关节角度','生成八拍卡 · 故事卡 · 老师点评'];
+var DC_LOAD_TIMER=null;
 function dcLoading(){
-  _dcView().innerHTML='<div class="dc-load"><div class="loading-spinner" style="margin:0 auto"></div><div class="dc-load-t">AI 正在逐拍拆解你的舞…</div><div class="dc-load-d">约 20–40 秒 · 八拍卡 / 故事卡 / 记忆卡</div></div>';
+  var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span></div>';}).join('');
+  _dcView().innerHTML='<div class="dc-load"><div class="loading-spinner" style="margin:0 auto"></div><div class="dc-load-t">AI 正在拆解你的舞…</div><div class="dc-load-d">约 20–40 秒 · 请别退出</div><div class="dc-steps">'+steps+'</div></div>';
   _dcShow();
+  var cur=0;
+  DC_LOAD_TIMER=setInterval(function(){
+    if(cur<DC_STEPS.length-1){ var e=document.getElementById('dcstep'+cur); if(e){e.className='dc-step done';} cur++; var n=document.getElementById('dcstep'+cur); if(n)n.className='dc-step on'; }
+  },7000);
 }
+function _dcLoadStop(){ if(DC_LOAD_TIMER){clearInterval(DC_LOAD_TIMER);DC_LOAD_TIMER=null;} }
 function pollDecompose(id){
   var tries=0;
   var iv=setInterval(function(){
@@ -2641,10 +2694,12 @@ function pollDecompose(id){
     fetch('api/decompose/'+id,{headers:{'Authorization':'Bearer '+AUTH_TOKEN}})
       .then(function(r){return r.json();})
       .then(function(d){
-        if(d.status==='completed'){ clearInterval(iv); DC_DATA=d; renderDecompose(d); }
-        else if(d.status==='failed'){ clearInterval(iv);
-          _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">⚠️</div><div class="dc-load-t">拆解失败了</div><div class="dc-load-d">换一支清晰点的舞蹈视频再试试</div><div style="margin-top:18px"><button class="dc-btn" style="width:auto;padding:10px 24px" onclick="showDecomposeUpload()">重新上传</button></div></div>'; }
-        else if(tries>80){ clearInterval(iv); toast('处理超时，请稍后在作品里查看'); }
+        if(d.status==='completed'){ clearInterval(iv); _dcLoadStop();
+          DC_STEPS.forEach(function(_,i){var e=document.getElementById('dcstep'+i);if(e)e.className='dc-step done';});
+          setTimeout(function(){ DC_DATA=d; renderDecompose(d); }, 350); }
+        else if(d.status==='failed'){ clearInterval(iv); _dcLoadStop();
+          _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">😥</div><div class="dc-load-t">这支没拆成功</div><div class="dc-load-d">建议换一支<b>光线清晰、单人出镜、15–30秒</b>的舞蹈视频再试</div><div style="margin-top:20px"><button class="dc-btn" style="width:auto;padding:11px 26px" onclick="showDecomposeUpload()">重新上传</button></div></div>'; }
+        else if(tries>80){ clearInterval(iv); _dcLoadStop(); toast('处理超时，请稍后在作品里查看'); }
       }).catch(function(){});
   },3000);
 }
@@ -2652,10 +2707,26 @@ function _esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g
 var DC_COLORS=['#7ab4ff','#50d282','#e8c98e','#ff6eb4','#b06eff'];
 function dcAngHtml(a){
   if(!a) return '';
-  var map=[['left_shoulder','左肩'],['right_shoulder','右肩'],['left_elbow','左肘'],['right_elbow','右肘'],['left_knee','左膝'],['right_knee','右膝'],['torso_tilt','躯干']];
-  var chips='';
-  map.forEach(function(m){ var v=a[m[0]]; if(v!=null) chips+='<span class="chip">'+m[1]+' <b>'+Math.round(v)+'°</b></span>'; });
-  return chips?'<div class="ang"><span class="glb">MediaPipe 实测角度</span>'+chips+'</div>':'';
+  // name, 目标角度, 容差(±°). 国风舞多要求肢体舒展蹬直→目标180；躯干倾斜目标0。
+  var map=[
+    ['left_shoulder','左肩',90,20],['right_shoulder','右肩',90,20],
+    ['left_elbow','左肘',180,12],['right_elbow','右肘',180,12],
+    ['left_knee','左膝',180,8],['right_knee','右膝',180,8],
+    ['torso_tilt','躯干',0,6]
+  ];
+  var cells='';
+  map.forEach(function(m){
+    var v=a[m[0]]; if(v==null) return;
+    var val=Math.round(v), tgt=m[2], tol=m[3];
+    var diff=Math.abs(v-tgt), ok=diff<=tol;
+    // 进度：越接近目标越满，最差按 60° 偏差归零
+    var pct=Math.max(6,Math.min(100,Math.round((1-Math.min(diff,60)/60)*100)));
+    var col=ok?'linear-gradient(90deg,#7AA84E,#9DC96E)':'linear-gradient(90deg,#D9A93E,#E8C878)';
+    cells+='<div class="g"><div class="gr"><span class="gn">'+m[1]+'</span>'+
+      '<span class="gv '+(ok?'ok':'off')+'">'+val+'°</span></div>'+
+      '<div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
+  });
+  return cells?'<div class="ang"><span class="glb">MediaPipe 逐帧实测 · 对照理想角度</span><div class="grid">'+cells+'</div></div>':'';
 }
 function renderDecompose(d){
   DC_ID=d.id; DC_DATA=d;
@@ -2664,15 +2735,17 @@ function renderDecompose(d){
   (d.phrases||[]).forEach(function(p,idx){
     var col=DC_COLORS[idx%DC_COLORS.length];
     var film='';
-    for(var k=0;k<strip;k++){ film+='<div class="fr"><img src="api/decompose/'+d.id+'/frame/p'+p.i+'_'+k+'" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>'; }
+    for(var k=0;k<strip;k++){ film+='<div class="fr"><img src="api/decompose/'+d.id+'/frame/p'+p.i+'_'+k+'" loading="lazy" onerror="this.parentNode.style.display=\'none\'"><span class="fno">'+(k+1)+'/'+strip+'</span></div>'; }
     beats+='<div class="dc-strip">'+
       '<div class="lbar" style="background:'+col+'"></div>'+
-      '<div class="hd"><span class="no" style="color:'+col+'">'+p.i+'</span><span class="nm">'+_esc(p.name)+'</span><span class="tm">'+p.t0+'–'+p.t1+'s</span>'+(p.kou?'<span class="kou">'+_esc(p.kou)+'</span>':'')+'</div>'+
-      '<div class="film">'+film+'</div>'+
+      '<div class="hd"><span class="no" style="color:'+col+'">'+p.i+'</span>'+
+        '<span class="txt"><span class="nm">'+_esc(p.name)+'</span><span class="tm">'+p.t0+'–'+p.t1+' s</span></span>'+
+        (p.kou?'<span class="kou">'+_esc(p.kou)+'</span>':'')+'</div>'+
+      '<div class="film"><span class="fcap">动作全程</span>'+film+'</div>'+
       '<div class="dt">'+
         '<div class="act">'+_esc(p.action)+'</div>'+
         (p.feet?'<div class="int">脚下 · '+_esc(p.feet)+'</div>':'')+
-        (p.intent?'<div class="int">意境 · '+_esc(p.intent)+'</div>':'')+
+        (p.intent?'<div class="int mood">意境 · '+_esc(p.intent)+'</div>':'')+
         dcAngHtml(p.angles)+
         '<div class="ctl"><span onclick="dcPlayClip(\'p'+p.i+'\',\''+_esc(p.name)+'\',\'norm\')">▷ 正常速</span><span onclick="dcPlayClip(\'p'+p.i+'\',\''+_esc(p.name)+'\',\'slow\')">慢放</span><span onclick="dcPlayClip(\'p'+p.i+'\',\''+_esc(p.name)+'\',\'mir\')">🪞 镜像</span></div>'+
         '<div class="shr" onclick="dcShare(\'beat\','+p.i+')">分享这拍 ↗</div>'+
@@ -2681,17 +2754,19 @@ function renderDecompose(d){
   var st=d.story||{}, mem=d.memory||{};
   _dcView().innerHTML=
     '<div class="dc-res">'+
-      '<div class="dc-hero"><div class="t">《'+_esc(d.title)+'》</div><div class="s">AI 自动拆解 · '+(d.phrases||[]).length+' 句 · '+(d.dur||'')+'s</div></div>'+
+      '<div class="dc-hero"><div class="brand">舞镜 · AI 拆舞</div><div class="t">《'+_esc(d.title)+'》</div><div class="rule"></div><div class="s">逐帧自动拆解 · <b>'+(d.phrases||[]).length+'</b> 句八拍卡 · <b>'+(d.dur||'')+'</b>s</div></div>'+
       (d.coach?'<div class="dc-sec">老师点评 · AI 逐帧测角</div>'+
         '<div class="dc-coach"><div class="cm">'+_esc(d.coach.comment)+'</div>'+
+        ((d.coach.good||[]).length?'<div class="csub g">◆ 做得好</div>':'')+
         (d.coach.good||[]).map(function(g){return '<div class="tp g">'+_esc(g)+'</div>';}).join('')+
+        ((d.coach.improve||[]).length?'<div class="csub i" style="margin-top:13px">◆ 可以更好</div>':'')+
         (d.coach.improve||[]).map(function(x){return '<div class="tp i">'+_esc(x)+'</div>';}).join('')+
         '<div class="shr" onclick="dcShare(\'coach\')">分享点评 ↗</div></div>':'')+
       '<div class="dc-sec">八拍卡 · 跟练</div>'+
       beats+
       (st.title?'<div class="dc-sec">故事卡</div>'+
         '<div class="dc-story"><div class="h">'+_esc(st.title)+'</div><div class="p">'+_esc(st.body)+'</div>'+
-        (st.chain?'<div class="chain">串记 · '+_esc(st.chain)+'</div>':'')+
+        (st.chain?'<div class="chain"><b>串记口诀</b><br>'+_esc(st.chain)+'</div>':'')+
         '<div class="shr" onclick="dcShare(\'story\')">分享故事卡 ↗</div></div>':'')+
       '<div class="dc-sec">记忆卡 · 整支跟练</div>'+
       '<div class="dc-mem">'+
