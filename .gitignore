@@ -13,3 +13,4 @@ _live/__pycache__/
 *.jpeg
 *.task
 .DS_Store
+.gstack/
