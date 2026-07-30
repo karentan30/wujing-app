@@ -6,7 +6,10 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>舞镜 · Dance Mirror</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23dce0ec' stroke='%238890a8' stroke-width='3'/><text x='50' y='62' text-anchor='middle' font-size='40' fill='%23606880'>镜</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23EDE4CF' stroke='%23B5922A' stroke-width='3'/><text x='50' y='62' text-anchor='middle' font-size='40' fill='%23B5922A'>镜</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -2606,6 +2609,34 @@ function renderDetailArchive(p){
 .dc-modal .mrow span{flex:1;text-align:center;font-size:13px;padding:11px;border-radius:10px;border:1px solid #2a3050;color:#cdd4e8;cursor:pointer}
 .dc-modal .mrow span.on{background:linear-gradient(135deg,#b8923e,#e8c98e);color:#0a0a0a;border-color:transparent;font-weight:600}
 .dc-modal .mclose{text-align:center;color:#7a86a8;font-size:13px;margin-top:16px;cursor:pointer}
+
+/* ═══ PAYMENT MODAL (抄自 Lumee payX · 简化为 ¥9.9 单次) ═══ */
+.pay-modal{position:fixed;inset:0;background:rgba(10,12,20,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:10000;display:none;align-items:center;justify-content:center;padding:24px}
+.pay-modal[aria-hidden="false"]{display:flex}
+.pay-sheet{background:#FFFDF6;border:1px solid #EDE4CF;border-radius:22px;width:100%;max-width:360px;padding:30px 24px 22px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.12)}
+.pay-close{position:absolute;top:12px;right:14px;font-size:22px;color:#A09078;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.pay-close:active{background:rgba(0,0,0,.04)}
+.pay-icon{width:44px;height:44px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,#C9A94A,#B5922A);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(181,146,42,.22)}
+.pay-title{font-family:"Noto Serif SC",serif;font-weight:900;font-size:22px;text-align:center;color:#1F1A14;margin-bottom:6px}
+.pay-desc{font-size:12.5px;color:#8C857A;text-align:center;line-height:1.65;margin-bottom:22px}
+.pay-channels{display:flex;flex-direction:column;gap:8px}
+.pay-channel{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1px solid #EDE4CF;background:#fff;cursor:pointer;transition:all .15s}
+.pay-channel:active{transform:scale(.97);background:#FCF8EF;border-color:#C9A94A}
+.pay-c-icon{font-size:20px;width:32px;text-align:center}
+.pay-c-name{flex:1;font-size:14px;font-weight:600;color:#1F1A14}
+.pay-c-arrow{color:#C9A94A;font-size:14px;font-weight:700}
+.pay-qr{text-align:center;margin-top:6px}
+.pay-qr-frame{width:180px;height:180px;margin:0 auto 12px;border:2px solid #EDE4CF;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fff;position:relative}
+.pay-qr-frame img{width:160px;height:160px;display:block}
+.pay-qr-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;font-size:13px;color:#8C857A}
+.pay-qr-load.hide{display:none}
+.pay-qr-hint{font-size:13px;color:#1F1A14;margin-bottom:6px}
+.pay-qr-hint b{color:#B5922A}
+.pay-qr-status{font-size:11px;color:#8C857A;letter-spacing:.04em}
+.pay-stripe{text-align:center;padding:24px}
+.pay-stripe-load{display:flex;flex-direction:column;align-items:center}
+.pay-stripe-hint{font-size:13px;color:#8C857A;margin-top:8px}
+.pay-foot{text-align:center;font-size:11px;color:#B8AE97;margin-top:16px;letter-spacing:.02em}
 </style>
 
 <div class="dc-modal" id="dcModal">
@@ -2618,6 +2649,53 @@ function renderDetailArchive(p){
       <span id="dcMir" onclick="dcToggleMirror()">🪞 镜像</span>
     </div>
     <div class="mclose" onclick="dcCloseModal()">收起</div>
+  </div>
+</div>
+
+<!-- ═══ PAYMENT MODAL (抄自 Lumee payX · 简化为 ¥9.9 单次拆解) ═══ -->
+<div class="pay-modal" id="payModal" aria-hidden="true">
+  <div class="pay-sheet" role="dialog">
+    <span class="pay-close" onclick="payClose()" aria-label="关闭">×</span>
+    <div class="pay-icon">✦</div>
+    <div class="pay-title">¥9.9 生成完整拆解</div>
+    <div class="pay-desc">你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。</div>
+
+    <!-- 渠道选择 -->
+    <div class="pay-channels" id="payChannels">
+      <div class="pay-channel" id="payChannelWx" onclick="payCreate('wechat')">
+        <span class="pay-c-icon">💚</span>
+        <span class="pay-c-name">微信支付</span>
+        <span class="pay-c-arrow">→</span>
+      </div>
+      <div class="pay-channel" id="payChannelAli" onclick="payCreate('alipay')">
+        <span class="pay-c-icon">🔵</span>
+        <span class="pay-c-name">支付宝</span>
+        <span class="pay-c-arrow">→</span>
+      </div>
+      <div class="pay-channel" id="payChannelStripe" onclick="payCreate('stripe')">
+        <span class="pay-c-icon">💳</span>
+        <span class="pay-c-name">信用卡 / PayPal (海外)</span>
+        <span class="pay-c-arrow">→</span>
+      </div>
+    </div>
+
+    <!-- 扫码展示区 -->
+    <div class="pay-qr" id="payQr" style="display:none">
+      <div class="pay-qr-frame">
+        <img id="payQrImg" src="" alt="支付二维码">
+        <div class="pay-qr-load" id="payQrLoad">正在生成二维码…</div>
+      </div>
+      <div class="pay-qr-hint" id="payQrHint">打开 <b>微信</b> 扫一扫 · 支付 <b>¥9.9</b></div>
+      <div class="pay-qr-status" id="payQrStatus">等待扫码…</div>
+    </div>
+
+    <!-- Stripe 跳转提示 -->
+    <div class="pay-stripe" id="payStripe" style="display:none">
+      <div class="pay-stripe-load"><div class="loading-spinner" style="width:28px;height:28px;margin:0 auto 12px"></div></div>
+      <div class="pay-stripe-hint">正在跳转到 Stripe 安全结账…</div>
+    </div>
+
+    <div class="pay-foot">付款后即时解锁 · 不成功自动退款</div>
   </div>
 </div>
 
@@ -2640,7 +2718,7 @@ function _dcShow(){
   window.scrollTo(0,0);
 }
 function showDecomposeUpload(){
-  if(typeof AUTH_TOKEN==='undefined' || !AUTH_TOKEN){ if(typeof showAuth==='function') showAuth(); if(typeof toast==='function') toast('上传需要登录'); return; }
+  // 上传免费·无需登录—游客也能传（后端 get_optional_user）。有 token 则绑账号。
   DC_FILE=null;
   _dcView().innerHTML =
     '<div class="dc-up">'+
@@ -2663,15 +2741,24 @@ function dcPick(inp){
   document.getElementById('dcGo').disabled=false;
 }
 function startDecompose(){
-  if(!DC_FILE||!AUTH_TOKEN) return;
+  if(!DC_FILE) return;
   var title=(document.getElementById('dcTitle').value||'我的舞').trim();
   var btn=document.getElementById('dcGo'); btn.disabled=true; btn.textContent='上传中…';
   var fd=new FormData(); fd.append('video',DC_FILE); fd.append('title',title); fd.append('genre','guofeng');
-  fetch('api/decompose',{method:'POST',headers:{'Authorization':'Bearer '+AUTH_TOKEN},body:fd})
+  var dcHdrs={};
+  if(typeof AUTH_TOKEN!=='undefined'&&AUTH_TOKEN) dcHdrs['Authorization']='Bearer '+AUTH_TOKEN;
+  fetch('api/decompose',{method:'POST',headers:dcHdrs,body:fd})
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d.decompose_id){ DC_ID=d.decompose_id; dcLoading(); pollDecompose(d.decompose_id); }
-      else { btn.disabled=false; btn.textContent='开始拆解'; toast(d.detail||'上传失败'); }
+      if(d.status==='awaiting_payment'){
+        DC_ID=d.decompose_id;
+        btn.disabled=false; btn.textContent='¥9.9 拆开这支舞';
+        showPayment(d.decompose_id, d.price_cny);
+      } else if(d.decompose_id){
+        DC_ID=d.decompose_id; dcLoading(); pollDecompose(d.decompose_id);
+      } else {
+        btn.disabled=false; btn.textContent='开始拆解'; toast(d.detail||'上传失败');
+      }
     })
     .catch(function(){ btn.disabled=false; btn.textContent='开始拆解'; toast('网络错误'); });
 }
@@ -2691,7 +2778,9 @@ function pollDecompose(id){
   var tries=0;
   var iv=setInterval(function(){
     tries++;
-    fetch('api/decompose/'+id,{headers:{'Authorization':'Bearer '+AUTH_TOKEN}})
+    var _dh={};
+    if(typeof AUTH_TOKEN!=='undefined'&&AUTH_TOKEN) _dh['Authorization']='Bearer '+AUTH_TOKEN;
+    fetch('api/decompose/'+id,{headers:_dh})
       .then(function(r){return r.json();})
       .then(function(d){
         if(d.status==='completed'){ clearInterval(iv); _dcLoadStop();
@@ -2817,6 +2906,94 @@ function dcShare(kind,idx){
   if(navigator.share){ navigator.share(payload).catch(function(){}); }
   else if(navigator.clipboard){ navigator.clipboard.writeText(txt+' '+url); toast('已复制分享文案，去粘贴到小红书/抖音'); }
   else { toast('长按截图分享到小红书/抖音'); }
+}
+/* ═══ PAYMENT FLOW (抄自 Lumee payX · 简化为 ¥9.9 单次拆解) ═══ */
+var PAY_OUT_TRADE_NO=null, PAY_POLL_TIMER=null;
+function showPayment(danceId,price){
+  var m=document.getElementById('payModal');
+  if(!m) return;
+  document.getElementById('payChannels').style.display='block';
+  document.getElementById('payQr').style.display='none';
+  document.getElementById('payStripe').style.display='none';
+  m.setAttribute('aria-hidden','false');
+}
+function payClose(){
+  var m=document.getElementById('payModal');
+  if(m) m.setAttribute('aria-hidden','true');
+  if(PAY_POLL_TIMER){clearInterval(PAY_POLL_TIMER);PAY_POLL_TIMER=null;}
+}
+function payCreate(channel){
+  if(!DC_ID){ toast('未找到拆解记录，请重新上传'); return; }
+  document.getElementById('payChannels').style.display='none';
+  if(channel==='stripe'){
+    document.getElementById('payStripe').style.display='block';
+  } else {
+    document.getElementById('payQr').style.display='block';
+    document.getElementById('payQrImg').style.display='none';
+    document.getElementById('payQrLoad').classList.remove('hide');
+    document.getElementById('payQrHint').innerHTML='正在生成二维码…';
+    document.getElementById('payQrStatus').textContent='';
+  }
+  var hdrs={'Content-Type':'application/json'};
+  if(typeof AUTH_TOKEN!=='undefined'&&AUTH_TOKEN) hdrs['Authorization']='Bearer '+AUTH_TOKEN;
+  fetch('api/pay/'+channel+'/create',{
+    method:'POST', headers:hdrs,
+    body:JSON.stringify({dance_id:DC_ID, title:document.getElementById('dcTitle').value||'我的舞', genre:'guofeng'})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.out_trade_no){
+      PAY_OUT_TRADE_NO=d.out_trade_no;
+      if(channel==='stripe'){
+        if(d.redirect_url){ window.location.href=d.redirect_url; }
+        else { toast('Stripe跳转链接获取失败'); payClose(); }
+      } else if(channel==='wechat'||channel==='alipay'){
+        document.getElementById('payQrLoad').classList.add('hide');
+        if(d.qr_url){
+          document.getElementById('payQrImg').src=d.qr_url;
+          document.getElementById('payQrImg').style.display='block';
+          var chName=channel==='wechat'?'微信':'支付宝';
+          document.getElementById('payQrHint').innerHTML='打开 <b>'+chName+'</b> 扫一扫 · 支付 <b>¥9.9</b>';
+          document.getElementById('payQrStatus').textContent='等待扫码…';
+          // 开始轮询支付结果
+          payPoll(d.out_trade_no);
+        } else { toast('二维码生成失败'); payClose(); }
+      }
+    } else {
+      toast(d.detail||'下单失败');
+      document.getElementById('payChannels').style.display='block';
+      document.getElementById('payQr').style.display='none';
+      document.getElementById('payStripe').style.display='none';
+    }
+  })
+  .catch(function(){ toast('网络错误'); payClose(); });
+}
+function payPoll(outTradeNo){
+  if(PAY_POLL_TIMER){clearInterval(PAY_POLL_TIMER);}
+  var tries=0;
+  PAY_POLL_TIMER=setInterval(function(){
+    tries++;
+    fetch('api/pay/'+outTradeNo+'/status')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.status==='paid'){
+          clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
+          document.getElementById('payQrStatus').textContent='✅ 支付成功！正在拆解…';
+          setTimeout(function(){
+            payClose();
+            dcLoading();
+            pollDecompose(DC_ID);
+          },600);
+        } else if(d.status==='failed'){
+          clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
+          toast('支付失败，请重试');
+          document.getElementById('payChannels').style.display='block';
+          document.getElementById('payQr').style.display='none';
+        } else {
+          document.getElementById('payQrStatus').textContent='等待扫码…'+(tries>10?' (如果已支付请稍等)':'');
+        }
+      }).catch(function(){});
+  },2500);
 }
 </script>
 </body>

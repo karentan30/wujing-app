@@ -18,7 +18,24 @@ from auth import hash_password, verify_password, create_token, decode_token
 # 产品拍板：上传免费无需登录，要拆解才付 9.9（付费门在 /api/decompose + pay.py 履约）。
 from pay import router as pay_router, init_orders_table, get_db as _pay_get_db
 from auto_decompose import run_decompose, get_decompose
+from review_compare import router as solo_router
+from group_review import router as group_router, init_group_tables, set_decompose_runner, set_optional_user_resolver
+from my_works import router as my_works_router, init_library_tables, upsert_my_work
+from analytics import track as analytics_track
 app = FastAPI(title="WuJing Dance API", version="1.0.0")
+# ── 拆解完成钩子：入库 + 埋点 ──
+def _run_decompose_with_hooks(did, video_path, user_id, title, genre):
+    try:
+        run_decompose(did, video_path, user_id, title, genre)
+        result = get_decompose(did)
+        if result and result.get("status") == "completed":
+            if user_id:
+                upsert_my_work(user_id, result)
+            analytics_track(str(user_id or "guest"), "decompose_success",
+                          {"dance_id": did, "title": title, "genre": genre})
+    except Exception:
+        analytics_track(str(user_id or "guest"), "decompose_failed",
+                      {"dance_id": did, "title": title})
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://karentan30.github.io","https://wj-clean.vercel.app","https://wj-clean-a83qqjigf-fabulousslim.vercel.app","https://wujing-mfgqx7z03-fabulousslim.vercel.app","https://wujing.vercel.app","https://wujing.mylumee.cn", "https://wujing.mylumee.app", "https://api-wujing.mylumee.app"],
@@ -43,6 +60,8 @@ _mount_if_exists("/clips4", os.path.join(BASE_DIR, "clips4"), "clips4")
 # Initialize database on startup
 init_db()
 init_orders_table()
+init_group_tables()
+init_library_tables()
 # ---------- Auth Middleware ----------
 def get_current_user(authorization: str = Header(None)):
     if not authorization:
@@ -72,6 +91,11 @@ def get_optional_user(authorization: str = Header(None)):
         return get_user_by_id(payload["user_id"])
     except Exception:
         return None
+
+# ── 注入群舞/班级依赖（在函数定义之后、路由之前）──
+set_decompose_runner(run_decompose, get_decompose)
+set_optional_user_resolver(get_optional_user)
+
 # ---------- Phase 1: User System ----------
 @app.post("/api/register")
 def register(email: str = Form(...), password: str = Form(...)):
@@ -419,7 +443,7 @@ async def decompose_video(
     # 商户号到位后设 WJ_FREE_MODE=0，自动恢复「要拆付 9.9」。
     if os.environ.get("WJ_FREE_MODE") == "1":
         uid2 = (user["id"] if user else None)
-        threading.Thread(target=run_decompose,
+        threading.Thread(target=_run_decompose_with_hooks,
                          args=(did, video_path, uid2, title, genre), daemon=True).start()
         return {"decompose_id": did, "dance_id": did, "status": "processing",
                 "message": "上传成功，正在为你拆解…"}
@@ -446,7 +470,7 @@ async def decompose_run_if_paid(did: str, user: dict = Depends(get_optional_user
     title = (d or {}).get("title", "我的舞")
     genre = (d or {}).get("genre", "guofeng")
     uid = (d or {}).get("user_id") or (user["id"] if user else None)
-    t = threading.Thread(target=run_decompose,
+    t = threading.Thread(target=_run_decompose_with_hooks,
                          args=(did, video_path, uid, title, genre), daemon=True)
     t.start()
     return {"decompose_id": did, "status": "processing", "message": "已付费，拆解已开始。"}
@@ -494,6 +518,10 @@ def serve_app():
     return FileResponse(_app_html)
 # ---------- Payment routes ----------
 app.include_router(pay_router)
+# ---------- Solo / Group / My Works routes ----------
+app.include_router(solo_router)
+app.include_router(group_router)
+app.include_router(my_works_router)
 # ---------- Health Check ----------
 @app.get("/api/health")
 def health():
