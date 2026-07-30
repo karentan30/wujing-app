@@ -370,12 +370,12 @@ body{
 .slowmo-wrap{padding:12px 16px;border-bottom:1px solid var(--glass-border)}
 .slowmo-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .slowmo-lbl{font-size:11px;color:var(--silver-dim)}
-.svid{width:100%;border-radius:10px;display:block;max-height:240px;object-fit:contain;background:linear-gradient(135deg,#e8ecf6,#dce0ee);border:1px solid var(--glass-border)}
+.svid{width:100%;border-radius:10px;display:block;max-height:240px;object-fit:contain;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);border:1px solid var(--glass-border)}
 .sctrl{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .sbtn{background:rgba(255,255,255,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--glass-border);color:var(--silver-deep);font-size:11px;padding:5px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
 .sbtn.on{background:rgba(220,224,236,.4);border-color:var(--silver-mid)}
 .sbtn:active{transform:scale(.95)}
-.svid-fallback{width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;height:140px;background:linear-gradient(135deg,#e8ecf6,#dce0ee);border:1px solid var(--glass-border);font-size:13px;color:var(--silver-dim);letter-spacing:1px}
+.svid-fallback{width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;height:140px;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);border:1px solid var(--glass-border);font-size:13px;color:var(--silver-dim);letter-spacing:1px}
 .fix-wrap{padding:14px 16px}
 .fix-row{display:flex;gap:11px;margin-bottom:10px;align-items:flex-start}
 .fix-row:last-child{margin-bottom:0}
@@ -509,8 +509,8 @@ body{
   font-size:10px;font-weight:500;color:var(--silver-deep);text-shadow:none;
 }
 .bg-tpl.active{border-color:var(--silver-deep);box-shadow:0 0 0 2px var(--silver-light),0 0 0 4px var(--silver-deep);transform:scale(.97)}
-.bg-tpl:nth-child(1){background:linear-gradient(135deg,#dce0ee,#f0f2f8,#ffffff);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(2){background:linear-gradient(135deg,#c8d0e0,#e8ecf6,#f5f7fc);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(1){background:linear-gradient(135deg,#FFFDF6,#FAF7F0,#ffffff);color:var(--gold)}
+.bg-tpl:nth-child(2){background:linear-gradient(135deg,#FBF6E8,#FFFDF6,#ffffff);color:var(--gold)}
 .bg-tpl:nth-child(3){background:linear-gradient(135deg,#b8c0d4,#d8dde8,#eef0f6);color:var(--silver-deep);text-shadow:none}
 .bg-tpl:nth-child(4){background:linear-gradient(135deg,#d4e0ed,#e8eef6,#ffffff);color:var(--silver-deep);text-shadow:none}
 .bg-tpl:nth-child(5){background:linear-gradient(135deg,#f0e6d8,#f8f0e6,#ffffff);color:var(--silver-deep);text-shadow:none}
@@ -595,7 +595,7 @@ body{
 .mv-modal{position:fixed;inset:0;z-index:300;background:rgba(240,242,248,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:24px;max-width:440px;margin:0 auto}
 .mv-modal.on{display:flex}
 .mv-modal .box{width:100%;background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(240,242,248,.5));border:1px solid var(--glass-border);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 32px rgba(200,208,224,.15)}
-.mv-modal video{width:100%;border-radius:12px;background:linear-gradient(135deg,#e8ecf6,#dce0ee);max-height:56vh}
+.mv-modal video{width:100%;border-radius:12px;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);max-height:56vh}
 .mv-modal .mt{font-size:22px;font-weight:700;letter-spacing:2px;margin:10px 0 2px;color:var(--text)}
 .mv-modal .mk{font-size:13px;color:var(--silver-deep);letter-spacing:2px;margin-bottom:10px}
 .mv-modal .mrow{display:flex;gap:8px}
@@ -827,7 +827,7 @@ body{
 
   <!-- AI preview -->
   <div class="home-section-label">舞镜AI为什么比你照镜子有效</div>
-  <div class="ai-preview shimmer" onclick="showView('review')" tabindex="0" role="button" aria-label="查看AI评分预览">
+  <div class="ai-preview" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传AI拆解">
     <div class="ai-preview-score">
       <div class="ai-ring">
         <div class="ai-ring-inner">
@@ -871,7 +871,7 @@ body{
     </div>
     <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>
-  <div class="entry-card shimmer" onclick="showView('mv')" tabindex="0" role="button" aria-label="进入MV制作">
+  <div class="entry-card" onclick="showView('mv')" tabindex="0" role="button" aria-label="进入MV制作">
     <div class="entry-icon">
       <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
         <rect x="8" y="9" width="18" height="16" rx="3" stroke="var(--silver-deep)" stroke-width="1.2" opacity=".5"/>
@@ -1489,8 +1489,8 @@ showView = function(v, idx) {
 var mvVideoFile=null, mvBgFile=null, mvBgIdx=0, mvPlaying=false, mvRaf=null, mvRecorder=null, mvChunks=[], mvVideoUrl=null, mvBgUrl=null;
 // Dance-themed background gradients (silver palette)
 const MV_BGS = [
-  'linear-gradient(135deg,#dce0ee,#f0f2f8,#ffffff)',
-  'linear-gradient(135deg,#c8d0e0,#e8ecf6,#f5f7fc)',
+  'linear-gradient(135deg,#FFFDF6,#FAF7F0,#ffffff)',
+  'linear-gradient(135deg,#FBF6E8,#FFFDF6,#ffffff)',
   'linear-gradient(135deg,#b8c0d4,#d8dde8,#eef0f6)',
   'linear-gradient(135deg,#d4e0ed,#e8eef6,#ffffff)',
   'linear-gradient(135deg,#f0e6d8,#f8f0e6,#ffffff)',
