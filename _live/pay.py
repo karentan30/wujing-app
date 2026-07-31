@@ -1001,6 +1001,8 @@ def _fulfill_membership(user_id: str, months: int = 1):
                 base = datetime.datetime.now()
             new_exp = (base + datetime.timedelta(days=30 * months)).isoformat()
             con.execute("UPDATE users SET member_expires=? WHERE id=?", (new_exp, user_id))
+            # 会员激活 → 历史作品全部永久保存（清 expire_at）
+            con.execute("UPDATE my_works SET expire_at=NULL WHERE user_id=?", (user_id,))
             con.commit()
             print(f"[pay/member] user={user_id} member_expires={new_exp}")
         finally:

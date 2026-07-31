@@ -32,7 +32,7 @@ import json
 from fastapi import APIRouter, Depends, HTTPException
 
 # 与 server.py / pay.py 保持同一路径 / 同一库 / 同一鉴权
-from pay import get_db as _get_db
+from pay import get_db as _get_db, is_active_member
 from auto_decompose import get_decompose
 
 BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
@@ -150,6 +150,7 @@ def upsert_my_work(user_id, d):
     if not did:
         return
     is_paid = 1 if _dance_is_paid(did) else 0
+    is_member = is_active_member(uid)
     title = d.get("title")
     genre = d.get("genre")
     dur = d.get("dur")
@@ -160,12 +161,12 @@ def upsert_my_work(user_id, d):
         # 保留 is_public（若此前已发广场，重拆不该把它抹掉）
         prev = con.execute("SELECT is_public FROM my_works WHERE dance_id=?", (did,)).fetchone()
         is_public = int(prev["is_public"]) if prev and prev["is_public"] is not None else 0
-        if is_paid:
+        if is_paid or is_member:
             con.execute(
                 "INSERT OR REPLACE INTO my_works"
                 "(dance_id,user_id,title,genre,cover,duration_s,n_phrases,is_paid,is_public,expire_at)"
                 " VALUES(?,?,?,?,?,?,?,?,?,NULL)",
-                (did, uid, title, genre, cover, dur, n_phrases, 1, is_public))
+                (did, uid, title, genre, cover, dur, n_phrases, is_paid, is_public))
         else:
             con.execute(
                 "INSERT OR REPLACE INTO my_works"
@@ -195,9 +196,17 @@ def my_works(user: dict = Depends(get_current_user)):
     out = []
     con = _get_db()
     try:
-        rows = con.execute(
-            "SELECT * FROM my_works WHERE user_id=? ORDER BY created_at DESC",
-            (user["id"],)).fetchall()
+        member = is_active_member(user["id"])
+        if member:
+            rows = con.execute(
+                "SELECT * FROM my_works WHERE user_id=? ORDER BY created_at DESC",
+                (user["id"],)).fetchall()
+        else:
+            rows = con.execute(
+                "SELECT * FROM my_works WHERE user_id=? "
+                "AND (expire_at IS NULL OR expire_at > datetime('now')) "
+                "ORDER BY created_at DESC",
+                (user["id"],)).fetchall()
         for r in rows:
             curve = _curve_for(con, r["dance_id"], user["id"])
             out.append({
@@ -211,7 +220,7 @@ def my_works(user: dict = Depends(get_current_user)):
                 "is_public": bool(r["is_public"]) if r["is_public"] is not None else False,
                 "created_at": r["created_at"],
                 "expire_at": r["expire_at"],
-                "curve": curve,                                   # [] = 还没练过
+                "curve": curve,
                 "best_score": max(curve) if curve else None,
                 "first_score": curve[0] if curve else None,
                 "practice_count": len(curve),
@@ -219,7 +228,7 @@ def my_works(user: dict = Depends(get_current_user)):
         saved = sum(1 for r in rows if r["is_paid"])
     finally:
         con.close()
-    return {"works": out, "count": len(out), "saved": saved}
+    return {"works": out, "count": len(out), "saved": saved, "is_member": member}
 
 
 # ══════════════════════════════════════════════════════════════
@@ -335,16 +344,23 @@ def plaza(tab: str = "recommend", genre: str = None, limit: int = 30):
     绝不编造互动数。每支带真实达标度（best_score，来自 practice_scores）。
     genre 传 'recommend'/None = 全部；否则按舞种过滤。"""
     limit = max(1, min(60, int(limit)))
+    _MEMBER_CASE = (
+        "CASE WHEN u.member_expires > datetime('now') THEN 1 ELSE 0 END as author_is_member"
+    )
     con = _get_db()
     try:
         if genre and genre not in ("recommend", "all", ""):
             rows = con.execute(
-                "SELECT * FROM my_works WHERE is_public=1 AND genre=? "
-                "ORDER BY created_at DESC LIMIT ?", (genre, limit)).fetchall()
+                f"SELECT mw.*, {_MEMBER_CASE} "
+                "FROM my_works mw LEFT JOIN users u ON mw.user_id = u.id "
+                "WHERE mw.is_public=1 AND mw.genre=? "
+                "ORDER BY mw.created_at DESC LIMIT ?", (genre, limit)).fetchall()
         else:
             rows = con.execute(
-                "SELECT * FROM my_works WHERE is_public=1 "
-                "ORDER BY created_at DESC LIMIT ?", (limit,)).fetchall()
+                f"SELECT mw.*, {_MEMBER_CASE} "
+                "FROM my_works mw LEFT JOIN users u ON mw.user_id = u.id "
+                "WHERE mw.is_public=1 "
+                "ORDER BY mw.created_at DESC LIMIT ?", (limit,)).fetchall()
         out = []
         for r in rows:
             curve = _curve_for(con, r["dance_id"], r["user_id"])
@@ -355,8 +371,77 @@ def plaza(tab: str = "recommend", genre: str = None, limit: int = 30):
                 "cover": r["cover"] or f"/api/decompose/{r['dance_id']}/frame/p1",
                 "duration_s": r["duration_s"],
                 "n_phrases": r["n_phrases"],
-                "best_score": max(curve) if curve else None,   # 真达标度·没练过=None
+                "best_score": max(curve) if curve else None,
+                "author_is_member": bool(r["author_is_member"]),
             })
     finally:
         con.close()
     return {"posts": out, "count": len(out)}
+
+
+# ══════════════════════════════════════════════════════════════
+# 接口 ⑤ 月度AI进步报告（会员专属）
+# ══════════════════════════════════════════════════════════════
+@router.get("/api/progress-report")
+def progress_report(user: dict = Depends(get_current_user)):
+    """月度AI进步报告（会员专属）。对比近30天 vs 前30天跟练数据，返回进步趋势 + AI总结。"""
+    if not is_active_member(user["id"]):
+        raise HTTPException(status_code=403, detail="月度进步报告是会员专属，订阅舞镜月卡即可解锁")
+    con = _get_db()
+    try:
+        recent = con.execute(
+            "SELECT dance_id, score FROM practice_scores "
+            "WHERE user_id=? AND created_at >= datetime('now', '-30 days') "
+            "ORDER BY created_at DESC", (user["id"],)).fetchall()
+        prior = con.execute(
+            "SELECT dance_id, score FROM practice_scores "
+            "WHERE user_id=? "
+            "AND created_at >= datetime('now', '-60 days') "
+            "AND created_at < datetime('now', '-30 days')",
+            (user["id"],)).fetchall()
+        recent_scores = [float(r["score"]) for r in recent]
+        prior_scores = [float(r["score"]) for r in prior]
+        recent_avg = round(sum(recent_scores) / len(recent_scores), 1) if recent_scores else None
+        prior_avg = round(sum(prior_scores) / len(prior_scores), 1) if prior_scores else None
+        improvement = round(recent_avg - prior_avg, 1) if (recent_avg is not None and prior_avg is not None) else None
+
+        best_dance = None
+        if recent:
+            dance_scores = {}
+            for r in recent:
+                dance_scores.setdefault(r["dance_id"], []).append(float(r["score"]))
+            best_did = max(dance_scores, key=lambda d: sum(dance_scores[d]) / len(dance_scores[d]))
+            best_avg = round(sum(dance_scores[best_did]) / len(dance_scores[best_did]), 1)
+            mw = con.execute("SELECT title, genre FROM my_works WHERE dance_id=?", (best_did,)).fetchone()
+            best_dance = {
+                "dance_id": best_did,
+                "title": mw["title"] if mw else best_did,
+                "genre": mw["genre"] if mw else None,
+                "avg_score": best_avg,
+                "attempt_count": len(dance_scores[best_did]),
+            }
+    finally:
+        con.close()
+
+    if not recent_scores:
+        summary = "本月还没有跟练记录，快去练习吧！每天一遍，舞技飞速进步。"
+    elif improvement is None:
+        summary = f"本月共完成 {len(recent_scores)} 次跟练，平均达标度 {recent_avg}%。继续保持，下个月可以看到进步趋势！"
+    elif improvement > 5:
+        summary = f"本月进步显著！平均达标度从 {prior_avg}% 提升至 {recent_avg}%，提高了 {improvement} 分。努力正在变成真实的进步，继续保持！"
+    elif improvement > 0:
+        summary = f"本月稳步提升，达标度从 {prior_avg}% 到 {recent_avg}%，提升 {improvement} 分。坚持练习，进步会越来越明显！"
+    elif improvement == 0:
+        summary = f"本月达标度与上月持平，保持在 {recent_avg}%。试试关注细节动作，突破瓶颈期！"
+    else:
+        summary = f"本月达标度 {recent_avg}%，较上月有所波动。不要气馁，每次练习都在积累肌肉记忆，继续加油！"
+
+    return {
+        "period": "最近30天",
+        "practice_count": len(recent_scores),
+        "avg_score": recent_avg,
+        "prior_avg_score": prior_avg,
+        "improvement": improvement,
+        "best_dance": best_dance,
+        "summary": summary,
+    }
