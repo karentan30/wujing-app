@@ -9,6 +9,35 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23EDE4CF' stroke='%23B5922A' stroke-width='3'/><text x='50' y='62' text-anchor='middle' font-size='40' fill='%23B5922A'>镜</text></svg>">
+<!-- 舞镜埋点 · PostHog（复用 Lumee 同 project，source=wujing 区分） -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_mBrp44sNSMrWwGJVqmPTNyLAbBQZLqTyMpWrbhbTqzPH', {
+    api_host: 'https://us.posthog.com',
+    person_profiles: 'identified_only',
+    autocapture: false,
+    capture_pageview: true
+  });
+  window.WJ = {
+    setUser: function(user){
+      if(user && user.id){
+        posthog.identify(String(user.id), { email: user.email, is_paid: !!user.is_paid, source: 'wujing' });
+        posthog.register({ is_logged_in: true });
+      }
+    },
+    reset: function(){ try{ posthog.reset(); }catch(e){} },
+    track: function(event, props){
+      try{
+        posthog.capture(event, Object.assign({
+          source: 'wujing',
+          is_logged_in: !!localStorage.getItem('wj_token'),
+          lang: document.documentElement.lang || 'zh',
+          platform: 'h5'
+        }, props || {}));
+      }catch(e){}
+    }
+  };
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -1530,6 +1559,9 @@ function handleAuth() {
       document.getElementById('authAvatarText').textContent = email.split('@')[0];
       document.getElementById('authAvatar').classList.add('logged-in');
       closeAuth();
+      // 埋点识别用户
+      try{ if(window.WJ&&WJ.setUser) WJ.setUser(d); }catch(e){}
+      try{ if(window.WJ&&WJ.track) WJ.track(authMode==='login'?'login':'register',{email:email}); }catch(e){}
       // 回触发登录前的tab（作品/广场等需要token的视图自动刷新）
       var backTab = AUTH_FROM_TAB || 'home'; AUTH_FROM_TAB = null;
       showView(backTab);
@@ -2766,7 +2798,19 @@ function renderDetailArchive(p){
 .dc-mem .ctrl span.on{background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 3px 10px rgba(181,146,42,.24)}
 .dc-share-all{margin:26px 16px 12px;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:15px;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 .dc-share-all.ghost{background:#fff;color:#8C7A4A;border:1.5px solid #EDE4CF;box-shadow:none;margin-top:-4px}
-.dc-aha{margin:8px 16px 24px;padding:16px 18px;display:flex;align-items:center;gap:12px;border-radius:16px;border:1.5px solid #C79E3B;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);cursor:pointer;box-shadow:0 4px 16px rgba(181,146,42,.12)}
+.dc-aha{margin:8px 16px 0;padding:16px 18px;display:flex;align-items:center;gap:12px;border-radius:16px;border:1.5px solid #C79E3B;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);cursor:pointer;box-shadow:0 4px 16px rgba(181,146,42,.12)}
+.dc-repurchase{margin:10px 16px 24px;padding:14px 18px;border-radius:14px;background:#fff;border:1px dashed #C79E3B;text-align:center;cursor:pointer}
+.dc-repurchase:active{opacity:.7}
+/* 跟练自评弹层 */
+.practice-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8000;display:flex;align-items:flex-end;justify-content:center}
+.practice-sheet{background:#FAF7F0;border-radius:24px 24px 0 0;padding:28px 20px 40px;width:100%;max-width:460px}
+.practice-sheet h3{font-size:17px;font-weight:700;color:#1F1A14;margin-bottom:6px;text-align:center}
+.practice-sheet p{font-size:13px;color:#8C7A4A;text-align:center;margin-bottom:20px;line-height:1.6}
+.score-slider{width:100%;accent-color:#B5922A;margin-bottom:8px}
+.score-display{font-size:32px;font-weight:900;color:#B5922A;text-align:center;margin-bottom:4px;font-family:'Noto Serif SC',serif}
+.score-label{font-size:12px;color:#8C7A4A;text-align:center;margin-bottom:20px}
+.remind-toggle{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:#8C7A4A;margin-bottom:18px;cursor:pointer}
+.remind-toggle input{accent-color:#B5922A;width:16px;height:16px}
 .dc-aha .aha-ic{width:44px;height:44px;flex-shrink:0;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #EDE4CF}
 .dc-aha .aha-tx{flex:1}
 .dc-aha .aha-t{font-size:14px;font-weight:700;color:#1F1A14}
@@ -2898,13 +2942,19 @@ function _dcShow(){
   var tb=document.getElementById('tabbar'); if(tb) tb.style.display='none';
   window.scrollTo(0,0);
 }
-function showDecomposeUpload(){
+var WJ_DISCOUNT = false; // 复购8折标记
+function showDecomposeUpload(discount){
+  WJ_DISCOUNT = !!discount;
   // 记录来源tab：返回时回到原tab（作品/广场进的拆解不丢位置）
   _dcEnter(_currentTab());
   // 上传免费·无需登录—游客也能传（后端 get_optional_user）。有 token 则绑账号。
   DC_FILE=null;
+  var priceLabel = WJ_DISCOUNT ? (_isZH()?'开始拆解 · ¥7.9（8折）':'Start breakdown · $1.59') : (_isZH()?'开始拆解 · ¥9.9':'Start breakdown · $1.99');
+  var priceNote  = WJ_DISCOUNT ? (_isZH()?'8折限时优惠 · 上传免费 · 不成功退款':'20% off · free upload · refund on failure') : (_isZH()?'拆解结果¥9.9 · 上传免费 · 不成功退款':'Result $1.99 · free upload · refund on failure');
+  var discountBanner = WJ_DISCOUNT ? '<div style="text-align:center;margin-bottom:10px;padding:8px 16px;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border-radius:12px;border:1px solid #C79E3B;font-size:13px;color:#8C7A4A">🎁 <b style="color:#B5922A">老用户8折</b> · 这支只要 ¥7.9</div>' : '';
   _dcView().innerHTML =
     '<div class="dc-up">'+
+      discountBanner+
       '<div class="dc-up-h">上传你的舞</div>'+
       '<div class="dc-up-s">任意一支舞都行——自己跳的、想学的博主的。AI 自动拆成八拍卡 + 故事卡 + 记忆卡（慢速/镜像跟练）。无需选参考。</div>'+
       '<div class="dc-field"><div class="dc-label">舞名（可留空）</div><input class="dc-input" id="dcTitle" placeholder="例如：只此青绿"></div>'+
@@ -2913,8 +2963,8 @@ function showDecomposeUpload(){
         '<input type="file" id="dcInput" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/*" style="display:none" onchange="dcPick(this)">'+
       '</div>'+
       '<div class="dc-fname" id="dcFname"></div>'+
-      '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">'+(_isZH()?'开始拆解 · ¥9.9':'Start breakdown · $1.99')+'</button>'+
-      '<div style="margin-top:10px;font-size:11px;color:var(--mute);text-align:center">'+(_isZH()?'拆解结果¥9.9 · 上传免费 · 不成功退款':'Result '+_priceFull()+' · free upload · refund on failure')+'</div>'+
+      '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">'+priceLabel+'</button>'+
+      '<div style="margin-top:10px;font-size:11px;color:var(--mute);text-align:center">'+priceNote+'</div>'+
       '<div style="margin-top:6px;font-size:10px;color:#B6A984;text-align:center;line-height:1.6">上传即代表你已年满18岁，或未成年人已获家长同意 · 拆解内容由 AI 生成</div>'+
     '</div>';
   _dcShow();
@@ -3122,6 +3172,11 @@ function renderDecompose(d){
         '<div class="aha-d">跟着记忆卡跳一遍 · 存进你的进步曲线</div></div>'+
         '<div class="aha-go">开始 →</div>'+
       '</div>'+
+      '<div class="dc-repurchase" onclick="dcRepurchase()">'+
+        '<div style="font-size:13px;font-weight:700;color:#8C7A4A">再拆一支舞 · 8折优惠</div>'+
+        '<div style="font-size:11px;color:#B5922A;margin-top:2px">第二支只要 <b>¥7.9</b>，限本次</div>'+
+        '<div style="font-size:12px;font-weight:700;color:#B5922A;margin-top:6px">去上传 →</div>'+
+      '</div>'+
     '</div>';
   _dcShow();
 }
@@ -3130,16 +3185,81 @@ function dcStartPractice(){
   var d=DC_DATA||{};
   if(!AUTH_TOKEN){ toast('登录后跟练才能存进步曲线'); showAuth(); return; }
   var did=d.id, title=d.title||'我的舞';
-  if(window.WJ&&WJ.track) WJ.track('practice_start',{dance_id:did});
-  // 前端自评一次达标度（诚实：让用户跟着整片跳完自评；服务端 practice_scores 记真曲线）
-  var s=window.prompt('跟着记忆卡完整跳一遍后，给自己一个达标度（0-100）：','');
-  if(s===null) return;
-  var score=Math.max(0,Math.min(100,parseInt(s,10)||0));
+  try{ if(window.WJ&&WJ.track) WJ.track('practice_start',{dance_id:did,dance_title:title}); }catch(e){}
+  _showPracticeScoreModal(did, title);
+}
+/* App 内跟练自评弹层（替代 window.prompt） */
+function _showPracticeScoreModal(did, title){
+  var existing=document.getElementById('practiceModal'); if(existing) existing.remove();
+  var m=document.createElement('div'); m.id='practiceModal'; m.className='practice-modal';
+  m.innerHTML=
+    '<div class="practice-sheet">'+
+      '<h3>跟练完了！给自己打个分</h3>'+
+      '<p>跟着《'+title+'》完整跳一遍后<br>这次跳了多少达标度？</p>'+
+      '<div class="score-display" id="psDisplay">70</div>'+
+      '<div class="score-label" id="psLabel">继续加油</div>'+
+      '<input type="range" class="score-slider" id="psSlider" min="0" max="100" value="70" oninput="_psUpdate(this.value)">'+
+      '<label class="remind-toggle"><input type="checkbox" id="psRemind" checked> 明天提醒我再练一次</label>'+
+      '<button class="auth-btn primary" style="margin-bottom:8px" onclick="_psSubmit(\''+did+'\')">记录这一次 🚀</button>'+
+      '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="document.getElementById(\'practiceModal\').remove()">跳过</button>'+
+    '</div>';
+  document.body.appendChild(m);
+  m.addEventListener('click',function(e){ if(e.target===m) m.remove(); });
+}
+function _psUpdate(v){
+  var lbl=v>=90?'太棒了！🏆':v>=75?'跳得不错 ✨':v>=60?'有进步空间':'继续加油 💪';
+  document.getElementById('psDisplay').textContent=v;
+  document.getElementById('psLabel').textContent=lbl;
+}
+function _psSubmit(did){
+  var score=parseInt(document.getElementById('psSlider').value,10)||0;
+  var remind=document.getElementById('psRemind').checked;
+  document.getElementById('practiceModal').remove();
   fetch('api/practice/'+did+'/score',{method:'POST',headers:_apiHeaders(),
     body:JSON.stringify({score:score,source:'self'})})
     .then(function(r){ return r.json(); })
-    .then(function(dd){ toast(dd.status==='ok'?'已记录起始分 '+score+' 分 · 再练几次看曲线涨起来 🚀':'记录失败'); loadWorks(); })
+    .then(function(dd){
+      try{ if(window.WJ&&WJ.track) WJ.track('practice_scored',{dance_id:did,score:score,reminded:remind}); }catch(e){}
+      toast(dd.status==='ok'?'起始分 '+score+' 分已记录 · 再练几次看曲线涨起来 🚀':'记录失败');
+      loadWorks();
+      if(remind) _showRemindSheet(did);
+    })
     .catch(function(){ toast('网络错误'); });
+}
+/* 留存钩子：跟练后「明天提醒」弹层 */
+function _showRemindSheet(did){
+  setTimeout(function(){
+    var m=document.createElement('div'); m.className='practice-modal';
+    m.innerHTML=
+      '<div class="practice-sheet" style="padding-bottom:env(safe-area-inset-bottom,24px)">'+
+        '<h3>🔔 明天继续练</h3>'+
+        '<p style="margin-bottom:24px">每天练15分钟<br>一周内进步曲线就会涨起来</p>'+
+        '<button class="auth-btn primary" style="margin-bottom:10px" onclick="_setRemind(this)">允许通知 · 每天提醒我</button>'+
+        '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="this.closest(\'.practice-modal\').remove()">先不了</button>'+
+      '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',function(e){ if(e.target===m) m.remove(); });
+  },400);
+}
+function _setRemind(btn){
+  if('Notification' in window && Notification.permission!=='denied'){
+    Notification.requestPermission().then(function(p){
+      if(p==='granted'){ toast('已开启提醒 · 每天来练一次 💪'); }
+      else { toast('可以把舞镜加到主屏幕，明天打开就是提醒'); }
+      btn.closest('.practice-modal').remove();
+    });
+  } else {
+    toast('把舞镜加到手机主屏幕，每天打开就是提醒 💪');
+    btn.closest('.practice-modal').remove();
+  }
+  try{ if(window.WJ&&WJ.track) WJ.track('remind_set',{}); }catch(e){}
+}
+/* 复购钩子：再拆一支 8折（跳回上传页） */
+function dcRepurchase(){
+  try{ if(window.WJ&&WJ.track) WJ.track('repurchase_tap',{from_dance:DC_DATA&&DC_DATA.id}); }catch(e){}
+  DC_DATA=null; DC_ID=null;
+  showView('home');
+  setTimeout(function(){ showDecomposeUpload(true); },200);
 }
 /* 拆解战报图：纯 canvas 合成（金色卡面 + 实测角度 + 舞镜水印）→ 下载/长按保存 */
 function dcSaveCard(){
@@ -3237,17 +3357,31 @@ document.getElementById('dcModal').onclick=function(e){ if(e.target===this) dcCl
 /* 记忆卡整片控制 */
 function dcMemMode(m){ var v=document.getElementById('dcMemVideo'); v.playbackRate=(m==='slow')?0.5:1; document.getElementById('dcMemNorm').classList.toggle('on',m!=='slow'); document.getElementById('dcMemSlow').classList.toggle('on',m==='slow'); }
 function dcMemMirror(){ var v=document.getElementById('dcMemVideo'); var on=!v.classList.contains('mir'); v.classList.toggle('mir',on); document.getElementById('dcMemMir').classList.toggle('on',on); }
-/* 一键分享（带舞镜水印文案·回流钩子） */
+/* 一键分享（带舞镜水印文案·ref回流钩子·埋点） */
 function dcShare(kind,idx){
-  var d=DC_DATA||{}; var url=location.origin+location.pathname;
+  var d=DC_DATA||{};
+  var uid=CURRENT_USER&&CURRENT_USER.id?'u'+CURRENT_USER.id:'g';
+  var ref='?ref=share_'+uid+'_'+(kind||'all');
+  var url=location.origin+location.pathname+ref;
   var txt='我用舞镜 AI 把《'+(d.title||'这支舞')+'》拆成了能跟练的八拍卡 🩰';
   if(kind==='story'&&d.story){ txt='《'+(d.title||'')+'》'+(d.story.title||'')+'——'+(d.story.body||'').slice(0,40)+'… @舞镜AI拆舞'; }
   else if(kind==='coach'&&d.coach){ txt='舞镜AI点评我跳《'+(d.title||'')+'》：'+(d.coach.comment||'').slice(0,50)+' @舞镜AI'; }
   else if(kind==='beat'&&d.phrases){ var p=d.phrases[idx-1]||{}; txt='第'+idx+'拍「'+(p.name||'')+'」：'+(p.action||'').slice(0,30)+' 口诀「'+(p.kou||'')+'」@舞镜AI'; }
+  try{ if(window.WJ&&WJ.track) WJ.track('share',{kind:kind,dance_id:d.id,dance_title:d.title}); }catch(e){}
   var payload={title:'舞镜 · '+(d.title||'AI拆舞'),text:txt,url:url};
-  if(navigator.share){ navigator.share(payload).catch(function(){}); }
-  else if(navigator.clipboard){ navigator.clipboard.writeText(txt+' '+url); toast('已复制分享文案，去粘贴到小红书/抖音'); }
+  if(navigator.share){ navigator.share(payload).then(function(){ _showShareReward(); }).catch(function(){}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(txt+' '+url); toast('已复制分享文案，去粘贴到小红书/抖音'); _showShareReward(); }
   else { toast('长按截图分享到小红书/抖音'); }
+}
+/* 分享奖励提示（软激励·无需后端） */
+function _showShareReward(){
+  try{
+    var el=document.createElement('div');
+    el.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(181,146,42,.35);pointer-events:none;white-space:nowrap';
+    el.textContent='🎁 朋友通过你的链接拆舞，你得1次免费拆';
+    document.body.appendChild(el);
+    setTimeout(function(){ el.style.opacity='0'; el.style.transition='opacity .5s'; setTimeout(function(){ el.remove(); },500); },3000);
+  }catch(e){}
 }
 /* ═══ PAYMENT FLOW ═══ */
 var PAY_OUT_TRADE_NO=null, PAY_POLL_TIMER=null;
@@ -3256,8 +3390,10 @@ function showPayment(danceId,price){
   if(!m) return;
   // 币种动态：中文¥9.9 / 海外$1.99（海外走Stripe实扣1.99）
   var p=_priceFull();
-  var t=document.getElementById('payTitle'); if(t) t.textContent=(_isZH()?'¥9.9 生成完整拆解':'Unlock full breakdown · $1.99');
-  var ds=document.getElementById('payDesc'); if(ds) ds.textContent=(_isZH()?'你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。':'Your dance is ready. Pay $1.99 to unlock: 8-beat cards + story + memory cards + AI coach + slow-mo/mirror practice.');
+  var _pTitle = WJ_DISCOUNT ? (_isZH()?'¥7.9 生成完整拆解（8折）':'Unlock breakdown · $1.59') : (_isZH()?'¥9.9 生成完整拆解':'Unlock full breakdown · $1.99');
+  var _pDesc  = WJ_DISCOUNT ? (_isZH()?'老用户8折优惠！付 ¥7.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。':'20% off! Pay $1.59 to unlock: 8-beat cards + story + memory + AI coach + slow-mo/mirror.') : (_isZH()?'你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。':'Your dance is ready. Pay $1.99 to unlock: 8-beat cards + story + memory cards + AI coach + slow-mo/mirror practice.');
+  var t=document.getElementById('payTitle'); if(t) t.textContent=_pTitle;
+  var ds=document.getElementById('payDesc'); if(ds) ds.textContent=_pDesc;
   var qh=document.getElementById('payQrHint'); if(qh) qh.innerHTML=_isZH()?'打开 <b>微信</b> 扫一扫 · 支付 <b>¥9.9</b>':'Scan to pay · <b>$1.99</b>';
   document.getElementById('payChannels').style.display='block';
   document.getElementById('payQr').style.display='none';
@@ -3498,11 +3634,26 @@ renderDecompose = function(d){
       if(t !== n.nodeValue) n.nodeValue = t;
     }
   }
+  function applyLangAttr(){
+    try{ document.documentElement.lang='en'; }catch(e){}
+  }
+  // 海外用户：隐藏微信/支付宝，只显示 Stripe
+  function applyPayChannels(){
+    try{
+      var wx=document.getElementById('payChannelWx');
+      var al=document.getElementById('payChannelAli');
+      var st=document.getElementById('payChannelStripe');
+      if(wx) wx.style.display='none';
+      if(al) al.style.display='none';
+      if(st) st.style.cssText+='order:-1;border-color:#B5922A;';
+    }catch(e){}
+  }
   // 初始 + 观察动态渲染
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', applyEN);
-  else applyEN();
+  function _applyAll(){ applyEN(); applyLangAttr(); applyPayChannels(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', _applyAll);
+  else _applyAll();
   try{
-    new MutationObserver(function(){ applyEN(); }).observe(document.body, {childList:true, subtree:true});
+    new MutationObserver(function(){ applyEN(); applyPayChannels(); }).observe(document.body, {childList:true, subtree:true});
   }catch(e){}
 })();
 </script>
