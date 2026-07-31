@@ -43,7 +43,11 @@ PRICE_CNY      = float(os.environ.get("WJ_DANCE_PRICE_CNY",      "9.9"))
 PRICE_CNY_DISC = float(os.environ.get("WJ_DANCE_PRICE_CNY_DISC", "7.9"))   # 复购8折
 PRICE_USD      = float(os.environ.get("WJ_DANCE_PRICE_USD",      "1.99"))
 PRICE_USD_DISC = float(os.environ.get("WJ_DANCE_PRICE_USD_DISC", "1.59"))
+PRICE_CNY_MONTHLY = float(os.environ.get("WJ_MONTHLY_PRICE_CNY", "39"))
+PRICE_USD_MONTHLY = float(os.environ.get("WJ_MONTHLY_PRICE_USD", "9.99"))
 PRODUCT_NAME = "舞镜 · 完整拆解卡（1 支舞）"
+STRIPE_PRICE_ID_MONTHLY = os.environ.get("STRIPE_PRICE_MONTHLY_USD", "")
+STRIPE_PRICE_ID_SINGLE  = os.environ.get("STRIPE_PRICE_SINGLE_USD", "")
 
 
 def _has_prior_paid_order(user_id: str) -> bool:
@@ -140,6 +144,7 @@ def init_orders_table():
             "ALTER TABLE orders ADD COLUMN trade_no TEXT",
             "ALTER TABLE orders ADD COLUMN ref_code TEXT",
             "ALTER TABLE orders ADD COLUMN discount INTEGER DEFAULT 0",
+            "ALTER TABLE orders ADD COLUMN product TEXT DEFAULT 'single'",
         ):
             try:
                 con.execute(ddl)
@@ -338,8 +343,17 @@ def _mark_paid_and_fulfill(out_trade_no, trade_no, channel, paid_amount_check,
                 con.commit()
                 return "already"
 
-            summary = _apply_paid_dance_unlock(
-                con, user_id, dance_id, out_trade_no, background_tasks=background_tasks)
+            # 查 product 类型（月会员 vs 单次）
+            prod_row = con.execute(
+                "SELECT product FROM orders WHERE out_trade_no=?", (out_trade_no,)).fetchone()
+            product = (prod_row["product"] if prod_row else None) or "single"
+
+            if product == "monthly":
+                _fulfill_membership(user_id, months=1)
+                summary = f"subscribe user={str(user_id)[:8]} order={out_trade_no}"
+            else:
+                summary = _apply_paid_dance_unlock(
+                    con, user_id, dance_id, out_trade_no, background_tasks=background_tasks)
             # 推荐人奖励：首单完成后给推荐人加1次免费额度
             try:
                 ref_row = con.execute(
@@ -669,10 +683,13 @@ async def stripe_create(payload: dict, authorization: str = Header(None),
         "metadata[dance_id]": dance_id,
         "metadata[user_id]": user_id,
         "line_items[0][quantity]": "1",
-        "line_items[0][price_data][currency]": "usd",
-        "line_items[0][price_data][unit_amount]": str(int(round(price_usd * 100))),
-        "line_items[0][price_data][product_data][name]": PRODUCT_NAME,
     }
+    if STRIPE_PRICE_ID_SINGLE:
+        form["line_items[0][price]"] = STRIPE_PRICE_ID_SINGLE
+    else:
+        form["line_items[0][price_data][currency]"] = "usd"
+        form["line_items[0][price_data][unit_amount]"] = str(int(round(price_usd * 100)))
+        form["line_items[0][price_data][product_data][name]"] = PRODUCT_NAME
     code, j = _stripe_request("POST", "/v1/checkout/sessions", form)
     if code != 200 or not j.get("url"):
         print(f"[pay/stripe/create] 失败 code={code} {str(j)[:200]}")
@@ -720,21 +737,83 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
     except Exception:
         raise HTTPException(status_code=400, detail="bad payload")
     etype = event.get("type", "")
-    if etype != "checkout.session.completed":
+
+    # ── checkout.session.completed（单次首付 or 订阅首期）──
+    if etype == "checkout.session.completed":
+        sess = event.get("data", {}).get("object", {})
+        # subscription mode 首期 payment_status 可能是 "no_payment_required"，用 mode 兜底
+        if sess.get("payment_status") != "paid" and sess.get("mode") != "subscription":
+            return {"received": True, "unpaid": True}
+        md = sess.get("metadata", {}) or {}
+        oid = md.get("out_trade_no") or sess.get("client_reference_id", "")
+        if not oid:
+            print("[pay/stripe/webhook] 缺 out_trade_no")
+            return {"received": True, "no_oid": True}
+        # 保存 stripe_customer_id + stripe_subscription_id 到 user（续费 renewal 查询用）
+        customer_id = sess.get("customer") or ""
+        sub_id = sess.get("subscription") or ""
+        if customer_id:
+            uid_meta = md.get("user_id", "")
+            if uid_meta and not uid_meta.startswith("guest"):
+                try:
+                    con_s = get_db()
+                    con_s.execute(
+                        "UPDATE users SET stripe_customer_id=?, stripe_subscription_id=? WHERE id=?",
+                        (customer_id, sub_id, uid_meta))
+                    con_s.commit()
+                    con_s.close()
+                except Exception as e:
+                    print(f"[pay/stripe/webhook] save customer err: {e}")
+        paid = (sess.get("amount_total", 0) or 0) / 100.0
+        if sess.get("mode") == "subscription" and paid == 0:
+            paid = PRICE_USD_MONTHLY
+        res = _mark_paid_and_fulfill(oid, sess.get("payment_intent", "") or sess.get("id", ""),
+                                     "stripe", paid, background_tasks=None)
+        return {"received": True, "result": res}
+
+    # ── invoice.paid（订阅续费·每月自动扣款）──
+    elif etype == "invoice.paid":
+        invoice = event.get("data", {}).get("object", {})
+        billing_reason = invoice.get("billing_reason", "")
+        if billing_reason != "subscription_cycle":
+            return {"received": True, "ignored_reason": billing_reason}
+        customer_id = invoice.get("customer", "")
+        if not customer_id:
+            return {"received": True, "no_customer": True}
+        try:
+            con_r = get_db()
+            row = con_r.execute(
+                "SELECT id FROM users WHERE stripe_customer_id=?", (customer_id,)).fetchone()
+            con_r.close()
+            if not row:
+                return {"received": True, "no_user": True}
+            _fulfill_membership(str(row["id"]), months=1)
+            print(f"[pay/stripe/webhook] renewal fulfilled user={row['id']}")
+            return {"received": True, "renewal": "ok"}
+        except Exception as e:
+            print(f"[pay/stripe/webhook] renewal err: {e}")
+            return {"received": True, "renewal_err": str(e)}
+
+    # ── customer.subscription.deleted（用户取消后到期停止）──
+    elif etype == "customer.subscription.deleted":
+        sub = event.get("data", {}).get("object", {})
+        customer_id = sub.get("customer", "")
+        if not customer_id:
+            return {"received": True, "no_customer": True}
+        try:
+            con_c = get_db()
+            con_c.execute(
+                "UPDATE users SET stripe_subscription_id=NULL WHERE stripe_customer_id=?",
+                (customer_id,))
+            con_c.commit()
+            con_c.close()
+            print(f"[pay/stripe/webhook] subscription cancelled customer={customer_id}")
+        except Exception as e:
+            print(f"[pay/stripe/webhook] cancel err: {e}")
+        return {"received": True, "cancelled": True}
+
+    else:
         return {"received": True, "ignored": etype}
-    sess = event.get("data", {}).get("object", {})
-    if sess.get("payment_status") != "paid":
-        return {"received": True, "unpaid": True}
-    md = sess.get("metadata", {}) or {}
-    oid = md.get("out_trade_no") or sess.get("client_reference_id", "")
-    if not oid:
-        print("[pay/stripe/webhook] 缺 out_trade_no")
-        return {"received": True, "no_oid": True}
-    # Stripe amount_total 为分(USD) → 转元校验
-    paid = (sess.get("amount_total", 0) or 0) / 100.0
-    res = _mark_paid_and_fulfill(oid, sess.get("payment_intent", "") or sess.get("id", ""),
-                                 "stripe", paid, background_tasks=None)
-    return {"received": True, "result": res}
 
 
 # ══════════════════════════════════════════════════════════════
@@ -881,3 +960,162 @@ async def consume_credit(payload: dict, authorization: str = Header(None)):
         return {"ok": True, "credits_remaining": int(row2["free_credits"] or 0)}
     finally:
         con.close()
+
+
+# ══════════════════════════════════════════════════════════════
+# 月会员（¥39/月 30天无限拆）
+# ══════════════════════════════════════════════════════════════
+
+def is_active_member(user_id: str) -> bool:
+    """用户是否有有效月会员（member_expires > now）"""
+    if not user_id or user_id.startswith("guest"):
+        return False
+    try:
+        con = get_db()
+        try:
+            row = con.execute("SELECT member_expires FROM users WHERE id=?", (user_id,)).fetchone()
+        finally:
+            con.close()
+        if not row or not row["member_expires"]:
+            return False
+        exp = datetime.datetime.fromisoformat(str(row["member_expires"]))
+        return exp > datetime.datetime.now()
+    except Exception:
+        return False
+
+
+def _fulfill_membership(user_id: str, months: int = 1):
+    """付款成功 → 延长/激活会员。幂等：叠加到现有到期时间。"""
+    try:
+        con = get_db()
+        try:
+            row = con.execute("SELECT member_expires FROM users WHERE id=?", (user_id,)).fetchone()
+            if row and row["member_expires"]:
+                try:
+                    base = datetime.datetime.fromisoformat(str(row["member_expires"]))
+                    if base < datetime.datetime.now():
+                        base = datetime.datetime.now()
+                except Exception:
+                    base = datetime.datetime.now()
+            else:
+                base = datetime.datetime.now()
+            new_exp = (base + datetime.timedelta(days=30 * months)).isoformat()
+            con.execute("UPDATE users SET member_expires=? WHERE id=?", (new_exp, user_id))
+            con.commit()
+            print(f"[pay/member] user={user_id} member_expires={new_exp}")
+        finally:
+            con.close()
+    except Exception as e:
+        print(f"[pay/member] fulfill error: {e}")
+
+
+@router.post("/subscribe/wechat")
+async def subscribe_wechat(payload: dict, authorization: str = Header(None),
+                           x_device_id: str = Header(None)):
+    """微信 ¥39/月卡（30天会员，非自动续费）"""
+    user_id = _user_id_optional(authorization, x_device_id)
+    if not _wechat_ready():
+        raise HTTPException(status_code=503, detail="微信支付暂未开放")
+    oid = _new_oid("WJWXSUB")
+    con = get_db()
+    try:
+        con.execute(
+            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,"
+            "breakdown_status,created_at,product) VALUES(?,?,?,?,'pending','wechat','CNY','',?,?)",
+            (oid, user_id, "subscription", ("%.2f" % PRICE_CNY_MONTHLY), _now_iso(), "monthly"))
+        con.commit()
+    finally:
+        con.close()
+    try:
+        r = _wx_unifiedorder(oid, int(round(PRICE_CNY_MONTHLY * 100)),
+                             "舞镜月会员·30天无限拆", "127.0.0.1")
+    except Exception as e:
+        raise HTTPException(status_code=502, detail="发起支付失败")
+    if r.get("return_code") == "SUCCESS" and r.get("result_code") == "SUCCESS" and r.get("code_url"):
+        return {"ok": True, "out_trade_no": oid, "code_url": r["code_url"],
+                "amount": PRICE_CNY_MONTHLY}
+    raise HTTPException(status_code=400,
+                        detail="微信下单失败：" + (r.get("err_code_des") or "未知错误"))
+
+
+@router.post("/subscribe/stripe")
+async def subscribe_stripe(payload: dict, authorization: str = Header(None),
+                           x_device_id: str = Header(None)):
+    """Stripe $9.99/月 recurring subscription（月卡）"""
+    user_id = _user_id_optional(authorization, x_device_id)
+    if not _stripe_ready():
+        raise HTTPException(status_code=503, detail="Stripe 暂未开放")
+    if not STRIPE_PRICE_ID_MONTHLY:
+        raise HTTPException(status_code=503, detail="月卡暂未开放")
+    oid = _new_oid("WJSTSUB")
+    con = get_db()
+    try:
+        con.execute(
+            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,"
+            "breakdown_status,created_at,product) VALUES(?,?,?,?,'pending','stripe','USD','',?,?)",
+            (oid, user_id, "subscription", ("%.2f" % PRICE_USD_MONTHLY), _now_iso(), "monthly"))
+        con.commit()
+    finally:
+        con.close()
+    # 取用户 email，让 Stripe 自动创建 customer
+    user_email = ""
+    if not user_id.startswith("guest"):
+        try:
+            con2 = get_db()
+            r = con2.execute("SELECT email FROM users WHERE id=?", (user_id,)).fetchone()
+            con2.close()
+            if r:
+                user_email = r["email"]
+        except Exception:
+            pass
+    form = {
+        "mode": "subscription",
+        "success_url": "https://wujing.mylumee.app/?pay=success&sub=1",
+        "cancel_url": STRIPE_CANCEL_URL,
+        "client_reference_id": oid,
+        "metadata[out_trade_no]": oid,
+        "metadata[user_id]": user_id,
+        "metadata[product]": "monthly",
+        "line_items[0][quantity]": "1",
+        "line_items[0][price]": STRIPE_PRICE_ID_MONTHLY,
+    }
+    if user_email:
+        form["customer_email"] = user_email
+    code, j = _stripe_request("POST", "/v1/checkout/sessions", form)
+    if code != 200 or not j.get("url"):
+        print(f"[pay/subscribe/stripe] 失败 code={code} {str(j)[:200]}")
+        raise HTTPException(status_code=502, detail="Stripe 下单失败")
+    con = get_db()
+    try:
+        con.execute("UPDATE orders SET trade_no=? WHERE out_trade_no=?", (j.get("id", ""), oid))
+        con.commit()
+    finally:
+        con.close()
+    return {"ok": True, "out_trade_no": oid, "url": j["url"],
+            "amount": PRICE_USD_MONTHLY, "currency": "USD"}
+
+
+@router.get("/member/status")
+async def member_status(authorization: str = Header(None)):
+    """查当前用户会员状态"""
+    user_id = _user_id_optional(authorization)
+    if user_id.startswith("guest"):
+        return {"is_member": False, "expires_at": None, "days_remaining": 0}
+    active = is_active_member(user_id)
+    expires_at = None
+    days_remaining = 0
+    if active:
+        con = get_db()
+        try:
+            row = con.execute(
+                "SELECT member_expires FROM users WHERE id=?", (user_id,)).fetchone()
+            if row and row["member_expires"]:
+                expires_at = row["member_expires"]
+                try:
+                    exp = datetime.datetime.fromisoformat(expires_at)
+                    days_remaining = max(0, (exp - datetime.datetime.now()).days)
+                except Exception:
+                    pass
+        finally:
+            con.close()
+    return {"is_member": active, "expires_at": expires_at, "days_remaining": days_remaining}

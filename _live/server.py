@@ -120,6 +120,10 @@ def get_optional_user(authorization: str = Header(None)):
 set_decompose_runner(run_decompose, get_decompose)
 set_optional_user_resolver(get_optional_user)
 
+@app.get("/health")
+def health():
+    return {"ok": True, "service": "wujing-api"}
+
 # ---------- Phase 1: User System ----------
 @app.post("/api/register")
 def register(email: str = Form(...), password: str = Form(...)):
@@ -611,6 +615,10 @@ def join_page(code: str):
     return RedirectResponse(f"/class_join.html?code={code}")
 # ---------- Payment routes ----------
 app.include_router(pay_router)
+
+# Stripe webhook 别名：Stripe Dashboard 注册的是 /stripe/webhook，实际处理在 /api/pay/stripe/webhook
+from pay import stripe_webhook as _pay_stripe_webhook
+app.post("/stripe/webhook")(_pay_stripe_webhook)
 app.include_router(hub_router)
 # ---------- Solo / Group / My Works routes ----------
 app.include_router(solo_router)

@@ -2,6 +2,14 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
+<meta property="og:title" content="舞镜 · AI 自动拆舞">
+<meta property="og:description" content="上传舞蹈视频，AI 自动拆解每一拍 · 八拍卡 + 慢放 + AI 老师点评 · 30秒出结果">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wujing.mylumee.app">
+<meta property="og:image" content="https://wujing.mylumee.app/static/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WuJing · AI Dance Breakdown">
+<meta name="twitter:description" content="Upload your dance · AI breaks down every beat · 8-beat cards + slow-mo + AI coach · Results in 30s">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>舞镜 · Dance Mirror</title>
@@ -45,7 +53,7 @@
   --card:#ffffff;
   --edge:#EDE4CF;
   --gold:#B5922A;
-  --gold-soft:#C9A94A;
+  --gold-soft:#E9B872;
   --ink:#1F1A14;
   --mute:#8C857A;
   --dark:#0E0B14;
@@ -222,6 +230,7 @@ body{
 .hero-cta-icon{font-size:16px}
 .hero-cta.secondary{background:var(--card);color:var(--ink);border:1px solid var(--edge);box-shadow:var(--shadow-card)}
 .hero-cta.secondary:hover{border-color:var(--gold-soft);box-shadow:var(--shadow-lift)}
+.hero-trust{font-size:11px;color:var(--mute);letter-spacing:.04em;margin-top:12px;opacity:.75}
 
 /* ═══ STEPS ═══ */
 .steps{display:flex;flex-direction:column;gap:10px;margin:0 0 24px;position:relative;z-index:2}
@@ -820,7 +829,7 @@ body{
 .upload-btn:disabled{opacity:.4;cursor:default}
 .upload-btn:not(:disabled):active{transform:scale(.97)}
 .loading-view{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
-.loading-spinner{width:40px;height:40px;border:3px solid var(--silver-mid);border-top-color:var(--warm);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--silver-mid);border-top-color:#E9B872;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-status{font-size:14px;color:var(--silver-deep);margin-bottom:4px}
 .loading-detail{font-size:12px;color:var(--silver-dim)}
@@ -869,9 +878,8 @@ body{
       <span class="hero-cta-icon">✦</span>
       <span>上传你的舞</span>
     </div>
+    <div class="hero-trust">不留存视频 · 结果仅你可见 · AI 生成标识</div>
   </div>
-
-  <!-- 已去除虚假社交证明 -->
 
   <!-- Upload（首屏核心 CTA） -->
   <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
@@ -881,6 +889,33 @@ body{
       <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，慢放/镜像跟练</div>
     </div>
     <div class="upload-card-arrow">→</div>
+  </div>
+
+  <!-- Demo preview card -->
+  <div id="demoPreviewCard" style="margin:16px 0 0;padding:16px;background:#1A1A1A;border-radius:16px;border:1px solid #2A2A2A">
+    <div style="font-size:11px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+      <span style="width:6px;height:6px;border-radius:50%;background:#E9B872;display:inline-block"></span>
+      <span id="demoLabel">示例拆解结果 · AI 生成</span>
+    </div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      <div style="flex:0 0 118px;background:#242424;border-radius:12px;padding:10px;border:1px solid #2A2A2A">
+        <div style="font-size:10px;color:#E9B872;font-weight:700;margin-bottom:6px">第1-2拍</div>
+        <div style="font-size:11px;color:#CCC;line-height:1.5">重心左移，手臂侧展至肩高，指尖延伸</div>
+      </div>
+      <div style="flex:0 0 118px;background:#242424;border-radius:12px;padding:10px;border:1px solid #2A2A2A">
+        <div style="font-size:10px;color:#E9B872;font-weight:700;margin-bottom:6px">第3-4拍</div>
+        <div style="font-size:11px;color:#CCC;line-height:1.5">顺势转腰，右脚踏步，目光跟随手势</div>
+      </div>
+      <div style="flex:0 0 118px;background:#242424;border-radius:12px;padding:10px;border:1px solid #2A2A2A">
+        <div style="font-size:10px;color:#E9B872;font-weight:700;margin-bottom:6px">第5-6拍</div>
+        <div style="font-size:11px;color:#CCC;line-height:1.5">双臂画弧收至胸前，呼吸配合沉肩</div>
+      </div>
+      <div style="flex:0 0 118px;background:#242424;border-radius:12px;padding:10px;border:1px solid #2A2A2A;opacity:0.45">
+        <div style="font-size:10px;color:#E9B872;font-weight:700;margin-bottom:6px">第7-8拍</div>
+        <div style="font-size:11px;color:#666;line-height:1.5">上传你的舞，解锁完整拆解…</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#555;text-align:center">← 滑动查看 · 付费解锁全套八拍+AI点评+慢放</div>
   </div>
 
   <!-- How it works -->
@@ -1074,7 +1109,7 @@ body{
 <!-- ══════ WORKS (我的作品) ══════ -->
 <div class="view hidden" id="view-works">
   <div class="wv" id="worksWrap">
-    <div class="wv-hd"><span class="wv-t">我的作品</span><span class="wv-badge">练习库</span></div>
+    <div class="wv-hd"><span class="wv-t">我的作品</span><span class="wv-badge">练习库</span><span id="memberBadge" style="display:none;align-items:center;background:linear-gradient(90deg,#E9B872,#E9B872);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-left:8px"></span></div>
     <div class="wv-sub">拆过的舞都沉淀在这，能看到每支的进步曲线。</div>
     <div id="worksList"></div>
   </div>
@@ -1320,7 +1355,23 @@ document.addEventListener('DOMContentLoaded', function(){
     var _u=new URLSearchParams(location.search);
     var _r=_u.get('ref');
     if(_r) localStorage.setItem('wj_ref',_r.slice(0,64));
+    // Stripe 支付成功回调
+    var _pay=_u.get('pay');
+    if(_pay==='success'){
+      var _sub=_u.get('sub');
+      if(_sub==='1'){
+        setTimeout(function(){showMemberSuccess();},800);
+      } else {
+        var _oid=_u.get('oid')||'';
+        if(_oid){
+          showToast(_isZH()?'支付成功，正在生成拆解...':'Payment successful, generating...');
+          setTimeout(function(){ pollDecompose(_oid); },1500);
+        }
+      }
+    }
   }catch(e){}
+  // demo卡国际化标签
+  try{ var _dl=document.getElementById('demoLabel'); if(_dl) _dl.textContent=_isZH()?'示例拆解结果 · AI 生成':'Sample result · AI generated'; }catch(e){}
 
   // ── 免费额度：登录用户启动后拉一次 ──
   if(AUTH_TOKEN){
@@ -1328,6 +1379,17 @@ document.addEventListener('DOMContentLoaded', function(){
       .then(function(r){return r.json();})
       .then(function(d){
         if(d.credits>0) _showCreditsToast(d.credits);
+      }).catch(function(){});
+    // ── 会员状态 ──
+    fetch('/api/pay/member/status',{headers:{'Authorization':'Bearer '+AUTH_TOKEN}})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        WJ_IS_MEMBER = !!d.is_member;
+        WJ_MEMBER_EXPIRES = d.expires_at || null;
+        if(WJ_IS_MEMBER){
+          var mb=document.getElementById('memberBadge');
+          if(mb){ mb.style.display='inline-flex'; mb.textContent='🎖 会员 '+d.days_remaining+'天'; }
+        }
       }).catch(function(){});
   }
 
@@ -1347,9 +1409,14 @@ document.addEventListener('DOMContentLoaded', function(){
 function _showCreditsToast(n){
   try{
     var el=document.createElement('div');
-    el.style.cssText='position:fixed;top:env(safe-area-inset-top,16px);left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;z-index:9998;box-shadow:0 4px 16px rgba(181,146,42,.35);white-space:nowrap;cursor:pointer';
+    el.style.cssText='position:fixed;top:env(safe-area-inset-top,16px);left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#E9B872,#E9B872);color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;z-index:9998;box-shadow:0 4px 16px rgba(181,146,42,.35);white-space:nowrap;cursor:pointer';
     el.textContent='🎁 你有 '+n+' 次免费拆解（推荐奖励）';
-    el.onclick=function(){ el.remove(); showDecomposeUpload(); };
+    el.onclick=function(){
+      el.remove();
+      var _ck=localStorage.getItem('wj_token')||'';
+      if(_ck){ fetch('/api/pay/credits/consume',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_ck},body:'{}'}).catch(function(){}); }
+      showDecomposeUpload();
+    };
     document.body.appendChild(el);
     setTimeout(function(){ el.style.opacity='0';el.style.transition='opacity .5s';setTimeout(function(){el.remove();},500); },5000);
   }catch(e){}
@@ -1468,7 +1535,14 @@ function loadWorks(){
           curveBars = '<div class="wc-curve"><div class="cl">进步曲线 · 跟练 '+(w.practice_count||0)+' 次'+(w.best_score!==null?' · 最高 '+(w.best_score)+' 分':'')+'</div>'+
             '<div class="wc-bars">'+w.curve.map(function(s){ return '<i style="height:'+Math.max(8,Math.round((s/(mx||100))*100))+'%"></i>'; }).join('')+'</div></div>';
         } else {
-          curveBars = '<div class="wc-curve"><div class="cl">还没跟练过 · 再练一次解锁进步曲线</div></div>';
+          curveBars = '<div class="wc-curve">'+
+            '<svg width="100%" height="44" viewBox="0 0 200 44" style="display:block;opacity:0.25;margin-bottom:6px">'+
+              '<line x1="0" y1="38" x2="200" y2="38" stroke="#444" stroke-width="1"/>'+
+              '<polyline points="0,34 40,30 80,24 120,18 160,12 200,6" fill="none" stroke="#E9B872" stroke-width="1.5" stroke-dasharray="4,3"/>'+
+              '<circle cx="40" cy="30" r="2.5" fill="#E9B872" opacity="0.5"/><circle cx="80" cy="24" r="2.5" fill="#E9B872" opacity="0.5"/>'+
+              '<circle cx="120" cy="18" r="2.5" fill="#E9B872" opacity="0.5"/><circle cx="160" cy="12" r="2.5" fill="#E9B872" opacity="0.5"/>'+
+            '</svg>'+
+            '<div class="cl" onclick="window.DC_ID=\''+w.id+'\';dcLoading();pollDecompose(\''+w.id+'\')" style="cursor:pointer;color:var(--gold)">▷ 去跟练 · 解锁进步曲线</div></div>';
         }
         var tags = (w.genre ? '<span class="wc-tag">'+_esc(w.genre==='guofeng'?'国风':w.genre)+'</span>' : '') +
           (w.n_phrases ? '<span class="wc-tag">'+(w.n_phrases)+' 句</span>' : '') +
@@ -1643,7 +1717,8 @@ function showUploadView() {
     '<div class="upload-sub">选一支想学的舞，上传你的练习视频，AI 自动对比分析</div>' +
     '<div class="teacher-grid" id="teacherGrid"><div class="loading-status" style="grid-column:1/-1;padding:24px;text-align:center;color:var(--silver-dim)">加载舞库中…</div></div>' +
     '<div class="upload-zone" id="uzone" onclick="document.getElementById(\'uinput\').click()">' +
-      '<div class="uz-icon">📹</div><div class="uz-label">点击选择视频文件</div><div class="uz-hint">支持 MP4 / MOV，最大 500MB</div>' +
+      '<div class="uz-icon">📹</div><div class="uz-label">'+(_isZH()?'点击选择视频文件':'Tap to select video')+'</div>'+
+      '<div class="uz-hint">'+(_isZH()?'支持 MP4 · MOV · 最长60秒 · <span style="color:#52C41A;font-weight:600">免费上传</span>':'MP4 · MOV · up to 60s · <span style="color:#52C41A;font-weight:600">Free upload</span>')+'</div>' +
       '<input type="file" id="uinput" accept="video/mp4,video/quicktime,video/*" onchange="handleFileSelect(this)">' +
     '</div>' +
     '<div id="uPreview" style="display:none"></div>' +
@@ -2378,7 +2453,7 @@ function renderDetailHum(p){
     '<div class="stave">' +
       '<div class="gl" style="top:8px">高</div><div class="gl" style="bottom:8px">低</div>' +
       '<svg viewBox="0 0 300 148" preserveAspectRatio="none" style="width:100%;height:100%">' +
-        '<defs><linearGradient id="hg"><stop offset="0" stop-color="#C9A94A"/><stop offset="1" stop-color="#8C7A4A"/></linearGradient></defs>' +
+        '<defs><linearGradient id="hg"><stop offset="0" stop-color="#E9B872"/><stop offset="1" stop-color="#8C7A4A"/></linearGradient></defs>' +
         '<path d="M0,112 C34,106 46,60 80,58 S128,96 150,72 S196,20 224,34 S270,92 300,64" fill="none" stroke="url(#hg)" stroke-width="3" stroke-linecap="round"/>' +
       '</svg>' +
       '<div class="hnote" style="left:7%;top:76%">起</div>' +
@@ -2741,7 +2816,7 @@ function renderDetailArchive(p){
 .dc-zone .l{font-size:15px;color:#1F1A14;font-weight:600}
 .dc-zone .h{font-size:12px;color:#9A8768;margin-top:5px}
 .dc-fname{font-size:13px;color:#7A5C2A;margin:12px 2px;word-break:break-all}
-.dc-btn{display:block;width:100%;padding:16px;border:none;border-radius:13px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:16px;font-weight:700;letter-spacing:.08em;margin-top:22px;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(181,146,42,.28)}
+.dc-btn{display:block;width:100%;padding:16px;border:none;border-radius:13px;background:linear-gradient(135deg,#E9B872,#E9B872);color:#fff;font-size:16px;font-weight:700;letter-spacing:.08em;margin-top:22px;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 .dc-btn:disabled{opacity:.35;box-shadow:none}
 .dc-load{padding:64px 24px;text-align:center}
 .dc-load-t{font-size:17px;font-weight:700;margin-top:20px;color:#1F1A14}
@@ -2768,11 +2843,11 @@ function renderDetailArchive(p){
 .dc-hero::before{content:"";position:absolute;top:-40px;right:-30px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(216,182,94,.16),transparent 68%);pointer-events:none}
 .dc-hero .brand{font-size:10px;letter-spacing:.34em;color:#B5922A;text-transform:uppercase;font-weight:700;margin-bottom:11px}
 .dc-hero .t{font-size:30px;font-weight:900;letter-spacing:.05em;color:#1F1A14;line-height:1.18}
-.dc-hero .rule{width:38px;height:2.5px;border-radius:2px;background:linear-gradient(90deg,#C79E3B,#E4C878);margin:13px 0 12px}
+.dc-hero .rule{width:38px;height:2.5px;border-radius:2px;background:linear-gradient(90deg,#E9B872,#E9B872);margin:13px 0 12px}
 .dc-hero .s{font-size:12px;color:#8F7C58;letter-spacing:.04em}
 .dc-hero .s b{color:#B5922A;font-weight:700}
 .dc-sec{display:flex;align-items:center;gap:9px;font-size:10.5px;letter-spacing:.24em;color:#B5922A;text-transform:uppercase;margin:30px 20px 13px;font-weight:700}
-.dc-sec::before{content:"";width:16px;height:2px;border-radius:2px;background:linear-gradient(90deg,#C79E3B,#E4C878)}
+.dc-sec::before{content:"";width:16px;height:2px;border-radius:2px;background:linear-gradient(90deg,#E9B872,#E9B872)}
 /* ===== 八拍卡 · 电影胶片条 ===== */
 .dc-strip{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px 14px;overflow:hidden;position:relative;box-shadow:0 4px 20px rgba(120,92,30,.07),0 1px 3px rgba(120,92,30,.05)}
 .dc-strip .lbar{position:absolute;left:0;top:0;bottom:0;width:4px;z-index:2}
@@ -2802,7 +2877,7 @@ function renderDetailArchive(p){
 .dc-strip .ang{margin-top:14px;background:#FBF7EC;border:1px solid #EFE6CF;border-radius:12px;padding:11px 13px 12px;cursor:pointer}
 .dc-strip .ang .glb{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.08em;color:#A98A3A;margin-bottom:0;font-weight:700}
 .dc-strip .ang .glb em{font-style:normal;font-weight:400;font-size:10px;color:#C2AE7C;margin-left:auto}
-.dc-strip .ang .glb::before{content:"";width:6px;height:6px;border-radius:50%;background:#C79E3B;box-shadow:0 0 0 3px rgba(199,158,59,.16)}
+.dc-strip .ang .glb::before{content:"";width:6px;height:6px;border-radius:50%;background:#E9B872;box-shadow:0 0 0 3px rgba(199,158,59,.16)}
 .dc-strip .ang .grid{display:flex;flex-wrap:wrap;gap:6px;max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .3s ease,margin-top .3s ease;margin-top:0}
 .dc-strip .ang.open .grid{max-height:400px;opacity:1;margin-top:9px}
 .dc-strip .ang.open .glb em{display:none}
@@ -2816,11 +2891,11 @@ function renderDetailArchive(p){
 .dc-strip .ang .g .bar i{display:block;height:100%;border-radius:2px}
 .dc-strip .ctl{display:flex;gap:7px;margin-top:14px}
 .dc-strip .ctl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:13px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
-.dc-strip .ctl span:active{border-color:#C79E3B;background:#F4EAD2}
+.dc-strip .ctl span:active{border-color:#E9B872;background:#F4EAD2}
 .dc-strip .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:12px;cursor:pointer;letter-spacing:.02em}
 /* ===== 老师点评 · AI 测评 ===== */
 .dc-coach{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:19px 19px 17px;box-shadow:0 4px 20px rgba(120,92,30,.07)}
-.dc-coach .cm{font-size:14.5px;color:#2E2416;line-height:1.85;padding:12px 15px;margin-bottom:15px;background:linear-gradient(135deg,#FBF4E1,#F8F0DB);border-radius:12px;border-left:3px solid #C79E3B;font-weight:600}
+.dc-coach .cm{font-size:14.5px;color:#2E2416;line-height:1.85;padding:12px 15px;margin-bottom:15px;background:linear-gradient(135deg,#FBF4E1,#F8F0DB);border-radius:12px;border-left:3px solid #E9B872;font-weight:600}
 .dc-coach .csub{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin:0 0 9px 2px}
 .dc-coach .csub.g{color:#5C8A3E}
 .dc-coach .csub.i{color:#B5922A}
@@ -2829,8 +2904,10 @@ function renderDetailArchive(p){
 .dc-coach .tp.i{background:#FBF6E9;color:#6E5622;border:1px solid #EFE4C9}
 .dc-coach .tp b{font-weight:900}
 .dc-coach .tp.i b{color:#B5892A}
-.dc-coach .beat{display:inline-block;background:#C79E3B;color:#fff!important;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;margin:0 2px;cursor:pointer;letter-spacing:.02em}
+.dc-coach .beat{display:inline-block;background:#E9B872;color:#fff!important;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;margin:0 2px;cursor:pointer;letter-spacing:.02em}
 @keyframes beatFlash{0%,100%{box-shadow:0 0 0 0 rgba(199,158,59,.5)}50%{box-shadow:0 0 0 10px rgba(199,158,59,0)}}
+@keyframes cardSlideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .dc-coach .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:11px;cursor:pointer}
 /* ===== 故事卡 ===== */
 .dc-story{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:22px 21px 19px;box-shadow:0 4px 20px rgba(120,92,30,.07);position:relative;overflow:hidden}
@@ -2849,11 +2926,11 @@ function renderDetailArchive(p){
 .dc-mem .hint{font-size:12px;color:#9A8768;line-height:1.65;margin-bottom:13px}
 .dc-mem .ctrl{display:flex;gap:7px}
 .dc-mem .ctrl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:13px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
-.dc-mem .ctrl span.on{background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 3px 10px rgba(181,146,42,.24)}
-.dc-share-all{margin:26px 16px 12px;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:15px;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 22px rgba(181,146,42,.28)}
+.dc-mem .ctrl span.on{background:linear-gradient(135deg,#E9B872,#E9B872);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 3px 10px rgba(181,146,42,.24)}
+.dc-share-all{margin:26px 16px 12px;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#E9B872,#E9B872);color:#fff;font-size:15px;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 .dc-share-all.ghost{background:#fff;color:#8C7A4A;border:1.5px solid #EDE4CF;box-shadow:none;margin-top:-4px}
-.dc-aha{margin:8px 16px 0;padding:16px 18px;display:flex;align-items:center;gap:12px;border-radius:16px;border:1.5px solid #C79E3B;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);cursor:pointer;box-shadow:0 4px 16px rgba(181,146,42,.12)}
-.dc-repurchase{margin:10px 16px 24px;padding:14px 18px;border-radius:14px;background:#fff;border:1px dashed #C79E3B;text-align:center;cursor:pointer}
+.dc-aha{margin:8px 16px 0;padding:16px 18px;display:flex;align-items:center;gap:12px;border-radius:16px;border:1.5px solid #E9B872;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);cursor:pointer;box-shadow:0 4px 16px rgba(181,146,42,.12)}
+.dc-repurchase{margin:10px 16px 24px;padding:14px 18px;border-radius:14px;background:#fff;border:1px dashed #E9B872;text-align:center;cursor:pointer}
 .dc-repurchase:active{opacity:.7}
 /* 跟练自评弹层 */
 .practice-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8000;display:flex;align-items:flex-end;justify-content:center}
@@ -2888,15 +2965,15 @@ function renderDetailArchive(p){
 .pay-sheet{background:#FFFDF6;border:1px solid #EDE4CF;border-radius:22px;width:100%;max-width:360px;padding:30px 24px 22px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.12)}
 .pay-close{position:absolute;top:12px;right:14px;font-size:22px;color:#A09078;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%}
 .pay-close:active{background:rgba(0,0,0,.04)}
-.pay-icon{width:44px;height:44px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,#C9A94A,#B5922A);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(181,146,42,.22)}
+.pay-icon{width:44px;height:44px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,#E9B872,#B5922A);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(181,146,42,.22)}
 .pay-title{font-family:"Noto Serif SC",serif;font-weight:900;font-size:22px;text-align:center;color:#1F1A14;margin-bottom:6px}
 .pay-desc{font-size:12.5px;color:#8C857A;text-align:center;line-height:1.65;margin-bottom:22px}
 .pay-channels{display:flex;flex-direction:column;gap:8px}
 .pay-channel{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1px solid #EDE4CF;background:#fff;cursor:pointer;transition:all .15s}
-.pay-channel:active{transform:scale(.97);background:#FCF8EF;border-color:#C9A94A}
+.pay-channel:active{transform:scale(.97);background:#FCF8EF;border-color:#E9B872}
 .pay-c-icon{font-size:20px;width:32px;text-align:center}
 .pay-c-name{flex:1;font-size:14px;font-weight:600;color:#1F1A14}
-.pay-c-arrow{color:#C9A94A;font-size:14px;font-weight:700}
+.pay-c-arrow{color:#E9B872;font-size:14px;font-weight:700}
 .pay-qr{text-align:center;margin-top:6px}
 .pay-qr-frame{width:180px;height:180px;margin:0 auto 12px;border:2px solid #EDE4CF;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fff;position:relative}
 .pay-qr-frame img{width:160px;height:160px;display:block}
@@ -2932,6 +3009,16 @@ function renderDetailArchive(p){
     <div class="pay-title" id="payTitle">¥9.9 生成完整拆解</div>
     <div class="pay-desc" id="payDesc">你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。</div>
 
+    <!-- 月会员升级卡 -->
+    <div style="margin:0 0 12px;padding:12px 14px;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border-radius:14px;border:1.5px solid #E9B872;cursor:pointer" onclick="showSubscribeSheet()">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#8C5A1E">🎖 月会员 · ¥39/月</div>
+          <div style="font-size:11px;color:#A07840;margin-top:2px">无限拆解 · 本月每支舞直接拆</div>
+        </div>
+        <div style="font-size:11px;color:#B5922A;font-weight:600">更划算 ›</div>
+      </div>
+    </div>
     <!-- 渠道选择 -->
     <div class="pay-channels" id="payChannels">
       <div class="pay-channel" id="payChannelWx" onclick="payCreate('wechat')">
@@ -2997,15 +3084,18 @@ function _dcShow(){
   window.scrollTo(0,0);
 }
 var WJ_DISCOUNT = false; // 复购8折标记
+var WJ_IS_MEMBER = false; // 月会员标记
+var WJ_MEMBER_EXPIRES = null; // 会员到期时间
 function showDecomposeUpload(discount){
   WJ_DISCOUNT = !!discount;
+  WJ.track('upload', {});
   // 记录来源tab：返回时回到原tab（作品/广场进的拆解不丢位置）
   _dcEnter(_currentTab());
   // 上传免费·无需登录—游客也能传（后端 get_optional_user）。有 token 则绑账号。
   DC_FILE=null;
   var priceLabel = WJ_DISCOUNT ? (_isZH()?'开始拆解 · ¥7.9（8折）':'Start breakdown · $1.59') : (_isZH()?'开始拆解 · ¥9.9':'Start breakdown · $1.99');
   var priceNote  = WJ_DISCOUNT ? (_isZH()?'8折限时优惠 · 上传免费 · 不成功退款':'20% off · free upload · refund on failure') : (_isZH()?'拆解结果¥9.9 · 上传免费 · 不成功退款':'Result $1.99 · free upload · refund on failure');
-  var discountBanner = WJ_DISCOUNT ? '<div style="text-align:center;margin-bottom:10px;padding:8px 16px;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border-radius:12px;border:1px solid #C79E3B;font-size:13px;color:#8C7A4A">🎁 <b style="color:#B5922A">老用户8折</b> · 这支只要 ¥7.9</div>' : '';
+  var discountBanner = WJ_DISCOUNT ? '<div style="text-align:center;margin-bottom:10px;padding:8px 16px;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border-radius:12px;border:1px solid #E9B872;font-size:13px;color:#8C7A4A">🎁 <b style="color:#B5922A">老用户8折</b> · 这支只要 ¥7.9</div>' : '';
   _dcView().innerHTML =
     '<div class="dc-up">'+
       discountBanner+
@@ -3054,16 +3144,25 @@ function startDecompose(){
     })
     .catch(function(){ btn.disabled=false; btn.textContent='开始拆解'; toast('网络错误'); });
 }
-var DC_STEPS=['读取视频 · 按八拍切分','AI 逐段识别动作 · 脚下 · 口诀','AI 逐帧测量关节角度','生成八拍卡 · 故事卡 · 老师点评'];
 var DC_LOAD_TIMER=null;
 function dcLoading(){
+  var DC_STEPS=_isZH()?
+    ['读取视频 · 识别八拍节奏','识别每段动作 · 分析脚下路线','MediaPipe 测量关节角度','生成八拍卡 · 老师点评 · 口诀']:
+    ['Reading video · detecting 8-beat rhythm','Analyzing movements · footwork','Measuring joint angles','Generating beat cards · coach notes'];
   var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span><span class="spin"></span></div>';}).join('');
-  _dcView().innerHTML='<div class="dc-load"><div class="dc-mirror">舞</div><div class="dc-load-t">AI 正在拆解你的舞…</div><div class="dc-load-d">通常 30 秒内完成 · 请别退出</div><div class="dc-steps">'+steps+'</div></div>';
+  _dcView().innerHTML='<div class="dc-load"><div class="dc-mirror">舞</div><div class="dc-load-t">'+(_isZH()?'AI 正在拆解你的舞…':'Analyzing your dance...')+'</div><div class="dc-load-d" id="dcCountdown">'+(_isZH()?'通常 30 秒内完成 · 请别退出':'Usually done in 30 seconds · stay on page')+'</div><div class="dc-steps">'+steps+'</div></div>';
   _dcShow();
   var cur=0;
   DC_LOAD_TIMER=setInterval(function(){
     if(cur<DC_STEPS.length-1){ var e=document.getElementById('dcstep'+cur); if(e){e.className='dc-step done';} cur++; var n=document.getElementById('dcstep'+cur); if(n)n.className='dc-step on'; }
   },7000);
+  var _cdSec=28;
+  var _cdTimer=setInterval(function(){
+    _cdSec--;
+    var el=document.getElementById('dcCountdown');
+    if(el && _cdSec>0) el.textContent=(_isZH()?'预计还需 ':'About ')+_cdSec+(_isZH()?'s · 请别退出':' sec left · stay on page');
+    if(_cdSec<=0) clearInterval(_cdTimer);
+  },1000);
 }
 function _dcLoadStop(){ if(DC_LOAD_TIMER){clearInterval(DC_LOAD_TIMER);DC_LOAD_TIMER=null;} }
 /* ── 后台轮询暂停：页面隐藏时停所有 poll/RAF，回前台恢复，省电省流量 ── */
@@ -3117,7 +3216,7 @@ function pollDecompose(id){
   },3000);
 }
 function _esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-var DC_COLORS=['#B5922A','#C9A94A','#D9BA6A','#A0863A','#8C7A4A'];
+var DC_COLORS=['#B5922A','#E9B872','#D9BA6A','#A0863A','#8C7A4A'];
 function dcFrameErr(el){
   var ph=document.createElement('div');
   ph.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,.4)';
@@ -3173,13 +3272,14 @@ function dcAngHtml(a){
 }
 function renderDecompose(d){
   DC_ID=d.id; DC_DATA=d;
+  WJ.track('decompose_done', {dance_id: d.id||''});
   var strip=d.strip||4;
   var beats='';
   (d.phrases||[]).forEach(function(p,idx){
     var col=DC_COLORS[idx%DC_COLORS.length];
     var film='';
     for(var k=0;k<strip;k++){ film+='<div class="fr"><img src="api/decompose/'+d.id+'/frame/p'+p.i+'_'+k+'" loading="lazy" onerror="dcFrameErr(this)"><span class="fno">'+(k+1)+'/'+strip+'</span></div>'; }
-    beats+='<div class="dc-strip">'+
+    beats+='<div class="dc-strip" style="animation:cardSlideIn .38s both;animation-delay:'+(idx*0.06)+'s">'+
       '<div class="lbar" style="background:'+col+'"></div>'+
       '<div class="hd"><span class="no" style="color:'+col+'">'+p.i+'</span>'+
         '<span class="txt"><span class="nm">'+_esc(p.name)+'</span><span class="tm">'+p.t0+'–'+p.t1+' s</span></span>'+
@@ -3204,7 +3304,10 @@ function renderDecompose(d){
         (d.coach.good||[]).map(function(g){return '<div class="tp g">'+_beatTag(g)+'</div>';}).join('')+
         ((d.coach.improve||[]).length?'<div class="csub i" style="margin-top:13px">◆ 可以更好</div>':'')+
         (d.coach.improve||[]).map(function(x){return '<div class="tp i">'+_beatTag(x)+'</div>';}).join('')+
-        '<div class="shr" onclick="dcShare(\'coach\')">分享点评 ↗</div></div>':'')+
+        '<div class="shr" onclick="dcShare(\'coach\')">分享点评 ↗</div></div>':
+        '<div class="dc-sec">老师点评 · AI 逐帧测角</div>'+
+        '<div class="dc-coach"><div class="cm" style="color:#8C7A4A;font-style:italic;font-weight:500">'+
+          ((_isZH)?'AI 正在对这支舞做逐帧测角分析，点评稍后生成 — 刷新页面可查看':'AI analysis is in progress. Refresh to see your full coaching feedback.')+'</div></div>')+
       '<div class="dc-sec">八拍卡 · 跟练</div>'+
       beats+
       (st.title?'<div class="dc-sec">故事卡</div>'+
@@ -3344,7 +3447,7 @@ function dcSaveCard(){
     ctx.font='500 30px "Noto Sans SC",sans-serif'; ctx.fillStyle='#8F7C58';
     ctx.fillText((d.phrases||[]).length+' 句八拍卡 · '+(d.dur||'')+'s · 舞镜 AI 自动拆解', W/2, 165);
     // 金线
-    ctx.strokeStyle='#C79E3B'; ctx.lineWidth=3; ctx.beginPath();
+    ctx.strokeStyle='#E9B872'; ctx.lineWidth=3; ctx.beginPath();
     ctx.moveTo(W/2-70,200); ctx.lineTo(W/2+70,200); ctx.stroke();
     // 八拍卡片列表（每拍一行）
     var y=260, phrases=d.phrases||[];
@@ -3374,7 +3477,7 @@ function dcSaveCard(){
     ctx.fillText('舞镜 AI 舞蹈拆解', W/2, H-120);
     ctx.fillStyle='#8F7C58'; ctx.font='400 26px "Noto Sans SC",sans-serif';
     ctx.fillText('上传任意一支舞 · AI 拆成能跟练的八拍卡', W/2, H-82);
-    ctx.fillStyle='#C79E3B'; ctx.font='700 30px "Noto Sans SC",sans-serif';
+    ctx.fillStyle='#E9B872'; ctx.font='700 30px "Noto Sans SC",sans-serif';
     ctx.fillText('wujing.mylumee.app', W/2, H-42);
     // 下载
     var link=c.toDataURL('image/png');
@@ -3440,7 +3543,7 @@ function dcShare(kind,idx){
 function _showShareReward(){
   try{
     var el=document.createElement('div');
-    el.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(181,146,42,.35);pointer-events:none;white-space:nowrap';
+    el.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#E9B872,#E9B872);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(181,146,42,.35);pointer-events:none;white-space:nowrap';
     el.textContent=_isZH()?'🎁 朋友通过你的链接拆舞，你得1次免费拆':'🎁 When a friend pays via your link, you get 1 free breakdown';
     document.body.appendChild(el);
     setTimeout(function(){ el.style.opacity='0'; el.style.transition='opacity .5s'; setTimeout(function(){ el.remove(); },500); },3000);
@@ -3448,7 +3551,118 @@ function _showShareReward(){
 }
 /* ═══ PAYMENT FLOW ═══ */
 var PAY_OUT_TRADE_NO=null, PAY_POLL_TIMER=null;
+function showSubscribeSheet(){
+  var isZH=_isZH();
+  var html='<div class="sheet-overlay" onclick="this.remove()" id="subSheet">'
+    +'<div class="sheet-panel" onclick="event.stopPropagation()" style="padding:24px 20px">'
+    +'<div style="font-size:17px;font-weight:700;color:#2D2D2D;margin-bottom:4px">'+(isZH?'月会员 · 无限拆解':'Monthly Member · Unlimited')+'</div>'
+    +'<div style="font-size:13px;color:#888;margin-bottom:20px">'+(isZH?'¥39/月 · 30天无限拆任意舞 · 随时不续':'$9.99/mo · 30 days unlimited · cancel anytime')+'</div>'
+    +(isZH?'<button class="btn-gold" style="width:100%;margin-bottom:10px" onclick="subscribeWechat()">微信支付 · ¥39</button>':'')
+    +(isZH?'<button class="btn-ghost" style="width:100%;margin-bottom:10px" onclick="subscribeAlipay()">支付宝 · ¥39</button>':'')
+    +'<button class="btn-gold" style="width:100%" onclick="subscribeStripe()">'+(isZH?'Stripe · ¥39':'Pay $9.99 via Card')+'</button>'
+    +'<div style="text-align:center;margin-top:14px;font-size:11px;color:#bbb">'+(isZH?'单次拆解 ¥9.9 · 点上方选渠道':'Single breakdown ¥9.9 · choose channel above')+'</div>'
+    +'</div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+function subscribeWechat(){
+  var token=localStorage.getItem('wj_token')||'';
+  if(!token){ showAuth(); return; }
+  var el=document.getElementById('subSheet');
+  if(el) el.remove();
+  PAY_BUSY=true;
+  toast(_isZH()?'发起微信订阅...':'Starting WeChat...');
+  fetch('/api/pay/subscribe/wechat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:'{}'})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.ok && d.code_url){
+        WJ.track('subscribe_monthly', {channel: 'wechat'});
+        var m=document.getElementById('payModal');
+        if(m) m.setAttribute('aria-hidden','false');
+        var pc=document.getElementById('payChannels');
+        if(pc) pc.style.display='none';
+        var qr=document.getElementById('payQr');
+        if(qr){ qr.style.display='block'; }
+        var img=document.getElementById('payQrImg');
+        if(img){ img.src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(d.code_url); img.style.display='block'; }
+        var ql=document.getElementById('payQrLoad');
+        if(ql) ql.classList.add('hide');
+        var qh=document.getElementById('payQrHint');
+        if(qh) qh.innerHTML=_isZH()?'打开 <b>微信</b> 扫一扫 · 支付 <b>¥39</b>':'Scan WeChat · <b>¥39</b>';
+        localStorage.setItem('wj_sub_mode','1');
+        payPoll(d.out_trade_no);
+      } else { PAY_BUSY=false; toast((d.detail||'微信订阅失败'),true); }
+    }).catch(function(){ PAY_BUSY=false; toast('网络错误',true); });
+}
+function subscribeStripe(){
+  var token=localStorage.getItem('wj_token')||'';
+  if(!token){ showAuth(); return; }
+  var el=document.getElementById('subSheet');
+  if(el) el.remove();
+  toast(_isZH()?'跳转Stripe...':'Redirecting...');
+  fetch('/api/pay/subscribe/stripe',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:'{}'})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.ok && d.url){ WJ.track('subscribe_monthly', {channel: 'stripe'}); window.location.href=d.url; }
+      else toast((d.detail||'Stripe失败'),true);
+    }).catch(function(){toast('网络错误',true);});
+}
+function subscribeAlipay(){
+  var token=localStorage.getItem('wj_token')||'';
+  if(!token){ showAuth(); return; }
+  var el=document.getElementById('subSheet');
+  if(el) el.remove();
+  toast(_isZH()?'支付宝月卡暂未开通，请用微信或Stripe':'Alipay monthly not available yet');
+}
+function showMemberSuccess(){
+  localStorage.removeItem('wj_sub_mode');
+  WJ_IS_MEMBER=true;
+  var mb=document.getElementById('memberBadge');
+  if(mb){mb.style.display='inline-flex';mb.textContent='🎖 会员';}
+  var token=localStorage.getItem('wj_token')||'';
+  function _show(exp){
+    var benefits=[
+      '✓ '+(_isZH()?'无限拆解 · 每支舞直接开始':'Unlimited breakdowns, no per-dance fee'),
+      '✓ '+(_isZH()?'历史作品永久保存':'All past breakdowns saved forever'),
+      '✓ '+(_isZH()?'AI 点评 · MediaPipe 精确关节测量':'AI coach with MediaPipe joint angles')
+    ];
+    var html='<div class="sheet-overlay" id="memberSuccessSheet" onclick="this.remove()">'
+      +'<div class="sheet-panel" onclick="event.stopPropagation()" style="padding:0;overflow:hidden;border-radius:20px 20px 0 0;animation:slideUp .35s cubic-bezier(.34,1.56,.64,1)">'
+      +'<div style="background:linear-gradient(135deg,#B5922A 0%,#E9B872 50%,#D4A843 100%);padding:32px 24px 24px;text-align:center">'
+      +'<div style="font-size:52px;margin-bottom:8px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))">🎖</div>'
+      +'<div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:.5px">'+(_isZH()?'会员已开通':'Welcome, Member!')+'</div>'
+      +'<div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:4px">'+(_isZH()?'¥39/月 · 无限拆解任意舞':'$9.99/mo · Unlimited breakdowns')+'</div>'
+      +(exp?'<div style="display:inline-block;margin-top:10px;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:12px;color:#fff;font-weight:600">'+(_isZH()?'有效期至 ':'Expires ')+exp+'</div>':'')
+      +'</div>'
+      +'<div style="padding:20px 24px 8px">'
+      +'<div style="font-size:12px;color:#9A8768;font-weight:600;letter-spacing:.5px;margin-bottom:12px">'+(_isZH()?'会员专属权益':'MEMBER BENEFITS')+'</div>'
+      +benefits.map(function(t){return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3EDE0;font-size:13px;color:#1F1A14">'+t+'</div>';}).join('')
+      +'</div>'
+      +'<div style="padding:16px 24px 28px">'
+      +'<button class="btn-gold" style="width:100%;font-size:15px;padding:14px" onclick="document.getElementById(\'memberSuccessSheet\').remove();showDecomposeUpload()">'+(_isZH()?'立刻上传一支舞 →':'Upload a Dance →')+'</button>'
+      +'<div style="text-align:center;margin-top:12px;font-size:12px;color:#bbb;cursor:pointer" onclick="document.getElementById(\'memberSuccessSheet\').remove()">'+(_isZH()?'稍后再说':'Later')+'</div>'
+      +'</div>'
+      +'</div></div>';
+    document.body.insertAdjacentHTML('beforeend',html);
+  }
+  if(token){
+    fetch('/api/pay/member/status',{headers:{'Authorization':'Bearer '+token}})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var exp='';
+        if(d.expires_at){
+          var dt=new Date(d.expires_at);
+          exp=_isZH()?(dt.getMonth()+1)+'月'+dt.getDate()+'日':dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        }
+        _show(exp);
+      }).catch(function(){_show('');});
+  } else { _show(''); }
+}
 function showPayment(danceId,price){
+  // 月会员免付：直接解锁
+  if(WJ_IS_MEMBER){
+    toast(_isZH()?'会员专属 · 直接拆解 🎖':'Member unlocking...');
+    if(danceId) DC_ID=danceId;
+    setTimeout(function(){ startDecompose(); }, 800);
+    return;
+  }
   var m=document.getElementById('payModal');
   if(!m) return;
   // 币种动态：中文¥9.9 / 海外$1.99（海外走Stripe实扣1.99）
@@ -3505,6 +3719,7 @@ function payCreate(channel){
   .then(function(d){
     if(d.out_trade_no){
       PAY_OUT_TRADE_NO=d.out_trade_no;
+      WJ.track('pay_create', {channel: channel||'unknown', amount: d.amount||9.9});
       if(channel==='stripe'){
         PAY_BUSY = false;
         if(d.url){ window.location.href=d.url; }
@@ -3543,7 +3758,15 @@ function payPoll(outTradeNo){
       .then(function(d){
         if(d.status==='paid'){
           clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
-          document.getElementById('payQrStatus').textContent='✅ 支付成功！正在拆解…';
+          if(localStorage.getItem('wj_sub_mode')==='1'){
+            WJ.track('subscribe_monthly',{channel:'wechat_confirmed'});
+            payClose();
+            showMemberSuccess();
+            return;
+          }
+          WJ.track('pay_success', {out_trade_no: outTradeNo||''});
+          var qs=document.getElementById('payQrStatus');
+          if(qs){qs.innerHTML='<span style="color:#4CAF50;font-size:18px">✓</span> <span style="color:#4CAF50;font-weight:600">'+(_isZH()?'支付成功':'Payment confirmed')+'</span>';}
           setTimeout(function(){
             payClose();
             var did = DC_ID;

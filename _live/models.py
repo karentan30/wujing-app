@@ -33,6 +33,9 @@ def init_db():
         for ddl in (
             "ALTER TABLE users ADD COLUMN free_credits INTEGER DEFAULT 0",
             "ALTER TABLE users ADD COLUMN ref_code TEXT",
+            "ALTER TABLE users ADD COLUMN member_expires TEXT",
+            "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
+            "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
         ):
             try:
                 conn.execute(ddl)
