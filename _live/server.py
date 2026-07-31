@@ -5,7 +5,7 @@ import json
 import threading
 from datetime import datetime
 from pathlib import Path
-import urllib.request, base64
+import urllib.request, base64, subprocess
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException, Header
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -53,6 +53,18 @@ def _run_decompose_with_hooks(did, video_path, user_id, title, genre,
     try:
         run_decompose(did, video_path, user_id, title, genre,
                       song=song, lyric_first=lyric_first, lyric_last=lyric_last)
+        # 生成三张PNG卡片（八拍卡/镜面卡/记忆卡）
+        try:
+            gen_script = os.path.join(BASE_DIR, "cards", "gen_cards.py")
+            if os.path.exists(gen_script):
+                ddir = os.path.join(DATA_DIR, did)
+                r = subprocess.run(["python3", gen_script, did, video_path, ddir],
+                                   timeout=300, capture_output=True, text=True)
+                print(f"[cards] {r.stdout.strip()}")
+                if r.returncode != 0:
+                    print(f"[cards] stderr: {r.stderr[-500:]}")
+        except Exception as _ce:
+            print(f"[cards] gen failed: {_ce}")
         result = get_decompose(did)
         if result and result.get("status") == "completed":
             if user_id:
@@ -430,8 +442,9 @@ def list_teachers():
 
 # ---------- 任意舞自动拆解（免选老师·上传即出八拍卡/故事卡/记忆卡） ----------
 def _safe_did(did):
-    """路径防穿越：dance_id 仅允许 uuid 字符集（十六进制+连字符），拒绝 ../ 等。"""
-    if not did or any(c not in "0123456789abcdefABCDEF-" for c in did) or ".." in did:
+    """路径防穿越：dance_id 允许字母/数字/连字符/下划线，拒绝 ../ 等路径穿越。"""
+    import re as _re
+    if not did or not _re.match(r'^[a-zA-Z0-9_-]+$', did) or ".." in did or "/" in did:
         raise HTTPException(status_code=400, detail="无效的 dance_id")
     return did
 def _identity_for(user, x_device_id=None):
@@ -598,6 +611,19 @@ def get_decompose_frame(did: str, name: str):
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Frame not found")
     return FileResponse(path, media_type="image/jpeg")
+
+@app.get("/api/decompose/{did}/card/{name}")
+def get_decompose_card(did: str, name: str):
+    _safe_did(did)
+    name_clean = name.replace("..", "").replace("/", "").replace("\\", "")
+    path = os.path.join(DATA_DIR, did, name_clean)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Card not found")
+    from urllib.parse import quote
+    safe_filename = quote(name_clean, safe="")
+    return FileResponse(path, media_type="image/png",
+                        headers={"Content-Disposition": f"attachment; filename*=UTF-8''{safe_filename}"})
+
 @app.get("/")
 @app.get("/design-upgrade.html")
 def serve_app():

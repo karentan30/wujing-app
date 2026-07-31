@@ -185,6 +185,80 @@ def _write(did, obj):
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
 
+
+
+def _assign_lyrics_deepseek(phrases, song, lyric_first, lyric_last):
+    if not (song or lyric_first):
+        return
+    try:
+        key = os.environ.get("DEEPSEEK_API_KEY", "")
+        n = len(phrases)
+        prompt = (
+            f"歌曲：《{song}》  首句：{lyric_first}  末句：{lyric_last}\n"
+            f"请从这首歌中选 {n} 句歌词，按顺序分配给舞蹈每一段，适合作配字显示。\n"
+            f"只输出JSON数组，长度精确 {n}，每项是一句歌词字符串，不要解释。"
+        )
+        body = json.dumps({"model": "deepseek-chat",
+                           "messages": [{"role": "user", "content": prompt}],
+                           "max_tokens": 400, "temperature": 0.3}).encode()
+        req = urllib.request.Request(DEEPSEEK_URL, data=body,
+            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
+        raw = json.loads(urllib.request.urlopen(req, timeout=30).read())
+        text = raw["choices"][0]["message"]["content"].strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.lstrip().lower().startswith("json"):
+                text = text.lstrip()[4:]
+        lines = json.loads(text.strip())
+        if isinstance(lines, list):
+            for i, p in enumerate(phrases):
+                if i < len(lines) and isinstance(lines[i], str):
+                    p["lyric"] = lines[i]
+    except Exception as e:
+        print(f"[lyrics_ds] failed: {e}")
+
+
+def whisper_align_lyrics(video_path, phrases, song="", lyric_first="", lyric_last=""):
+    """Whisper 时间戳对齐歌词；失败返回 False"""
+    import tempfile
+    tmp_audio = tempfile.mktemp(suffix=".wav")
+    try:
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", video_path,
+                        "-ar", "16000", "-ac", "1", tmp_audio],
+                       check=True, timeout=60, capture_output=True)
+    except Exception as e:
+        print(f"[whisper] 音频提取失败: {e}")
+        return False
+    try:
+        import whisper as _whisper
+        model = _whisper.load_model("base")
+        result = model.transcribe(tmp_audio, language="zh", task="transcribe")
+        segments = result.get("segments", [])
+        print(f"[whisper] 识别到 {len(segments)} 段")
+        if not segments:
+            return False
+        matched = 0
+        for p in phrases:
+            t0, t1 = p["t0"], p["t1"]
+            best_seg, best_overlap = None, 0.0
+            for seg in segments:
+                overlap = min(seg["end"], t1) - max(seg["start"], t0)
+                if overlap > best_overlap:
+                    best_overlap = overlap
+                    best_seg = seg
+            if best_seg and best_overlap > 0.3:
+                p["lyric"] = best_seg["text"].strip()
+                matched += 1
+        return matched > 0
+    except Exception as e:
+        print(f"[whisper] 识别失败: {e}")
+        return False
+    finally:
+        try:
+            os.remove(tmp_audio)
+        except Exception:
+            pass
+
 def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
                   song="", lyric_first="", lyric_last=""):
     """后台任务：拆解一支任意上传的舞。全程兜底，绝不留半成品。"""
@@ -229,6 +303,12 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         # 挂真实角度到每段
         for p in phrases:
             p["angles"] = pose.get(f"p{p['i']}")
+
+        # 歌词对齐：whisper 优先，fallback DeepSeek
+        if song or lyric_first:
+            aligned = whisper_align_lyrics(video_path, phrases, song, lyric_first, lyric_last)
+            if not aligned:
+                _assign_lyrics_deepseek(phrases, song, lyric_first, lyric_last)
 
         # 串联口诀（用 key 字拼）
         keys = [p.get("key", "") for p in phrases]
