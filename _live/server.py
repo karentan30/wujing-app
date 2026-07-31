@@ -544,12 +544,26 @@ def get_decompose_endpoint(did: str, user: dict = Depends(get_optional_user)):
     d = get_decompose(did)
     if not d:
         raise HTTPException(status_code=404, detail="Not found")
+    # 已发广场(is_public=1)的作品 = 公开分享物，任何人可只读查看（广场UGC的核心）
+    if _decompose_is_public(did):
+        return d
     owner = d.get("user_id")
     # None / 'guest' 视为匿名，任何人可读；绑定了真实登录用户的才校验归属
     if owner not in (None, "", "guest"):
         if not user or owner != user["id"]:
             raise HTTPException(status_code=403, detail="Access denied")
     return d
+
+
+def _decompose_is_public(did):
+    try:
+        with _pay_get_db() as _c:
+            row = _c.execute(
+                "SELECT is_public FROM my_works WHERE dance_id=? AND is_public=1 LIMIT 1",
+                (did,)).fetchone()
+            return bool(row)
+    except Exception:
+        return False
 
 @app.get("/api/decompose/{did}/clip/{name}")
 def get_decompose_clip(did: str, name: str):
