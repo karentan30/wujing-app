@@ -25,9 +25,9 @@
   --shadow-lift:0 4px 20px rgba(120,92,30,.12),0 8px 40px rgba(120,92,30,.06);
   --blur:12px;
   /* ── 旧变量映射（兼容遗留 CSS · 指向金色主题） ── */
-  --silver-deep: #6B6050;
-  --silver-dim: var(--mute);
-  --silver-mid: #A09078;
+  --silver-deep: #8C7A4A;
+  --silver-dim: #B6A984;
+  --silver-mid: var(--gold-soft);
   --silver-light: var(--card);
   --silver: var(--card);
   --frost: var(--edge);
@@ -85,7 +85,7 @@ body{
 .back{
   margin-left:auto;font-size:12px;color:var(--mute);
   border:1px solid var(--edge);border-radius:100px;
-  padding:5px 14px;cursor:pointer;background:var(--card);font-family:inherit;
+  padding:11px 18px;cursor:pointer;background:var(--card);font-family:inherit;
   transition:border-color .3s,box-shadow .3s;
 }
 .back:hover{border-color:var(--gold-soft);box-shadow:0 1px 8px rgba(0,0,0,.06)}
@@ -163,7 +163,7 @@ body{
 .piece-card:active{transform:scale(.97)}
 .piece-card .banner{
   height:88px;position:relative;overflow:hidden;
-  background:linear-gradient(120deg,rgba(232,236,246,.6),rgba(220,224,238,.4));
+  background:linear-gradient(120deg,rgba(245,240,228,.7),rgba(237,228,207,.5));
 }
 .piece-card .banner .piece-label{position:absolute;left:18px;bottom:12px;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--silver-deep);z-index:2}
 .piece-card .banner .piece-label.is-blue{color:var(--silver-dim)}
@@ -233,11 +233,11 @@ body{
   box-shadow:0 1px 8px rgba(0,0,0,.04);background:conic-gradient(var(--silver-deep) 0deg 274deg, var(--frost) 274deg 360deg)}
 .ai-ring-inner{position:absolute;inset:4px;background:var(--silver-light);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column}
 .ai-ring-num{font-size:18px;font-weight:700;color:var(--silver-deep);line-height:1;letter-spacing:-.3px}
-.ai-ring-lbl{font-size:7px;color:var(--silver-dim);letter-spacing:1px;font-weight:500}
+.ai-ring-lbl{font-size:10px;color:var(--silver-dim);letter-spacing:1px;font-weight:500}
 .ai-preview-dims{flex:1;display:flex;flex-direction:column;gap:4px}
 .ai-dim{display:flex;align-items:center;gap:6px}
 .ai-dim-bar{height:5px;border-radius:3px;transition:width .5s}
-.ai-dim-label{font-size:9px;color:var(--silver-deep);flex-shrink:0;width:28px;text-align:right;letter-spacing:.5px}
+.ai-dim-label{font-size:11px;color:var(--silver-deep);flex-shrink:0;width:28px;text-align:right;letter-spacing:.5px}
 .ai-preview-arrow{flex-shrink:0;color:var(--silver-dim);font-size:16px}
 
 /* ═══ REVIEW SCORE BAR ═══ */
@@ -260,7 +260,7 @@ body{
   z-index:1;
 }
 .score-ring-inner .num{font-size:28px;font-weight:700;color:var(--silver-deep);line-height:1;letter-spacing:-.5px}
-.score-ring-inner .lbl{font-size:8px;color:var(--silver-mid);letter-spacing:1px;font-weight:500}
+.score-ring-inner .lbl{font-size:11px;color:var(--silver-mid);letter-spacing:1px;font-weight:500}
 .score-ring::after{
   content:'';position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;
   border-radius:50%;z-index:0;
@@ -314,7 +314,7 @@ body{
 @keyframes dimFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
 /* ═══ BADGE ═══ */
-.badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px;letter-spacing:.3px;display:inline-flex;align-items:center;flex-shrink:0}
+.badge{font-size:10px;font-weight:600;padding:8px 14px;border-radius:6px;letter-spacing:.3px;display:inline-flex;align-items:center;flex-shrink:0}
 .badge.light{background:var(--frost);color:var(--silver-deep)}
 .badge.shine{background:linear-gradient(135deg,rgba(245,240,228,.5),rgba(181,146,42,.1));border:1px solid rgba(255,255,255,.3);color:var(--silver-deep)}
 .badge.warm{background:linear-gradient(135deg,rgba(200,160,120,.2),rgba(200,160,120,.1));border:1px solid rgba(200,160,120,.25);color:var(--warm-dim)}
@@ -371,7 +371,7 @@ body{
 .slowmo-lbl{font-size:11px;color:var(--silver-dim)}
 .svid{width:100%;border-radius:10px;display:block;max-height:240px;object-fit:contain;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);border:1px solid var(--glass-border)}
 .sctrl{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
-.sbtn{background:rgba(255,255,255,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--glass-border);color:var(--silver-deep);font-size:11px;padding:5px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
+.sbtn{background:rgba(255,255,255,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--glass-border);color:var(--silver-deep);font-size:12px;padding:11px 18px;border-radius:8px;cursor:pointer;font-family:inherit}
 .sbtn.on{background:rgba(245,240,228,.4);border-color:var(--silver-mid)}
 .sbtn:active{transform:scale(.95)}
 .svid-fallback{width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;height:140px;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);border:1px solid var(--glass-border);font-size:13px;color:var(--silver-dim);letter-spacing:1px}
@@ -447,7 +447,7 @@ body{
 .day:active{transform:scale(.985)}
 .day.complete{border-color:var(--glass-border);opacity:.8}
 .day-head{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer}
-.day-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.day-num{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .day-num.major{color:var(--warm-dim);background:rgba(200,160,120,.2)}
 .day-num.minor{color:var(--silver-dim);background:var(--frost)}
 .day-info{flex:1}.day-title{font-size:13px;font-weight:500;color:var(--text)}
@@ -458,7 +458,7 @@ body{
 .day.open .day-body{max-height:600px;opacity:1;border-top-color:var(--glass-border)}
 .task{padding:10px 16px;border-bottom:1px solid var(--frost);display:flex;align-items:flex-start;gap:11px}
 .task:last-child{border-bottom:none}
-.task-cb{width:20px;height:20px;border-radius:50%;border:2px solid var(--silver-mid);flex-shrink:0;margin-top:1px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;display:flex;align-items:center;justify-content:center}
+.task-cb{width:44px;height:44px;border-radius:50%;border:2px solid var(--silver-mid);flex-shrink:0;margin-top:1px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;display:flex;align-items:center;justify-content:center}
 .task-cb:active{transform:scale(.85)}
 .task-cb.done{border-color:var(--warm-dim);background:rgba(200,160,120,.12);box-shadow:0 0 6px rgba(200,160,120,.15)}
 .task-cb.done::after{content:'';width:11px;height:11px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 11 11'%3E%3Cpath d='M2 5.5L4.5 8l4-5' fill='none' stroke='%23c9a07e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
@@ -497,7 +497,7 @@ body{
 .mv-upload-zone .hint{font-size:11px;color:var(--silver-dim);margin-top:4px}
 .mv-upload-zone input[type=file]{display:none}
 
-.prompt-chip{font-size:11px;padding:4px 10px;border:1px solid var(--glass-border);border-radius:100px;color:var(--silver-dim);cursor:pointer;background:rgba(255,255,255,.25);transition:all .2s}
+.prompt-chip{font-size:11px;padding:11px 16px;border:1px solid var(--glass-border);border-radius:100px;color:var(--silver-dim);cursor:pointer;background:rgba(255,255,255,.25);transition:all .2s}
 .prompt-chip:active{transform:scale(.95);background:rgba(181,146,42,.08)}
 
 .bg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;position:relative;z-index:2}
@@ -510,13 +510,13 @@ body{
 .bg-tpl.active{border-color:var(--silver-deep);box-shadow:0 0 0 2px var(--silver-light),0 0 0 4px var(--silver-deep);transform:scale(.97)}
 .bg-tpl:nth-child(1){background:linear-gradient(135deg,#FFFDF6,#FAF7F0,#ffffff);color:var(--gold)}
 .bg-tpl:nth-child(2){background:linear-gradient(135deg,#FBF6E8,#FFFDF6,#ffffff);color:var(--gold)}
-.bg-tpl:nth-child(3){background:linear-gradient(135deg,#b8c0d4,#d8dde8,#eef0f6);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(4){background:linear-gradient(135deg,#d4e0ed,#e8eef6,#ffffff);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(5){background:linear-gradient(135deg,#f0e6d8,#f8f0e6,#ffffff);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(6){background:linear-gradient(135deg,#e0eee8,#eef6f0,#ffffff);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(7){background:linear-gradient(135deg,#e8dce8,#f2eaf2,#ffffff);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(8){background:linear-gradient(135deg,#dce8f0,#eef2f8,#ffffff);color:var(--silver-deep);text-shadow:none}
-.bg-tpl:nth-child(9){background:linear-gradient(135deg,#f0e8e8,#f8f2f0,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(3){background:linear-gradient(135deg,#F0E8D4,#F8F2E4,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(4){background:linear-gradient(135deg,#EFE9DB,#F7F1E5,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(5){background:linear-gradient(135deg,#F3E6CE,#FBF3E0,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(6){background:linear-gradient(135deg,#F5EFDC,#FBF6E9,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(7){background:linear-gradient(135deg,#F2E4D6,#FAF0E4,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(8){background:linear-gradient(135deg,#E9E3D4,#F5F0E6,#ffffff);color:var(--silver-deep);text-shadow:none}
+.bg-tpl:nth-child(9){background:linear-gradient(135deg,#F5E4DA,#FBF0E8,#ffffff);color:var(--silver-deep);text-shadow:none}
 .bg-tpl .name{position:relative;z-index:1}
 
 .mv-canvas-wrap{
@@ -563,7 +563,7 @@ body{
 .subtabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 16px;position:sticky;top:66px;z-index:55;
   background:linear-gradient(180deg,rgba(250,247,240,.92) 78%,transparent)}
 .subtabs::-webkit-scrollbar{display:none}
-.subtabs .st{font-size:12px;color:var(--silver-dim);padding:7px 14px;border-radius:100px;border:1px solid var(--glass-border);white-space:nowrap;flex:0 0 auto;cursor:pointer;background:rgba(255,255,255,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:all .2s}
+.subtabs .st{font-size:12px;color:var(--silver-dim);padding:11px 18px;border-radius:100px;border:1px solid var(--glass-border);white-space:nowrap;flex:0 0 auto;cursor:pointer;background:rgba(255,255,255,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:all .2s}
 .subtabs .st:active{transform:scale(.95)}
 .subtabs .st.on{background:var(--warm-dim);color:#fff;border-color:var(--warm-dim);font-weight:600}
 .phrase-card{border-radius:14px;padding:14px 15px;margin-bottom:12px;position:relative;overflow:hidden;z-index:2;
@@ -586,7 +586,7 @@ body{
 .phrase-card .kou{margin-top:9px;background:linear-gradient(135deg,rgba(245,240,228,.4),rgba(181,146,42,.08));border:1px solid var(--glass-border);border-radius:8px;padding:7px 11px;letter-spacing:2px;font-size:14px;color:var(--silver-deep)}
 .phrase-card .kou small{display:block;font-size:9px;letter-spacing:1px;color:var(--silver-dim);margin-bottom:2px}
 .phrase-card .playrow{display:flex;gap:7px;margin-top:9px}
-.phrase-card .playrow .pb{flex:1;text-align:center;font-size:12px;border:1px solid var(--glass-border);border-radius:8px;padding:8px;color:var(--silver-deep);cursor:pointer;background:rgba(255,255,255,.35);transition:all .2s}
+.phrase-card .playrow .pb{flex:1;text-align:center;font-size:12px;border:1px solid var(--glass-border);border-radius:8px;padding:11px 8px;color:var(--silver-deep);cursor:pointer;background:rgba(255,255,255,.35);transition:all .2s}
 .phrase-card .playrow .pb:active{transform:scale(.95)}
 .phrase-card .playrow .pb.main{background:linear-gradient(135deg,rgba(245,240,228,.5),rgba(181,146,42,.1));border-color:var(--silver-mid);font-weight:600}
 .string-card{margin:14px 0 4px;text-align:center;font-size:18px;letter-spacing:4px;color:var(--silver-deep);padding:12px 16px;border:1px dashed var(--glass-border);border-radius:12px;z-index:2;position:relative;background:rgba(255,255,255,.2)}
@@ -622,7 +622,7 @@ body{
   background:linear-gradient(145deg,rgba(255,255,255,.55),rgba(237,228,207,.25) 50%,rgba(245,240,228,.15));backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));box-shadow:0 2px 12px rgba(181,146,42,.05)}
 .lead-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--silver-deep);z-index:2}
 .lead-top b{color:var(--text)}.mode-sw{display:flex;border:1px solid var(--glass-border);border-radius:100px;overflow:hidden}
-.mode-sw span{font-size:10px;padding:4px 10px;color:var(--silver-dim);cursor:pointer}
+.mode-sw span{font-size:11px;padding:11px 16px;color:var(--silver-dim);cursor:pointer}
 .mode-sw span:active{background:rgba(181,146,42,.08)}.mode-sw span.on{background:var(--warm-dim);color:#fff;font-weight:600}
 .lead-mid{margin:auto 0;text-align:center;z-index:2}
 .lead-cap{font-size:11px;letter-spacing:4px;color:var(--silver-dim);text-transform:uppercase}
@@ -661,7 +661,7 @@ body{
 .rec-ctrl .b.rec{background:linear-gradient(135deg,var(--silver-mid),var(--silver));border-color:var(--silver-mid)}
 .rec-phrase{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;position:relative;z-index:2}
 .rec-phrase::-webkit-scrollbar{display:none}
-.rec-phrase span{flex:0 0 auto;font-size:11px;padding:5px 10px;border-radius:100px;border:1px solid var(--glass-border);color:var(--silver-dim);cursor:pointer;background:rgba(255,255,255,.2)}
+.rec-phrase span{flex:0 0 auto;font-size:11px;padding:11px 16px;border-radius:100px;border:1px solid var(--glass-border);color:var(--silver-dim);cursor:pointer;background:rgba(255,255,255,.2)}
 .rec-phrase span.on{background:var(--warm-dim);color:#fff;border-color:var(--warm-dim);font-weight:600}
 .rec-note{font-size:11px;color:var(--silver-deep);line-height:1.5;position:relative;z-index:2}
 .arch-block{margin-bottom:18px;position:relative;z-index:2}
@@ -683,7 +683,7 @@ body{
 .detail-nav{position:fixed;bottom:0;left:0;right:0;max-width:440px;margin:0 auto;z-index:80;
   display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));
   background:linear-gradient(180deg,rgba(250,247,240,.5),rgba(250,247,240,.92));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--glass-border)}
-.detail-nav .n{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:var(--silver-dim);letter-spacing:1px;flex:1;cursor:pointer}
+.detail-nav .n{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:var(--silver-dim);letter-spacing:1px;flex:1;cursor:pointer;padding:8px 0}
 .detail-nav .n:active{opacity:.6}.detail-nav .n .gi{font-size:16px;line-height:1}
 .detail-nav .n.on{color:var(--warm-dim);font-weight:600}
 .detail-nav .n.on .gi{color:var(--warm-dim)}
@@ -736,7 +736,7 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-status{font-size:14px;color:var(--silver-deep);margin-bottom:4px}
 .loading-detail{font-size:12px;color:var(--silver-dim)}
-.auth-avatar{position:absolute;top:10px;right:10px;z-index:10;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.5);border:1px solid var(--glass-border);font-size:12px;color:var(--silver-deep);cursor:pointer;backdrop-filter:blur(4px)}
+.auth-avatar{position:absolute;top:10px;right:10px;z-index:10;display:flex;align-items:center;gap:6px;padding:11px 16px;border-radius:20px;background:rgba(255,255,255,.5);border:1px solid var(--glass-border);font-size:12px;color:var(--silver-deep);cursor:pointer;backdrop-filter:blur(4px)}
 .auth-avatar:active{transform:scale(.95)}
 .auth-avatar .badge{display:none;width:6px;height:6px;border-radius:50%;background:var(--green-done)}
 .auth-avatar.logged-in .badge{display:block}
@@ -775,11 +775,11 @@ body{
   <!-- Hero -->
   <div class="hero">
     <div class="hero-brand">舞镜</div>
-    <div class="hero-tagline">AI 舞蹈教练 · 每一拍，都陪你拆透</div>
-    <div class="hero-desc">上传任意舞蹈视频。AI 自动拆成八拍卡 + 故事卡 + 记忆卡，能慢放、镜像跟练。</div>
+    <div class="hero-tagline">AI 自动拆舞 · 每一拍都能跟练</div>
+    <div class="hero-desc">上传舞蹈视频，AI 拆成八拍卡 + 故事卡 + 记忆卡，慢放镜像跟练。</div>
     <div class="hero-cta" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频自动拆卡">
       <span class="hero-cta-icon">✦</span>
-      <span>上传你的舞 · AI自动拆成八拍卡</span>
+      <span>上传你的舞</span>
     </div>
   </div>
 
@@ -832,10 +832,10 @@ body{
       </div>
     </div>
     <div class="ai-preview-dims">
-      <div class="ai-dim"><span class="ai-dim-bar" style="background:#5a7a68;width:82%"></span><span class="ai-dim-label">节拍</span></div>
+      <div class="ai-dim"><span class="ai-dim-bar" style="background:var(--gold-soft);width:82%"></span><span class="ai-dim-label">节拍</span></div>
       <div class="ai-dim"><span class="ai-dim-bar" style="background:#c8a96e;width:71%"></span><span class="ai-dim-label">动作</span></div>
       <div class="ai-dim"><span class="ai-dim-bar" style="background:#c8a96e;width:70%"></span><span class="ai-dim-label">镜像</span></div>
-      <div class="ai-dim"><span class="ai-dim-bar" style="background:#5a7a68;width:83%"></span><span class="ai-dim-label">情感</span></div>
+      <div class="ai-dim"><span class="ai-dim-bar" style="background:var(--gold-soft);width:83%"></span><span class="ai-dim-label">情感</span></div>
     </div>
     <div class="ai-preview-arrow">→</div>
   </div>
@@ -845,8 +845,8 @@ body{
   <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
     <div class="upload-card-icon">📹</div>
     <div class="upload-card-info">
-      <div class="upload-card-title">点此上传你的舞</div>
-      <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，还能慢放/镜像跟练</div>
+      <div class="upload-card-title">上传你的舞 · 免费</div>
+      <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，慢放/镜像跟练</div>
     </div>
     <div class="upload-card-arrow">→</div>
   </div>
@@ -861,7 +861,7 @@ body{
       </svg>
     </div>
     <div class="entry-info">
-      <div class="entry-title">AI 拆舞</div>
+      <div class="entry-title">AI 拆舞 · 免费上传</div>
       <div class="entry-desc">上传任意舞蹈视频，AI 自动拆成能跟练的八拍卡</div>
     </div>
     <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -888,6 +888,12 @@ body{
       html += '<div class="entry-card" onclick="window.DC_ID='+w.id+';dcLoading();pollDecompose(\''+w.id+'\')" tabindex="0" role="button" aria-label="查看拆解"><div class="entry-icon">'+icon+'</div><div class="entry-info"><div class="entry-title">'+(w.title||'我的舞')+'</div><div class="entry-desc">'+(w.n||'?')+'句 · '+(w.dur||'?')+'s</div></div><div class="entry-arrow">→</div></div>';
     });
     document.getElementById('wjWorksList').innerHTML = html;
+  } else {
+    document.getElementById('wjWorksList').innerHTML =
+      '<div class="entry-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传你的第一支舞">'+
+      '<div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--gold)" stroke-width="1.2" opacity=".5"/><path d="M12 11v12l10-6z" fill="var(--gold-soft)" opacity=".7"/></svg></div>'+
+      '<div class="entry-info"><div class="entry-title">上传你的第一支舞</div><div class="entry-desc">上传任意舞蹈视频，AI 自动拆解 · 免费</div></div>'+
+      '<div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>';
   }
 })();</script>
 
@@ -1124,7 +1130,14 @@ function toast(msg){
 }
 // Add error handling for slow-mo review videos (hardcoded paths may 404)
 document.querySelectorAll('.svid').forEach(function(el){
-  el.onerror = function(){ this.style.display = 'none'; };
+  el.onerror = function(){
+    var fb = document.createElement('div');
+    fb.className = 'svid-fallback';
+    fb.innerHTML = '⏳ 视频加载失败 <span style="display:block;font-size:11px;margin-top:4px;color:var(--mute)">点击重试</span>';
+    fb.onclick = function(){ var s = document.createElement('source'); s.src = el.querySelector('source') ? el.querySelector('source').src : el.src; el.innerHTML = ''; el.appendChild(s); el.load(); fb.remove(); };
+    el.parentNode.insertBefore(fb, el.nextSibling);
+    el.style.display = 'none';
+  };
 });
 
 // Tab switch warning: pause recording/camera when user leaves
@@ -1474,13 +1487,13 @@ var mvVideoFile=null, mvBgFile=null, mvBgIdx=0, mvPlaying=false, mvRaf=null, mvR
 const MV_BGS = [
   'linear-gradient(135deg,#FFFDF6,#FAF7F0,#ffffff)',
   'linear-gradient(135deg,#FBF6E8,#FFFDF6,#ffffff)',
-  'linear-gradient(135deg,#b8c0d4,#d8dde8,#eef0f6)',
-  'linear-gradient(135deg,#d4e0ed,#e8eef6,#ffffff)',
-  'linear-gradient(135deg,#f0e6d8,#f8f0e6,#ffffff)',
-  'linear-gradient(135deg,#e0eee8,#eef6f0,#ffffff)',
-  'linear-gradient(135deg,#e8dce8,#f2eaf2,#ffffff)',
-  'linear-gradient(135deg,#dce8f0,#eef2f8,#ffffff)',
-  'linear-gradient(135deg,#f0e8e8,#f8f2f0,#ffffff)',
+  'linear-gradient(135deg,#F0E8D4,#F8F2E4,#ffffff)',
+  'linear-gradient(135deg,#EFE9DB,#F7F1E5,#ffffff)',
+  'linear-gradient(135deg,#F3E6CE,#FBF3E0,#ffffff)',
+  'linear-gradient(135deg,#F5EFDC,#FBF6E9,#ffffff)',
+  'linear-gradient(135deg,#F2E4D6,#FAF0E4,#ffffff)',
+  'linear-gradient(135deg,#E9E3D4,#F5F0E6,#ffffff)',
+  'linear-gradient(135deg,#F5E4DA,#FBF0E8,#ffffff)',
 ];
 var mvUserBg=null; // ImageData from user-uploaded image
 
@@ -1986,7 +1999,7 @@ function renderDetailHum(p){
     '<div class="stave">' +
       '<div class="gl" style="top:8px">高</div><div class="gl" style="bottom:8px">低</div>' +
       '<svg viewBox="0 0 300 148" preserveAspectRatio="none" style="width:100%;height:100%">' +
-        '<defs><linearGradient id="hg"><stop offset="0" stop-color="#b8c0d4"/><stop offset="1" stop-color="#8890a8"/></linearGradient></defs>' +
+        '<defs><linearGradient id="hg"><stop offset="0" stop-color="#C9A94A"/><stop offset="1" stop-color="#8C7A4A"/></linearGradient></defs>' +
         '<path d="M0,112 C34,106 46,60 80,58 S128,96 150,72 S196,20 224,34 S270,92 300,64" fill="none" stroke="url(#hg)" stroke-width="3" stroke-linecap="round"/>' +
       '</svg>' +
       '<div class="hnote" style="left:7%;top:76%">起</div>' +
@@ -2348,13 +2361,17 @@ function renderDetailArchive(p){
 .dc-zone .ic{font-size:36px;margin-bottom:10px}
 .dc-zone .l{font-size:15px;color:#1F1A14;font-weight:600}
 .dc-zone .h{font-size:12px;color:#9A8768;margin-top:5px}
-.dc-fname{font-size:13px;color:#5a7a4a;margin:12px 2px;word-break:break-all}
+.dc-fname{font-size:13px;color:#7A5C2A;margin:12px 2px;word-break:break-all}
 .dc-btn{display:block;width:100%;padding:16px;border:none;border-radius:13px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:16px;font-weight:700;letter-spacing:.08em;margin-top:22px;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 .dc-btn:disabled{opacity:.35;box-shadow:none}
 .dc-load{padding:64px 24px;text-align:center}
 .dc-load-t{font-size:17px;font-weight:700;margin-top:20px;color:#1F1A14}
 .dc-load-d{font-size:12px;color:#9A8768;margin-top:8px;line-height:1.7}
 .dc-load-d b{color:#B5922A}
+.dc-mirror{width:64px;height:64px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F3E3AE,var(--gold));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;font-family:"Noto Serif SC",serif;box-shadow:0 8px 28px rgba(181,146,42,.35);animation:dcMirror 1.6s ease-in-out infinite}
+@keyframes dcMirror{0%,100%{transform:scale(1)}50%{transform:scale(1.08) rotate(-3deg)}}
+.dc-step .spin{width:14px;height:14px;margin-left:auto;border:2px solid #EDE4CF;border-top-color:#B5922A;border-radius:50%;display:none;animation:spin .7s linear infinite;flex-shrink:0}
+.dc-step.on .spin{display:block}
 .dc-steps{max-width:290px;margin:34px auto 0;text-align:left}
 .dc-step{display:flex;align-items:center;gap:12px;padding:10px 0;opacity:.38;transition:opacity .45s}
 .dc-step.on,.dc-step.done{opacity:1}
@@ -2385,13 +2402,14 @@ function renderDetailArchive(p){
 .dc-strip .hd .txt{display:flex;flex-direction:column;gap:3px;min-width:0}
 .dc-strip .nm{font-size:19px;font-weight:900;color:#1F1A14;letter-spacing:.01em;line-height:1.1}
 .dc-strip .tm{font-size:10.5px;color:#B6A984;letter-spacing:.06em;font-variant-numeric:tabular-nums}
-.dc-strip .kou{margin-left:auto;flex-shrink:0;align-self:center;font-size:12.5px;color:#8A6B22;font-weight:700;letter-spacing:.14em;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border:1px solid #EBDCB0;border-radius:20px;padding:6px 13px;white-space:nowrap}
+.dc-strip .kou{margin-left:auto;flex-shrink:0;align-self:center;font-size:12.5px;color:#3A2E1C;font-weight:700;letter-spacing:.14em;background:#fff;border:1px solid #EBDCB0;border-radius:20px;padding:6px 13px;white-space:nowrap}
 /* 胶片：深炭色片基 + 白色齿孔轨 + 帧间白发丝线 */
-.dc-strip .film{position:relative;display:flex;gap:2.5px;padding:12px 12px;margin:0 12px;background:linear-gradient(180deg,#242019,#1a1712);border-radius:12px;box-shadow:inset 0 1px 6px rgba(0,0,0,.5)}
+.dc-strip .film{position:relative;display:flex;gap:2.5px;padding:12px 12px;margin:0 12px;background:linear-gradient(180deg,#242019,#1a1712);border-radius:12px;box-shadow:inset 0 1px 6px rgba(0,0,0,.5);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.dc-strip .film::-webkit-scrollbar{display:none}
 .dc-strip .film::before,.dc-strip .film::after{content:"";position:absolute;left:8px;right:8px;height:5px;background-image:repeating-linear-gradient(90deg,transparent 0,transparent 6px,rgba(255,255,255,.5) 6px,rgba(255,255,255,.5) 11px);opacity:.55;pointer-events:none;border-radius:2px}
 .dc-strip .film::before{top:3.5px}
 .dc-strip .film::after{bottom:3.5px}
-.dc-strip .film .fr{position:relative;flex:1;aspect-ratio:9/13;overflow:hidden;background:#0d0b08;border-radius:4px}
+.dc-strip .film .fr{position:relative;flex:0 0 88px;aspect-ratio:9/13;overflow:hidden;background:#0d0b08;border-radius:4px}
 .dc-strip .film .fr img{width:100%;height:100%;object-fit:cover;display:block}
 .dc-strip .film .fr::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08);border-radius:4px;pointer-events:none}
 .dc-strip .film .fr .fno{position:absolute;left:4px;bottom:3px;font-size:8.5px;color:rgba(255,255,255,.72);letter-spacing:.1em;font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(0,0,0,.7);font-family:ui-monospace,monospace}
@@ -2402,10 +2420,13 @@ function renderDetailArchive(p){
 .dc-strip .dt .int::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:#D8C79A}
 .dc-strip .dt .int.mood::before{background:#C7A0D8}
 /* 测评角度 · 当前° vs 目标° */
-.dc-strip .ang{margin-top:14px;background:#FBF7EC;border:1px solid #EFE6CF;border-radius:12px;padding:11px 13px 12px}
-.dc-strip .ang .glb{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.16em;color:#A98A3A;text-transform:uppercase;margin-bottom:9px;font-weight:700}
+.dc-strip .ang{margin-top:14px;background:#FBF7EC;border:1px solid #EFE6CF;border-radius:12px;padding:11px 13px 12px;cursor:pointer}
+.dc-strip .ang .glb{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.08em;color:#A98A3A;margin-bottom:0;font-weight:700}
+.dc-strip .ang .glb em{font-style:normal;font-weight:400;font-size:10px;color:#C2AE7C;margin-left:auto}
 .dc-strip .ang .glb::before{content:"";width:6px;height:6px;border-radius:50%;background:#C79E3B;box-shadow:0 0 0 3px rgba(199,158,59,.16)}
-.dc-strip .ang .grid{display:flex;flex-wrap:wrap;gap:6px}
+.dc-strip .ang .grid{display:flex;flex-wrap:wrap;gap:6px;max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .3s ease,margin-top .3s ease;margin-top:0}
+.dc-strip .ang.open .grid{max-height:400px;opacity:1;margin-top:9px}
+.dc-strip .ang.open .glb em{display:none}
 .dc-strip .ang .g{flex:1 1 calc(50% - 3px);min-width:0;background:#fff;border:1px solid #EDE4CF;border-radius:9px;padding:6px 9px}
 .dc-strip .ang .g .gr{display:flex;align-items:baseline;justify-content:space-between}
 .dc-strip .ang .g .gn{font-size:11px;color:#7A6A46}
@@ -2415,7 +2436,7 @@ function renderDetailArchive(p){
 .dc-strip .ang .g .bar{height:3px;border-radius:2px;background:#EEE6D2;margin-top:6px;overflow:hidden}
 .dc-strip .ang .g .bar i{display:block;height:100%;border-radius:2px}
 .dc-strip .ctl{display:flex;gap:7px;margin-top:14px}
-.dc-strip .ctl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:10px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
+.dc-strip .ctl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:13px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
 .dc-strip .ctl span:active{border-color:#C79E3B;background:#F4EAD2}
 .dc-strip .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:12px;cursor:pointer;letter-spacing:.02em}
 /* ===== 老师点评 · AI 测评 ===== */
@@ -2446,7 +2467,7 @@ function renderDetailArchive(p){
 .dc-mem .h{font-size:15px;color:#1F1A14;font-weight:900;margin-bottom:5px}
 .dc-mem .hint{font-size:12px;color:#9A8768;line-height:1.65;margin-bottom:13px}
 .dc-mem .ctrl{display:flex;gap:7px}
-.dc-mem .ctrl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:10px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
+.dc-mem .ctrl span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:13px 4px;border-radius:11px;border:1px solid #E7DBBC;color:#7A5C2A;cursor:pointer;background:#FCF8EF;transition:all .15s}
 .dc-mem .ctrl span.on{background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 3px 10px rgba(181,146,42,.24)}
 .dc-share-all{margin:26px 16px 12px;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;font-size:15px;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 /* 视频弹层 */
@@ -2457,11 +2478,11 @@ function renderDetailArchive(p){
 .dc-modal video.mir{transform:scaleX(-1)}
 .dc-modal .mt{color:#fff;font-size:17px;font-weight:300;text-align:center;margin-top:14px;letter-spacing:.04em}
 .dc-modal .mrow{display:flex;gap:8px;margin-top:14px}
-.dc-modal .mrow span{flex:1;text-align:center;font-size:13px;padding:11px;border-radius:10px;border:1px solid #2a3050;color:#cdd4e8;cursor:pointer}
+.dc-modal .mrow span{flex:1;text-align:center;font-size:13px;padding:11px;border-radius:10px;border:1px solid #3A3428;color:#E8DEC8;cursor:pointer}
 .dc-modal .mrow span.on{background:linear-gradient(135deg,#b8923e,#e8c98e);color:#0a0a0a;border-color:transparent;font-weight:600}
-.dc-modal .mclose{text-align:center;color:#7a86a8;font-size:13px;margin-top:16px;cursor:pointer}
+.dc-modal .mclose{text-align:center;color:#B6A984;font-size:13px;margin-top:16px;cursor:pointer}
 
-/* ═══ PAYMENT MODAL (抄自 Lumee payX · 简化为 ¥9.9 单次) ═══ */
+/* ═══ PAYMENT MODAL ═══ */
 .pay-modal{position:fixed;inset:0;background:rgba(10,12,20,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:10000;display:none;align-items:center;justify-content:center;padding:24px}
 .pay-modal[aria-hidden="false"]{display:flex}
 .pay-sheet{background:#FFFDF6;border:1px solid #EDE4CF;border-radius:22px;width:100%;max-width:360px;padding:30px 24px 22px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.12)}
@@ -2503,7 +2524,7 @@ function renderDetailArchive(p){
   </div>
 </div>
 
-<!-- ═══ PAYMENT MODAL (抄自 Lumee payX · 简化为 ¥9.9 单次拆解) ═══ -->
+<!-- ═══ PAYMENT MODAL ═══ -->
 <div class="pay-modal" id="payModal" aria-hidden="true">
   <div class="pay-sheet" role="dialog">
     <span class="pay-close" onclick="payClose()" aria-label="关闭">×</span>
@@ -2514,17 +2535,17 @@ function renderDetailArchive(p){
     <!-- 渠道选择 -->
     <div class="pay-channels" id="payChannels">
       <div class="pay-channel" id="payChannelWx" onclick="payCreate('wechat')">
-        <span class="pay-c-icon">💚</span>
+        <span class="pay-c-icon">微信</span>
         <span class="pay-c-name">微信支付</span>
         <span class="pay-c-arrow">→</span>
       </div>
       <div class="pay-channel" id="payChannelAli" onclick="payCreate('alipay')">
-        <span class="pay-c-icon">🔵</span>
+        <span class="pay-c-icon">支付宝</span>
         <span class="pay-c-name">支付宝</span>
         <span class="pay-c-arrow">→</span>
       </div>
       <div class="pay-channel" id="payChannelStripe" onclick="payCreate('stripe')">
-        <span class="pay-c-icon">💳</span>
+        <span class="pay-c-icon">信用卡</span>
         <span class="pay-c-name">信用卡 / PayPal (海外)</span>
         <span class="pay-c-arrow">→</span>
       </div>
@@ -2546,7 +2567,8 @@ function renderDetailArchive(p){
       <div class="pay-stripe-hint">正在跳转到 Stripe 安全结账…</div>
     </div>
 
-    <div class="pay-foot">付款后即时解锁 · 不成功自动退款</div>
+    <div class="pay-foot">🔒 SSL 安全加密 · 付款后即时解锁 · 不成功自动退款</div>
+    <div style="text-align:center;margin-top:6px"><span onclick="payClose()" style="font-size:12px;color:var(--mute);cursor:pointer;padding:8px 16px;display:inline-block">稍后支付</span></div>
   </div>
 </div>
 
@@ -2578,16 +2600,19 @@ function showDecomposeUpload(){
       '<div class="dc-field"><div class="dc-label">舞名（可留空）</div><input class="dc-input" id="dcTitle" placeholder="例如：只此青绿"></div>'+
       '<div class="dc-zone" onclick="document.getElementById(\'dcInput\').click()">'+
         '<div class="ic">📹</div><div class="l">点击选择视频</div><div class="h">MP4 / MOV · 单人出镜 · 光线清晰 · 15–30 秒最佳</div>'+
-        '<input type="file" id="dcInput" accept="video/*" style="display:none" onchange="dcPick(this)">'+
+        '<input type="file" id="dcInput" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/*" style="display:none" onchange="dcPick(this)">'+
       '</div>'+
       '<div class="dc-fname" id="dcFname"></div>'+
-      '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">开始拆解</button>'+
+      '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">开始拆解 · ¥9.9</button>'+
+      '<div style="margin-top:10px;font-size:11px;color:var(--mute);text-align:center">拆解结果¥9.9 · 上传免费 · 不成功退款</div>'+
     '</div>';
   _dcShow();
 }
 function dcPick(inp){
   var f=inp.files&&inp.files[0]; if(!f) return;
   if(f.size>500*1024*1024){ toast('文件超过500MB'); inp.value=''; return; }
+  var okType=/\.(mp4|mov|webm|avi|m4v|mkv)$/i.test(f.name) || /^video\//.test(f.type||'');
+  if(!okType){ toast('仅支持视频文件（MP4/MOV/WebM 等）'); inp.value=''; return; }
   DC_FILE=f; document.getElementById('dcFname').textContent='已选：'+f.name+' ('+(f.size/1048576).toFixed(1)+'MB)';
   document.getElementById('dcGo').disabled=false;
 }
@@ -2616,8 +2641,8 @@ function startDecompose(){
 var DC_STEPS=['读取视频 · 按八拍切分','AI 逐段识别动作 · 脚下 · 口诀','AI 逐帧测量关节角度','生成八拍卡 · 故事卡 · 老师点评'];
 var DC_LOAD_TIMER=null;
 function dcLoading(){
-  var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span></div>';}).join('');
-  _dcView().innerHTML='<div class="dc-load"><div class="loading-spinner" style="margin:0 auto"></div><div class="dc-load-t">AI 正在拆解你的舞…</div><div class="dc-load-d">约 20–40 秒 · 请别退出</div><div class="dc-steps">'+steps+'</div></div>';
+  var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span><span class="spin"></span></div>';}).join('');
+  _dcView().innerHTML='<div class="dc-load"><div class="dc-mirror">舞</div><div class="dc-load-t">AI 正在拆解你的舞…</div><div class="dc-load-d">通常 30 秒内完成 · 请别退出</div><div class="dc-steps">'+steps+'</div></div>';
   _dcShow();
   var cur=0;
   DC_LOAD_TIMER=setInterval(function(){
@@ -2644,7 +2669,14 @@ function pollDecompose(id){
   },3000);
 }
 function _esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-var DC_COLORS=['#7ab4ff','#50d282','#e8c98e','#ff6eb4','#b06eff'];
+var DC_COLORS=['#B5922A','#C9A94A','#D9BA6A','#A0863A','#8C7A4A'];
+function dcFrameErr(el){
+  var ph=document.createElement('div');
+  ph.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,.4)';
+  ph.textContent='帧生成中';
+  el.parentNode.appendChild(ph);
+  el.remove();
+}
 function dcAngHtml(a){
   if(!a) return '';
   // name, 目标角度, 容差(±°). 国风舞多要求肢体舒展蹬直→目标180；躯干倾斜目标0。
@@ -2666,7 +2698,7 @@ function dcAngHtml(a){
       '<span class="gv '+(ok?'ok':'off')+'">'+val+'°</span></div>'+
       '<div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
   });
-  return cells?'<div class="ang"><span class="glb">AI 逐帧实测 · 对照理想角度</span><div class="grid">'+cells+'</div></div>':'';
+  return cells?'<div class="ang" onclick="this.classList.toggle(\'open\')"><span class="glb">📐 AI 逐帧实测角度 <em>点击展开</em></span><div class="grid">'+cells+'</div></div>':'';
 }
 function renderDecompose(d){
   DC_ID=d.id; DC_DATA=d;
@@ -2675,7 +2707,7 @@ function renderDecompose(d){
   (d.phrases||[]).forEach(function(p,idx){
     var col=DC_COLORS[idx%DC_COLORS.length];
     var film='';
-    for(var k=0;k<strip;k++){ film+='<div class="fr"><img src="api/decompose/'+d.id+'/frame/p'+p.i+'_'+k+'" loading="lazy" onerror="this.parentNode.style.display=\'none\'"><span class="fno">'+(k+1)+'/'+strip+'</span></div>'; }
+    for(var k=0;k<strip;k++){ film+='<div class="fr"><img src="api/decompose/'+d.id+'/frame/p'+p.i+'_'+k+'" loading="lazy" onerror="dcFrameErr(this)"><span class="fno">'+(k+1)+'/'+strip+'</span></div>'; }
     beats+='<div class="dc-strip">'+
       '<div class="lbar" style="background:'+col+'"></div>'+
       '<div class="hd"><span class="no" style="color:'+col+'">'+p.i+'</span>'+
@@ -2758,7 +2790,7 @@ function dcShare(kind,idx){
   else if(navigator.clipboard){ navigator.clipboard.writeText(txt+' '+url); toast('已复制分享文案，去粘贴到小红书/抖音'); }
   else { toast('长按截图分享到小红书/抖音'); }
 }
-/* ═══ PAYMENT FLOW (抄自 Lumee payX · 简化为 ¥9.9 单次拆解) ═══ */
+/* ═══ PAYMENT FLOW ═══ */
 var PAY_OUT_TRADE_NO=null, PAY_POLL_TIMER=null;
 function showPayment(danceId,price){
   var m=document.getElementById('payModal');
@@ -2773,6 +2805,11 @@ function payClose(){
   if(m) m.setAttribute('aria-hidden','true');
   if(PAY_POLL_TIMER){clearInterval(PAY_POLL_TIMER);PAY_POLL_TIMER=null;}
 }
+// 点击支付弹窗背景关闭
+document.addEventListener('click', function(e){
+  var m=document.getElementById('payModal');
+  if(m && m.getAttribute('aria-hidden')==='false' && !e.target.closest('.pay-sheet')){ payClose(); }
+});
 function payCreate(channel){
   if(!DC_ID){ toast('未找到拆解记录，请重新上传'); return; }
   // Stripe跳转前保存DC_ID到localStorage，防止跳转回来丢失状态
@@ -2826,7 +2863,7 @@ function payPoll(outTradeNo){
   var tries=0;
   PAY_POLL_TIMER=setInterval(function(){
     tries++;
-    if(tries>80){ clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
+    if(tries>120){ clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
       toast('支付超时，请重新尝试'); payClose(); return; }
     fetch('api/pay/status?out_trade_no='+outTradeNo)
       .then(function(r){return r.json();})
@@ -2845,10 +2882,10 @@ function payPoll(outTradeNo){
           document.getElementById('payChannels').style.display='block';
           document.getElementById('payQr').style.display='none';
         } else {
-          document.getElementById('payQrStatus').textContent='等待扫码…'+(tries>10?' (如果已支付请稍等)':'');
+          document.getElementById('payQrStatus').textContent='等待扫码…'+(tries>8?' (如果已支付请稍等)':'');
         }
       }).catch(function(){});
-  },2500);
+  },1500);
 }
 
 /* ── 页面加载时从 Stripe 返回后恢复拆解状态 ── */

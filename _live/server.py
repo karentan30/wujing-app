@@ -22,6 +22,7 @@ from review_compare import router as solo_router
 from group_review import router as group_router, init_group_tables, set_decompose_runner, set_optional_user_resolver
 from my_works import router as my_works_router, init_library_tables, upsert_my_work
 from analytics import track as analytics_track
+from hub_router import router as hub_router
 app = FastAPI(title="WuJing Dance API", version="1.0.0")
 # ── 拆解完成钩子：入库 + 埋点 ──
 def _run_decompose_with_hooks(did, video_path, user_id, title, genre):
@@ -518,6 +519,7 @@ def serve_app():
     return FileResponse(_app_html)
 # ---------- Payment routes ----------
 app.include_router(pay_router)
+app.include_router(hub_router)
 # ---------- Solo / Group / My Works routes ----------
 app.include_router(solo_router)
 app.include_router(group_router)
