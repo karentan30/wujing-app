@@ -6,7 +6,7 @@
 #   order = hp.create('wechat', '舞蹈拆解', 9.9, 'WJ-REF-001')
 #   status = hp.status(order['order_no'])
 # ════════════════════════════════════════════════════════════════════
-import os, json, hmac, hashlib, urllib.request, urllib.parse
+import os, json, hmac, hashlib, urllib.request, urllib.parse, urllib.error
 
 class HubPay:
     def __init__(self, project_id, hub_base=None):
@@ -39,7 +39,12 @@ class HubPay:
                 "X-Sign": self._sign(body),
             },
         )
-        resp = json.loads(urllib.request.urlopen(req, timeout=15).read().decode("utf-8"))
+        try:
+            resp = json.loads(urllib.request.urlopen(req, timeout=15).read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            raise RuntimeError(f"hub pay create failed: HTTP {e.code}")
+        except urllib.error.URLError as e:
+            raise RuntimeError(f"hub pay create failed: {e.reason}")
         if not resp.get("ok"):
             raise RuntimeError(resp.get("error", "hub pay create failed"))
         return resp
@@ -57,7 +62,12 @@ class HubPay:
                 "X-Sign": self._sign(canonical),
             },
         )
-        resp = json.loads(urllib.request.urlopen(req, timeout=15).read().decode("utf-8"))
+        try:
+            resp = json.loads(urllib.request.urlopen(req, timeout=15).read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            raise RuntimeError(f"hub pay status failed: HTTP {e.code}")
+        except urllib.error.URLError as e:
+            raise RuntimeError(f"hub pay status failed: {e.reason}")
         if not resp.get("ok"):
             raise RuntimeError(resp.get("error", "hub pay status failed"))
         return resp

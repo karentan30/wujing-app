@@ -688,6 +688,65 @@ body{
 .detail-nav .n.on{color:var(--warm-dim);font-weight:600}
 .detail-nav .n.on .gi{color:var(--warm-dim)}
 
+/* ═══ BOTTOM TABBAR ═══ */
+#app{padding-bottom:66px}
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;max-width:440px;margin:0 auto;
+  display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--edge);z-index:90;padding-bottom:env(safe-area-inset-bottom,0);
+}
+.tabbar .t{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:9px 0 8px;cursor:pointer;color:var(--mute);font-size:10px;letter-spacing:.02em;
+  transition:color .2s;
+}
+.tabbar .t .ic{font-size:19px;line-height:1;filter:grayscale(.4) opacity(.75);transition:all .2s}
+.tabbar .t.on{color:var(--gold);font-weight:600}
+.tabbar .t.on .ic{filter:none;opacity:1;transform:translateY(-1px)}
+.tabbar .t:active{opacity:.6}
+
+/* ═══ WORKS / PLAZA / CLASS 视图 ═══ */
+.wv{padding:22px 20px 10px}
+.wv-hd{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.wv-hd .wv-t{font-size:20px;font-weight:800;font-family:"Noto Serif SC",serif;color:var(--ink)}
+.wv-hd .wv-badge{font-size:10px;background:var(--gold);color:#fff;padding:2px 8px;border-radius:10px;letter-spacing:.05em}
+.wv-sub{font-size:12px;color:var(--mute);margin-bottom:16px;line-height:1.6}
+.wv-empty{
+  text-align:center;padding:54px 24px;color:var(--mute);
+  background:var(--card);border:1px dashed var(--edge);border-radius:16px;margin-top:8px;
+}
+.wv-empty .e-ic{font-size:40px;margin-bottom:12px;opacity:.7}
+.wv-empty .e-t{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.wv-empty .e-d{font-size:12px;line-height:1.7;margin-bottom:18px}
+.wv-empty .e-btn{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#fff;padding:12px 26px;border-radius:100px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(181,146,42,.3)}
+.wv-card{background:var(--card);border:1px solid var(--edge);border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-card)}
+.wv-card .wc-cover{height:120px;background:linear-gradient(135deg,rgba(245,240,228,.6),rgba(181,146,42,.1));display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--gold);position:relative}
+.wv-card .wc-body{padding:13px 15px}
+.wv-card .wc-title{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.wv-card .wc-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.wv-card .wc-tag{font-size:10px;border:1px solid var(--edge);color:var(--mute);border-radius:6px;padding:2px 7px}
+.wv-card .wc-score{font-size:12px;color:var(--gold);font-weight:700}
+.wv-card .wc-row{display:flex;gap:8px;margin-top:12px}
+.wv-card .wc-btn{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--edge);color:var(--ink);background:rgba(255,255,255,.6);transition:all .15s}
+.wv-card .wc-btn.main{background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(181,146,42,.25)}
+.wv-card .wc-btn:active{transform:scale(.97)}
+.wv-card .wc-curve{margin-top:11px;padding-top:10px;border-top:1px dashed var(--edge)}
+.wv-card .wc-curve .cl{font-size:10px;color:var(--mute);letter-spacing:.08em;margin-bottom:6px}
+.wv-card .wc-bars{display:flex;align-items:flex-end;gap:4px;height:36px}
+.wv-card .wc-bars i{flex:1;background:linear-gradient(180deg,var(--gold-soft),var(--gold));border-radius:3px 3px 0 0;min-height:4px;opacity:.85}
+.wv-card .wc-bars span{font-size:9px;color:var(--mute);text-align:center;flex:1}
+
+/* ═══ SKELETON ═══ */
+.skel{position:relative;overflow:hidden;background:#F0EADF;border-radius:10px}
+.skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:skelShimmer 1.3s infinite}
+@keyframes skelShimmer{100%{transform:translateX(100%)}}
+.skel-card{background:var(--card);border:1px solid var(--edge);border-radius:14px;margin-bottom:12px;padding:14px;box-shadow:var(--shadow-card)}
+.skel-card .sk-cover{height:110px;background:#F0EADF;border-radius:10px;margin-bottom:12px}
+.skel-card .sk-line{height:12px;background:#F0EADF;border-radius:6px;margin-bottom:8px}
+.skel-card .sk-line.short{width:60%}
+
 /* ═══ AUTH MODAL ═══ */
 .auth-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(10,12,20,.6);backdrop-filter:blur(6px)}
 .auth-overlay.hidden{display:none}
@@ -785,6 +844,16 @@ body{
 
   <!-- 已去除虚假社交证明 -->
 
+  <!-- Upload（首屏核心 CTA） -->
+  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
+    <div class="upload-card-icon">📹</div>
+    <div class="upload-card-info">
+      <div class="upload-card-title">上传你的舞 · 免费</div>
+      <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，慢放/镜像跟练</div>
+    </div>
+    <div class="upload-card-arrow">→</div>
+  </div>
+
   <!-- How it works -->
   <div class="home-section-label">三步开练</div>
   <div class="steps">
@@ -799,24 +868,6 @@ body{
     <div class="step">
       <div class="step-icon">③</div>
       <div class="step-info"><div class="step-t">慢放/镜像跟练</div><div class="step-d">0.5×慢放看细节，一键镜像，照着跟跳不别扭</div></div>
-    </div>
-  </div>
-
-  <!-- Differentiation vs traditional -->
-  <div class="home-section-label">跟B站跟练的区别？</div>
-  <div class="vs-box">
-    <div class="vs-col vs-old">
-      <div class="vs-title">看视频自己抠</div>
-      <div class="vs-item">✗ 反复拖进度条对齐动作</div>
-      <div class="vs-item">✗ 动作连拍看不清</div>
-      <div class="vs-item">✗ 没口诀，记不住顺序</div>
-    </div>
-    <div class="vs-divider"></div>
-    <div class="vs-col vs-new">
-      <div class="vs-title">舞镜AI</div>
-      <div class="vs-item">✓ AI自动拆成八拍卡+连拍帧</div>
-      <div class="vs-item">✓ 每句有口诀+记忆钩子</div>
-      <div class="vs-item">✓ 慢放/镜像跟练，照着做</div>
     </div>
   </div>
 
@@ -838,17 +889,6 @@ body{
       <div class="ai-dim"><span class="ai-dim-bar" style="background:var(--gold-soft);width:83%"></span><span class="ai-dim-label">情感</span></div>
     </div>
     <div class="ai-preview-arrow">→</div>
-  </div>
-
-  <!-- Upload video directly from home -->
-  <div class="home-section-label">上传舞蹈视频</div>
-  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
-    <div class="upload-card-icon">📹</div>
-    <div class="upload-card-info">
-      <div class="upload-card-title">上传你的舞 · 免费</div>
-      <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，慢放/镜像跟练</div>
-    </div>
-    <div class="upload-card-arrow">→</div>
   </div>
 
   <!-- Tools -->
@@ -875,6 +915,24 @@ body{
       <div class="entry-icon"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="14" stroke="var(--gold)" stroke-width="1.2" opacity=".5"/><path d="M12 11v12l10-6z" fill="var(--gold-soft)" opacity=".7"/></svg></div>
       <div class="entry-info"><div class="entry-title">上传你的第一支舞</div><div class="entry-desc">上传任意舞蹈视频，AI 自动拆解</div></div>
       <div class="entry-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5l4 3.5-4 3.5" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div>
+
+  <!-- Differentiation vs traditional（先建立价值认知，再对比） -->
+  <div class="home-section-label">跟B站跟练的区别？</div>
+  <div class="vs-box">
+    <div class="vs-col vs-old">
+      <div class="vs-title">看视频自己抠</div>
+      <div class="vs-item">✗ 反复拖进度条对齐动作</div>
+      <div class="vs-item">✗ 动作连拍看不清</div>
+      <div class="vs-item">✗ 没口诀，记不住顺序</div>
+    </div>
+    <div class="vs-divider"></div>
+    <div class="vs-col vs-new">
+      <div class="vs-title">舞镜AI</div>
+      <div class="vs-item">✓ AI自动拆成八拍卡+连拍帧</div>
+      <div class="vs-item">✓ 每句有口诀+记忆钩子</div>
+      <div class="vs-item">✓ 慢放/镜像跟练，照着做</div>
     </div>
   </div>
 </div>
@@ -984,6 +1042,33 @@ body{
   </div>
 </div>
 
+<!-- ══════ WORKS (我的作品) ══════ -->
+<div class="view hidden" id="view-works">
+  <div class="wv" id="worksWrap">
+    <div class="wv-hd"><span class="wv-t">我的作品</span><span class="wv-badge">练习库</span></div>
+    <div class="wv-sub">拆过的舞都沉淀在这，能看到每支的进步曲线。</div>
+    <div id="worksList"></div>
+  </div>
+</div>
+
+<!-- ══════ PLAZA (作品广场) ══════ -->
+<div class="view hidden" id="view-plaza">
+  <div class="wv" id="plazaWrap">
+    <div class="wv-hd"><span class="wv-t">作品广场</span><span class="wv-badge">真实跟练</span></div>
+    <div class="wv-sub">大家把练好的舞分享出来，互相看看练到什么程度了。</div>
+    <div id="plazaList"></div>
+  </div>
+</div>
+
+<!-- ══════ CLASS (班级测评) ══════ -->
+<div class="view hidden" id="view-class">
+  <div class="wv" id="classWrap">
+    <div class="wv-hd"><span class="wv-t">班级测评</span><span class="wv-badge">老师端</span></div>
+    <div class="wv-sub">老师建班、学生扫码加入，全班一起评分跟练。</div>
+    <div id="classList"></div>
+  </div>
+</div>
+
 <!-- Video Modal -->
 <div class="mv-modal" id="mvModal">
   <div class="box">
@@ -1000,6 +1085,14 @@ body{
 
 <audio id="detailAudio" preload="auto"></audio>
 <div class="toast" id="toast"></div>
+
+<!-- ═══ BOTTOM TABBAR ═══ -->
+<div class="tabbar" id="tabbar">
+  <div class="t on" data-tab="home" onclick="goTab('home')"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span>首页</span></div>
+  <div class="t" data-tab="works" onclick="goTab('works')"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 19c.6-3.4 3.4-5 7-5s6.4 1.6 7 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span>我的作品</span></div>
+  <div class="t" data-tab="plaza" onclick="goTab('plaza')"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M5 18l4-4 3 3 3-3 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>广场</span></div>
+  <div class="t" data-tab="class" onclick="goTab('class')"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20h16M6 20V9l6-5 6 5v11M10 20v-5h4v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>班级</span></div>
+</div>
 
 </div><!-- /app -->
 
@@ -1057,7 +1150,7 @@ function detailCacheDom(){
 }
 
 function showView(v, idx){
-  var views = ['home','review','plan','mv','detail'];
+  var views = ['home','review','plan','mv','detail','works','plaza','class'];
   var target = document.getElementById('view-'+v);
   if(!target && v !== 'detail') return;
 
@@ -1077,13 +1170,33 @@ function showView(v, idx){
   var detailNav = document.getElementById('detailNav');
   if(detailNav) detailNav.style.display = (v === 'detail') ? 'flex' : 'none';
 
+  // Tabbar：detail 视图有自己的 detail-nav，隐藏主 tabbar
+  var tabbar = document.getElementById('tabbar');
+  if(tabbar) tabbar.style.display = (v === 'detail') ? 'none' : 'flex';
+  setTabActive(v);
+
   if(v !== 'detail') detailStopLead(); // cleanup camera/rAF/audio
   if(v === 'plan') updateAllPlanProgress();
   if(v === 'mv'){ mvStopVideo(); mvStopPreview(); }
+  if(v === 'works') loadWorks();
+  if(v === 'plaza') loadPlaza();
+  if(v === 'class') loadClass();
   if(v === 'detail'){
     detailCurPieceIdx = idx !== undefined ? idx : 0;
     renderDetailPage();
   }
+}
+
+function goTab(tab){
+  if(tab === 'home'){ showView('home'); }
+  else if(tab === 'works' || tab === 'plaza' || tab === 'class'){ showView(tab); }
+}
+function setTabActive(v){
+  var tabbar = document.getElementById('tabbar');
+  if(!tabbar) return;
+  tabbar.querySelectorAll('.t').forEach(function(t){
+    t.classList.toggle('on', t.getAttribute('data-tab') === v);
+  });
 }
 function replayDimFill(){
   document.querySelectorAll('.dim-fill').forEach(function(el){
@@ -1177,6 +1290,131 @@ if (AUTH_TOKEN) {
   if (at) at.textContent = '已登录';
   var aa = document.getElementById('authAvatar');
   if (aa) aa.classList.add('logged-in');
+}
+
+/* ═══ WORKS / PLAZA / CLASS 渲染 ═══ */
+function _apiHeaders(){
+  var h = {'Accept':'application/json'};
+  if(typeof AUTH_TOKEN !== 'undefined' && AUTH_TOKEN) h['Authorization'] = 'Bearer '+AUTH_TOKEN;
+  return h;
+}
+function _wvEmpty(icon, title, desc, btnTxt, btnFn){
+  return '<div class="wv-empty"><div class="e-ic">'+icon+'</div>'+
+    '<div class="e-t">'+title+'</div><div class="e-d">'+desc+'</div>'+
+    '<span class="e-btn" onclick="'+btnFn+'">'+btnTxt+'</span></div>';
+}
+function _wvSkel(){
+  var s = '';
+  for(var i=0;i<3;i++){
+    s += '<div class="skel-card"><div class="sk-cover"></div>'+
+      '<div class="sk-line"></div><div class="sk-line short"></div></div>';
+  }
+  return s;
+}
+function loadWorks(){
+  var box = document.getElementById('worksList');
+  if(!box) return;
+  box.innerHTML = _wvSkel();
+  if(!AUTH_TOKEN){
+    box.innerHTML = _wvEmpty('💃','登录后积累你的舞库','拆过的舞会沉淀成「我的作品」，还能看到每支舞的跟练进步曲线。','去登录','showAuth()');
+    return;
+  }
+  fetch('api/my-works',{headers:_apiHeaders()})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d){
+      var ws = d.works || [];
+      if(!ws.length){
+        box.innerHTML = _wvEmpty('🩰','还没有拆过的舞','上传一支舞蹈，AI 拆成能跟练的八拍卡，就会存在这里。','去拆一支','showDecomposeUpload()');
+        return;
+      }
+      var h = '';
+      ws.forEach(function(w){
+        var curveBars = '';
+        if(w.curve && w.curve.length){
+          var mx = Math.max.apply(null, w.curve);
+          curveBars = '<div class="wc-curve"><div class="cl">进步曲线 · 跟练 '+(w.practice_count||0)+' 次'+(w.best_score!==null?' · 最高 '+(w.best_score)+' 分':'')+'</div>'+
+            '<div class="wc-bars">'+w.curve.map(function(s){ return '<i style="height:'+Math.max(8,Math.round((s/(mx||100))*100))+'%"></i>'; }).join('')+'</div></div>';
+        } else {
+          curveBars = '<div class="wc-curve"><div class="cl">还没跟练过 · 再练一次解锁进步曲线</div></div>';
+        }
+        var tags = (w.genre ? '<span class="wc-tag">'+_esc(w.genre==='guofeng'?'国风':w.genre)+'</span>' : '') +
+          (w.n_phrases ? '<span class="wc-tag">'+(w.n_phrases)+' 句</span>' : '') +
+          (w.is_paid ? '<span class="wc-tag">已解锁</span>' : '<span class="wc-tag">未解锁</span>');
+        h += '<div class="wv-card">'+
+          '<div class="wc-cover">🎵</div>'+
+          '<div class="wc-body">'+
+            '<div class="wc-title">'+_esc(w.title||'我的舞')+'</div>'+
+            '<div class="wc-meta">'+tags+'</div>'+
+            curveBars+
+            '<div class="wc-row">'+
+              '<div class="wc-btn main" onclick="window.DC_ID=\''+w.dance_id+'\';dcLoading();pollDecompose(\''+w.dance_id+'\')">继续练</div>'+
+              (w.is_public ? '' : '<div class="wc-btn" onclick="publishWork(\''+w.dance_id+'\')">发到广场</div>')+
+            '</div>'+
+          '</div></div>';
+      });
+      box.innerHTML = h;
+    })
+    .catch(function(){ box.innerHTML = _wvEmpty('😥','加载失败','网络好像开了小差，稍后再试试。','重新加载','loadWorks()'); });
+}
+function publishWork(did){
+  fetch('api/my-works/'+did+'/publish',{method:'POST',headers:_apiHeaders(),body:JSON.stringify({publish:true}),})
+    .then(function(r){ return r.json(); })
+    .then(function(d){ toast(d.status==='ok'?'已发到广场 🎉':'发布失败'); loadWorks(); })
+    .catch(function(){ toast('网络错误'); });
+}
+function loadPlaza(){
+  var box = document.getElementById('plazaList');
+  if(!box) return;
+  box.innerHTML = _wvSkel();
+  fetch('api/plaza',{headers:_apiHeaders()})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var ps = d.posts || [];
+      if(!ps.length){
+        box.innerHTML = _wvEmpty('📸','还没有人分享作品','你练好的舞可以先发到这里，成为广场第一批真实作品。','去拆一支','showDecomposeUpload()');
+        return;
+      }
+      var h = '';
+      ps.forEach(function(w){
+        h += '<div class="wv-card">'+
+          '<div class="wc-cover">🎵</div>'+
+          '<div class="wc-body">'+
+            '<div class="wc-title">'+_esc(w.title||'一支舞')+'</div>'+
+            '<div class="wc-meta">'+(w.genre?'<span class="wc-tag">'+_esc(w.genre==='guofeng'?'国风':w.genre)+'</span>':'')+
+              (w.best_score!==null?'<span class="wc-score">达标 '+w.best_score+'</span>':'')+'</div>'+
+            '<div class="wc-row"><div class="wc-btn main" onclick="window.DC_ID=\''+w.dance_id+'\';dcLoading();pollDecompose(\''+w.dance_id+'\')">看这支</div></div>'+
+          '</div></div>';
+      });
+      box.innerHTML = h;
+    })
+    .catch(function(){ box.innerHTML = _wvEmpty('😥','加载失败','网络好像开了小差，稍后再试试。','重新加载','loadPlaza()'); });
+}
+function loadClass(){
+  var box = document.getElementById('classList');
+  if(!box) return;
+  box.innerHTML =
+    '<div class="wv-card"><div class="wc-body">'+
+      '<div class="wc-title">老师端 · 建班</div>'+
+      '<div class="wc-meta"><span class="wc-tag">全班跟练</span><span class="wc-tag">逐人评分</span></div>'+
+      '<div style="font-size:12px;color:var(--mute);line-height:1.7;margin-top:8px">建一个班级，生成邀请码，学生扫码加入后全班一起评分、跟练、出班级报告。</div>'+
+      '<div class="wc-row"><div class="wc-btn main" onclick="openClassTeacher()">创建班级</div></div>'+
+    '</div></div>'+
+    '<div class="wv-card"><div class="wc-body">'+
+      '<div class="wc-title">学生端 · 加入班级</div>'+
+      '<div class="wc-meta"><span class="wc-tag">邀请码加入</span></div>'+
+      '<div style="font-size:12px;color:var(--mute);line-height:1.7;margin-top:8px">老师把邀请码发给你，输入后加入班级测评。</div>'+
+      '<div class="wc-row"><div class="wc-btn main" onclick="openClassJoin()">输入邀请码加入</div></div>'+
+    '</div></div>';
+}
+function openClassTeacher(){
+  window.open('/class_teacher.html', '_blank');
+}
+function openClassJoin(){
+  var code = prompt('请输入班级邀请码','');
+  if(!code) return;
+  var c = String(code).trim().toUpperCase();
+  if(!c) return;
+  window.location.href = '/j/'+c;
 }
 
 function showAuth() {
@@ -2450,6 +2688,8 @@ function renderDetailArchive(p){
 .dc-coach .tp.i{background:#FBF6E9;color:#6E5622;border:1px solid #EFE4C9}
 .dc-coach .tp b{font-weight:900}
 .dc-coach .tp.i b{color:#B5892A}
+.dc-coach .beat{display:inline-block;background:#C79E3B;color:#fff!important;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;margin:0 2px;cursor:pointer;letter-spacing:.02em}
+@keyframes beatFlash{0%,100%{box-shadow:0 0 0 0 rgba(199,158,59,.5)}50%{box-shadow:0 0 0 10px rgba(199,158,59,0)}}
 .dc-coach .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:11px;cursor:pointer}
 /* ===== 故事卡 ===== */
 .dc-story{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:22px 21px 19px;box-shadow:0 4px 20px rgba(120,92,30,.07);position:relative;overflow:hidden}
@@ -2588,6 +2828,7 @@ function _dcShow(){
   var dv=_dcView(); dv.classList.remove('hidden');
   var back=document.querySelector('.back'); if(back){ back.classList.remove('hidden'); back.onclick=function(){ dcCloseModal(); showView('home'); }; }
   var dn=document.getElementById('detailNav'); if(dn) dn.style.display='none';
+  var tb=document.getElementById('tabbar'); if(tb) tb.style.display='none';
   window.scrollTo(0,0);
 }
 function showDecomposeUpload(){
@@ -2677,6 +2918,29 @@ function dcFrameErr(el){
   el.parentNode.appendChild(ph);
   el.remove();
 }
+function _beatTag(t){
+  var s = _esc(t);
+  return s.replace(/第\s*([0-9一二三四五六七八九十]+)\s*拍/g,
+    '<span class="beat" onclick="dcJumpBeat(\'$1\')">第$1拍</span>');
+}
+function _cn2num(cn){
+  var m = {'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10};
+  if(/^\d+$/.test(cn)) return parseInt(cn,10);
+  if(cn === '十') return 10;
+  if(cn.indexOf('十')>-1){ var a=cn.split('十'); return (m[a[0]]||1)*10 + (m[a[1]]||0); }
+  return m[cn] || 1;
+}
+function dcJumpBeat(beatStr){
+  var n = _cn2num(beatStr);
+  var cards = document.querySelectorAll('#view-decompose .dc-strip');
+  var target = null;
+  cards.forEach(function(card){
+    var no = card.querySelector('.hd .no');
+    if(no && parseInt(no.textContent,10) === n && !target) target = card;
+  });
+  if(target){ target.scrollIntoView({behavior:'smooth',block:'center'}); target.style.animation='beatFlash 1.2s ease'; setTimeout(function(){target.style.animation='';},1300); }
+  else { var d=DC_DATA||{}; (d.phrases||[]).forEach(function(p){ if(p.i===n){ window.DC_ID=d.id; dcLoading(); pollDecompose(d.id); } }); }
+}
 function dcAngHtml(a){
   if(!a) return '';
   // name, 目标角度, 容差(±°). 国风舞多要求肢体舒展蹬直→目标180；躯干倾斜目标0。
@@ -2730,9 +2994,9 @@ function renderDecompose(d){
       (d.coach?'<div class="dc-sec">老师点评 · AI 逐帧测角</div>'+
         '<div class="dc-coach"><div class="cm">'+_esc(d.coach.comment)+'</div>'+
         ((d.coach.good||[]).length?'<div class="csub g">◆ 做得好</div>':'')+
-        (d.coach.good||[]).map(function(g){return '<div class="tp g">'+_esc(g)+'</div>';}).join('')+
+        (d.coach.good||[]).map(function(g){return '<div class="tp g">'+_beatTag(g)+'</div>';}).join('')+
         ((d.coach.improve||[]).length?'<div class="csub i" style="margin-top:13px">◆ 可以更好</div>':'')+
-        (d.coach.improve||[]).map(function(x){return '<div class="tp i">'+_esc(x)+'</div>';}).join('')+
+        (d.coach.improve||[]).map(function(x){return '<div class="tp i">'+_beatTag(x)+'</div>';}).join('')+
         '<div class="shr" onclick="dcShare(\'coach\')">分享点评 ↗</div></div>':'')+
       '<div class="dc-sec">八拍卡 · 跟练</div>'+
       beats+

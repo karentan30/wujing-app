@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 import urllib.request, base64
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException, Header
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from models import init_db, create_user, get_user_by_email, get_user_by_id, create_review, get_review, get_user_reviews, update_review_status, get_practice_progress, upsert_practice_task, get_user_stats
@@ -517,6 +517,21 @@ def serve_app():
     if not os.path.exists(_app_html):
         return JSONResponse({"service": "wujing-api", "note": "app html not deployed here"})
     return FileResponse(_app_html)
+
+@app.get("/class_teacher.html")
+def serve_class_teacher():
+    _p = os.path.join(BASE_DIR, "static", "class_teacher.html")
+    return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
+
+@app.get("/class_join.html")
+def serve_class_join():
+    _p = os.path.join(BASE_DIR, "static", "class_join.html")
+    return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
+
+@app.get("/j/{code}")
+def join_page(code: str):
+    """班级码短链 → 重写到学员加入页。group_review 建班返回的 join_url 即 /j/{code}。"""
+    return RedirectResponse(f"/class_join.html?code={code}")
 # ---------- Payment routes ----------
 app.include_router(pay_router)
 app.include_router(hub_router)
