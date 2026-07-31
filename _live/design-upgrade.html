@@ -872,51 +872,54 @@ body{
   <!-- Hero -->
   <div class="hero">
     <div class="hero-brand">舞镜</div>
-    <div class="hero-tagline">AI 自动拆舞 · 每一拍都能跟练</div>
-    <div class="hero-desc">上传舞蹈视频，AI 拆成八拍卡 + 故事卡 + 记忆卡，慢放镜像跟练。</div>
-    <div class="hero-cta" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频自动拆卡">
-      <span class="hero-cta-icon">✦</span>
-      <span>上传你的舞</span>
+    <div class="hero-tagline" style="font-size:16px;font-weight:700;color:var(--ink);letter-spacing:.02em">学一支舞，从 2 小时到 20 分钟</div>
+    <div class="hero-desc">AI 自动拆解每一句动作 · 镜面跟练 · 记忆口诀 · 生成卡片</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px">
+      <div class="hero-cta" onclick="document.getElementById('demo-library').scrollIntoView({behavior:'smooth'})" tabindex="0" role="button" aria-label="选热门舞蹈跟练">
+        <span class="hero-cta-icon">▶</span>
+        <span>选一支开始跟练 ↓</span>
+      </div>
+      <div class="hero-cta secondary" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传自己的视频" style="font-size:13px;padding:9px 22px">
+        <span>上传自己的视频 →</span>
+      </div>
     </div>
     <div class="hero-trust">不留存视频 · 结果仅你可见 · AI 生成标识</div>
   </div>
 
-  <!-- Upload（首屏核心 CTA） -->
-  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
-    <div class="upload-card-icon">📹</div>
-    <div class="upload-card-info">
-      <div class="upload-card-title">上传你的舞 · 免费</div>
-      <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，慢放/镜像跟练</div>
-    </div>
-    <div class="upload-card-arrow">→</div>
-  </div>
-
-  <!-- Demo preview card -->
-  <div style="margin:16px 0 0">
-    <div style="font-size:11px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:6px">
-      <span style="width:6px;height:6px;border-radius:50%;background:#E9B872;display:inline-block"></span>
-      <span>真实拆解示例 · 点击查看完整卡片</span>
-    </div>
+  <!-- Demo library — PRIMARY CTA（舞蹈库置顶，跟练优先） -->
+  <div id="demo-library" style="margin:16px 0 0">
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:.02em">选一支，现在就开始 ↓</div>
+    <div style="font-size:11px;color:#888;margin-bottom:10px">热门舞蹈已拆解好 · 点击直接跟练，无需上传</div>
     <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-      <div onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 130px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 140px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">⚔️</div>
         <div style="font-size:13px;font-weight:700;color:#E9B872">虞兮叹</div>
         <div style="font-size:10px;color:#888;margin-top:4px">剑舞 · 9段</div>
-        <div style="font-size:10px;color:#555;margin-top:8px">查看卡片 →</div>
+        <div style="font-size:11px;color:#E9B872;margin-top:10px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 130px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 140px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🎭</div>
         <div style="font-size:13px;font-weight:700;color:#C878E8">孽</div>
         <div style="font-size:10px;color:#888;margin-top:4px">双人 · 8段</div>
-        <div style="font-size:10px;color:#555;margin-top:8px">查看卡片 →</div>
+        <div style="font-size:11px;color:#C878E8;margin-top:10px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 130px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 140px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🌸</div>
         <div style="font-size:13px;font-weight:700;color:#78C878">春满园</div>
         <div style="font-size:10px;color:#888;margin-top:4px">民族舞 · 6段</div>
-        <div style="font-size:10px;color:#555;margin-top:8px">查看卡片 →</div>
+        <div style="font-size:11px;color:#78C878;margin-top:10px;font-weight:600">▶ 立即跟练</div>
       </div>
     </div>
+  </div>
+
+  <!-- Upload（次要 CTA） -->
+  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解" style="margin-top:20px">
+    <div class="upload-card-icon">📹</div>
+    <div class="upload-card-info">
+      <div class="upload-card-title">上传自己的视频</div>
+      <div class="upload-card-desc">想拆自己练的那支舞？上传视频，AI 自动拆成八拍卡 + 跟练模式</div>
+    </div>
+    <div class="upload-card-arrow">→</div>
   </div>
 
   <!-- How it works -->
@@ -924,7 +927,7 @@ body{
   <div class="steps">
     <div class="step">
       <div class="step-icon">①</div>
-      <div class="step-info"><div class="step-t">上传舞蹈视频</div><div class="step-d">任意一支舞都行，上传免费无需登录</div></div>
+      <div class="step-info"><div class="step-t">选一支或上传你的舞</div><div class="step-d">热门舞蹈直接跟练，或上传自己的视频免费拆解</div></div>
     </div>
     <div class="step">
       <div class="step-icon">②</div>
@@ -3000,6 +3003,13 @@ function renderDetailArchive(p){
 .pay-stripe-load{display:flex;flex-direction:column;align-items:center}
 .pay-stripe-hint{font-size:13px;color:#8C857A;margin-top:8px}
 .pay-foot{text-align:center;font-size:11px;color:#B8AE97;margin-top:16px;letter-spacing:.02em}
+/* ── 付费墙 ── */
+.dc-paywall{margin:16px;padding:32px 20px;background:linear-gradient(135deg,#1a1f35,#0f1220);border:1px solid rgba(90,150,255,.25);border-radius:14px;text-align:center}
+.dc-paywall-icon{font-size:36px;margin-bottom:10px}
+.dc-paywall-title{font-size:22px;font-weight:bold;color:#fff;margin-bottom:6px}
+.dc-paywall-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;line-height:1.6}
+.dc-paywall-btn{background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;font-size:17px;font-weight:bold;padding:14px 36px;border-radius:30px;cursor:pointer;display:block;width:100%;max-width:240px;margin:0 auto 10px}
+.dc-paywall-note{font-size:12px;color:rgba(255,255,255,.3)}
 /* ── 跟练模式 overlay ── */
 .dc-practice-overlay{display:none;position:fixed;inset:0;background:#07090f;z-index:9999;flex-direction:column;align-items:center}
 .dc-practice-overlay.active{display:flex}
@@ -3014,6 +3024,7 @@ function renderDetailArchive(p){
 .dc-practice-close{position:absolute;top:12px;right:16px;background:none;border:none;color:rgba(255,255,255,.5);font-size:28px;cursor:pointer;padding:8px;z-index:1}
 .dc-practice-no-clip{color:rgba(255,255,255,.35);font-size:13px;padding:20px;text-align:center}
 .dc-practice-btn{background:rgba(90,150,255,.18);border:1px solid rgba(90,150,255,.4);color:#5a96ff;font-size:12px;padding:3px 10px;border-radius:6px;cursor:pointer;margin-left:6px;vertical-align:middle;-webkit-tap-highlight-color:transparent}
+.dc-practice-share-btn{background:rgba(255,200,80,.15);border:1px solid rgba(255,200,80,.4);color:#ffc850;font-size:14px;padding:8px 16px;border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 </style>
 
 <div class="dc-modal" id="dcModal">
@@ -3252,7 +3263,10 @@ function pollDecompose(id){
           _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">😥</div><div class="dc-load-t">这支舞暂时打不开</div><div class="dc-load-d">'+(res.status===403?'这支作品未公开或属于他人':'请求出错了('+res.status+')')+'</div><div style="margin-top:20px"><button class="dc-btn" id="dcErrBack" style="width:auto;padding:11px 26px">返回</button></div></div>';
           var _eb=document.getElementById('dcErrBack'); if(_eb) _eb.onclick=function(){ showView(_dcFromTab()); }; }
         else if(d.status==='awaiting_payment'){ clearInterval(iv); _dcLoadStop();
-          DC_ID=d.id; showPayment(d.id, d.price_cny||9.9); }
+          DC_ID=d.id;
+          if(d.phrases && d.phrases.length){
+            DC_DATA=d; renderDecompose(d);
+          } else { showPayment(d.id, d.price_cny||9.9); } }
         else if(d.status==='completed'){ clearInterval(iv); _dcLoadStop();
           DC_STEPS.forEach(function(_,i){var e=document.getElementById('dcstep'+i);if(e)e.className='dc-step done';});
           setTimeout(function(){ DC_DATA=d; renderDecompose(d); }, 350); }
@@ -3322,6 +3336,7 @@ function renderDecompose(d){
   WJ.track('decompose_done', {dance_id: d.id||''});
   var strip=d.strip||4;
   var beats='';
+  var _isPreview = d.is_preview && !d.is_demo;
   (d.phrases||[]).forEach(function(p,idx){
     var col=DC_COLORS[idx%DC_COLORS.length];
     var film='';
@@ -3341,6 +3356,15 @@ function renderDecompose(d){
         '<div class="shr" onclick="dcShare(\'beat\','+p.i+')">分享这拍 ↗</div>'+
       '</div></div>';
   });
+  if(_isPreview){
+    beats+='<div class="dc-paywall">'+
+      '<div class="dc-paywall-icon">🔒</div>'+
+      '<div class="dc-paywall-title">解锁完整拆解</div>'+
+      '<div class="dc-paywall-sub">以上是免费预览的前 2 句 · 付款后立即解锁全部动作、三张卡片、慢速跟练</div>'+
+      '<button class="dc-paywall-btn" onclick="showPayment(DC_ID,9.9)">¥9.9 立即解锁</button>'+
+      '<div class="dc-paywall-note">微信扫码 · 秒到账 · 永久解锁</div>'+
+    '</div>';
+  }
   var st=d.story||{}, mem=d.memory||{};
   _dcView().innerHTML=
     '<div class="dc-res">'+
@@ -4072,6 +4096,7 @@ renderDecompose = function(d){
     <button onclick="dcPracticeNav(-1)">←</button>
     <div class="dc-practice-title" id="dcPracticeLabel"></div>
     <button onclick="dcPracticeNav(1)">→</button>
+    <button class="dc-practice-share-btn" onclick="dcShareCard()" title="生成分享卡">📤 分享</button>
   </div>
 </div>
 <script>
@@ -4134,6 +4159,59 @@ function dcPracticeClose(){
   var msg=top.querySelector('.dc-practice-no-clip');
   if(msg)msg.remove();
   vid.style.display='block';
+}
+function dcShareCard(){
+  var d=_dcPracticeData;if(!d)return;
+  var p=d.phrases[_dcPracticeIdx];
+  var did=d.id;
+  if(!CanvasRenderingContext2D.prototype.roundRect){
+    CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+      this.beginPath();this.moveTo(x+r,y);this.lineTo(x+w-r,y);
+      this.arcTo(x+w,y,x+w,y+r,r);this.lineTo(x+w,y+h-r);
+      this.arcTo(x+w,y+h,x+w-r,y+h,r);this.lineTo(x+r,y+h);
+      this.arcTo(x,y+h,x,y+h-r,r);this.lineTo(x,y+r);
+      this.arcTo(x,y,x+r,y,r);this.closePath();
+    };
+  }
+  var W=750,H=420;
+  var canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  var ctx=canvas.getContext('2d');
+  var grad=ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0,'#0d1025');grad.addColorStop(1,'#1a2040');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='20px sans-serif';
+  ctx.fillText('我学会了第 '+p.i+' 句',30,44);
+  ctx.fillStyle='#fff';ctx.font='bold 32px sans-serif';
+  ctx.fillText('《'+(d.title||'')+'》',30,84);
+  var total=4,FW=(W-90)/4,FH=180,FY=110;
+  var loadedCount=0,frameImgs=Array(total).fill(null);
+  function drawFrame(fi,img){
+    var fx=30+fi*(FW+10);
+    ctx.save();ctx.beginPath();ctx.roundRect(fx,FY,FW,FH,8);
+    ctx.clip();ctx.drawImage(img,fx,FY,FW,FH);ctx.restore();
+  }
+  function finalize(){
+    ctx.fillStyle='#ffc850';ctx.font='bold 24px sans-serif';
+    ctx.fillText('♪ '+(p.kou||p.name||''),30,FY+FH+44);
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='18px sans-serif';
+    ctx.fillText((p.action||'').slice(0,28),30,FY+FH+74);
+    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='14px sans-serif';
+    ctx.textAlign='right';ctx.fillText('舞镜 wujing.mylumee.app',W-20,H-16);ctx.textAlign='left';
+    try{
+      var link=document.createElement('a');
+      link.download='舞镜分享卡-第'+p.i+'句.png';
+      link.href=canvas.toDataURL('image/png');link.click();
+    }catch(e){alert('请长按图片保存分享卡');}
+  }
+  for(var fi=0;fi<total;fi++){
+    (function(i){
+      var img=new Image();img.crossOrigin='anonymous';
+      img.src='api/decompose/'+did+'/frame/p'+p.i+'_'+i+'.jpg';
+      img.onload=function(){frameImgs[i]=img;loadedCount++;if(loadedCount===total){frameImgs.forEach(function(im,idx){if(im)drawFrame(idx,im);});finalize();}};
+      img.onerror=function(){loadedCount++;if(loadedCount===total){frameImgs.forEach(function(im,idx){if(im)drawFrame(idx,im);});finalize();}};
+    })(fi);
+  }
 }
 // 键盘导航
 document.addEventListener('keydown',function(e){
