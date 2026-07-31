@@ -24,6 +24,29 @@ from my_works import router as my_works_router, init_library_tables, upsert_my_w
 from analytics import track as analytics_track
 from hub_router import router as hub_router
 app = FastAPI(title="WuJing Dance API", version="1.0.0")
+
+# ── 免费模式限频：防无上限刷拆解烧 ARK/DeepSeek（WJ_FREE_MODE=1 时生效） ──
+import time as _time
+_FREE_LIMIT = {"per_hour": 3, "per_day": 10}          # 每设备每小时3次/每天10次免费拆解
+_free_hits = {}                                       # {identity: {"h": [ts], "d": [ts]}}
+_bg_daily = {}                                        # {"bg:{uid}:{date}": count} 生图每日配额
+_FREE_LOCK = threading.Lock()
+
+def _free_quota_ok(identity):
+    """免费模式配额判定：超限返回 False。登录用户按 device 一起计（同设备）。"""
+    if os.environ.get("WJ_FREE_MODE") != "1":
+        return True
+    if not identity or identity == "guest":
+        return True  # 无身份的极端兜底不卡（正常前端都带 device）
+    now = _time.time()
+    with _FREE_LOCK:
+        rec = _free_hits.setdefault(identity, {"h": [], "d": []})
+        rec["h"] = [t for t in rec["h"] if now - t < 3600]
+        rec["d"] = [t for t in rec["d"] if now - t < 86400]
+        if len(rec["h"]) >= _FREE_LIMIT["per_hour"] or len(rec["d"]) >= _FREE_LIMIT["per_day"]:
+            return False
+        rec["h"].append(now); rec["d"].append(now)
+        return True
 # ── 拆解完成钩子：入库 + 埋点 ──
 def _run_decompose_with_hooks(did, video_path, user_id, title, genre):
     try:
@@ -364,9 +387,19 @@ def generate_bg(data: dict, user: dict = Depends(get_current_user)):
     prompt = data.get("prompt", "")
     if not prompt:
         raise HTTPException(status_code=400, detail="prompt is required")
-    # ⚠️生图=最大烧钱坑：仍要求登录（get_current_user）防匿名无限调用烧豆包余额。
-    # 旧 check_analysis_access 额度门已随 payment.py 作废；此处以「必须登录」作为最低门槛，
-    # 更严格的每日配额留待后续（TODO：加登录用户每日生图上限）。
+    # ⚠️生图=最大烧钱坑：登录（get_current_user）+ 每日配额双闸，防无限调用烧豆包余额。
+    _BG_LIMIT_PER_DAY = 20
+    _now_day = _time.strftime("%Y%m%d")
+    uid = str(user["id"])
+    key = f"bg:{uid}:{_now_day}"
+    with _FREE_LOCK:
+        cnt = _bg_daily.get(key, 0)
+        if cnt >= _BG_LIMIT_PER_DAY:
+            raise HTTPException(status_code=429, detail=f"今日生图已达上限（{_BG_LIMIT_PER_DAY}次），明天再试")
+        _bg_daily[key] = cnt + 1
+    # 过期清理（避免 dict 无限增长）
+    if len(_bg_daily) > 2000:
+        _bg_daily.clear()
     key = os.environ.get("ARK_API_KEY")
     if not key:
         raise HTTPException(status_code=500, detail="ARK_API_KEY not configured")
@@ -390,13 +423,32 @@ def list_teachers():
     return {"teachers": _teacher_list()}
 
 # ---------- 任意舞自动拆解（免选老师·上传即出八拍卡/故事卡/记忆卡） ----------
-def _dance_is_paid(dance_id):
-    """该 dance 是否已存在一条 paid 订单（付费门判定，复用 pay.py orders 表）。"""
+def _safe_did(did):
+    """路径防穿越：dance_id 仅允许 uuid 字符集（十六进制+连字符），拒绝 ../ 等。"""
+    if not did or any(c not in "0123456789abcdefABCDEF-" for c in did) or ".." in did:
+        raise HTTPException(status_code=400, detail="无效的 dance_id")
+    return did
+def _identity_for(user, x_device_id=None):
+    """付费身份：登录用户→user_id；游客→guest:<device_id>（每设备独立，一次付款只解锁该设备）。
+    无 device 时回退全局 'guest'（旧游客，但下单会带 device 所以正常路径不会走到）。"""
+    if user and user.get("id"):
+        return str(user["id"])
+    dev = (x_device_id or "").strip()
+    if dev:
+        dev = "".join(ch for ch in dev if ch.isalnum() or ch in "-_")[:64]
+        if dev:
+            return f"guest:{dev}"
+    return "guest"
+
+
+def _dance_is_paid(dance_id, identity):
+    """该 dance 是否已存在一条**该身份**的 paid 订单（付费门判定，复用 pay.py orders 表）。
+    按 (user_id, dance_id) 联合判定，防止一次付款被全网复用。"""
     try:
         with _pay_get_db() as _c:
             row = _c.execute(
-                "SELECT 1 FROM orders WHERE dance_id=? AND status='paid' LIMIT 1",
-                (dance_id,)).fetchone()
+                "SELECT 1 FROM orders WHERE dance_id=? AND user_id=? AND status='paid' LIMIT 1",
+                (dance_id, identity)).fetchone()
             return bool(row)
     except Exception:
         return False
@@ -408,6 +460,7 @@ async def decompose_video(
     title: str = Form("我的舞"),
     genre: str = Form("guofeng"),
     user: dict = Depends(get_optional_user),   # 上传免费·无需登录（游客可传）
+    x_device_id: str = Header(None),
 ):
     """上传免费（游客可传）：存源视频 + 建 dance 记录，但**不自动拆解**。
     用户点「拆开这支舞」→ /api/pay/*/create 付 9.9 → 支付回调履约触发 run_decompose。
@@ -443,6 +496,10 @@ async def decompose_video(
     # 免费模式(WJ_FREE_MODE=1·支付商户号未就位时先免费拉新)：上传即拆·不收费。
     # 商户号到位后设 WJ_FREE_MODE=0，自动恢复「要拆付 9.9」。
     if os.environ.get("WJ_FREE_MODE") == "1":
+        ident = _identity_for(user, x_device_id)
+        if not _free_quota_ok(ident):
+            raise HTTPException(status_code=429,
+                                detail="免费拆解已达上限（每小时3次/每天10次），请稍后再试或登录解锁更多")
         uid2 = (user["id"] if user else None)
         threading.Thread(target=_run_decompose_with_hooks,
                          args=(did, video_path, uid2, title, genre), daemon=True).start()
@@ -455,14 +512,17 @@ async def decompose_video(
 
 
 @app.post("/api/decompose/{did}/run")
-async def decompose_run_if_paid(did: str, user: dict = Depends(get_optional_user)):
+async def decompose_run_if_paid(did: str, user: dict = Depends(get_optional_user),
+                                x_device_id: str = Header(None)):
     """兜底触发：已付费但拆解未生成时手动重跑（幂等）。未付费拒。
     正常路径由支付回调 pay.py._apply_paid_dance_unlock 自动触发，这里仅作重试入口。"""
+    _safe_did(did)
     ddir = os.path.join(DATA_DIR, did)
     video_path = os.path.join(ddir, "input.mp4")
     if not os.path.exists(video_path):
         raise HTTPException(status_code=404, detail="源视频不存在，请重新上传")
-    if os.environ.get("WJ_FREE_MODE") != "1" and not _dance_is_paid(did):
+    identity = _identity_for(user, x_device_id)
+    if os.environ.get("WJ_FREE_MODE") != "1" and not _dance_is_paid(did, identity):
         raise HTTPException(status_code=402, detail="尚未付费，请先付 9.9 解锁拆解")
     # 已完成则不重复跑（幂等）
     d = get_decompose(did)
@@ -478,6 +538,7 @@ async def decompose_run_if_paid(did: str, user: dict = Depends(get_optional_user
 
 @app.get("/api/decompose/{did}")
 def get_decompose_endpoint(did: str, user: dict = Depends(get_optional_user)):
+    _safe_did(did)
     """游客可读（上传免费、无需登录）：拿拆解卡 / awaiting_payment 态。
     若该 dance 绑定了某登录用户，则仅该用户可读；匿名 dance（user_id=None）任何人可读。"""
     d = get_decompose(did)
@@ -492,6 +553,7 @@ def get_decompose_endpoint(did: str, user: dict = Depends(get_optional_user)):
 
 @app.get("/api/decompose/{did}/clip/{name}")
 def get_decompose_clip(did: str, name: str):
+    _safe_did(did)
     """服务拆解切片：name='full'→整片·'pN'→第N段。慢放/镜像前端处理。"""
     safe = "".join(ch for ch in name if ch.isalnum() or ch == "_")
     if safe == "full":
@@ -504,6 +566,7 @@ def get_decompose_clip(did: str, name: str):
 
 @app.get("/api/decompose/{did}/frame/{name}")
 def get_decompose_frame(did: str, name: str):
+    _safe_did(did)
     """服务某段定格帧图 pN.jpg / pN_k.jpg（胶片条帧）。"""
     safe = "".join(ch for ch in name if ch.isalnum() or ch == "_")
     path = os.path.join(DATA_DIR, did, "frames", f"{safe}.jpg")

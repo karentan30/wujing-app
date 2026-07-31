@@ -559,10 +559,27 @@ try:
                 "message": placeholder["message"]}
 
     @router.post("/review/{review_id}/run")
-    async def run_solo_review_endpoint(review_id: str):
+    async def run_solo_review_endpoint(review_id: str, authorization: str = Header(None),
+                                       x_device_id: str = Header(None)):
         """兜底触发：已付费但报告未生成时手动重跑（幂等）。
-        付费校验收口在主控（复用 pay.py orders 表 dance_id==review_id 判 paid）。
-        本端点仅在源视频存在时触发；主控可在此前加付费门（与 /api/decompose/{id}/run 同形）。"""
+        付费判定：按 (身份, dance_id==review_id) 查 pay.py orders 表 paid，防免费刷昂贵计算。"""
+        # 复用 pay.py 的游客设备身份（登录→user_id，游客→guest:<device>）
+        try:
+            from pay import _user_id_optional as _pay_uid
+        except Exception:
+            _pay_uid = None
+        identity = _pay_uid(authorization, x_device_id) if _pay_uid else "guest"
+        if os.environ.get("WJ_FREE_MODE") != "1":
+            try:
+                from pay import get_db as _pay_db
+                with _pay_db() as _c:
+                    paid = _c.execute(
+                        "SELECT 1 FROM orders WHERE dance_id=? AND user_id=? AND status='paid' LIMIT 1",
+                        (review_id, identity)).fetchone()
+            except Exception:
+                paid = None
+            if not paid:
+                raise HTTPException(status_code=402, detail="尚未付费，请先付 9.9 解锁点评")
         rdir = _review_dir(review_id)
         if not os.path.exists(os.path.join(rdir, "input.mp4")):
             raise HTTPException(status_code=404, detail="源视频不存在，请重新上传")

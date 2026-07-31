@@ -1285,6 +1285,26 @@ var SELECTED_TEACHER = 'yue';
 var SELECTED_GENRE = 'guofeng';
 var REVIEW_POLL_INTERVAL = null;
 
+/* ── 设备身份：游客独立解锁（一次付款只解锁该设备，防止全局共享白嫖） ── */
+(function(){
+  try{
+    var dev = localStorage.getItem('wj_device_id');
+    if(!dev){ dev = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2,10); localStorage.setItem('wj_device_id', dev); }
+  }catch(e){}
+})();
+var _origFetch = window.fetch;
+window.fetch = function(url, opts){
+  opts = opts || {};
+  try{
+    var dev = localStorage.getItem('wj_device_id');
+    if(dev){
+      if(!opts.headers) opts.headers = {};
+      if(!opts.headers['X-Device-Id']) opts.headers['X-Device-Id'] = dev;
+    }
+  }catch(e){}
+  return _origFetch(url, opts);
+};
+
 if (AUTH_TOKEN) {
   var at = document.getElementById('authAvatarText');
   if (at) at.textContent = '已登录';
@@ -1551,7 +1571,7 @@ function handleFileSelect(input) {
   if (f.size > 500*1024*1024) { toast('文件超过500MB'); input.value = ''; return; }
   UPLOADED_FILE = f;
   var pv = document.getElementById('uPreview'); pv.style.display = 'block';
-  pv.innerHTML = '<div class="upload-preview"><div class="up-icon">🎬</div><div class="up-info"><div class="up-name">'+f.name+'</div><div class="up-size">'+(f.size/1024/1024).toFixed(1)+' MB</div></div><div class="up-remove" onclick="clearFile()">✕</div></div>';
+  pv.innerHTML = '<div class="upload-preview"><div class="up-icon">🎬</div><div class="up-info"><div class="up-name">'+_esc(f.name)+'</div><div class="up-size">'+(f.size/1024/1024).toFixed(1)+' MB</div></div><div class="up-remove" onclick="clearFile()">✕</div></div>';
   document.getElementById('uploadBtn').disabled = false;
 }
 
@@ -2846,6 +2866,7 @@ function showDecomposeUpload(){
       '<div class="dc-fname" id="dcFname"></div>'+
       '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">开始拆解 · ¥9.9</button>'+
       '<div style="margin-top:10px;font-size:11px;color:var(--mute);text-align:center">拆解结果¥9.9 · 上传免费 · 不成功退款</div>'+
+      '<div style="margin-top:6px;font-size:10px;color:#B6A984;text-align:center;line-height:1.6">上传即代表你已年满18岁，或未成年人已获家长同意 · 拆解内容由 AI 生成</div>'+
     '</div>';
   _dcShow();
 }
@@ -2870,6 +2891,7 @@ function startDecompose(){
       if(d.status==='awaiting_payment'){
         DC_ID=d.decompose_id;
         btn.disabled=false; btn.textContent='¥9.9 拆开这支舞';
+        btn.onclick=function(){ showPayment(DC_ID, d.price_cny); }; // 不重复上传，改弹支付
         showPayment(d.decompose_id, d.price_cny);
       } else if(d.decompose_id){
         DC_ID=d.decompose_id; dcLoading(); pollDecompose(d.decompose_id);
@@ -2900,13 +2922,15 @@ function pollDecompose(id){
     fetch('api/decompose/'+id,{headers:_dh})
       .then(function(r){return r.json();})
       .then(function(d){
-        if(d.status==='completed'){ clearInterval(iv); _dcLoadStop();
+        if(d.status==='awaiting_payment'){ clearInterval(iv); _dcLoadStop();
+          DC_ID=d.id; showPayment(d.id, d.price_cny||9.9); }
+        else if(d.status==='completed'){ clearInterval(iv); _dcLoadStop();
           DC_STEPS.forEach(function(_,i){var e=document.getElementById('dcstep'+i);if(e)e.className='dc-step done';});
           setTimeout(function(){ DC_DATA=d; renderDecompose(d); }, 350); }
         else if(d.status==='failed'){ clearInterval(iv); _dcLoadStop();
           _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">😥</div><div class="dc-load-t">这支没拆成功</div><div class="dc-load-d">建议换一支<b>光线清晰、单人出镜、15–30秒</b>的舞蹈视频再试</div><div style="margin-top:20px"><button class="dc-btn" style="width:auto;padding:11px 26px" onclick="showDecomposeUpload()">重新上传</button></div></div>'; }
-        else if(tries>80){ clearInterval(iv); _dcLoadStop(); toast('处理超时，请稍后在作品里查看'); }
-      }).catch(function(){});
+        else if(tries>80){ clearInterval(iv); _dcLoadStop(); toast('处理超时，请稍后再试'); }
+      }).catch(function(){ clearInterval(iv); _dcLoadStop(); toast('网络异常，请检查网络后重试'); });
   },3000);
 }
 function _esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -2939,7 +2963,7 @@ function dcJumpBeat(beatStr){
     if(no && parseInt(no.textContent,10) === n && !target) target = card;
   });
   if(target){ target.scrollIntoView({behavior:'smooth',block:'center'}); target.style.animation='beatFlash 1.2s ease'; setTimeout(function(){target.style.animation='';},1300); }
-  else { var d=DC_DATA||{}; (d.phrases||[]).forEach(function(p){ if(p.i===n){ window.DC_ID=d.id; dcLoading(); pollDecompose(d.id); } }); }
+  else { toast('未找到第'+n+'拍对应的卡片，翻到上方八拍卡区查看'); }
 }
 function dcAngHtml(a){
   if(!a) return '';
@@ -2983,7 +3007,7 @@ function renderDecompose(d){
         (p.feet?'<div class="int">脚下 · '+_esc(p.feet)+'</div>':'')+
         (p.intent?'<div class="int mood">意境 · '+_esc(p.intent)+'</div>':'')+
         dcAngHtml(p.angles)+
-        '<div class="ctl"><span onclick="dcPlayClip(\'p'+p.i+'\',\''+_esc(p.name)+'\',\'norm\')">▷ 正常速</span><span onclick="dcPlayClip(\'p'+p.i+'\',\''+_esc(p.name)+'\',\'slow\')">慢放</span><span onclick="dcPlayClip(\'p'+p.i+'\',\''+_esc(p.name)+'\',\'mir\')">🪞 镜像</span></div>'+
+        '<div class="ctl"><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'norm\')">▷ 正常速</span><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'slow\')">慢放</span><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'mir\')">🪞 镜像</span></div>'+
         '<div class="shr" onclick="dcShare(\'beat\','+p.i+')">分享这拍 ↗</div>'+
       '</div></div>';
   });
@@ -3017,6 +3041,10 @@ function renderDecompose(d){
 }
 /* 分段视频弹层：慢速=playbackRate·镜像=scaleX(-1) */
 function dcPlayClip(name,title,mode){
+  if(title===null||title===undefined){
+    var d=DC_DATA||{}, idx=parseInt(String(name).replace('p',''),10);
+    (d.phrases||[]).forEach(function(ph){ if(ph.i===idx) title=ph.name||''; });
+  }
   var v=document.getElementById('dcVideo');
   v.src='api/decompose/'+DC_ID+'/clip/'+name; DC_MIR=false; v.classList.remove('mir');
   document.getElementById('dcModalTitle').textContent=title||'';
@@ -3137,8 +3165,10 @@ function payPoll(outTradeNo){
           document.getElementById('payQrStatus').textContent='✅ 支付成功！正在拆解…';
           setTimeout(function(){
             payClose();
+            var did = DC_ID;
+            if(!did){ try{ did = localStorage.getItem('wj_dc_id'); }catch(e){} }
             dcLoading();
-            pollDecompose(DC_ID);
+            if(did) pollDecompose(did);
           },600);
         } else if(d.status==='failed'){
           clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;

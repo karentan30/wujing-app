@@ -194,6 +194,15 @@ def _uid_of(user):
         return getattr(user, "id", None)
 
 
+def _require_teacher(authorization, cls):
+    """校验调用者是该班级的老师（teacher_uid）。否则 403。返回 uid。"""
+    user = _resolve_user(authorization)
+    uid = _uid_of(user)
+    if uid is None or str(cls.get("teacher_uid") or "") != str(uid):
+        raise HTTPException(status_code=403, detail="只有该班老师可以操作")
+    return uid
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 评分归一：把 auto_decompose 产出（每段 MediaPipe 实测角度 + coach 文本）
 # 归一成 report.html 六维契约。口径固定（doc 四·注意）：
@@ -773,9 +782,12 @@ async def class_create(
     logo_url: str = Form(""),
     authorization: str = Header(None),
 ):
-    """建班 → 返回 class_id + invite_code + 加入短链（前端据 code 生成二维码）。"""
+    """建班 → 返回 class_id + invite_code + 加入短链（前端据 code 生成二维码）。
+    必须登录（老师身份需持久归属，游客建班会导致班级无人能管理/鉴权失效）。"""
     user = _resolve_user(authorization)
-    teacher_uid = _uid_of(user)  # 允许游客试建（体验版钩子），登录则绑账号
+    teacher_uid = _uid_of(user)
+    if teacher_uid is None:
+        raise HTTPException(status_code=401, detail="请先登录后再创建班级")
     if not dance_name.strip():
         raise HTTPException(status_code=400, detail="请填写舞名")
     if genre not in ("guofeng", "kpop"):
@@ -827,6 +839,7 @@ def class_start_scoring(class_id: str, authorization: str = Header(None)):
     cls = _get_class(class_id)
     if not cls:
         raise HTTPException(status_code=404, detail="班级不存在")
+    _require_teacher(authorization, cls)
     members = _members(class_id)
     pending = [m for m in members if m["status"] == "uploaded"]
     if not pending:
@@ -854,13 +867,16 @@ def class_start_scoring(class_id: str, authorization: str = Header(None)):
 @router.post("/api/class/{class_id}/rescore-member")
 def class_rescore_member(class_id: str, data: dict, authorization: str = Header(None)):
     """单人重跑（拍糊/检出差）。不重算全班积压，只把该生重新入队。"""
+    cls = _get_class(class_id)
+    if not cls:
+        raise HTTPException(status_code=404, detail="班级不存在")
+    _require_teacher(authorization, cls)
     member_id = data.get("member_id")
     m = _get_member(member_id) if member_id else None
     if not m or m["class_id"] != class_id:
         raise HTTPException(status_code=404, detail="学员不存在")
     if not m["decompose_id"]:
         raise HTTPException(status_code=400, detail="该学员尚未上传视频")
-    cls = _get_class(class_id)
     did = m["decompose_id"]
     video_path = os.path.join(DATA_DIR, did, "input.mp4")
     _set_member_status(member_id, "uploaded")
@@ -873,7 +889,11 @@ def class_rescore_member(class_id: str, data: dict, authorization: str = Header(
 
 @router.get("/api/class/{class_id}/report")
 def class_report(class_id: str, authorization: str = Header(None)):
-    """拉汇总报告 JSON（喂 report.html 的 DATA[]）。优先用缓存，无则实时汇总。"""
+    """拉汇总报告 JSON（喂 report.html 的 DATA[]）。优先用缓存，无则实时汇总。仅该班老师可看。"""
+    cls = _get_class(class_id)
+    if not cls:
+        raise HTTPException(status_code=404, detail="班级不存在")
+    _require_teacher(authorization, cls)
     con = get_db()
     try:
         row = con.execute(
@@ -889,10 +909,11 @@ def class_report(class_id: str, authorization: str = Header(None)):
 
 @router.patch("/api/class/{class_id}/brand")
 def class_set_brand(class_id: str, data: dict, authorization: str = Header(None)):
-    """存机构品牌（Logo/机构名/老师名/标语）——护城河体验。"""
+    """存机构品牌（Logo/机构名/老师名/标语）——护城河体验。仅该班老师可改。"""
     cls = _get_class(class_id)
     if not cls:
         raise HTTPException(status_code=404, detail="班级不存在")
+    _require_teacher(authorization, cls)
     brand = {"schoolName": (data.get("schoolName") or "").strip(),
              "teacherName": (data.get("teacherName") or "").strip(),
              "motto": (data.get("motto") or "").strip(),
@@ -909,7 +930,11 @@ def class_set_brand(class_id: str, data: dict, authorization: str = Header(None)
 
 @router.patch("/api/class/{class_id}/notes")
 def class_set_notes(class_id: str, data: dict, authorization: str = Header(None)):
-    """老师逐生备注：写进该生 score_json 的 teacher_note 字段（report.html 老师备注区）。"""
+    """老师逐生备注：写进该生 score_json 的 teacher_note 字段（report.html 老师备注区）。仅老师可写。"""
+    cls = _get_class(class_id)
+    if not cls:
+        raise HTTPException(status_code=404, detail="班级不存在")
+    _require_teacher(authorization, cls)
     member_id = data.get("member_id")
     note = (data.get("note") or "").strip()
     m = _get_member(member_id) if member_id else None

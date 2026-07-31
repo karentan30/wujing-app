@@ -123,10 +123,16 @@ def _user_id_from_auth(authorization):
         raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
 
 
-def _user_id_optional(authorization):
+def _user_id_optional(authorization, x_device_id=None):
     """可选登录：产品是「上传免费无需登录 → 要拆才付」，游客也能下单付费。
-    有合法 token → 真实 user_id；无/非法 token → 匿名占位 'guest'（订单仍按 dance_id 履约解锁）。"""
+    有合法 token → 真实 user_id；无 token → guest:<device_id>（每设备独立身份，
+    一次付款只解锁该设备，防止游客全局共享一次付款白嫖）。"""
     if not authorization:
+        dev = (x_device_id or "").strip()
+        if dev:
+            dev = "".join(ch for ch in dev if ch.isalnum() or ch in "-_")[:64]
+            if dev:
+                return f"guest:{dev}"
         return "guest"
     scheme, _, token = authorization.partition(" ")
     if scheme.lower() != "bearer" or not token:
@@ -361,9 +367,10 @@ def _wx_orderquery(out_trade_no):
 
 
 @router.post("/wechat/create")
-async def wechat_create(payload: dict, authorization: str = Header(None)):
+async def wechat_create(payload: dict, authorization: str = Header(None),
+                        x_device_id: str = Header(None)):
     """微信 NATIVE 下单。body: {dance_id}。返回 {code_url} 供前端生成二维码。"""
-    user_id = _user_id_optional(authorization)
+    user_id = _user_id_optional(authorization, x_device_id)
     dance_id = str(payload.get("dance_id", "") or "").strip()
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
@@ -460,9 +467,10 @@ def get_alipay():
 
 
 @router.post("/alipay/create")
-async def alipay_create(payload: dict, authorization: str = Header(None)):
+async def alipay_create(payload: dict, authorization: str = Header(None),
+                        x_device_id: str = Header(None)):
     """支付宝当面付：alipay.trade.precreate → 返回 qr_code 给前端生成二维码。"""
-    user_id = _user_id_optional(authorization)
+    user_id = _user_id_optional(authorization, x_device_id)
     dance_id = str(payload.get("dance_id", "") or "").strip()
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
@@ -561,10 +569,11 @@ def _stripe_request(method, path, form=None, timeout=20):
 
 
 @router.post("/stripe/create")
-async def stripe_create(payload: dict, authorization: str = Header(None)):
+async def stripe_create(payload: dict, authorization: str = Header(None),
+                        x_device_id: str = Header(None)):
     """海外 Stripe Checkout Session（mode=payment，price_data 动态计价 PRICE_USD）。
     返回 {url} 前端跳转 Stripe 托管收银台。out_trade_no 写入 metadata + client_reference_id 供回调对账。"""
-    user_id = _user_id_optional(authorization)
+    user_id = _user_id_optional(authorization, x_device_id)
     dance_id = str(payload.get("dance_id", "") or "").strip()
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
@@ -726,7 +735,8 @@ def _pay_status_query(out_trade_no, channel=None):
 
 
 @router.get("/status")
-async def pay_status(out_trade_no: str, authorization: str = Header(None)):
+async def pay_status(out_trade_no: str, authorization: str = Header(None),
+                     x_device_id: str = Header(None)):
     """前端统一轮询接口：返回订单状态 + 拆解卡生成进度 breakdown_status。
     breakdown_status: '' / queued / processing / completed / failed
     完成后前端调 GET /api/decompose/{dance_id} 取完整拆解卡。"""
@@ -735,9 +745,10 @@ async def pay_status(out_trade_no: str, authorization: str = Header(None)):
 
 
 @router.get("/dance/{dance_id}/unlocked")
-async def dance_unlocked(dance_id: str, authorization: str = Header(None)):
+async def dance_unlocked(dance_id: str, authorization: str = Header(None),
+                         x_device_id: str = Header(None)):
     """查某支舞是否已为当前用户解锁（存在一条 paid 订单即解锁）。前端用于门控下载完整拆解卡。"""
-    user_id = _user_id_optional(authorization)
+    user_id = _user_id_optional(authorization, x_device_id)
     con = get_db()
     try:
         row = con.execute(
