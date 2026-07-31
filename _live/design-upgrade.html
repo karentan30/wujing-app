@@ -3609,7 +3609,38 @@ function subscribeAlipay(){
   if(!token){ showAuth(); return; }
   var el=document.getElementById('subSheet');
   if(el) el.remove();
-  toast(_isZH()?'支付宝月卡暂未开通，请用微信或Stripe':'Alipay monthly not available yet');
+  PAY_BUSY=true;
+  toast(_isZH()?'发起支付宝订阅...':'Starting Alipay...');
+  fetch('/api/pay/subscribe/alipay',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:'{}'})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.ok && d.qr_code){
+        WJ.track('subscribe_monthly',{channel:'alipay'});
+        localStorage.setItem('wj_sub_mode','1');
+        var m=document.getElementById('payModal');
+        if(m) m.setAttribute('aria-hidden','false');
+        var pc=document.getElementById('payChannels');
+        if(pc) pc.style.display='none';
+        var qr=document.getElementById('payQr');
+        if(qr){ qr.style.display='block'; }
+        var img=document.getElementById('payQrImg');
+        if(img){ img.src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(d.qr_code); img.style.display='block'; }
+        var ql=document.getElementById('payQrLoad');
+        if(ql) ql.classList.add('hide');
+        var qh=document.getElementById('payQrHint');
+        if(qh) qh.innerHTML=_isZH()?'打开 <b>支付宝</b> 扫一扫 · 支付 <b>¥39</b>':'Scan Alipay · <b>¥39</b>';
+        payPoll(d.out_trade_no);
+      } else { PAY_BUSY=false; toast((d.detail||'支付宝月卡失败'),true); }
+    }).catch(function(){ PAY_BUSY=false; toast('网络错误',true); });
+}
+function openPortal(){
+  var token=localStorage.getItem('wj_token')||'';
+  if(!token){ toast(_isZH()?'请先登录':'Please log in first'); return; }
+  fetch('/api/pay/portal',{method:'POST',headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.ok && d.url){ window.location.href=d.url; }
+      else toast(d.detail||(_isZH()?'暂无订阅记录':'No subscription found'));
+    }).catch(function(){toast(_isZH()?'网络错误':'Network error');});
 }
 function showMemberSuccess(){
   localStorage.removeItem('wj_sub_mode');
@@ -3637,7 +3668,8 @@ function showMemberSuccess(){
       +'</div>'
       +'<div style="padding:16px 24px 28px">'
       +'<button class="btn-gold" style="width:100%;font-size:15px;padding:14px" onclick="document.getElementById(\'memberSuccessSheet\').remove();showDecomposeUpload()">'+(_isZH()?'立刻上传一支舞 →':'Upload a Dance →')+'</button>'
-      +'<div style="text-align:center;margin-top:12px;font-size:12px;color:#bbb;cursor:pointer" onclick="document.getElementById(\'memberSuccessSheet\').remove()">'+(_isZH()?'稍后再说':'Later')+'</div>'
+      +'<div style="text-align:center;margin-top:10px;font-size:12px;color:#E9B872;cursor:pointer;text-decoration:underline" onclick="document.getElementById(\'memberSuccessSheet\').remove();openPortal()">'+(_isZH()?'管理订阅 / 取消续费':'Manage subscription')+'</div>'
+      +'<div style="text-align:center;margin-top:8px;font-size:12px;color:#bbb;cursor:pointer" onclick="document.getElementById(\'memberSuccessSheet\').remove()">'+(_isZH()?'稍后再说':'Later')+'</div>'
       +'</div>'
       +'</div></div>';
     document.body.insertAdjacentHTML('beforeend',html);

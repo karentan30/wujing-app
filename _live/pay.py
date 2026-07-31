@@ -1119,3 +1119,59 @@ async def member_status(authorization: str = Header(None)):
         finally:
             con.close()
     return {"is_member": active, "expires_at": expires_at, "days_remaining": days_remaining}
+
+
+@router.post("/subscribe/alipay")
+async def subscribe_alipay(payload: dict, authorization: str = Header(None),
+                            x_device_id: str = Header(None)):
+    """支付宝月卡 ¥39（当面付 precreate → 扫码，后端记录 member_expires+30天）"""
+    user_id = _user_id_optional(authorization, x_device_id)
+    client = get_alipay()
+    if not client:
+        raise HTTPException(status_code=503, detail="支付宝暂未开放")
+    oid = _new_oid("WJALSUB")
+    con = get_db()
+    try:
+        con.execute(
+            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,"
+            "breakdown_status,created_at,product) VALUES(?,?,?,?,'pending','alipay','CNY','',?,?)",
+            (oid, user_id, "subscription", ("%.2f" % PRICE_CNY_MONTHLY), _now_iso(), "monthly"))
+        con.commit()
+    finally:
+        con.close()
+    try:
+        resp = client.api_alipay_trade_precreate(
+            subject="舞镜月会员·30天无限拆",
+            out_trade_no=oid,
+            total_amount=("%.2f" % PRICE_CNY_MONTHLY))
+    except Exception as e:
+        print(f"[pay/subscribe/alipay] precreate 异常 {e}")
+        raise HTTPException(status_code=502, detail="发起支付失败，请稍后再试")
+    if str(resp.get("code")) != "10000" or not resp.get("qr_code"):
+        print(f"[pay/subscribe/alipay] 失败 {resp}")
+        raise HTTPException(status_code=400,
+                            detail="支付宝下单失败：" + (resp.get("sub_msg") or resp.get("msg") or "未知错误"))
+    return {"ok": True, "out_trade_no": oid, "qr_code": resp["qr_code"], "amount": PRICE_CNY_MONTHLY}
+
+
+@router.post("/portal")
+async def create_portal_session(authorization: str = Header(None)):
+    """Stripe Customer Portal：用户自主管理/取消订阅"""
+    user_id = _user_id_from_auth(authorization)
+    if not _stripe_ready():
+        raise HTTPException(status_code=503, detail="Stripe 暂未开放")
+    con = get_db()
+    try:
+        row = con.execute("SELECT stripe_customer_id FROM users WHERE id=?", (user_id,)).fetchone()
+    finally:
+        con.close()
+    if not row or not row["stripe_customer_id"]:
+        raise HTTPException(status_code=404, detail="未找到Stripe订阅记录")
+    form = {
+        "customer": row["stripe_customer_id"],
+        "return_url": "https://wujing.mylumee.app/?portal=return",
+    }
+    code, j = _stripe_request("POST", "/v1/billing_portal/sessions", form)
+    if code != 200 or not j.get("url"):
+        raise HTTPException(status_code=502, detail="Portal 创建失败")
+    return {"ok": True, "url": j["url"]}
