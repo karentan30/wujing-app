@@ -1314,7 +1314,61 @@ document.addEventListener('DOMContentLoaded', function(){
       if(label) label.classList.add('done');
     }
   });
+
+  // ── 解析推荐链接 ref 参数，存入 localStorage ──
+  try{
+    var _u=new URLSearchParams(location.search);
+    var _r=_u.get('ref');
+    if(_r) localStorage.setItem('wj_ref',_r.slice(0,64));
+  }catch(e){}
+
+  // ── 免费额度：登录用户启动后拉一次 ──
+  if(AUTH_TOKEN){
+    fetch('api/pay/credits',{headers:{'Authorization':'Bearer '+AUTH_TOKEN}})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.credits>0) _showCreditsToast(d.credits);
+      }).catch(function(){});
+  }
+
+  // ── 回访钩子：距上次跟练 18h-48h 弹「继续练」sheet ──
+  try{
+    var _lpt=parseInt(localStorage.getItem('wj_last_practice_time')||'0',10);
+    var _lpd=localStorage.getItem('wj_last_practice_did');
+    var _lptitle=localStorage.getItem('wj_last_practice_title')||'这支舞';
+    var _now=Date.now(), _diff=_now-_lpt;
+    if(_lpt && _lpd && _diff > 18*3600*1000 && _diff < 48*3600*1000){
+      setTimeout(function(){ _showComebackSheet(_lpd, _lptitle); }, 1200);
+    }
+  }catch(e){}
 });
+
+/* 免费额度提示 */
+function _showCreditsToast(n){
+  try{
+    var el=document.createElement('div');
+    el.style.cssText='position:fixed;top:env(safe-area-inset-top,16px);left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;z-index:9998;box-shadow:0 4px 16px rgba(181,146,42,.35);white-space:nowrap;cursor:pointer';
+    el.textContent='🎁 你有 '+n+' 次免费拆解（推荐奖励）';
+    el.onclick=function(){ el.remove(); showDecomposeUpload(); };
+    document.body.appendChild(el);
+    setTimeout(function(){ el.style.opacity='0';el.style.transition='opacity .5s';setTimeout(function(){el.remove();},500); },5000);
+  }catch(e){}
+}
+
+/* 回访钩子 */
+function _showComebackSheet(did, title){
+  var m=document.createElement('div'); m.className='practice-modal';
+  m.innerHTML=
+    '<div class="practice-sheet">'+
+      '<h3>'+((_isZH)?'继续练《'+title+'》':'Continue your practice')+'</h3>'+
+      '<p style="margin-bottom:24px">'+((_isZH)?'昨天开始练的这支舞，今天再跟练一次，曲线会涨起来 📈':'You started practicing yesterday. One more session today will grow your curve 📈')+'</p>'+
+      '<button class="auth-btn primary" style="margin-bottom:10px" onclick="window.DC_ID=\''+did+'\';dcLoading();pollDecompose(\''+did+'\');this.closest(\'.practice-modal\').remove()">'+((_isZH)?'继续跟练 →':'Continue practice →')+'</button>'+
+      '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="this.closest(\'.practice-modal\').remove()">'+((_isZH)?'下次再说':'Maybe later')+'</button>'+
+    '</div>';
+  document.body.appendChild(m);
+  m.addEventListener('click',function(e){if(e.target===m)m.remove();});
+  try{if(window.WJ&&WJ.track)WJ.track('comeback_sheet_shown',{dance_id:did});}catch(e){}
+}
 
 /* ═══ AUTH + API HELPERS ═══ */
 var AUTH_TOKEN = localStorage.getItem('wujing_token') || null;
@@ -3191,23 +3245,25 @@ function dcStartPractice(){
 /* App 内跟练自评弹层（替代 window.prompt） */
 function _showPracticeScoreModal(did, title){
   var existing=document.getElementById('practiceModal'); if(existing) existing.remove();
+  var zh=_isZH();
   var m=document.createElement('div'); m.id='practiceModal'; m.className='practice-modal';
   m.innerHTML=
     '<div class="practice-sheet">'+
-      '<h3>跟练完了！给自己打个分</h3>'+
-      '<p>跟着《'+title+'》完整跳一遍后<br>这次跳了多少达标度？</p>'+
+      '<h3>'+(zh?'跟练完了！给自己打个分':'Done! Rate yourself')+'</h3>'+
+      '<p>'+(zh?'跟着《'+title+'》完整跳一遍后<br>这次跳了多少达标度？':'How well did you follow along with <b>'+title+'</b>?<br>Slide to rate yourself.')+'</p>'+
       '<div class="score-display" id="psDisplay">70</div>'+
-      '<div class="score-label" id="psLabel">继续加油</div>'+
+      '<div class="score-label" id="psLabel">'+(zh?'继续加油':'Keep it up')+'</div>'+
       '<input type="range" class="score-slider" id="psSlider" min="0" max="100" value="70" oninput="_psUpdate(this.value)">'+
-      '<label class="remind-toggle"><input type="checkbox" id="psRemind" checked> 明天提醒我再练一次</label>'+
-      '<button class="auth-btn primary" style="margin-bottom:8px" onclick="_psSubmit(\''+did+'\')">记录这一次 🚀</button>'+
-      '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="document.getElementById(\'practiceModal\').remove()">跳过</button>'+
+      '<label class="remind-toggle"><input type="checkbox" id="psRemind" checked> '+(zh?'明天提醒我再练一次':'Remind me to practice tomorrow')+'</label>'+
+      '<button class="auth-btn primary" style="margin-bottom:8px" onclick="_psSubmit(\''+did+'\')">'+(zh?'记录这一次 🚀':'Save this session 🚀')+'</button>'+
+      '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="document.getElementById(\'practiceModal\').remove()">'+(zh?'跳过':'Skip')+'</button>'+
     '</div>';
   document.body.appendChild(m);
   m.addEventListener('click',function(e){ if(e.target===m) m.remove(); });
 }
 function _psUpdate(v){
-  var lbl=v>=90?'太棒了！🏆':v>=75?'跳得不错 ✨':v>=60?'有进步空间':'继续加油 💪';
+  var zh=_isZH();
+  var lbl=v>=90?(zh?'太棒了！🏆':'Amazing! 🏆'):v>=75?(zh?'跳得不错 ✨':'Nice work ✨'):v>=60?(zh?'有进步空间':'Room to improve'):(zh?'继续加油 💪':'Keep going 💪');
   document.getElementById('psDisplay').textContent=v;
   document.getElementById('psLabel').textContent=lbl;
 }
@@ -3220,6 +3276,12 @@ function _psSubmit(did){
     .then(function(r){ return r.json(); })
     .then(function(dd){
       try{ if(window.WJ&&WJ.track) WJ.track('practice_scored',{dance_id:did,score:score,reminded:remind}); }catch(e){}
+      // 留存：存回访钩子数据
+      try{
+        localStorage.setItem('wj_last_practice_time', String(Date.now()));
+        localStorage.setItem('wj_last_practice_did', did);
+        var _dc=DC_DATA||{}; localStorage.setItem('wj_last_practice_title',_dc.title||'我的舞');
+      }catch(e){}
       toast(dd.status==='ok'?'起始分 '+score+' 分已记录 · 再练几次看曲线涨起来 🚀':'记录失败');
       loadWorks();
       if(remind) _showRemindSheet(did);
@@ -3228,14 +3290,15 @@ function _psSubmit(did){
 }
 /* 留存钩子：跟练后「明天提醒」弹层 */
 function _showRemindSheet(did){
+  var zh=_isZH();
   setTimeout(function(){
     var m=document.createElement('div'); m.className='practice-modal';
     m.innerHTML=
       '<div class="practice-sheet" style="padding-bottom:env(safe-area-inset-bottom,24px)">'+
-        '<h3>🔔 明天继续练</h3>'+
-        '<p style="margin-bottom:24px">每天练15分钟<br>一周内进步曲线就会涨起来</p>'+
-        '<button class="auth-btn primary" style="margin-bottom:10px" onclick="_setRemind(this)">允许通知 · 每天提醒我</button>'+
-        '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="this.closest(\'.practice-modal\').remove()">先不了</button>'+
+        '<h3>'+(zh?'🔔 明天继续练':'🔔 Practice tomorrow')+'</h3>'+
+        '<p style="margin-bottom:24px">'+(zh?'每天练15分钟<br>一周内进步曲线就会涨起来':'15 minutes a day —<br>your progress curve will grow within a week.')+'</p>'+
+        '<button class="auth-btn primary" style="margin-bottom:10px" onclick="_setRemind(this)">'+(zh?'允许通知 · 每天提醒我':'Allow notifications · remind me daily')+'</button>'+
+        '<button class="auth-btn" style="background:transparent;color:var(--mute);border:none;font-size:13px" onclick="this.closest(\'.practice-modal\').remove()">'+(zh?'先不了':'Maybe later')+'</button>'+
       '</div>';
     document.body.appendChild(m);
     m.addEventListener('click',function(e){ if(e.target===m) m.remove(); });
@@ -3378,7 +3441,7 @@ function _showShareReward(){
   try{
     var el=document.createElement('div');
     el.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C79E3B,#E4C878);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(181,146,42,.35);pointer-events:none;white-space:nowrap';
-    el.textContent='🎁 朋友通过你的链接拆舞，你得1次免费拆';
+    el.textContent=_isZH()?'🎁 朋友通过你的链接拆舞，你得1次免费拆':'🎁 When a friend pays via your link, you get 1 free breakdown';
     document.body.appendChild(el);
     setTimeout(function(){ el.style.opacity='0'; el.style.transition='opacity .5s'; setTimeout(function(){ el.remove(); },500); },3000);
   }catch(e){}
@@ -3429,11 +3492,14 @@ function payCreate(channel){
   PAY_BUSY = true;
   var hdrs={'Content-Type':'application/json'};
   if(typeof AUTH_TOKEN!=='undefined'&&AUTH_TOKEN) hdrs['Authorization']='Bearer '+AUTH_TOKEN;
+  if(typeof DC_DEVICE_ID!=='undefined'&&DC_DEVICE_ID) hdrs['X-Device-Id']=DC_DEVICE_ID;
   var _tEl=document.getElementById('dcTitle');
   var _tName=_tEl?(_tEl.value||'我的舞'):'我的舞';
+  var _ref=''; try{ _ref=localStorage.getItem('wj_ref')||''; }catch(e){}
   fetch('api/pay/'+channel+'/create',{
     method:'POST', headers:hdrs,
-    body:JSON.stringify({dance_id:DC_ID, title:_tName, genre:'guofeng'})
+    body:JSON.stringify({dance_id:DC_ID, title:_tName, genre:'guofeng',
+      discount:!!WJ_DISCOUNT, ref_code:_ref||undefined})
   })
   .then(function(r){return r.json();})
   .then(function(d){
@@ -3610,6 +3676,16 @@ renderDecompose = function(d){
     // ── 通用 ──
     '我的作品':'My Dances','返回':'Back','加载失败':'Load failed','已复制分享文案，去粘贴到小红书/抖音':'Copied! Paste to Xiaohongshu/Douyin',
     '长按截图分享到小红书/抖音':'Long-press to screenshot & share',
+    // ── 新增（裂变/留存/续费/回访）──
+    '再拆一支舞 · 8折优惠':'Break down another · 20% off',
+    '第二支只要':'2nd dance only','限本次':'limited offer',
+    '老用户8折':'20% returning user discount',
+    '8折限时优惠 · 上传免费 · 不成功退款':'20% off · free upload · refund on failure',
+    '去上传 →':'Upload now →',
+    '继续练':'Continue practice',
+    '下次再说':'Maybe later',
+    '跳过':'Skip',
+    '先不了':'Maybe later',
   };
 
   function trText(s){

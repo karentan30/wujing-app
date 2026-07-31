@@ -28,7 +28,18 @@ def init_db():
               email TEXT UNIQUE NOT NULL,
               password_hash TEXT NOT NULL,
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
+            );""")
+        # 幂等补列（存量库可能无此字段）
+        for ddl in (
+            "ALTER TABLE users ADD COLUMN free_credits INTEGER DEFAULT 0",
+            "ALTER TABLE users ADD COLUMN ref_code TEXT",
+        ):
+            try:
+                conn.execute(ddl)
+            except Exception:
+                pass
+        conn.commit()
+        conn.executescript("""
             CREATE TABLE IF NOT EXISTS reviews (
               id TEXT PRIMARY KEY,
               user_id INTEGER REFERENCES users(id),

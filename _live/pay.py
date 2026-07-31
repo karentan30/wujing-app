@@ -39,9 +39,56 @@ BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
 DB_PATH = os.environ.get("WUJING_DB_PATH", os.path.join(BASE_DIR, "wujing.db"))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
-PRICE_CNY = float(os.environ.get("WJ_DANCE_PRICE_CNY", "9.9"))     # 境内 ¥9.9
-PRICE_USD = float(os.environ.get("WJ_DANCE_PRICE_USD", "1.99"))    # 海外 Stripe 计价
+PRICE_CNY      = float(os.environ.get("WJ_DANCE_PRICE_CNY",      "9.9"))
+PRICE_CNY_DISC = float(os.environ.get("WJ_DANCE_PRICE_CNY_DISC", "7.9"))   # 复购8折
+PRICE_USD      = float(os.environ.get("WJ_DANCE_PRICE_USD",      "1.99"))
+PRICE_USD_DISC = float(os.environ.get("WJ_DANCE_PRICE_USD_DISC", "1.59"))
 PRODUCT_NAME = "舞镜 · 完整拆解卡（1 支舞）"
+
+
+def _has_prior_paid_order(user_id: str) -> bool:
+    """用户是否有过历史成功付款（用于老用户折扣资格校验）。"""
+    if not user_id or user_id.startswith("guest:"):
+        return False
+    con = get_db()
+    try:
+        r = con.execute(
+            "SELECT 1 FROM orders WHERE user_id=? AND status='paid' LIMIT 1", (user_id,)
+        ).fetchone()
+        return r is not None
+    finally:
+        con.close()
+
+
+def _resolve_price(user_id: str, discount_requested: bool):
+    """决定实际收取价格（CNY, USD）。后端自主校验折扣资格，不信前端。"""
+    if discount_requested and _has_prior_paid_order(user_id):
+        return PRICE_CNY_DISC, PRICE_USD_DISC
+    return PRICE_CNY, PRICE_USD
+
+
+def _award_referrer(ref_code: str):
+    """被推荐用户完成首单后，给推荐人加1次免费拆解额度。幂等（不重复给同一单）。"""
+    if not ref_code:
+        return
+    # ref_code 格式: share_u{user_id}_{kind}
+    parts = ref_code.split("_")
+    if len(parts) < 2 or not parts[1].startswith("u"):
+        return
+    try:
+        referrer_uid = int(parts[1][1:])
+    except Exception:
+        return
+    con = get_db()
+    try:
+        con.execute(
+            "UPDATE users SET free_credits = free_credits + 1 WHERE id=?", (referrer_uid,)
+        )
+        con.commit()
+    except Exception:
+        pass
+    finally:
+        con.close()
 
 router = APIRouter(prefix="/api/pay", tags=["pay"])
 
@@ -91,6 +138,8 @@ def init_orders_table():
             "ALTER TABLE orders ADD COLUMN currency TEXT DEFAULT 'CNY'",
             "ALTER TABLE orders ADD COLUMN channel TEXT",
             "ALTER TABLE orders ADD COLUMN trade_no TEXT",
+            "ALTER TABLE orders ADD COLUMN ref_code TEXT",
+            "ALTER TABLE orders ADD COLUMN discount INTEGER DEFAULT 0",
         ):
             try:
                 con.execute(ddl)
@@ -291,6 +340,21 @@ def _mark_paid_and_fulfill(out_trade_no, trade_no, channel, paid_amount_check,
 
             summary = _apply_paid_dance_unlock(
                 con, user_id, dance_id, out_trade_no, background_tasks=background_tasks)
+            # 推荐人奖励：首单完成后给推荐人加1次免费额度
+            try:
+                ref_row = con.execute(
+                    "SELECT ref_code FROM orders WHERE out_trade_no=?", (out_trade_no,)
+                ).fetchone()
+                if ref_row and ref_row["ref_code"]:
+                    # 只有新用户（历史仅此1单）才触发奖励，防刷
+                    prior = con.execute(
+                        "SELECT COUNT(*) as c FROM orders WHERE user_id=? AND status='paid'",
+                        (user_id,)
+                    ).fetchone()
+                    if prior and prior["c"] <= 1:
+                        _award_referrer(ref_row["ref_code"])
+            except Exception as _e:
+                print(f"[pay/ref_award] 奖励异常（不影响履约）: {_e}")
             con.commit()
             print(f"[pay/{channel}] PAID {out_trade_no} {summary}")
             return "ok"
@@ -369,31 +433,33 @@ def _wx_orderquery(out_trade_no):
 @router.post("/wechat/create")
 async def wechat_create(payload: dict, authorization: str = Header(None),
                         x_device_id: str = Header(None)):
-    """微信 NATIVE 下单。body: {dance_id}。返回 {code_url} 供前端生成二维码。"""
+    """微信 NATIVE 下单。body: {dance_id, discount?, ref_code?}。"""
     user_id = _user_id_optional(authorization, x_device_id)
     dance_id = str(payload.get("dance_id", "") or "").strip()
+    ref_code = str(payload.get("ref_code", "") or "").strip()[:64]
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
     if not _wechat_ready():
         raise HTTPException(status_code=503, detail="微信支付暂未开放")
+    price_cny, _ = _resolve_price(user_id, bool(payload.get("discount")))
     oid = _new_oid("WJWX")
     con = get_db()
     try:
         con.execute(
-            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,created_at)"
-            " VALUES(?,?,?,?, 'pending','wechat','CNY','',?)",
-            (oid, user_id, dance_id, ("%.2f" % PRICE_CNY), _now_iso()))
+            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,ref_code,discount,created_at)"
+            " VALUES(?,?,?,?, 'pending','wechat','CNY','',?,?,?)",
+            (oid, user_id, dance_id, ("%.2f" % price_cny), ref_code or None,
+             1 if price_cny < PRICE_CNY else 0, _now_iso()))
         con.commit()
     finally:
         con.close()
     try:
-        # spbill_create_ip 无法在此拿到 request（用占位；微信 NATIVE 对 IP 校验宽松）
-        r = _wx_unifiedorder(oid, int(round(PRICE_CNY * 100)), PRODUCT_NAME, "127.0.0.1")
+        r = _wx_unifiedorder(oid, int(round(price_cny * 100)), PRODUCT_NAME, "127.0.0.1")
     except Exception as e:
         print(f"[pay/wechat/create] 下单异常 {e}")
         raise HTTPException(status_code=502, detail="发起支付失败，请稍后再试")
     if r.get("return_code") == "SUCCESS" and r.get("result_code") == "SUCCESS" and r.get("code_url"):
-        return {"ok": True, "out_trade_no": oid, "code_url": r["code_url"], "amount": PRICE_CNY}
+        return {"ok": True, "out_trade_no": oid, "code_url": r["code_url"], "amount": price_cny}
     msg = r.get("err_code_des") or r.get("return_msg") or "未知错误"
     print(f"[pay/wechat/create] 下单失败 {r}")
     raise HTTPException(status_code=400, detail="微信下单失败：" + msg)
@@ -469,27 +535,30 @@ def get_alipay():
 @router.post("/alipay/create")
 async def alipay_create(payload: dict, authorization: str = Header(None),
                         x_device_id: str = Header(None)):
-    """支付宝当面付：alipay.trade.precreate → 返回 qr_code 给前端生成二维码。"""
+    """支付宝当面付。body: {dance_id, discount?, ref_code?}。"""
     user_id = _user_id_optional(authorization, x_device_id)
     dance_id = str(payload.get("dance_id", "") or "").strip()
+    ref_code = str(payload.get("ref_code", "") or "").strip()[:64]
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
     client = get_alipay()
     if not client:
         raise HTTPException(status_code=503, detail="支付宝暂未开放")
+    price_cny, _ = _resolve_price(user_id, bool(payload.get("discount")))
     oid = _new_oid("WJAL")
     con = get_db()
     try:
         con.execute(
-            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,created_at)"
-            " VALUES(?,?,?,?, 'pending','alipay','CNY','',?)",
-            (oid, user_id, dance_id, ("%.2f" % PRICE_CNY), _now_iso()))
+            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,ref_code,discount,created_at)"
+            " VALUES(?,?,?,?, 'pending','alipay','CNY','',?,?,?)",
+            (oid, user_id, dance_id, ("%.2f" % price_cny), ref_code or None,
+             1 if price_cny < PRICE_CNY else 0, _now_iso()))
         con.commit()
     finally:
         con.close()
     try:
         resp = client.api_alipay_trade_precreate(
-            subject=PRODUCT_NAME, out_trade_no=oid, total_amount=("%.2f" % PRICE_CNY))
+            subject=PRODUCT_NAME, out_trade_no=oid, total_amount=("%.2f" % price_cny))
     except Exception as e:
         print(f"[pay/alipay/create] precreate 异常 {e}")
         raise HTTPException(status_code=502, detail="发起支付失败，请稍后再试")
@@ -497,7 +566,7 @@ async def alipay_create(payload: dict, authorization: str = Header(None),
         print(f"[pay/alipay/create] 失败 {resp}")
         raise HTTPException(status_code=400,
                             detail="支付宝下单失败：" + (resp.get("sub_msg") or resp.get("msg") or "未知错误"))
-    return {"ok": True, "out_trade_no": oid, "qr_code": resp["qr_code"], "amount": PRICE_CNY}
+    return {"ok": True, "out_trade_no": oid, "qr_code": resp["qr_code"], "amount": price_cny}
 
 
 @router.post("/alipay/notify")
@@ -571,21 +640,23 @@ def _stripe_request(method, path, form=None, timeout=20):
 @router.post("/stripe/create")
 async def stripe_create(payload: dict, authorization: str = Header(None),
                         x_device_id: str = Header(None)):
-    """海外 Stripe Checkout Session（mode=payment，price_data 动态计价 PRICE_USD）。
-    返回 {url} 前端跳转 Stripe 托管收银台。out_trade_no 写入 metadata + client_reference_id 供回调对账。"""
+    """海外 Stripe Checkout Session。body: {dance_id, discount?, ref_code?}。"""
     user_id = _user_id_optional(authorization, x_device_id)
     dance_id = str(payload.get("dance_id", "") or "").strip()
+    ref_code = str(payload.get("ref_code", "") or "").strip()[:64]
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
     if not _stripe_ready():
         raise HTTPException(status_code=503, detail="Stripe 暂未开放")
+    _, price_usd = _resolve_price(user_id, bool(payload.get("discount")))
     oid = _new_oid("WJST")
     con = get_db()
     try:
         con.execute(
-            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,created_at)"
-            " VALUES(?,?,?,?, 'pending','stripe','USD','',?)",
-            (oid, user_id, dance_id, ("%.2f" % PRICE_USD), _now_iso()))
+            "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,ref_code,discount,created_at)"
+            " VALUES(?,?,?,?, 'pending','stripe','USD','',?,?,?)",
+            (oid, user_id, dance_id, ("%.2f" % price_usd), ref_code or None,
+             1 if price_usd < PRICE_USD else 0, _now_iso()))
         con.commit()
     finally:
         con.close()
@@ -599,21 +670,20 @@ async def stripe_create(payload: dict, authorization: str = Header(None),
         "metadata[user_id]": user_id,
         "line_items[0][quantity]": "1",
         "line_items[0][price_data][currency]": "usd",
-        "line_items[0][price_data][unit_amount]": str(int(round(PRICE_USD * 100))),  # 分
+        "line_items[0][price_data][unit_amount]": str(int(round(price_usd * 100))),
         "line_items[0][price_data][product_data][name]": PRODUCT_NAME,
     }
     code, j = _stripe_request("POST", "/v1/checkout/sessions", form)
     if code != 200 or not j.get("url"):
         print(f"[pay/stripe/create] 失败 code={code} {str(j)[:200]}")
         raise HTTPException(status_code=502, detail="Stripe 下单失败")
-    # 记录 session id 便于查单兜底
     con = get_db()
     try:
         con.execute("UPDATE orders SET trade_no=? WHERE out_trade_no=?", (j.get("id", ""), oid))
         con.commit()
     finally:
         con.close()
-    return {"ok": True, "out_trade_no": oid, "url": j["url"], "amount": PRICE_USD, "currency": "USD"}
+    return {"ok": True, "out_trade_no": oid, "url": j["url"], "amount": price_usd, "currency": "USD"}
 
 
 def _stripe_verify_sig(payload_bytes, sig_header, secret, tolerance=300):
@@ -761,3 +831,53 @@ async def dance_unlocked(dance_id: str, authorization: str = Header(None),
         return {"unlocked": False}
     return {"unlocked": True, "out_trade_no": row["out_trade_no"],
             "breakdown_status": row["breakdown_status"] or ""}
+
+
+@router.get("/credits")
+async def get_credits(authorization: str = Header(None)):
+    """查询当前用户的免费拆解额度（推荐奖励）。未登录返回 0。"""
+    from server import get_user_by_id
+    if not authorization or not authorization.startswith("Bearer "):
+        return {"credits": 0}
+    try:
+        import jwt as pyjwt
+        JWT_SECRET = os.environ.get("JWT_SECRET", "wujing-secret-change-me")
+        token = authorization.split(" ", 1)[1]
+        payload = pyjwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        uid = payload.get("user_id")
+    except Exception:
+        return {"credits": 0}
+    con = get_db()
+    try:
+        row = con.execute("SELECT free_credits FROM users WHERE id=?", (uid,)).fetchone()
+        return {"credits": int(row["free_credits"]) if row else 0}
+    finally:
+        con.close()
+
+
+@router.post("/credits/consume")
+async def consume_credit(payload: dict, authorization: str = Header(None)):
+    """消费1次免费额度（用户手动触发拆解时调用）。返回剩余额度。"""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="需要登录")
+    try:
+        import jwt as pyjwt
+        JWT_SECRET = os.environ.get("JWT_SECRET", "wujing-secret-change-me")
+        token = authorization.split(" ", 1)[1]
+        payload_jwt = pyjwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        uid = payload_jwt.get("user_id")
+    except Exception:
+        raise HTTPException(status_code=401, detail="token 无效")
+    con = get_db()
+    try:
+        row = con.execute("SELECT free_credits FROM users WHERE id=?", (uid,)).fetchone()
+        if not row or int(row["free_credits"] or 0) < 1:
+            raise HTTPException(status_code=402, detail="没有免费额度")
+        con.execute(
+            "UPDATE users SET free_credits = free_credits - 1 WHERE id=? AND free_credits > 0",
+            (uid,))
+        con.commit()
+        row2 = con.execute("SELECT free_credits FROM users WHERE id=?", (uid,)).fetchone()
+        return {"ok": True, "credits_remaining": int(row2["free_credits"] or 0)}
+    finally:
+        con.close()
