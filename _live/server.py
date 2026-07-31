@@ -6,11 +6,11 @@ import threading
 from datetime import datetime
 from pathlib import Path
 import urllib.request, base64, subprocess
-from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException, Header
+from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException, Header, Request
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from models import init_db, create_user, get_user_by_email, get_user_by_id, create_review, get_review, get_user_reviews, update_review_status, get_practice_progress, upsert_practice_task, get_user_stats
+from models import init_db, create_user, get_user_by_email, get_user_by_id, get_user_by_openid, create_wx_user, create_review, get_review, get_user_reviews, update_review_status, get_practice_progress, upsert_practice_task, get_user_stats
 from auth import hash_password, verify_password, create_token, decode_token
 # 支付统一走 pay.py（微信 NATIVE / 支付宝当面付 / Stripe Checkout，含幂等+验签+履约）。
 # 旧 payment.py 的支付桩已废弃：不再 import；订单表/DB 连接改用 pay.py 提供的实现。
@@ -191,6 +191,63 @@ def login_json(data: dict):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     token = create_token(user["id"], user["email"])
     return {"token": token, "user_id": user["id"], "email": user["email"]}
+
+# ── 微信网页授权登录（OAuth2.0 snsapi_userinfo）──────────────────────────────
+WECHAT_APP_ID = os.environ.get("WECHAT_APP_ID", "")
+WECHAT_APP_SECRET = os.environ.get("WECHAT_APP_SECRET", "")
+_WX_OAUTH_BASE = "https://open.weixin.qq.com/connect/oauth2/authorize"
+_WX_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token"
+_WX_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo"
+
+@app.get("/api/wx/login")
+def wx_login_redirect(redirect_uri: str = ""):
+    import urllib.parse as _up
+    if not WECHAT_APP_ID:
+        raise HTTPException(status_code=503, detail="WeChat AppID not configured")
+    callback = f"https://wujing.mylumee.app/api/wx/callback?redirect={_up.quote(redirect_uri or '/')}"
+    url = (f"{_WX_OAUTH_BASE}?appid={WECHAT_APP_ID}"
+           f"&redirect_uri={_up.quote(callback)}"
+           f"&response_type=code&scope=snsapi_userinfo&state=wujing#wechat_redirect")
+    return RedirectResponse(url)
+
+@app.get("/api/wx/callback")
+async def wx_callback(code: str = "", state: str = "", redirect: str = "/"):
+    import urllib.parse as _up, urllib.request as _ur
+    if not WECHAT_APP_SECRET:
+        return RedirectResponse(f"{redirect}#wx_error=secret_not_configured")
+    try:
+        # 1. code → access_token + openid
+        r = _ur.urlopen(
+            f"{_WX_TOKEN_URL}?appid={WECHAT_APP_ID}&secret={WECHAT_APP_SECRET}"
+            f"&code={code}&grant_type=authorization_code", timeout=10)
+        data = json.loads(r.read())
+        openid = data.get("openid", "")
+        access_token = data.get("access_token", "")
+        if not openid:
+            return RedirectResponse(f"{redirect}#wx_error=no_openid")
+        # 2. openid → userinfo
+        r2 = _ur.urlopen(
+            f"{_WX_USERINFO_URL}?access_token={access_token}&openid={openid}&lang=zh_CN", timeout=10)
+        user_info = json.loads(r2.read())
+        nickname = user_info.get("nickname", "")
+        avatar = user_info.get("headimgurl", "")
+        # 3. 查或建用户
+        user = get_user_by_openid(openid)
+        if user:
+            uid, email = user["id"], user["email"]
+        else:
+            uid = create_wx_user(openid, nickname)
+            email = f"wx_{openid}@wujing.wx"
+        token = create_token(uid, email)
+        # 4. 把 token 带回前端（URL hash）
+        payload = base64.b64encode(json.dumps(
+            {"token": token, "openid": openid, "nickname": nickname, "avatar": avatar}
+        ).encode()).decode()
+        return RedirectResponse(f"{redirect}#wx_token={payload}")
+    except Exception as e:
+        print(f"[wx_callback] error: {e}")
+        return RedirectResponse(f"{redirect}#wx_error=callback_failed")
+
 @app.get("/api/me")
 def get_me(user: dict = Depends(get_current_user)):
     stats = get_user_stats(user["id"])
@@ -657,6 +714,20 @@ app.include_router(hub_router)
 app.include_router(solo_router)
 app.include_router(group_router)
 app.include_router(my_works_router)
+# ---------- Teacher Signup ----------
+@app.post("/api/teacher/signup")
+async def teacher_signup(request: Request):
+    import datetime
+    try:
+        data = await request.json()
+        contact = str(data.get("contact", ""))[:100]
+        line = f"{datetime.datetime.now().isoformat()} | {contact}\n"
+        with open(os.path.join(BASE_DIR, "teacher_signups.txt"), "a") as f:
+            f.write(line)
+    except Exception:
+        pass
+    return {"ok": True}
+
 # ---------- Health Check ----------
 @app.get("/api/health")
 def health():

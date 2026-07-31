@@ -36,6 +36,7 @@ def init_db():
             "ALTER TABLE users ADD COLUMN member_expires TEXT",
             "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
             "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
+            "ALTER TABLE users ADD COLUMN openid TEXT",
         ):
             try:
                 conn.execute(ddl)
@@ -81,6 +82,25 @@ def get_user_by_id(user_id):
     with get_db() as conn:
         row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
         return dict(row) if row else None
+
+def get_user_by_openid(openid):
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM users WHERE openid = ?", (openid,)).fetchone()
+        return dict(row) if row else None
+
+def create_wx_user(openid, nickname=""):
+    import uuid as _uuid, hashlib as _hl
+    email = f"wx_{openid}@wujing.wx"
+    pw_hash = _hl.sha256(_uuid.uuid4().hex.encode()).hexdigest()
+    with get_db() as conn:
+        try:
+            cur = conn.execute(
+                "INSERT INTO users (email, password_hash, openid) VALUES (?, ?, ?)",
+                (email, pw_hash, openid))
+            return cur.lastrowid
+        except Exception:
+            row = conn.execute("SELECT * FROM users WHERE openid = ?", (openid,)).fetchone()
+            return dict(row)["id"] if row else None
 
 def create_review(review_id, user_id, teacher_key):
     with get_db() as conn:
