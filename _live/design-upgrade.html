@@ -1592,7 +1592,7 @@ function loadPlaza(){
         h += '<div class="wv-card">'+
           '<div class="wc-cover">🎵</div>'+
           '<div class="wc-body">'+
-            '<div class="wc-title">'+_esc(w.title||'一支舞')+'</div>'+
+            '<div class="wc-title">'+_esc(w.title||'一支舞')+(w.author_is_member?'<span style="margin-left:5px;font-size:11px;background:linear-gradient(135deg,#E9B872,#C8922A);color:#fff;padding:1px 6px;border-radius:8px;font-weight:700;letter-spacing:.02em">月卡</span>':'')+'</div>'+
             '<div class="wc-meta">'+(w.genre?'<span class="wc-tag">'+_esc(w.genre==='guofeng'?'国风':w.genre)+'</span>':'')+
               (w.best_score!==null?'<span class="wc-score">达标 '+w.best_score+'</span>':'')+'</div>'+
             '<div class="wc-row"><div class="wc-btn main" onclick="showDecomposeUpload()">拆我的同款舞</div><div class="wc-btn" onclick="window.DC_ID=\''+w.dance_id+'\';dcLoading();pollDecompose(\''+w.dance_id+'\')">看这支</div></div>'+
@@ -1813,7 +1813,7 @@ function startUpload() {
 
 function showLoadingView() {
   document.getElementById('reviewContainer').innerHTML =
-    '<div class="loading-view"><div class="loading-spinner"></div><div class="loading-status">AI 正在分析你的舞蹈...</div><div class="loading-detail">抽帧对比 → DeepSeek 视觉分析 → 生成慢放</div><div class="loading-detail" style="margin-top:8px;font-size:11px">大约需要 30-60 秒</div></div>';
+    '<div class="loading-view"><div class="loading-spinner"></div><div class="loading-status">AI 正在分析你的舞蹈...</div><div class="loading-detail">抽帧对比 → DeepSeek 视觉分析 → 生成慢放</div></div>';
 }
 
 function pollReview(reviewId) {
@@ -2963,6 +2963,9 @@ function renderDetailArchive(p){
 .dc-modal .mrow{display:flex;gap:8px;margin-top:14px}
 .dc-modal .mrow span{flex:1;text-align:center;font-size:13px;padding:11px;border-radius:10px;border:1px solid #3A3428;color:#E8DEC8;cursor:pointer}
 .dc-modal .mrow span.on{background:linear-gradient(135deg,#b8923e,#e8c98e);color:#0a0a0a;border-color:transparent;font-weight:600}
+.dc-modal .box{position:relative}
+.dc-modal .mclose-x{position:absolute;top:-10px;right:-10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:20px;line-height:36px;text-align:center;cursor:pointer;z-index:10;backdrop-filter:blur(4px)}
+.dc-modal .mclose-x:hover{background:rgba(255,255,255,.28)}
 .dc-modal .mclose{text-align:center;color:#B6A984;font-size:13px;margin-top:16px;cursor:pointer}
 
 /* ═══ PAYMENT MODAL ═══ */
@@ -2996,6 +2999,7 @@ function renderDetailArchive(p){
 
 <div class="dc-modal" id="dcModal">
   <div class="box">
+    <div class="mclose-x" onclick="dcCloseModal()">×</div>
     <video id="dcVideo" playsinline controls loop></video>
     <div class="mt" id="dcModalTitle"></div>
     <div class="mrow">
@@ -3156,7 +3160,7 @@ function dcLoading(){
     ['读取视频 · 识别八拍节奏','识别每段动作 · 分析脚下路线','MediaPipe 测量关节角度','生成八拍卡 · 老师点评 · 口诀']:
     ['Reading video · detecting 8-beat rhythm','Analyzing movements · footwork','Measuring joint angles','Generating beat cards · coach notes'];
   var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span><span class="spin"></span></div>';}).join('');
-  _dcView().innerHTML='<div class="dc-load"><div class="dc-mirror">舞</div><div class="dc-load-t">'+(_isZH()?'AI 正在拆解你的舞…':'Analyzing your dance...')+'</div><div class="dc-load-d" id="dcCountdown">'+(_isZH()?'通常 30 秒内完成 · 请别退出':'Usually done in 30 seconds · stay on page')+'</div><div class="dc-steps">'+steps+'</div></div>';
+  _dcView().innerHTML='<div class="dc-load"><div class="dc-mirror">舞</div><div class="dc-load-t">'+(_isZH()?'AI 正在拆解你的舞…':'Analyzing your dance...')+'</div><div class="dc-load-d" id="dcCountdown">'+(_isZH()?'AI 分析中 · 请别退出':'AI analyzing · please stay')+'</div><div class="dc-steps">'+steps+'</div></div>';
   _dcShow();
   var cur=0;
   DC_LOAD_TIMER=setInterval(function(){
@@ -3518,6 +3522,13 @@ function dcSetMode(m){
   v.playbackRate=(m==='slow')?0.5:1;
   document.getElementById('dcNorm').classList.toggle('on',m!=='slow');
   document.getElementById('dcSlow').classList.toggle('on',m==='slow');
+  var slowBtn=document.getElementById('dcSlow');
+  if(m==='slow'){
+    function _upd(){ if(v.duration>0) slowBtn.textContent='慢放 0.5× · '+Math.round(v.duration*2)+'s'; }
+    if(v.readyState>=1) _upd(); else v.addEventListener('loadedmetadata',_upd,{once:true});
+  } else {
+    slowBtn.textContent='慢放 0.5×';
+  }
 }
 function dcToggleMirror(){
   DC_MIR=!DC_MIR;
@@ -3893,7 +3904,7 @@ renderDecompose = function(d){
     '开始拆解':'Start breakdown','开始拆解 · ¥9.9':'Start breakdown · ¥9.9',
     '拆解结果¥9.9 · 上传免费 · 不成功退款':'Result card ¥9.9 · free upload · refund if it fails',
     '上传即代表你已年满18岁，或未成年人已获家长同意 · 拆解内容由 AI 生成':'By uploading you confirm you are 18+ (or a minor with guardian consent) · Content is AI-generated',
-    'AI 正在拆解你的舞…':'AI is breaking down your dance…','通常 30 秒内完成 · 请别退出':'Usually done within 30s · please stay',
+    'AI 正在拆解你的舞…':'AI is breaking down your dance…','AI 分析中 · 请别退出':'AI analyzing · please stay',
     '读取视频 · 按八拍切分':'Reading video · cutting to beats','AI 逐段识别动作 · 脚下 · 口诀':'AI recognizing moves · footwork · cues',
     'AI 逐帧测量关节角度':'AI measuring joint angles frame by frame','生成八拍卡 · 故事卡 · 老师点评':'Generating 8-beat cards · story · coach feedback',
     '这支没拆成功':'This one failed','建议换一支光线清晰、单人出镜、15–30秒的舞蹈视频再试':'Try a video with clear lighting, solo dancer, 15–30s',
