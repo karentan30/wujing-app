@@ -89,7 +89,8 @@ def _vision_describe(frame_path, idx, t0, t1):
         f"这是一支舞蹈第{idx}段(约{t0:.1f}-{t1:.1f}秒)的定格画面。你是资深舞蹈老师，"
         "用中文描述这个动作帮学员跟练。只输出JSON不要解释：\n"
         '{"name":"2-3字段名如 起势/开手/旋身/亮相","action":"一句话身体和手臂动作要点",'
-        '"feet":"脚下和重心一句话","intent":"这段的意境或情绪一句话","kou":"3-4字记忆口诀如 举—望—转"}'
+        '"feet":"脚下和重心一句话","intent":"这段的意境或情绪一句话","kou":"3-4字记忆口诀如 举—望—转",'
+        '"key":"1个最能代表这段动作的汉字如 遮/抛/仰/拧/甩/举/沉/回/开/点"}'
     )
     body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 260,
             "input": [{"role": "user", "content": [
@@ -108,7 +109,8 @@ def _vision_describe(frame_path, idx, t0, t1):
     return {"i": idx, "t0": round(t0, 2), "t1": round(t1, 2),
             "name": d.get("name", ""), "full": (d.get("action", "") or "")[:14],
             "action": d.get("action", ""), "feet": d.get("feet", ""),
-            "intent": d.get("intent", ""), "kou": d.get("kou", "")}
+            "intent": d.get("intent", ""), "kou": d.get("kou", ""),
+            "key": d.get("key", "")}
 
 
 def _vision_coach(frame_paths, title, measured=None):
@@ -183,12 +185,15 @@ def _write(did, obj):
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
 
-def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng"):
+def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
+                  song="", lyric_first="", lyric_last=""):
     """后台任务：拆解一支任意上传的舞。全程兜底，绝不留半成品。"""
     ddir = os.path.join(DATA_DIR, did)
     os.makedirs(os.path.join(ddir, "frames"), exist_ok=True)
     os.makedirs(os.path.join(ddir, "clips"), exist_ok=True)
-    result = {"id": did, "user_id": user_id, "title": title, "genre": genre, "status": "processing"}
+    result = {"id": did, "user_id": user_id, "title": title, "genre": genre,
+              "song": song, "lyric_first": lyric_first, "lyric_last": lyric_last,
+              "status": "processing"}
     _write(did, result)
     try:
         dur = _dur(video_path)
@@ -224,6 +229,16 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng"):
         # 挂真实角度到每段
         for p in phrases:
             p["angles"] = pose.get(f"p{p['i']}")
+
+        # 串联口诀（用 key 字拼）
+        keys = [p.get("key", "") for p in phrases]
+        if any(keys):
+            mnemo = "  ".join(k for k in keys if k) + "  ·  " + "  ".join(k for k in keys if k)
+            mnemo = "  ".join(k for k in keys if k)
+            result["mnemo"] = mnemo
+            result["mnemo_sub"] = "  >  ".join(
+                f"{p.get('key','')}({p.get('name','')})" for p in phrases if p.get("key")
+            )
 
         # 每段正常切片（慢放0.5×=前端playbackRate·镜像=前端scaleX(-1)·无需重复编码）
         for i in range(n):

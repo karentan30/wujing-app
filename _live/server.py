@@ -48,9 +48,11 @@ def _free_quota_ok(identity):
         rec["h"].append(now); rec["d"].append(now)
         return True
 # ── 拆解完成钩子：入库 + 埋点 ──
-def _run_decompose_with_hooks(did, video_path, user_id, title, genre):
+def _run_decompose_with_hooks(did, video_path, user_id, title, genre,
+                              song="", lyric_first="", lyric_last=""):
     try:
-        run_decompose(did, video_path, user_id, title, genre)
+        run_decompose(did, video_path, user_id, title, genre,
+                      song=song, lyric_first=lyric_first, lyric_last=lyric_last)
         result = get_decompose(did)
         if result and result.get("status") == "completed":
             if user_id:
@@ -463,6 +465,9 @@ async def decompose_video(
     video: UploadFile = File(...),
     title: str = Form("我的舞"),
     genre: str = Form("guofeng"),
+    song: str = Form(""),
+    lyric_first: str = Form(""),
+    lyric_last: str = Form(""),
     user: dict = Depends(get_optional_user),   # 上传免费·无需登录（游客可传）
     x_device_id: str = Header(None),
 ):
@@ -491,6 +496,7 @@ async def decompose_video(
         _write_awaiting = os.path.join(ddir, "decompose.json")
         with open(_write_awaiting, "w", encoding="utf-8") as f:
             json.dump({"id": did, "user_id": uid, "title": title, "genre": genre,
+                       "song": song, "lyric_first": lyric_first, "lyric_last": lyric_last,
                        "status": "awaiting_payment",
                        "message": "上传成功。点「拆开这支舞」付 9.9 生成完整拆解卡。"},
                       f, ensure_ascii=False)
@@ -506,7 +512,8 @@ async def decompose_video(
                                 detail="免费拆解已达上限（每小时3次/每天10次），请稍后再试或登录解锁更多")
         uid2 = (user["id"] if user else None)
         threading.Thread(target=_run_decompose_with_hooks,
-                         args=(did, video_path, uid2, title, genre), daemon=True).start()
+                         args=(did, video_path, uid2, title, genre, song, lyric_first, lyric_last),
+                         daemon=True).start()
         return {"decompose_id": did, "dance_id": did, "status": "processing",
                 "message": "上传成功，正在为你拆解…"}
 

@@ -3112,6 +3112,9 @@ function showDecomposeUpload(discount){
       '<div class="dc-up-h">上传你的舞</div>'+
       '<div class="dc-up-s">任意一支舞都行——自己跳的、想学的博主的。AI 自动拆成八拍卡 + 故事卡 + 记忆卡（慢速/镜像跟练）。无需选参考。</div>'+
       '<div class="dc-field"><div class="dc-label">舞名（可留空）</div><input class="dc-input" id="dcTitle" placeholder="例如：只此青绿"></div>'+
+      '<div class="dc-field"><div class="dc-label">歌曲名（可留空，自动搜歌词）</div><input class="dc-input" id="dcSong" placeholder="例如：清明雨上 许嵩"></div>'+
+      '<div class="dc-field"><div class="dc-label">歌词第一句（可留空）</div><input class="dc-input" id="dcLyric1" placeholder="例如：远方有琴 愀然空灵"></div>'+
+      '<div class="dc-field"><div class="dc-label">歌词最后一句（可留空）</div><input class="dc-input" id="dcLyricLast" placeholder="例如：又是清明雨上 折菊寄到你身旁"></div>'+
       '<div class="dc-zone" onclick="document.getElementById(\'dcInput\').click()">'+
         '<div class="ic">📹</div><div class="l">点击选择视频</div><div class="h">MP4 / MOV · 单人出镜 · 光线清晰 · 15–30 秒最佳</div>'+
         '<input type="file" id="dcInput" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/*" style="display:none" onchange="dcPick(this)">'+
@@ -3134,8 +3137,14 @@ function dcPick(inp){
 function startDecompose(){
   if(!DC_FILE) return;
   var title=(document.getElementById('dcTitle').value||'我的舞').trim();
+  var song=(document.getElementById('dcSong')||{}).value||'';
+  var lyric1=(document.getElementById('dcLyric1')||{}).value||'';
+  var lyricLast=(document.getElementById('dcLyricLast')||{}).value||'';
   var btn=document.getElementById('dcGo'); btn.disabled=true; btn.textContent='上传中…';
   var fd=new FormData(); fd.append('video',DC_FILE); fd.append('title',title); fd.append('genre','guofeng');
+  if(song) fd.append('song',song);
+  if(lyric1) fd.append('lyric_first',lyric1);
+  if(lyricLast) fd.append('lyric_last',lyricLast);
   var dcHdrs={};
   if(typeof AUTH_TOKEN!=='undefined'&&AUTH_TOKEN) dcHdrs['Authorization']='Bearer '+AUTH_TOKEN;
   fetch('api/decompose',{method:'POST',headers:dcHdrs,body:fd})
