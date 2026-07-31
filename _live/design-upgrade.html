@@ -1347,7 +1347,26 @@ function loadWorks(){
   if(!box) return;
   box.innerHTML = _wvSkel();
   if(!AUTH_TOKEN){
-    box.innerHTML = _wvEmpty('💃','登录后积累你的舞库','拆过的舞会沉淀成「我的作品」，还能看到每支舞的跟练进步曲线。','去登录','showAuth()');
+    // 游客：展示本机已拆的作品（与首页舞库一致），登录后同步到云端 + 解锁进步曲线
+    var localWorks = [];
+    try{ localWorks = JSON.parse(localStorage.getItem('wj_works') || '[]'); }catch(e){}
+    if(localWorks.length){
+      var lh = '';
+      localWorks.forEach(function(w){
+        lh += '<div class="wv-card">'+
+          '<div class="wc-cover">🎵</div>'+
+          '<div class="wc-body"><div class="wc-title">'+_esc(w.title||'我的舞')+'</div>'+
+          '<div class="wc-meta"><span class="wc-tag">'+(w.n||'?')+' 句</span><span class="wc-tag">本机暂存</span></div>'+
+          '<div class="wc-row"><div class="wc-btn main" onclick="window.DC_ID=\''+w.id+'\';dcLoading();pollDecompose(\''+w.id+'\')">继续练</div></div>'+
+          '</div></div>';
+      });
+      box.innerHTML = lh +
+        '<div class="wv-card"><div class="wc-body">'+
+        '<div style="font-size:12px;color:var(--mute);line-height:1.7">这是本机的 '+localWorks.length+' 支舞。登录后自动同步到云端，还能解锁每支的进步曲线。</div>'+
+        '<div class="wc-row"><div class="wc-btn main" onclick="showAuth()">登录同步</div></div></div></div>';
+    } else {
+      box.innerHTML = _wvEmpty('💃','登录后积累你的舞库','拆过的舞会沉淀成「我的作品」，还能看到每支舞的跟练进步曲线。','去登录','showAuth()');
+    }
     return;
   }
   fetch('api/my-works',{headers:_apiHeaders()})
@@ -2812,8 +2831,8 @@ function renderDetailArchive(p){
   <div class="pay-sheet" role="dialog">
     <span class="pay-close" onclick="payClose()" aria-label="关闭">×</span>
     <div class="pay-icon">✦</div>
-    <div class="pay-title">¥9.9 生成完整拆解</div>
-    <div class="pay-desc">你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。</div>
+    <div class="pay-title" id="payTitle">¥9.9 生成完整拆解</div>
+    <div class="pay-desc" id="payDesc">你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。</div>
 
     <!-- 渠道选择 -->
     <div class="pay-channels" id="payChannels">
@@ -2858,6 +2877,11 @@ function renderDetailArchive(p){
 <script>
 var DC_ID=null, DC_DATA=null, DC_FILE=null, DC_MIR=false;
 
+/* 价格显示：海外(非中文)显示 $1.99，中文显示 ¥9.9 */
+function _isZH(){ try{ var l=(navigator.language||'').toLowerCase(); return !l || l.indexOf('zh')===0; }catch(e){ return true; } }
+function _price(cny){ return _isZH() ? ('¥'+(cny||'9.9')) : '$1.99'; }
+function _priceFull(){ return _isZH() ? '¥9.9' : '$1.99'; }
+
 function _dcView(){
   var dv=document.getElementById('view-decompose');
   if(!dv){ dv=document.createElement('div'); dv.className='view'; dv.id='view-decompose';
@@ -2889,8 +2913,8 @@ function showDecomposeUpload(){
         '<input type="file" id="dcInput" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/*" style="display:none" onchange="dcPick(this)">'+
       '</div>'+
       '<div class="dc-fname" id="dcFname"></div>'+
-      '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">开始拆解 · ¥9.9</button>'+
-      '<div style="margin-top:10px;font-size:11px;color:var(--mute);text-align:center">拆解结果¥9.9 · 上传免费 · 不成功退款</div>'+
+      '<button class="dc-btn" id="dcGo" disabled onclick="startDecompose()">'+(_isZH()?'开始拆解 · ¥9.9':'Start breakdown · $1.99')+'</button>'+
+      '<div style="margin-top:10px;font-size:11px;color:var(--mute);text-align:center">'+(_isZH()?'拆解结果¥9.9 · 上传免费 · 不成功退款':'Result '+_priceFull()+' · free upload · refund on failure')+'</div>'+
       '<div style="margin-top:6px;font-size:10px;color:#B6A984;text-align:center;line-height:1.6">上传即代表你已年满18岁，或未成年人已获家长同意 · 拆解内容由 AI 生成</div>'+
     '</div>';
   _dcShow();
@@ -2915,7 +2939,7 @@ function startDecompose(){
     .then(function(d){
       if(d.status==='awaiting_payment'){
         DC_ID=d.decompose_id;
-        btn.disabled=false; btn.textContent='¥9.9 拆开这支舞';
+        btn.disabled=false; btn.textContent=_isZH()?'¥9.9 拆开这支舞':'Unlock for $1.99';
         btn.onclick=function(){ showPayment(DC_ID, d.price_cny); }; // 不重复上传，改弹支付
         showPayment(d.decompose_id, d.price_cny);
       } else if(d.decompose_id){
@@ -2938,6 +2962,32 @@ function dcLoading(){
   },7000);
 }
 function _dcLoadStop(){ if(DC_LOAD_TIMER){clearInterval(DC_LOAD_TIMER);DC_LOAD_TIMER=null;} }
+/* ── 后台轮询暂停：页面隐藏时停所有 poll/RAF，回前台恢复，省电省流量 ── */
+var _PAUSABLE_POLLS = {};
+var _POLL_GEN = 0;
+function _pausable(fn, intervalMs, key){
+  var running=false, timer=null, gen=++_POLL_GEN;
+  function clear(){ if(timer){ clearInterval(timer); timer=null; } }
+  function start(){
+    if(running && !document.hidden) return;
+    running=true; clear();
+    timer=setInterval(function(){
+      if(document.hidden) return;           // 隐藏时跳过，不真发请求
+      fn();
+    }, intervalMs);
+  }
+  function stop(){ running=false; clear(); }
+  _PAUSABLE_POLLS[key||('p'+gen)] = {start:start,stop:stop};
+  start();
+  return {clear:stop, start:start};
+}
+document.addEventListener('visibilitychange', function(){
+  var hidden = document.hidden;
+  for(var k in _PAUSABLE_POLLS){
+    var p=_PAUSABLE_POLLS[k];
+    if(hidden){ p.stop(); } else { p.start(); }
+  }
+});
 function pollDecompose(id){
   var tries=0;
   var iv=setInterval(function(){
@@ -3204,6 +3254,11 @@ var PAY_OUT_TRADE_NO=null, PAY_POLL_TIMER=null;
 function showPayment(danceId,price){
   var m=document.getElementById('payModal');
   if(!m) return;
+  // 币种动态：中文¥9.9 / 海外$1.99（海外走Stripe实扣1.99）
+  var p=_priceFull();
+  var t=document.getElementById('payTitle'); if(t) t.textContent=(_isZH()?'¥9.9 生成完整拆解':'Unlock full breakdown · $1.99');
+  var ds=document.getElementById('payDesc'); if(ds) ds.textContent=(_isZH()?'你的舞已上传成功。付 ¥9.9 解锁：八拍卡 + 故事卡 + 记忆卡 + AI 老师点评 + 慢放/镜像跟练。':'Your dance is ready. Pay $1.99 to unlock: 8-beat cards + story + memory cards + AI coach + slow-mo/mirror practice.');
+  var qh=document.getElementById('payQrHint'); if(qh) qh.innerHTML=_isZH()?'打开 <b>微信</b> 扫一扫 · 支付 <b>¥9.9</b>':'Scan to pay · <b>$1.99</b>';
   document.getElementById('payChannels').style.display='block';
   document.getElementById('payQr').style.display='none';
   document.getElementById('payStripe').style.display='none';
@@ -3259,7 +3314,7 @@ function payCreate(channel){
           document.getElementById('payQrImg').src=qrSrc;
           document.getElementById('payQrImg').style.display='block';
           var chName=channel==='wechat'?'微信':'支付宝';
-          document.getElementById('payQrHint').innerHTML='打开 <b>'+chName+'</b> 扫一扫 · 支付 <b>¥9.9</b>';
+          document.getElementById('payQrHint').innerHTML=_isZH()?('打开 <b>'+chName+'</b> 扫一扫 · 支付 <b>¥9.9</b>'):('Scan to pay · <b>$1.99</b>');
           document.getElementById('payQrStatus').textContent='等待扫码…';
           payPoll(d.out_trade_no);
         } else { toast('二维码生成失败'); PAY_BUSY=false; payClose(); }

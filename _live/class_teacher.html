@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>舞镜 · 班级管理台（老师端）</title>
 <style>
 :root{
@@ -15,7 +15,7 @@
   --font-serif:"Songti SC","STSong",serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);background:var(--cream);color:var(--ink);padding:0 16px 50px}
+body{font-family:var(--font-sans);background:var(--cream);color:var(--ink);padding:0 16px 50px;padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}
 .topbar{max-width:640px;margin:0 auto;padding:16px 0;display:flex;align-items:center;gap:8px}
 .logo{font-size:17px;font-weight:700;letter-spacing:.05em}
 .logo span{font-weight:300;color:var(--gold);font-family:var(--font-serif)}
