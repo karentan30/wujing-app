@@ -898,44 +898,87 @@ body{
 
   <!-- Demo library — PRIMARY CTA（舞蹈库置顶，跟练优先） -->
   <div id="demo-library" style="margin:16px 0 0">
-    <div data-i18n="libraryTitle" style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:.02em">选一支，现在就开始 ↓</div>
-    <div data-i18n="librarySub" style="font-size:11px;color:#888;margin-bottom:10px">热门舞蹈已拆解好 · 点击直接跟练，无需上传</div>
-    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-      <div onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 140px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div data-i18n="libraryTitle" style="font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em">选一支，现在就开始 ↓</div>
+      <div style="font-size:10px;color:#888" data-i18n="libraryCount">6 支已拆解</div>
+    </div>
+    <!-- 分类 tabs -->
+    <div id="dc-cat-tabs" style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
+      <button onclick="dcFilterCat('all')" id="dc-cat-all" class="dc-cat-btn dc-cat-active" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(233,184,114,.5);background:rgba(233,184,114,.15);color:#E9B872;transition:all .2s">全部</button>
+      <button onclick="dcFilterCat('guofeng')" id="dc-cat-guofeng" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🏮 古风</button>
+      <button onclick="dcFilterCat('kpop')" id="dc-cat-kpop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🎵 K-pop</button>
+      <button onclick="dcFilterCat('pop')" id="dc-cat-pop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">💃 流行</button>
+    </div>
+    <!-- 舞蹈卡片容器 -->
+    <div id="dc-dance-grid" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      <!-- 古风 -->
+      <div class="dc-dance-card" data-cat="guofeng" onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 140px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">⚔️</div>
         <div style="font-size:13px;font-weight:700;color:#E9B872">虞兮叹</div>
         <div style="font-size:10px;color:#888;margin-top:4px">剑舞 · 9段</div>
-        <div style="font-size:11px;color:#E9B872;margin-top:10px;font-weight:600">▶ 立即跟练</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(233,184,114,.15);color:#E9B872;font-weight:600">古风</span>
+          <span style="font-size:9px;color:#888">中难度</span>
+        </div>
+        <div style="font-size:11px;color:#E9B872;margin-top:8px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 140px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="guofeng" onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 140px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🎭</div>
         <div style="font-size:13px;font-weight:700;color:#C878E8">孽</div>
         <div style="font-size:10px;color:#888;margin-top:4px">双人 · 8段</div>
-        <div style="font-size:11px;color:#C878E8;margin-top:10px;font-weight:600">▶ 立即跟练</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(200,120,232,.15);color:#C878E8;font-weight:600">古风</span>
+          <span style="font-size:9px;color:#888">进阶</span>
+        </div>
+        <div style="font-size:11px;color:#C878E8;margin-top:8px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 140px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="guofeng" onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 140px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🌸</div>
         <div style="font-size:13px;font-weight:700;color:#78C878">春满园</div>
         <div style="font-size:10px;color:#888;margin-top:4px">民族舞 · 6段</div>
-        <div style="font-size:11px;color:#78C878;margin-top:10px;font-weight:600">▶ 立即跟练</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,200,120,.15);color:#78C878;font-weight:600">民族</span>
+          <span style="font-size:9px;color:#888">入门</span>
+        </div>
+        <div style="font-size:11px;color:#78C878;margin-top:8px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div onclick="window.DC_ID='vid_kpop_newjeans';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_newjeans')" style="flex:0 0 140px;cursor:pointer;background:#0A0F1A;border-radius:14px;padding:14px 12px;border:1px solid #1A3A5A;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <!-- K-pop -->
+      <div class="dc-dance-card" data-cat="kpop" onclick="window.DC_ID='vid_kpop_newjeans';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_newjeans')" style="flex:0 0 140px;cursor:pointer;background:#0A0F1A;border-radius:14px;padding:14px 12px;border:1px solid #1A3A5A;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🎵</div>
         <div style="font-size:13px;font-weight:700;color:#78B8FF">Hype Boy</div>
         <div style="font-size:10px;color:#888;margin-top:4px">NewJeans · 8 moves</div>
-        <div style="font-size:11px;color:#78B8FF;margin-top:10px;font-weight:600">▶ Practice now</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,184,255,.15);color:#78B8FF;font-weight:600">K-pop</span>
+          <span style="font-size:9px;color:#888">入门</span>
+        </div>
+        <div style="font-size:11px;color:#78B8FF;margin-top:8px;font-weight:600">▶ Practice now</div>
       </div>
-      <div onclick="window.DC_ID='vid_kpop_blackpink';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_blackpink')" style="flex:0 0 140px;cursor:pointer;background:#1A0A10;border-radius:14px;padding:14px 12px;border:1px solid #5A1030;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="kpop" onclick="window.DC_ID='vid_kpop_blackpink';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_blackpink')" style="flex:0 0 140px;cursor:pointer;background:#1A0A10;border-radius:14px;padding:14px 12px;border:1px solid #5A1030;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">💗</div>
         <div style="font-size:13px;font-weight:700;color:#FF78A8">Pink Venom</div>
         <div style="font-size:10px;color:#888;margin-top:4px">BLACKPINK · 7 moves</div>
-        <div style="font-size:11px;color:#FF78A8;margin-top:10px;font-weight:600">▶ Practice now</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,168,.15);color:#FF78A8;font-weight:600">K-pop</span>
+          <span style="font-size:9px;color:#888">中难度</span>
+        </div>
+        <div style="font-size:11px;color:#FF78A8;margin-top:8px;font-weight:600">▶ Practice now</div>
       </div>
-      <div onclick="window.DC_ID='vid_kpop_bts';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_bts')" style="flex:0 0 140px;cursor:pointer;background:#0A100A;border-radius:14px;padding:14px 12px;border:1px solid #2A5A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="kpop" onclick="window.DC_ID='vid_kpop_bts';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_bts')" style="flex:0 0 140px;cursor:pointer;background:#0A100A;border-radius:14px;padding:14px 12px;border:1px solid #2A5A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">✨</div>
         <div style="font-size:13px;font-weight:700;color:#A8E878">Dynamite</div>
         <div style="font-size:10px;color:#888;margin-top:4px">BTS · 8 moves</div>
-        <div style="font-size:11px;color:#A8E878;margin-top:10px;font-weight:600">▶ Practice now</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,232,120,.15);color:#A8E878;font-weight:600">K-pop</span>
+          <span style="font-size:9px;color:#888">入门</span>
+        </div>
+        <div style="font-size:11px;color:#A8E878;margin-top:8px;font-weight:600">▶ Practice now</div>
+      </div>
+      <!-- 即将上线占位卡 -->
+      <div class="dc-dance-card dc-coming-soon" data-cat="all" onclick="showDecomposeUpload()" style="flex:0 0 140px;cursor:pointer;background:rgba(255,255,255,.03);border-radius:14px;padding:14px 12px;border:1px dashed rgba(255,255,255,.12);transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+        <div style="font-size:22px;margin-bottom:8px">➕</div>
+        <div style="font-size:12px;font-weight:600;color:#666">更多舞蹈</div>
+        <div style="font-size:10px;color:#555;margin-top:4px;line-height:1.5">每周上新<br>或上传你的</div>
+        <div style="font-size:11px;color:#888;margin-top:16px;font-weight:600">↑ 上传视频</div>
       </div>
     </div>
   </div>
@@ -4255,6 +4298,24 @@ function dcShowStampToast(n){var t=document.createElement('div');t.style.cssText
 function dcShowStampAchievement(){var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;';ov.innerHTML='<div style="background:linear-gradient(135deg,#1a1f35,#0f1220);border:2px solid rgba(255,200,80,0.5);border-radius:20px;padding:40px 32px;text-align:center;max-width:300px;"><div style="font-size:56px;margin-bottom:12px;">🏆</div><div style="font-size:24px;font-weight:bold;color:#ffc850;margin-bottom:8px;">连续练习成就！</div><div style="color:rgba(255,255,255,0.7);font-size:15px;margin-bottom:24px;">集满'+STAMP_TARGET+'个印章，解锁全套慢动作合集</div><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;padding:12px 32px;border-radius:20px;font-size:16px;cursor:pointer;">太棒了！</button></div>';document.body.appendChild(ov);ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});}
 function dcRenderStampBar(){var d=dcGetStamps();var bar=document.getElementById('dcStampBar');if(!bar)return;var filled=d.total%STAMP_TARGET;var html='🔥 '+d.total+'个印章 ';for(var i=0;i<STAMP_TARGET;i++){html+=i<filled?'⭐':'☆';}bar.textContent=html;if(d.total===0)bar.style.display='none';else bar.style.display='block';}
 // ===== 今日一句 =====
+function dcFilterCat(cat){
+  // Update tab styles
+  document.querySelectorAll('.dc-cat-btn').forEach(function(b){
+    b.style.background='transparent';b.style.color='#888';b.style.borderColor='rgba(255,255,255,.1)';
+    b.classList.remove('dc-cat-active');
+  });
+  var active=document.getElementById('dc-cat-'+cat);
+  if(active){active.style.background='rgba(233,184,114,.15)';active.style.color='#E9B872';active.style.borderColor='rgba(233,184,114,.5)';active.classList.add('dc-cat-active');}
+  // Show/hide cards
+  document.querySelectorAll('.dc-dance-card').forEach(function(c){
+    var cardCat=c.getAttribute('data-cat');
+    var show=(cat==='all')||(cardCat===cat)||(cardCat==='all');
+    c.style.display=show?'':'none';
+  });
+  // Always show the "more" card
+  document.querySelectorAll('.dc-coming-soon').forEach(function(c){c.style.display='';});
+}
+
 function dcInitDailyPhrase(){var demos=['vid_1679971642','vid_2130688639','vid_563626483'];var dayIdx=Math.floor(Date.now()/86400000);var did=demos[dayIdx%demos.length];fetch('api/decompose/'+did).then(function(r){return r.json();}).then(function(d){if(!d.phrases||!d.phrases.length)return;var p=d.phrases[dayIdx%d.phrases.length];var el=document.getElementById('dcDailyPhrase');if(el)el.style.display='block';var t=document.getElementById('dcDailyTitle');if(t)t.textContent='《'+(d.title||'')+'》第'+p.i+'句 · '+(p.name||'');var k=document.getElementById('dcDailyKou');if(k)k.textContent='口诀：'+(p.kou||p.action||'').slice(0,24);var btn=document.getElementById('dcDailyBtn');if(btn)btn.onclick=function(){window.DC_ID=did;DC_DATA=null;dcLoading();pollDecompose(did);};}).catch(function(){});dcRenderStampBar();}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){dcInitDailyPhrase();dcApplyI18n();});}else{dcInitDailyPhrase();dcApplyI18n();}
 
