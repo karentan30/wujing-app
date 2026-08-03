@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(145deg,#0a0f20 0%,#111830 55%,#0d1525 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:72px 88px;position:relative}
+.step-row{display:flex;align-items:center;gap:16px;margin-bottom:36px}
+.step-circle{width:66px;height:66px;background:linear-gradient(135deg,#5a96ff,#7c6fff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff}
+.step-meta{font-size:20px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase}
+h1{font-size:72px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px;letter-spacing:-1px}
+h1 em{color:#5a96ff;font-style:normal}
+.sub{font-size:24px;color:rgba(255,255,255,0.4);margin-bottom:40px}
+.cards-row{display:flex;gap:20px;flex:1;margin-bottom:24px}
+.card-type{flex:1;border-radius:20px;padding:28px 22px;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.c1{background:rgba(90,150,255,0.08);border:1px solid rgba(90,150,255,0.3)}
+.c2{background:rgba(80,210,130,0.06);border:1px solid rgba(80,210,130,0.25)}
+.c3{background:rgba(255,200,80,0.06);border:1px solid rgba(255,200,80,0.25)}
+.c-icon{font-size:52px}
+.c-name{font-size:24px;font-weight:bold}
+.c1 .c-name{color:#5a96ff}
+.c2 .c-name{color:#50d282}
+.c3 .c-name{color:#ffc850}
+.c-desc{font-size:17px;color:rgba(255,255,255,0.45);line-height:1.5}
+.c-dl{font-size:16px;padding:6px 16px;border-radius:20px;margin-top:4px;font-weight:600}
+.c1 .c-dl{background:rgba(90,150,255,0.2);color:#5a96ff}
+.c2 .c-dl{background:rgba(80,210,130,0.15);color:#50d282}
+.c3 .c-dl{background:rgba(255,200,80,0.15);color:#ffc850}
+.cta-btn{display:block;background:linear-gradient(90deg,#5a96ff,#7c6fff);color:#fff;font-size:26px;font-weight:bold;padding:18px;border-radius:16px;text-align:center;letter-spacing:1px}
+.step-pills{display:flex;gap:0;width:100%;margin-top:16px}
+.pill{flex:1;padding:16px;text-align:center;font-size:19px;font-weight:600}
+.pill-1,.pill-2{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:rgba(90,150,255,0.6)}
+.pill-1{border-radius:14px 0 0 14px}
+.pill-2{border-left:none}
+.pill-3{background:rgba(90,150,255,0.2);border:1px solid rgba(90,150,255,0.4);color:#5a96ff;border-left:none;border-radius:0 14px 14px 0}
+.brand{position:absolute;bottom:36px;right:60px;font-size:18px;color:rgba(255,255,255,0.15)}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="step-row">
+    <div class="step-circle">3</div>
+    <div class="step-meta">Step 3 of 3</div>
+  </div>
+  <h1>Download Your<br><em>Learning Cards</em></h1>
+  <div class="sub">3 types. Each teaches you differently. Pick what works for you.</div>
+  <div class="cards-row">
+    <div class="card-type c1">
+      <div class="c-icon">🎞️</div>
+      <div class="c-name">Frame Card</div>
+      <div class="c-desc">8 frames + timing cues to follow beat by beat</div>
+      <div class="c-dl">↓ PNG</div>
+    </div>
+    <div class="card-type c2">
+      <div class="c-icon">🪞</div>
+      <div class="c-name">Mirror Card</div>
+      <div class="c-desc">Flipped frames so left = your left, always</div>
+      <div class="c-dl">↓ PNG</div>
+    </div>
+    <div class="card-type c3">
+      <div class="c-icon">🧠</div>
+      <div class="c-name">Memory Card</div>
+      <div class="c-desc">Key character + mnemonic story to remember each move</div>
+      <div class="c-dl">↓ PNG</div>
+    </div>
+  </div>
+  <div class="cta-btn">Start Learning Free →</div>
+  <div class="step-pills">
+    <div class="pill pill-1">① Upload ✓</div>
+    <div class="pill pill-2">② AI Done ✓</div>
+    <div class="pill pill-3">③ Get Cards</div>
+  </div>
+</div>
+<div class="brand">wujing.mylumee.app</div>
+</body></html>

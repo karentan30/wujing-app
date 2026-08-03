@@ -1,0 +1,2464 @@
+{
+  "version": "1.0",
+  "total": 80,
+  "updated": "2026-08-02",
+  "genres": [
+    "kpop",
+    "guofeng",
+    "pop",
+    "jazz",
+    "latin",
+    "guangchang"
+  ],
+  "dances": [
+    {
+      "id": "vid_kpop_newjeans",
+      "title": "Hype Boy",
+      "artist": "NewJeans",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 138,
+      "status": "ready",
+      "phrases": 8,
+      "emoji": "🎵",
+      "color": "#78B8FF",
+      "thumbnail": "/api/frame/vid_kpop_newjeans/p1/0",
+      "card_paths": {
+        "bapai": "/api/decompose/vid_kpop_newjeans/card/八拍卡v3",
+        "jingmian": "/api/decompose/vid_kpop_newjeans/card/镜面卡v3",
+        "jiyi": "/api/decompose/vid_kpop_newjeans/card/记忆卡v3"
+      },
+      "tags": [
+        "girl_group",
+        "easy",
+        "2024"
+      ],
+      "preview_kou": [
+        "侧·推·转",
+        "跳·落·收",
+        "扭·摆·甩"
+      ],
+      "en_title": "Hype Boy",
+      "en_artist": "NewJeans",
+      "stats": {
+        "views": "50亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 50亿话题"
+      }
+    },
+    {
+      "id": "vid_kpop_blackpink",
+      "title": "Pink Venom",
+      "artist": "BLACKPINK",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 120,
+      "status": "ready",
+      "phrases": 7,
+      "emoji": "💗",
+      "color": "#FF78A8",
+      "thumbnail": "/api/frame/vid_kpop_blackpink/p1/0",
+      "card_paths": {
+        "bapai": "/api/decompose/vid_kpop_blackpink/card/八拍卡v3",
+        "jingmian": "/api/decompose/vid_kpop_blackpink/card/镜面卡v3",
+        "jiyi": "/api/decompose/vid_kpop_blackpink/card/记忆卡v3"
+      },
+      "tags": [
+        "girl_group",
+        "medium",
+        "iconic"
+      ],
+      "preview_kou": [
+        "压·展·甩",
+        "转·落·定",
+        "刺·收·挑"
+      ],
+      "en_title": "Pink Venom",
+      "en_artist": "BLACKPINK",
+      "stats": {
+        "views": "80亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 80亿话题"
+      }
+    },
+    {
+      "id": "vid_kpop_bts",
+      "title": "Dynamite",
+      "artist": "BTS",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 114,
+      "status": "ready",
+      "phrases": 8,
+      "emoji": "✨",
+      "color": "#A8E878",
+      "thumbnail": "/api/frame/vid_kpop_bts/p1/0",
+      "card_paths": {
+        "bapai": "/api/decompose/vid_kpop_bts/card/八拍卡v3",
+        "jingmian": "/api/decompose/vid_kpop_bts/card/镜面卡v3",
+        "jiyi": "/api/decompose/vid_kpop_bts/card/记忆卡v3"
+      },
+      "tags": [
+        "boy_group",
+        "easy",
+        "iconic"
+      ],
+      "preview_kou": [
+        "跳·踢·收",
+        "摇·摆·定",
+        "推·转·落"
+      ],
+      "en_title": "Dynamite",
+      "en_artist": "BTS",
+      "stats": {
+        "views": "120亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 120亿话题"
+      }
+    },
+    {
+      "id": "vid_2130688639",
+      "title": "虞兮叹",
+      "artist": "各大博主",
+      "genre": "guofeng",
+      "difficulty": 3,
+      "bpm": 88,
+      "status": "ready",
+      "phrases": 9,
+      "emoji": "⚔️",
+      "color": "#E9B872",
+      "thumbnail": "/api/frame/vid_2130688639/p1/0",
+      "card_paths": {
+        "bapai": "/api/decompose/vid_2130688639/card/八拍卡v3",
+        "jingmian": "/api/decompose/vid_2130688639/card/镜面卡v3",
+        "jiyi": "/api/decompose/vid_2130688639/card/记忆卡v3"
+      },
+      "tags": [
+        "guofeng",
+        "sword_dance",
+        "medium"
+      ],
+      "preview_kou": [
+        "遮·抛·仰",
+        "转·落·收",
+        "展·压·翻"
+      ],
+      "en_title": "Yu Xi Tan",
+      "en_artist": "Various",
+      "stats": {
+        "views": "30亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 30亿+"
+      }
+    },
+    {
+      "id": "vid_565648474",
+      "title": "群舞·琵琶曲",
+      "artist": "古典舞群舞",
+      "genre": "guofeng",
+      "difficulty": 3,
+      "bpm": 88,
+      "status": "ready",
+      "phrases": 8,
+      "emoji": "🎶",
+      "color": "#F0C030",
+      "thumbnail": "/static/cards/vid_565648474_八拍卡.png",
+      "card_paths": {
+        "bapai": "/static/cards/vid_565648474_八拍卡.png",
+        "jingmian": "/static/cards/vid_565648474_镜面卡.png",
+        "jiyi": "/static/cards/vid_565648474_记忆卡.png"
+      },
+      "tags": [
+        "guofeng",
+        "group",
+        "pipa",
+        "medium"
+      ],
+      "preview_kou": [
+        "展—立—舒",
+        "沉—按—挪—随",
+        "拧—架—送—沉"
+      ],
+      "stats": {
+        "views": "15亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音15亿播放"
+      },
+      "slowmo": "/api/decompose/vid_565648474/slowmo",
+      "tts_count": 8
+    },
+    {
+      "id": "vid_1488273297",
+      "title": "清明雨上",
+      "artist": "卢润泽",
+      "genre": "guofeng",
+      "difficulty": 3,
+      "bpm": 76,
+      "status": "ready",
+      "phrases": 9,
+      "emoji": "🌧️",
+      "color": "#A070F0",
+      "thumbnail": "/static/cards/vid_1488273297_八拍卡.png",
+      "card_paths": {
+        "bapai": "/static/cards/vid_1488273297_八拍卡.png",
+        "jingmian": "/static/cards/vid_1488273297_镜面卡.png",
+        "jiyi": "/static/cards/vid_1488273297_记忆卡.png"
+      },
+      "tags": [
+        "guofeng",
+        "solo",
+        "lyrical",
+        "medium"
+      ],
+      "preview_kou": [
+        "抬—拧—展—笑",
+        "拧—落—柔—沉",
+        "抬—仰—托"
+      ],
+      "stats": {
+        "views": "20亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音20亿播放"
+      },
+      "slowmo": "/api/decompose/vid_1488273297/slowmo",
+      "tts_count": 9
+    },
+    {
+      "id": "vid_aespa_supernova",
+      "title": "Supernova",
+      "artist": "aespa",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 127,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌟",
+      "color": "#C8A8FF",
+      "tags": [
+        "girl_group",
+        "medium",
+        "2024",
+        "viral"
+      ],
+      "preview_kou": [
+        "旋·展·锁",
+        "冲·落·定",
+        "抛·转·收"
+      ],
+      "en_title": "Supernova",
+      "en_artist": "aespa",
+      "stats": {
+        "views": "60亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 60亿话题"
+      }
+    },
+    {
+      "id": "vid_aespa_whiplash",
+      "title": "Whiplash",
+      "artist": "aespa",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 130,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "⚡",
+      "color": "#C8A8FF",
+      "tags": [
+        "girl_group",
+        "medium",
+        "2024"
+      ],
+      "preview_kou": [
+        "甩·弹·收",
+        "压·爆·定",
+        "切·转·锁"
+      ],
+      "en_title": "Whiplash",
+      "en_artist": "aespa",
+      "stats": {
+        "views": "40亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 40亿话题"
+      }
+    },
+    {
+      "id": "vid_newjeans_eta",
+      "title": "ETA",
+      "artist": "NewJeans",
+      "genre": "kpop",
+      "difficulty": 1,
+      "bpm": 116,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎶",
+      "color": "#78B8FF",
+      "tags": [
+        "girl_group",
+        "easy",
+        "cute"
+      ],
+      "preview_kou": [
+        "点·摇·收",
+        "侧·扭·落",
+        "拍·转·定"
+      ],
+      "en_title": "ETA",
+      "en_artist": "NewJeans",
+      "stats": {
+        "views": "30亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 30亿话题"
+      }
+    },
+    {
+      "id": "vid_illit_magnetic",
+      "title": "Magnetic",
+      "artist": "ILLIT",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 112,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🧲",
+      "color": "#FFB8D8",
+      "tags": [
+        "girl_group",
+        "easy",
+        "2024",
+        "viral"
+      ],
+      "preview_kou": [
+        "拉·推·转",
+        "扭·摆·收",
+        "弹·落·定"
+      ],
+      "en_title": "Magnetic",
+      "en_artist": "ILLIT",
+      "stats": {
+        "views": "40亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 40亿话题"
+      }
+    },
+    {
+      "id": "vid_aespa_savage",
+      "title": "Savage",
+      "artist": "aespa",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 125,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🔥",
+      "color": "#C8A8FF",
+      "tags": [
+        "girl_group",
+        "medium",
+        "classic"
+      ],
+      "preview_kou": [
+        "踹·甩·收",
+        "转·压·爆",
+        "挑·落·定"
+      ],
+      "en_title": "Savage",
+      "en_artist": "aespa",
+      "stats": {
+        "views": "50亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 50亿话题"
+      }
+    },
+    {
+      "id": "vid_aespa_nextlevel",
+      "title": "Next Level",
+      "artist": "aespa",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 118,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌀",
+      "color": "#C8A8FF",
+      "tags": [
+        "girl_group",
+        "medium",
+        "classic"
+      ],
+      "preview_kou": [
+        "展·切·锁",
+        "推·翻·收",
+        "旋·落·定"
+      ],
+      "en_title": "Next Level",
+      "en_artist": "aespa",
+      "stats": {
+        "views": "45亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 45亿话题"
+      }
+    },
+    {
+      "id": "vid_blackpink_foreveryoung",
+      "title": "Forever Young",
+      "artist": "BLACKPINK",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 120,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌸",
+      "color": "#FF78A8",
+      "tags": [
+        "girl_group",
+        "easy",
+        "classic"
+      ],
+      "preview_kou": [
+        "甩·转·收",
+        "踢·落·展",
+        "拍·推·定"
+      ],
+      "en_title": "Forever Young",
+      "en_artist": "BLACKPINK",
+      "stats": {
+        "views": "8亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 8亿"
+      }
+    },
+    {
+      "id": "vid_blackpink_lovesick",
+      "title": "Lovesick Girls",
+      "artist": "BLACKPINK",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 105,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💔",
+      "color": "#FF78A8",
+      "tags": [
+        "girl_group",
+        "easy",
+        "emotional"
+      ],
+      "preview_kou": [
+        "捂·转·展",
+        "落·摇·收",
+        "推·仰·定"
+      ],
+      "en_title": "Lovesick Girls",
+      "en_artist": "BLACKPINK",
+      "stats": {
+        "views": "7亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 7亿"
+      }
+    },
+    {
+      "id": "vid_blackpink_howyoulikethat",
+      "title": "How You Like That",
+      "artist": "BLACKPINK",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 130,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🖤",
+      "color": "#FF78A8",
+      "tags": [
+        "girl_group",
+        "medium",
+        "iconic"
+      ],
+      "preview_kou": [
+        "压·爆·甩",
+        "转·踩·定",
+        "切·展·收"
+      ],
+      "en_title": "How You Like That",
+      "en_artist": "BLACKPINK",
+      "stats": {
+        "views": "12亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 12亿"
+      }
+    },
+    {
+      "id": "vid_bts_ptd",
+      "title": "Permission to Dance",
+      "artist": "BTS",
+      "genre": "kpop",
+      "difficulty": 1,
+      "bpm": 122,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🕺",
+      "color": "#A8E878",
+      "tags": [
+        "boy_group",
+        "easy",
+        "fun"
+      ],
+      "preview_kou": [
+        "拍·踩·摇",
+        "举·转·收",
+        "跳·落·定"
+      ],
+      "en_title": "Permission to Dance",
+      "en_artist": "BTS",
+      "stats": {
+        "views": "5亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 5亿"
+      }
+    },
+    {
+      "id": "vid_bts_butter",
+      "title": "Butter",
+      "artist": "BTS",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 110,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🧈",
+      "color": "#A8E878",
+      "tags": [
+        "boy_group",
+        "easy",
+        "smooth"
+      ],
+      "preview_kou": [
+        "滑·推·收",
+        "摇·转·展",
+        "踢·落·定"
+      ],
+      "en_title": "Butter",
+      "en_artist": "BTS",
+      "stats": {
+        "views": "7亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 7亿"
+      }
+    },
+    {
+      "id": "vid_bts_dna",
+      "title": "DNA",
+      "artist": "BTS",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 130,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🧬",
+      "color": "#A8E878",
+      "tags": [
+        "boy_group",
+        "medium",
+        "classic"
+      ],
+      "preview_kou": [
+        "锁·转·爆",
+        "甩·落·切",
+        "推·展·定"
+      ],
+      "en_title": "DNA",
+      "en_artist": "BTS",
+      "stats": {
+        "views": "14亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 14亿"
+      }
+    },
+    {
+      "id": "vid_newjeans_omg",
+      "title": "OMG",
+      "artist": "NewJeans",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 108,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "😍",
+      "color": "#78B8FF",
+      "tags": [
+        "girl_group",
+        "easy",
+        "cute"
+      ],
+      "preview_kou": [
+        "点·扭·摆",
+        "转·落·收",
+        "推·展·定"
+      ],
+      "en_title": "OMG",
+      "en_artist": "NewJeans",
+      "stats": {
+        "views": "25亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 25亿话题"
+      }
+    },
+    {
+      "id": "vid_newjeans_howsweet",
+      "title": "How Sweet",
+      "artist": "NewJeans",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 102,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🍬",
+      "color": "#78B8FF",
+      "tags": [
+        "girl_group",
+        "easy",
+        "2024"
+      ],
+      "preview_kou": [
+        "摇·侧·收",
+        "拍·转·落",
+        "展·推·定"
+      ],
+      "en_title": "How Sweet",
+      "en_artist": "NewJeans",
+      "stats": {
+        "views": "35亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 35亿话题"
+      }
+    },
+    {
+      "id": "vid_newjeans_attention",
+      "title": "Attention",
+      "artist": "NewJeans",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 96,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "👀",
+      "color": "#78B8FF",
+      "tags": [
+        "girl_group",
+        "easy",
+        "debut"
+      ],
+      "preview_kou": [
+        "侧·看·收",
+        "走·转·定",
+        "摆·落·展"
+      ],
+      "en_title": "Attention",
+      "en_artist": "NewJeans",
+      "stats": {
+        "views": "28亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 28亿话题"
+      }
+    },
+    {
+      "id": "vid_babymonster_sheesh",
+      "title": "Sheesh",
+      "artist": "BABYMONSTER",
+      "genre": "kpop",
+      "difficulty": 3,
+      "bpm": 128,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🔱",
+      "color": "#FFD878",
+      "tags": [
+        "girl_group",
+        "medium",
+        "2024"
+      ],
+      "preview_kou": [
+        "踢·甩·锁",
+        "压·爆·收",
+        "旋·落·定"
+      ],
+      "en_title": "Sheesh",
+      "en_artist": "BABYMONSTER",
+      "stats": {
+        "views": "20亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 20亿话题"
+      }
+    },
+    {
+      "id": "vid_jisoo_flower",
+      "title": "FLOWER",
+      "artist": "JISOO",
+      "genre": "kpop",
+      "difficulty": 2,
+      "bpm": 100,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌺",
+      "color": "#FF78A8",
+      "tags": [
+        "solo",
+        "easy",
+        "elegant"
+      ],
+      "preview_kou": [
+        "绕·展·落",
+        "捧·转·收",
+        "推·仰·定"
+      ],
+      "en_title": "FLOWER",
+      "en_artist": "JISOO",
+      "stats": {
+        "views": "3亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 3亿"
+      }
+    },
+    {
+      "id": "vid_zhibi",
+      "title": "执笔",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 2,
+      "bpm": 80,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🖌️",
+      "color": "#E9B872",
+      "tags": [
+        "guofeng",
+        "hanfu",
+        "easy",
+        "drama"
+      ],
+      "preview_kou": [
+        "提·落·转",
+        "捻·推·展",
+        "遮·抛·收"
+      ],
+      "en_title": "Zhi Bi",
+      "en_artist": "Various",
+      "stats": {
+        "views": "25亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 25亿+"
+      }
+    },
+    {
+      "id": "vid_liangliang",
+      "title": "凉凉",
+      "artist": "张碧晨/杨宗纬",
+      "genre": "guofeng",
+      "difficulty": 1,
+      "bpm": 75,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌙",
+      "color": "#A8C8FF",
+      "tags": [
+        "guofeng",
+        "beginner",
+        "popular",
+        "ost"
+      ],
+      "preview_kou": [
+        "飘·落·收",
+        "绕·展·转",
+        "推·仰·定"
+      ],
+      "en_title": "Liang Liang",
+      "en_artist": "Various",
+      "stats": {
+        "views": "12亿+",
+        "platform": "全平台",
+        "label": "🔥 全平台 12亿+"
+      }
+    },
+    {
+      "id": "vid_qianqiusui",
+      "title": "千秋岁",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 3,
+      "bpm": 85,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🏯",
+      "color": "#E9B872",
+      "tags": [
+        "guofeng",
+        "medium",
+        "classical"
+      ],
+      "preview_kou": [
+        "绕·转·收",
+        "压·展·落",
+        "切·推·定"
+      ],
+      "en_title": "Qian Qiu Sui",
+      "en_artist": "Various",
+      "stats": {
+        "views": "15亿+",
+        "platform": "小红书",
+        "label": "🔥 小红书 15亿+"
+      }
+    },
+    {
+      "id": "vid_tanchuang",
+      "title": "探窗",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 4,
+      "bpm": 90,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🏮",
+      "color": "#E9B872",
+      "tags": [
+        "guofeng",
+        "hard",
+        "visual"
+      ],
+      "preview_kou": [
+        "探·伸·回",
+        "转·踮·展",
+        "落·压·定"
+      ],
+      "en_title": "Tan Chuang",
+      "en_artist": "Various",
+      "stats": {
+        "views": "10亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 10亿+"
+      }
+    },
+    {
+      "id": "vid_chiling",
+      "title": "赤伶",
+      "artist": "HITA",
+      "genre": "guofeng",
+      "difficulty": 2,
+      "bpm": 82,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎭",
+      "color": "#FF8878",
+      "tags": [
+        "guofeng",
+        "drama",
+        "easy",
+        "classic"
+      ],
+      "preview_kou": [
+        "甩·袖·展",
+        "转·落·收",
+        "推·仰·定"
+      ],
+      "en_title": "Chi Ling",
+      "en_artist": "HITA",
+      "stats": {
+        "views": "20亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 20亿+"
+      }
+    },
+    {
+      "id": "vid_qiansi",
+      "title": "牵丝戏",
+      "artist": "银临/Aki阿杰",
+      "genre": "guofeng",
+      "difficulty": 3,
+      "bpm": 88,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🧵",
+      "color": "#D8A8E8",
+      "tags": [
+        "guofeng",
+        "medium",
+        "puppet"
+      ],
+      "preview_kou": [
+        "绕·拉·收",
+        "扯·甩·展",
+        "垂·转·定"
+      ],
+      "en_title": "Qian Si Xi",
+      "en_artist": "Various",
+      "stats": {
+        "views": "18亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 18亿+"
+      }
+    },
+    {
+      "id": "vid_qingmingyushang",
+      "title": "清明雨上",
+      "artist": "许嵩",
+      "genre": "guofeng",
+      "difficulty": 2,
+      "bpm": 78,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌧️",
+      "color": "#A8C8FF",
+      "tags": [
+        "guofeng",
+        "easy",
+        "emotional"
+      ],
+      "preview_kou": [
+        "飘·落·展",
+        "绕·转·收",
+        "推·仰·定"
+      ],
+      "en_title": "Qing Ming Yu Shang",
+      "en_artist": "Xu Song",
+      "stats": {
+        "views": "8亿+",
+        "platform": "B站+抖音",
+        "label": "🔥 B站+抖音 8亿+"
+      }
+    },
+    {
+      "id": "vid_yixiaojianghu",
+      "title": "一笑江湖",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 2,
+      "bpm": 92,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "⚔️",
+      "color": "#E9B872",
+      "tags": [
+        "guofeng",
+        "wuxia",
+        "easy"
+      ],
+      "preview_kou": [
+        "刺·转·收",
+        "展·踢·落",
+        "推·旋·定"
+      ],
+      "en_title": "Yi Xiao Jiang Hu",
+      "en_artist": "Various",
+      "stats": {
+        "views": "6亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 6亿+"
+      }
+    },
+    {
+      "id": "vid_lirenchou",
+      "title": "离人愁",
+      "artist": "李袁杰",
+      "genre": "guofeng",
+      "difficulty": 2,
+      "bpm": 76,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "😢",
+      "color": "#A8C8FF",
+      "tags": [
+        "guofeng",
+        "easy",
+        "popular"
+      ],
+      "preview_kou": [
+        "拭·转·落",
+        "飘·展·收",
+        "推·仰·定"
+      ],
+      "en_title": "Li Ren Chou",
+      "en_artist": "Li Yuanjie",
+      "stats": {
+        "views": "8亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 8亿+"
+      }
+    },
+    {
+      "id": "vid_mangzhong",
+      "title": "芒种",
+      "artist": "音阙诗听",
+      "genre": "guofeng",
+      "difficulty": 1,
+      "bpm": 84,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌾",
+      "color": "#C8E878",
+      "tags": [
+        "guofeng",
+        "beginner",
+        "seasonal"
+      ],
+      "preview_kou": [
+        "摇·摆·收",
+        "转·落·展",
+        "推·点·定"
+      ],
+      "en_title": "Mang Zhong",
+      "en_artist": "Various",
+      "stats": {
+        "views": "5亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 5亿+"
+      }
+    },
+    {
+      "id": "vid_duhongchen",
+      "title": "渡红尘",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 3,
+      "bpm": 86,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌅",
+      "color": "#FF9878",
+      "tags": [
+        "guofeng",
+        "medium",
+        "emotional"
+      ],
+      "preview_kou": [
+        "绕·展·落",
+        "转·飘·收",
+        "推·仰·定"
+      ],
+      "en_title": "Du Hong Chen",
+      "en_artist": "Various",
+      "stats": {
+        "views": "4亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 4亿+"
+      }
+    },
+    {
+      "id": "vid_fututap",
+      "title": "浮图塔",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 2,
+      "bpm": 120,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🗼",
+      "color": "#E9B872",
+      "tags": [
+        "guofeng",
+        "electronic",
+        "young"
+      ],
+      "preview_kou": [
+        "弹·扭·收",
+        "跳·展·落",
+        "转·锁·定"
+      ],
+      "en_title": "Fu Tu Ta",
+      "en_artist": "Various",
+      "stats": {
+        "views": "3亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 3亿+"
+      }
+    },
+    {
+      "id": "vid_juanzhulian",
+      "title": "卷珠帘",
+      "artist": "霍尊",
+      "genre": "guofeng",
+      "difficulty": 1,
+      "bpm": 72,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💎",
+      "color": "#D8C8FF",
+      "tags": [
+        "guofeng",
+        "beginner",
+        "slow"
+      ],
+      "preview_kou": [
+        "卷·展·落",
+        "飘·转·收",
+        "推·仰·定"
+      ],
+      "en_title": "Juan Zhu Lian",
+      "en_artist": "Huo Zun",
+      "stats": {
+        "views": "5亿+",
+        "platform": "全平台",
+        "label": "🔥 全平台 5亿+"
+      }
+    },
+    {
+      "id": "vid_daomadan",
+      "title": "刀马旦",
+      "artist": "古风舞者",
+      "genre": "guofeng",
+      "difficulty": 5,
+      "bpm": 110,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🗡️",
+      "color": "#FF6878",
+      "tags": [
+        "guofeng",
+        "very_hard",
+        "acrobatic"
+      ],
+      "preview_kou": [
+        "踢·劈·收",
+        "翻·转·落",
+        "亮·展·定"
+      ],
+      "en_title": "Dao Ma Dan",
+      "en_artist": "Various",
+      "stats": {
+        "views": "3亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 3亿+"
+      }
+    },
+    {
+      "id": "vid_espresso",
+      "title": "Espresso",
+      "artist": "Sabrina Carpenter",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 104,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "☕",
+      "color": "#FFD878",
+      "tags": [
+        "pop",
+        "tiktok",
+        "2024",
+        "viral"
+      ],
+      "preview_kou": [
+        "摇·摆·收",
+        "转·落·展",
+        "踏·推·定"
+      ],
+      "en_title": "Espresso",
+      "en_artist": "Sabrina Carpenter",
+      "stats": {
+        "views": "150亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 150亿话题"
+      }
+    },
+    {
+      "id": "vid_tyla_water",
+      "title": "Water",
+      "artist": "Tyla",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 108,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💧",
+      "color": "#78D8FF",
+      "tags": [
+        "pop",
+        "afrobeats",
+        "tiktok",
+        "2024"
+      ],
+      "preview_kou": [
+        "流·摆·收",
+        "转·落·展",
+        "波·推·定"
+      ],
+      "en_title": "Water",
+      "en_artist": "Tyla",
+      "stats": {
+        "views": "80亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 80亿话题"
+      }
+    },
+    {
+      "id": "vid_bencaoganmu",
+      "title": "本草纲目",
+      "artist": "刘畊宏",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 130,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💪",
+      "color": "#78FF98",
+      "tags": [
+        "pop",
+        "fitness",
+        "viral",
+        "beginner"
+      ],
+      "preview_kou": [
+        "踩·踢·摆",
+        "跳·收·展",
+        "转·落·定"
+      ],
+      "en_title": "Ben Cao Gang Mu",
+      "en_artist": "Liu Genghong",
+      "stats": {
+        "views": "80亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 80亿+"
+      }
+    },
+    {
+      "id": "vid_zuixuanminzufeng",
+      "title": "最炫民族风",
+      "artist": "凤凰传奇",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 136,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌈",
+      "color": "#FF9878",
+      "tags": [
+        "pop",
+        "folk",
+        "beginner",
+        "classic"
+      ],
+      "preview_kou": [
+        "踩·摆·收",
+        "转·落·展",
+        "举·推·定"
+      ],
+      "en_title": "Zui Xuan Min Zu Feng",
+      "en_artist": "Phoenix Legend",
+      "stats": {
+        "views": "20亿+",
+        "platform": "全平台",
+        "label": "🔥 全平台 20亿+"
+      }
+    },
+    {
+      "id": "vid_haicaowu",
+      "title": "海草舞",
+      "artist": "谢帝",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 128,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌊",
+      "color": "#78D8FF",
+      "tags": [
+        "pop",
+        "wave",
+        "beginner",
+        "fun"
+      ],
+      "preview_kou": [
+        "飘·摆·收",
+        "波·展·落",
+        "转·推·定"
+      ],
+      "en_title": "Hai Cao Wu",
+      "en_artist": "Xie Di",
+      "stats": {
+        "views": "15亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 15亿+"
+      }
+    },
+    {
+      "id": "vid_ketaisan",
+      "title": "科目三",
+      "artist": "各大博主",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 124,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "😂",
+      "color": "#FFD878",
+      "tags": [
+        "pop",
+        "meme",
+        "beginner",
+        "viral"
+      ],
+      "preview_kou": [
+        "扭·摆·甩",
+        "转·踩·收",
+        "推·摇·定"
+      ],
+      "en_title": "Ke Mu San",
+      "en_artist": "Various",
+      "stats": {
+        "views": "100亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 100亿+"
+      }
+    },
+    {
+      "id": "vid_aini",
+      "title": "爱你",
+      "artist": "王心凌",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 118,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💕",
+      "color": "#FFB8D8",
+      "tags": [
+        "pop",
+        "retro",
+        "beginner",
+        "cute"
+      ],
+      "preview_kou": [
+        "捧·心·展",
+        "转·落·收",
+        "点·推·定"
+      ],
+      "en_title": "Ai Ni",
+      "en_artist": "Cyndi Wang",
+      "stats": {
+        "views": "50亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 50亿+"
+      }
+    },
+    {
+      "id": "vid_ketahai",
+      "title": "可可托海的牧羊人",
+      "artist": "王琪",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 86,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🐑",
+      "color": "#A8E8C8",
+      "tags": [
+        "pop",
+        "folk",
+        "easy",
+        "emotional"
+      ],
+      "preview_kou": [
+        "漫·步·收",
+        "转·落·展",
+        "远·望·定"
+      ],
+      "en_title": "Ke Ke Tuo Hai",
+      "en_artist": "Wang Qi",
+      "stats": {
+        "views": "10亿+",
+        "platform": "全平台",
+        "label": "🔥 全平台 10亿+"
+      }
+    },
+    {
+      "id": "vid_yelandisco",
+      "title": "野狼disco",
+      "artist": "宝石Gem",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 128,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🕺",
+      "color": "#A878FF",
+      "tags": [
+        "pop",
+        "disco",
+        "easy",
+        "viral"
+      ],
+      "preview_kou": [
+        "摇·摆·踩",
+        "转·收·展",
+        "锁·推·定"
+      ],
+      "en_title": "Ye Lang Disco",
+      "en_artist": "BaoshiGem",
+      "stats": {
+        "views": "30亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 30亿+"
+      }
+    },
+    {
+      "id": "vid_duiniaibuwan",
+      "title": "对你爱不完",
+      "artist": "刘德华",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 118,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "❤️",
+      "color": "#FF7878",
+      "tags": [
+        "pop",
+        "classic",
+        "easy"
+      ],
+      "preview_kou": [
+        "捧·心·展",
+        "摇·转·收",
+        "踱·推·定"
+      ],
+      "en_title": "Dui Ni Ai Bu Wan",
+      "en_artist": "Andy Lau",
+      "stats": {
+        "views": "8亿+",
+        "platform": "全平台",
+        "label": "🔥 全平台 8亿+"
+      }
+    },
+    {
+      "id": "vid_jingwei",
+      "title": "精卫",
+      "artist": "古风舞者",
+      "genre": "pop",
+      "difficulty": 3,
+      "bpm": 132,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🐦",
+      "color": "#FF9878",
+      "tags": [
+        "pop",
+        "guofeng_fusion",
+        "medium"
+      ],
+      "preview_kou": [
+        "展·翅·收",
+        "转·落·定",
+        "冲·推·飞"
+      ],
+      "en_title": "Jing Wei",
+      "en_artist": "Various",
+      "stats": {
+        "views": "5亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 5亿+"
+      }
+    },
+    {
+      "id": "vid_tashanhe",
+      "title": "踏山河",
+      "artist": "小乐哥",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 126,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🏔️",
+      "color": "#E9B872",
+      "tags": [
+        "pop",
+        "guofeng_fusion",
+        "easy"
+      ],
+      "preview_kou": [
+        "踏·展·收",
+        "转·落·推",
+        "旋·定·扬"
+      ],
+      "en_title": "Ta Shan He",
+      "en_artist": "Xiao Lege",
+      "stats": {
+        "views": "6亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 6亿+"
+      }
+    },
+    {
+      "id": "vid_taitouwangjian",
+      "title": "抬头望见北斗星",
+      "artist": "各大博主",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 120,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "⭐",
+      "color": "#78D8FF",
+      "tags": [
+        "pop",
+        "folk",
+        "beginner",
+        "patriotic"
+      ],
+      "preview_kou": [
+        "仰·望·收",
+        "举·展·落",
+        "转·推·定"
+      ],
+      "en_title": "Tai Tou Wang Jian Bei Dou Xing",
+      "en_artist": "Various",
+      "stats": {
+        "views": "8亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 8亿+"
+      }
+    },
+    {
+      "id": "vid_qishiwu",
+      "title": "骑士舞",
+      "artist": "各大博主",
+      "genre": "pop",
+      "difficulty": 2,
+      "bpm": 132,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🐎",
+      "color": "#C8A8FF",
+      "tags": [
+        "pop",
+        "tiktok",
+        "easy",
+        "2024"
+      ],
+      "preview_kou": [
+        "骑·扭·收",
+        "转·摆·展",
+        "踏·推·定"
+      ],
+      "en_title": "Qi Shi Wu",
+      "en_artist": "Various",
+      "stats": {
+        "views": "10亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 10亿+"
+      }
+    },
+    {
+      "id": "vid_haibuhai",
+      "title": "嗨！不嗨",
+      "artist": "各大博主",
+      "genre": "pop",
+      "difficulty": 1,
+      "bpm": 128,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎉",
+      "color": "#FFD878",
+      "tags": [
+        "pop",
+        "tiktok",
+        "beginner",
+        "viral"
+      ],
+      "preview_kou": [
+        "摆·摇·收",
+        "跳·展·落",
+        "转·推·定"
+      ],
+      "en_title": "Hai Bu Hai",
+      "en_artist": "Various",
+      "stats": {
+        "views": "5亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 5亿+"
+      }
+    },
+    {
+      "id": "vid_singleladies",
+      "title": "Single Ladies",
+      "artist": "Beyoncé",
+      "genre": "jazz",
+      "difficulty": 3,
+      "bpm": 122,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💍",
+      "color": "#FFD878",
+      "tags": [
+        "jazz",
+        "iconic",
+        "medium",
+        "beyonce"
+      ],
+      "preview_kou": [
+        "摇·甩·收",
+        "踢·转·落",
+        "展·推·定"
+      ],
+      "en_title": "Single Ladies",
+      "en_artist": "Beyoncé",
+      "stats": {
+        "views": "3亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 3亿+ (教程搜索第一)"
+      }
+    },
+    {
+      "id": "vid_uptownfunk",
+      "title": "Uptown Funk",
+      "artist": "Bruno Mars",
+      "genre": "jazz",
+      "difficulty": 2,
+      "bpm": 115,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎸",
+      "color": "#FFD878",
+      "tags": [
+        "jazz",
+        "funk",
+        "easy",
+        "viral"
+      ],
+      "preview_kou": [
+        "踏·摆·收",
+        "滑·转·展",
+        "推·踢·定"
+      ],
+      "en_title": "Uptown Funk",
+      "en_artist": "Bruno Mars",
+      "stats": {
+        "views": "5亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 5亿+"
+      }
+    },
+    {
+      "id": "vid_aboutdamntime",
+      "title": "About Damn Time",
+      "artist": "Lizzo",
+      "genre": "jazz",
+      "difficulty": 2,
+      "bpm": 110,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💫",
+      "color": "#FF78D8",
+      "tags": [
+        "jazz",
+        "easy",
+        "2022",
+        "viral"
+      ],
+      "preview_kou": [
+        "摇·甩·收",
+        "转·踢·展",
+        "推·落·定"
+      ],
+      "en_title": "About Damn Time",
+      "en_artist": "Lizzo",
+      "stats": {
+        "views": "20亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 20亿话题"
+      }
+    },
+    {
+      "id": "vid_pokerface",
+      "title": "Poker Face",
+      "artist": "Lady Gaga",
+      "genre": "jazz",
+      "difficulty": 2,
+      "bpm": 120,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🃏",
+      "color": "#D878FF",
+      "tags": [
+        "jazz",
+        "pop",
+        "easy",
+        "iconic"
+      ],
+      "preview_kou": [
+        "锁·面·收",
+        "转·落·展",
+        "推·摆·定"
+      ],
+      "en_title": "Poker Face",
+      "en_artist": "Lady Gaga",
+      "stats": {
+        "views": "6亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 6亿+"
+      }
+    },
+    {
+      "id": "vid_thriller",
+      "title": "Thriller",
+      "artist": "Michael Jackson",
+      "genre": "jazz",
+      "difficulty": 4,
+      "bpm": 108,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🧟",
+      "color": "#FF7878",
+      "tags": [
+        "jazz",
+        "hard",
+        "iconic",
+        "halloween"
+      ],
+      "preview_kou": [
+        "僵·爪·收",
+        "转·拖·展",
+        "踢·锁·定"
+      ],
+      "en_title": "Thriller",
+      "en_artist": "Michael Jackson",
+      "stats": {
+        "views": "3亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 3亿+ (万圣节常青)"
+      }
+    },
+    {
+      "id": "vid_rhythmnation",
+      "title": "Rhythm Nation",
+      "artist": "Janet Jackson",
+      "genre": "jazz",
+      "difficulty": 3,
+      "bpm": 116,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🏛️",
+      "color": "#C8C8C8",
+      "tags": [
+        "jazz",
+        "medium",
+        "classic",
+        "militarystyle"
+      ],
+      "preview_kou": [
+        "踢·展·收",
+        "转·锁·落",
+        "推·踏·定"
+      ],
+      "en_title": "Rhythm Nation",
+      "en_artist": "Janet Jackson",
+      "stats": {
+        "views": "1亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 1亿+"
+      }
+    },
+    {
+      "id": "vid_levelup",
+      "title": "Level Up",
+      "artist": "Ciara",
+      "genre": "jazz",
+      "difficulty": 3,
+      "bpm": 130,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "⬆️",
+      "color": "#78FFD8",
+      "tags": [
+        "jazz",
+        "medium",
+        "athletic"
+      ],
+      "preview_kou": [
+        "爬·推·收",
+        "转·展·落",
+        "锁·踢·定"
+      ],
+      "en_title": "Level Up",
+      "en_artist": "Ciara",
+      "stats": {
+        "views": "15亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 15亿话题"
+      }
+    },
+    {
+      "id": "vid_wildside",
+      "title": "Wild Side",
+      "artist": "Normani",
+      "genre": "jazz",
+      "difficulty": 4,
+      "bpm": 90,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🐆",
+      "color": "#FFB878",
+      "tags": [
+        "jazz",
+        "hard",
+        "sensual",
+        "2021"
+      ],
+      "preview_kou": [
+        "滑·转·落",
+        "展·甩·收",
+        "压·推·定"
+      ],
+      "en_title": "Wild Side",
+      "en_artist": "Normani",
+      "stats": {
+        "views": "10亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 10亿话题"
+      }
+    },
+    {
+      "id": "vid_onthefloor",
+      "title": "On the Floor",
+      "artist": "Jennifer Lopez",
+      "genre": "jazz",
+      "difficulty": 2,
+      "bpm": 128,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "💃",
+      "color": "#FFD878",
+      "tags": [
+        "jazz",
+        "easy",
+        "latin_fusion"
+      ],
+      "preview_kou": [
+        "摆·转·收",
+        "踢·落·展",
+        "推·摇·定"
+      ],
+      "en_title": "On the Floor",
+      "en_artist": "Jennifer Lopez",
+      "stats": {
+        "views": "2亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 2亿+"
+      }
+    },
+    {
+      "id": "vid_superfreakygirl",
+      "title": "Super Freaky Girl",
+      "artist": "Nicki Minaj",
+      "genre": "jazz",
+      "difficulty": 3,
+      "bpm": 118,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎀",
+      "color": "#FF78A8",
+      "tags": [
+        "jazz",
+        "medium",
+        "2022"
+      ],
+      "preview_kou": [
+        "甩·弹·收",
+        "转·落·展",
+        "踢·推·定"
+      ],
+      "en_title": "Super Freaky Girl",
+      "en_artist": "Nicki Minaj",
+      "stats": {
+        "views": "25亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 25亿话题"
+      }
+    },
+    {
+      "id": "vid_titi",
+      "title": "Tití Me Preguntó",
+      "artist": "Bad Bunny",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 96,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🐰",
+      "color": "#FFD878",
+      "tags": [
+        "latin",
+        "reggaeton",
+        "easy",
+        "2022"
+      ],
+      "preview_kou": [
+        "摆·扭·收",
+        "转·落·展",
+        "踏·推·定"
+      ],
+      "en_title": "Tití Me Preguntó",
+      "en_artist": "Bad Bunny",
+      "stats": {
+        "views": "8亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 8亿"
+      }
+    },
+    {
+      "id": "vid_ritmo",
+      "title": "Ritmo",
+      "artist": "J Balvin",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 100,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎺",
+      "color": "#FFD878",
+      "tags": [
+        "latin",
+        "reggaeton",
+        "easy"
+      ],
+      "preview_kou": [
+        "摆·扭·收",
+        "踢·展·落",
+        "推·转·定"
+      ],
+      "en_title": "Ritmo",
+      "en_artist": "J Balvin",
+      "stats": {
+        "views": "6亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 6亿"
+      }
+    },
+    {
+      "id": "vid_hipsdontlie",
+      "title": "Hips Don't Lie",
+      "artist": "Shakira",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 100,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌶️",
+      "color": "#FF9878",
+      "tags": [
+        "latin",
+        "easy",
+        "iconic",
+        "hips"
+      ],
+      "preview_kou": [
+        "扭·摆·收",
+        "转·踢·展",
+        "波·推·定"
+      ],
+      "en_title": "Hips Don't Lie",
+      "en_artist": "Shakira",
+      "stats": {
+        "views": "28亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 28亿"
+      }
+    },
+    {
+      "id": "vid_concalma",
+      "title": "Con Calma",
+      "artist": "Daddy Yankee",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 98,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "😎",
+      "color": "#FFD878",
+      "tags": [
+        "latin",
+        "reggaeton",
+        "easy"
+      ],
+      "preview_kou": [
+        "摇·摆·收",
+        "转·踢·落",
+        "推·展·定"
+      ],
+      "en_title": "Con Calma",
+      "en_artist": "Daddy Yankee",
+      "stats": {
+        "views": "12亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 12亿"
+      }
+    },
+    {
+      "id": "vid_despacito",
+      "title": "Despacito",
+      "artist": "Luis Fonsi",
+      "genre": "latin",
+      "difficulty": 1,
+      "bpm": 89,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌅",
+      "color": "#FFD878",
+      "tags": [
+        "latin",
+        "beginner",
+        "iconic",
+        "worldwide"
+      ],
+      "preview_kou": [
+        "步·摆·收",
+        "转·展·落",
+        "慢·推·定"
+      ],
+      "en_title": "Despacito",
+      "en_artist": "Luis Fonsi",
+      "stats": {
+        "views": "83亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 83亿 (史上第2)"
+      }
+    },
+    {
+      "id": "vid_hawaii",
+      "title": "Hawái",
+      "artist": "Maluma",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 92,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌺",
+      "color": "#FF9878",
+      "tags": [
+        "latin",
+        "easy",
+        "romantic"
+      ],
+      "preview_kou": [
+        "漫·摆·收",
+        "转·落·展",
+        "踏·推·定"
+      ],
+      "en_title": "Hawái",
+      "en_artist": "Maluma",
+      "stats": {
+        "views": "8亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 8亿"
+      }
+    },
+    {
+      "id": "vid_bizcochito",
+      "title": "Bizcochito",
+      "artist": "Rosalía",
+      "genre": "latin",
+      "difficulty": 3,
+      "bpm": 114,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🍪",
+      "color": "#FF78D8",
+      "tags": [
+        "latin",
+        "flamenco_fusion",
+        "medium"
+      ],
+      "preview_kou": [
+        "踏·扭·收",
+        "转·展·落",
+        "切·推·定"
+      ],
+      "en_title": "Bizcochito",
+      "en_artist": "Rosalía",
+      "stats": {
+        "views": "15亿+",
+        "platform": "TikTok",
+        "label": "🔥 TikTok 15亿话题"
+      }
+    },
+    {
+      "id": "vid_takitaki",
+      "title": "Taki Taki",
+      "artist": "Ozuna",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 104,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🔥",
+      "color": "#FFD878",
+      "tags": [
+        "latin",
+        "easy",
+        "collab"
+      ],
+      "preview_kou": [
+        "摆·扭·收",
+        "转·落·展",
+        "推·踏·定"
+      ],
+      "en_title": "Taki Taki",
+      "en_artist": "Ozuna",
+      "stats": {
+        "views": "5亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 5亿"
+      }
+    },
+    {
+      "id": "vid_vivirmivia",
+      "title": "Vivir Mi Vida",
+      "artist": "Marc Anthony",
+      "genre": "latin",
+      "difficulty": 3,
+      "bpm": 132,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🎻",
+      "color": "#FF9878",
+      "tags": [
+        "latin",
+        "salsa",
+        "medium",
+        "classic"
+      ],
+      "preview_kou": [
+        "踏·转·收",
+        "摆·展·落",
+        "旋·推·定"
+      ],
+      "en_title": "Vivir Mi Vida",
+      "en_artist": "Marc Anthony",
+      "stats": {
+        "views": "2亿+",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 2亿+"
+      }
+    },
+    {
+      "id": "vid_waitingfortonight",
+      "title": "Waiting for Tonight",
+      "artist": "Jennifer Lopez",
+      "genre": "latin",
+      "difficulty": 2,
+      "bpm": 120,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌙",
+      "color": "#D8A8FF",
+      "tags": [
+        "latin",
+        "dance_pop",
+        "easy",
+        "classic"
+      ],
+      "preview_kou": [
+        "举·展·收",
+        "转·落·摆",
+        "推·仰·定"
+      ],
+      "en_title": "Waiting for Tonight",
+      "en_artist": "Jennifer Lopez",
+      "stats": {
+        "views": "1.5亿",
+        "platform": "YouTube",
+        "label": "🔥 YouTube 1.5亿"
+      }
+    },
+    {
+      "id": "vid_dagula_zuixuan",
+      "title": "最炫民族风（广场版）",
+      "artist": "代古拉k",
+      "genre": "guangchang",
+      "difficulty": 1,
+      "bpm": 136,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌸",
+      "color": "#FFD878",
+      "tags": [
+        "guangchang",
+        "beginner",
+        "folk",
+        "viral"
+      ],
+      "preview_kou": [
+        "踩·摆·收",
+        "转·展·落",
+        "举·推·定"
+      ],
+      "en_title": "Square Dance - Zu Xuan",
+      "en_artist": "Dagulak",
+      "stats": {
+        "views": "50亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 50亿+"
+      }
+    },
+    {
+      "id": "vid_xiaopingguo",
+      "title": "小苹果",
+      "artist": "筷子兄弟",
+      "genre": "guangchang",
+      "difficulty": 1,
+      "bpm": 134,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🍎",
+      "color": "#FF7878",
+      "tags": [
+        "guangchang",
+        "beginner",
+        "viral",
+        "fun"
+      ],
+      "preview_kou": [
+        "踩·拍·收",
+        "转·落·展",
+        "蹦·推·定"
+      ],
+      "en_title": "Little Apple",
+      "en_artist": "Chopstick Brothers",
+      "stats": {
+        "views": "30亿+",
+        "platform": "全平台",
+        "label": "🔥 全平台 30亿+"
+      }
+    },
+    {
+      "id": "vid_zuimeide_taiyang",
+      "title": "最美的太阳",
+      "artist": "陈思思",
+      "genre": "guangchang",
+      "difficulty": 1,
+      "bpm": 128,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "☀️",
+      "color": "#FFD878",
+      "tags": [
+        "guangchang",
+        "beginner",
+        "upbeat"
+      ],
+      "preview_kou": [
+        "展·踩·收",
+        "转·摆·落",
+        "举·推·定"
+      ],
+      "en_title": "Zui Mei De Tai Yang",
+      "en_artist": "Chen Sisi",
+      "stats": {
+        "views": "10亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 10亿+"
+      }
+    },
+    {
+      "id": "vid_huohongsarirung",
+      "title": "火红的萨日朗",
+      "artist": "乌兰图雅",
+      "genre": "guangchang",
+      "difficulty": 2,
+      "bpm": 130,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌺",
+      "color": "#FF7878",
+      "tags": [
+        "guangchang",
+        "easy",
+        "mongolian"
+      ],
+      "preview_kou": [
+        "摆·转·收",
+        "踢·展·落",
+        "举·推·定"
+      ],
+      "en_title": "Huo Hong De Sa Ri Lang",
+      "en_artist": "Wu Lantuyao",
+      "stats": {
+        "views": "20亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 20亿+"
+      }
+    },
+    {
+      "id": "vid_zhongguomei",
+      "title": "中国美",
+      "artist": "龙梅子",
+      "genre": "guangchang",
+      "difficulty": 2,
+      "bpm": 126,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🏯",
+      "color": "#FF9878",
+      "tags": [
+        "guangchang",
+        "easy",
+        "patriotic"
+      ],
+      "preview_kou": [
+        "展·转·收",
+        "摆·落·推",
+        "旋·踩·定"
+      ],
+      "en_title": "Zhong Guo Mei",
+      "en_artist": "Long Meizi",
+      "stats": {
+        "views": "8亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 8亿+"
+      }
+    },
+    {
+      "id": "vid_taomagan",
+      "title": "套马杆",
+      "artist": "乌兰托娅",
+      "genre": "guangchang",
+      "difficulty": 1,
+      "bpm": 138,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🐴",
+      "color": "#C8A878",
+      "tags": [
+        "guangchang",
+        "beginner",
+        "mongolian"
+      ],
+      "preview_kou": [
+        "踩·踢·收",
+        "转·摆·展",
+        "跑·推·定"
+      ],
+      "en_title": "Tao Ma Gan",
+      "en_artist": "Wu Lantuyao",
+      "stats": {
+        "views": "5亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 5亿+"
+      }
+    },
+    {
+      "id": "vid_yingshanhong",
+      "title": "映山红",
+      "artist": "宋祖英",
+      "genre": "guangchang",
+      "difficulty": 2,
+      "bpm": 116,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌸",
+      "color": "#FF9878",
+      "tags": [
+        "guangchang",
+        "easy",
+        "folk",
+        "classic"
+      ],
+      "preview_kou": [
+        "摆·展·收",
+        "转·落·摇",
+        "举·推·定"
+      ],
+      "en_title": "Ying Shan Hong",
+      "en_artist": "Song Zuying",
+      "stats": {
+        "views": "3亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 3亿+"
+      }
+    },
+    {
+      "id": "vid_wohewodezuguo",
+      "title": "我和我的祖国",
+      "artist": "群星",
+      "genre": "guangchang",
+      "difficulty": 1,
+      "bpm": 110,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🇨🇳",
+      "color": "#FF7878",
+      "tags": [
+        "guangchang",
+        "beginner",
+        "patriotic"
+      ],
+      "preview_kou": [
+        "展·捧·收",
+        "转·落·摆",
+        "举·推·定"
+      ],
+      "en_title": "Wo He Wo De Zuguo",
+      "en_artist": "Various",
+      "stats": {
+        "views": "15亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 15亿+"
+      }
+    },
+    {
+      "id": "vid_huohuohuo",
+      "title": "火火火",
+      "artist": "凤凰传奇",
+      "genre": "guangchang",
+      "difficulty": 2,
+      "bpm": 140,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🔥",
+      "color": "#FF7878",
+      "tags": [
+        "guangchang",
+        "easy",
+        "energetic"
+      ],
+      "preview_kou": [
+        "踩·爆·收",
+        "转·展·落",
+        "跳·推·定"
+      ],
+      "en_title": "Huo Huo Huo",
+      "en_artist": "Phoenix Legend",
+      "stats": {
+        "views": "6亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 6亿+"
+      }
+    },
+    {
+      "id": "vid_tianlanlan",
+      "title": "天蓝蓝",
+      "artist": "海来阿木",
+      "genre": "guangchang",
+      "difficulty": 1,
+      "bpm": 104,
+      "status": "coming_soon",
+      "phrases": 0,
+      "emoji": "🌤️",
+      "color": "#78D8FF",
+      "tags": [
+        "guangchang",
+        "beginner",
+        "folk",
+        "emotional"
+      ],
+      "preview_kou": [
+        "漫·展·收",
+        "转·摆·落",
+        "仰·推·定"
+      ],
+      "en_title": "Tian Lan Lan",
+      "en_artist": "Hai Lai Amu",
+      "stats": {
+        "views": "4亿+",
+        "platform": "抖音",
+        "label": "🔥 抖音 4亿+"
+      }
+    }
+  ]
+}

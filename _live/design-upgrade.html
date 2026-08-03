@@ -839,6 +839,7 @@ body{
 .auth-avatar .badge{display:none;width:6px;height:6px;border-radius:50%;background:var(--green-done)}
 .auth-avatar.logged-in .badge{display:block}
 
+.dc-lib-views{font-size:11px;color:#fb923c;font-weight:600;margin-top:3px}
 </style>
 </head>
 <body>
@@ -900,19 +901,26 @@ body{
   <div id="demo-library" style="margin:16px 0 0">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
       <div data-i18n="libraryTitle" style="font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em">选一支，现在就开始 ↓</div>
-      <div style="font-size:10px;color:#888" data-i18n="libraryCount">6 支已拆解</div>
+      <div style="font-size:10px;color:#888" data-i18n="libraryCount">30+ 支 · 持续更新</div>
     </div>
+    <!-- 搜索框 -->
+    <input id="dc-library-search" type="text" placeholder="搜歌名 / 歌手... Search dance..."
+      oninput="dcLibrarySearch(this.value)"
+      style="width:100%;box-sizing:border-box;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:13px;margin-bottom:10px;outline:none">
     <!-- 分类 tabs -->
     <div id="dc-cat-tabs" style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
       <button onclick="dcFilterCat('all')" id="dc-cat-all" class="dc-cat-btn dc-cat-active" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(233,184,114,.5);background:rgba(233,184,114,.15);color:#E9B872;transition:all .2s">全部</button>
       <button onclick="dcFilterCat('guofeng')" id="dc-cat-guofeng" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🏮 古风</button>
       <button onclick="dcFilterCat('kpop')" id="dc-cat-kpop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🎵 K-pop</button>
-      <button onclick="dcFilterCat('pop')" id="dc-cat-pop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">💃 流行</button>
+      <button onclick="dcFilterCat('pop')" id="dc-cat-pop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">⭐ 流行</button>
+      <button onclick="dcFilterCat('jazz')" id="dc-cat-jazz" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🎷 爵士</button>
+      <button onclick="dcFilterCat('latin')" id="dc-cat-latin" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">💃 拉丁</button>
+      <button onclick="dcFilterCat('guangchang')" id="dc-cat-guangchang" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🌹 广场</button>
     </div>
     <!-- 舞蹈卡片容器 -->
     <div id="dc-dance-grid" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
       <!-- 古风 -->
-      <div class="dc-dance-card" data-cat="guofeng" onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 140px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="guofeng" data-search="虞兮叹 yuxitan 古风 guofeng 剑舞" onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 140px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">⚔️</div>
         <div style="font-size:13px;font-weight:700;color:#E9B872">虞兮叹</div>
         <div style="font-size:10px;color:#888;margin-top:4px">剑舞 · 9段</div>
@@ -922,7 +930,7 @@ body{
         </div>
         <div style="font-size:11px;color:#E9B872;margin-top:8px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div class="dc-dance-card" data-cat="guofeng" onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 140px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="guofeng" data-search="孽 nie 古风 guofeng 双人" onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 140px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🎭</div>
         <div style="font-size:13px;font-weight:700;color:#C878E8">孽</div>
         <div style="font-size:10px;color:#888;margin-top:4px">双人 · 8段</div>
@@ -932,7 +940,7 @@ body{
         </div>
         <div style="font-size:11px;color:#C878E8;margin-top:8px;font-weight:600">▶ 立即跟练</div>
       </div>
-      <div class="dc-dance-card" data-cat="guofeng" onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 140px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="guofeng" data-search="春满园 chunmanyuan 民族舞 guofeng folk" onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 140px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🌸</div>
         <div style="font-size:13px;font-weight:700;color:#78C878">春满园</div>
         <div style="font-size:10px;color:#888;margin-top:4px">民族舞 · 6段</div>
@@ -943,7 +951,7 @@ body{
         <div style="font-size:11px;color:#78C878;margin-top:8px;font-weight:600">▶ 立即跟练</div>
       </div>
       <!-- K-pop -->
-      <div class="dc-dance-card" data-cat="kpop" onclick="window.DC_ID='vid_kpop_newjeans';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_newjeans')" style="flex:0 0 140px;cursor:pointer;background:#0A0F1A;border-radius:14px;padding:14px 12px;border:1px solid #1A3A5A;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="kpop" data-search="hype boy newjeans kpop" onclick="window.DC_ID='vid_kpop_newjeans';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_newjeans')" style="flex:0 0 140px;cursor:pointer;background:#0A0F1A;border-radius:14px;padding:14px 12px;border:1px solid #1A3A5A;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🎵</div>
         <div style="font-size:13px;font-weight:700;color:#78B8FF">Hype Boy</div>
         <div style="font-size:10px;color:#888;margin-top:4px">NewJeans · 8 moves</div>
@@ -953,7 +961,7 @@ body{
         </div>
         <div style="font-size:11px;color:#78B8FF;margin-top:8px;font-weight:600">▶ Practice now</div>
       </div>
-      <div class="dc-dance-card" data-cat="kpop" onclick="window.DC_ID='vid_kpop_blackpink';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_blackpink')" style="flex:0 0 140px;cursor:pointer;background:#1A0A10;border-radius:14px;padding:14px 12px;border:1px solid #5A1030;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="kpop" data-search="pink venom blackpink kpop" onclick="window.DC_ID='vid_kpop_blackpink';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_blackpink')" style="flex:0 0 140px;cursor:pointer;background:#1A0A10;border-radius:14px;padding:14px 12px;border:1px solid #5A1030;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">💗</div>
         <div style="font-size:13px;font-weight:700;color:#FF78A8">Pink Venom</div>
         <div style="font-size:10px;color:#888;margin-top:4px">BLACKPINK · 7 moves</div>
@@ -963,7 +971,7 @@ body{
         </div>
         <div style="font-size:11px;color:#FF78A8;margin-top:8px;font-weight:600">▶ Practice now</div>
       </div>
-      <div class="dc-dance-card" data-cat="kpop" onclick="window.DC_ID='vid_kpop_bts';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_bts')" style="flex:0 0 140px;cursor:pointer;background:#0A100A;border-radius:14px;padding:14px 12px;border:1px solid #2A5A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div class="dc-dance-card" data-cat="kpop" data-search="dynamite bts kpop" onclick="window.DC_ID='vid_kpop_bts';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_bts')" style="flex:0 0 140px;cursor:pointer;background:#0A100A;border-radius:14px;padding:14px 12px;border:1px solid #2A5A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">✨</div>
         <div style="font-size:13px;font-weight:700;color:#A8E878">Dynamite</div>
         <div style="font-size:10px;color:#888;margin-top:4px">BTS · 8 moves</div>
@@ -973,8 +981,210 @@ body{
         </div>
         <div style="font-size:11px;color:#A8E878;margin-top:8px;font-weight:600">▶ Practice now</div>
       </div>
-      <!-- 即将上线占位卡 -->
-      <div class="dc-dance-card dc-coming-soon" data-cat="all" onclick="showDecomposeUpload()" style="flex:0 0 140px;cursor:pointer;background:rgba(255,255,255,.03);border-radius:14px;padding:14px 12px;border:1px dashed rgba(255,255,255,.12);transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <!-- K-pop 即将上线 -->
+      <div class="dc-dance-card dc-coming-card" data-cat="kpop" data-search="supernova aespa kpop" style="flex:0 0 140px;cursor:pointer;background:rgba(200,168,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(200,168,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌟</div>
+        <div style="font-size:13px;font-weight:700;color:#C8A8FF">Supernova</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">aespa · K-pop</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(200,168,255,.15);color:#C8A8FF;font-weight:600">K-pop</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 50亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 80亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 120亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 30亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 60亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div</div</div</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="kpop" data-search="magnetic illit kpop" style="flex:0 0 140px;cursor:pointer;background:rgba(255,184,216,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,184,216,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🧲</div>
+        <div style="font-size:13px;font-weight:700;color:#FFB8D8">Magnetic</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">ILLIT · K-pop</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,184,216,.15);color:#FFB8D8;font-weight:600">K-pop</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 40亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="kpop" data-search="eta newjeans kpop" style="flex:0 0 140px;cursor:pointer;background:rgba(120,184,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(120,184,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🎶</div>
+        <div style="font-size:13px;font-weight:700;color:#78B8FF">ETA</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">NewJeans · K-pop</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,184,255,.15);color:#78B8FF;font-weight:600">K-pop</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 30亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <!-- 古风 即将上线 -->
+      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="执笔 zhibi 古风 guofeng" style="flex:0 0 140px;cursor:pointer;background:rgba(233,184,114,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(233,184,114,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🖌️</div>
+        <div style="font-size:13px;font-weight:700;color:#E9B872">执笔</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">古风 · 8段</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(233,184,114,.15);color:#E9B872;font-weight:600">古风</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 25亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="凉凉 liangliang 古风 guofeng 张碧晨" style="flex:0 0 140px;cursor:pointer;background:rgba(168,200,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(168,200,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌙</div>
+        <div style="font-size:13px;font-weight:700;color:#A8C8FF">凉凉</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">张碧晨 · 古风</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,200,255,.15);color:#A8C8FF;font-weight:600">古风</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 全平台 12亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="赤伶 chiling hita 古风 guofeng" style="flex:0 0 140px;cursor:pointer;background:rgba(255,136,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,136,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🎭</div>
+        <div style="font-size:13px;font-weight:700;color:#FF8878">赤伶</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">HITA · 戏腔</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,136,120,.15);color:#FF8878;font-weight:600">古风</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 20亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="探窗 tanchuang 古风 guofeng 武侠" style="flex:0 0 140px;cursor:pointer;background:rgba(233,184,114,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(233,184,114,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🏮</div>
+        <div style="font-size:13px;font-weight:700;color:#E9B872">探窗</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">古风 · 进阶</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(233,184,114,.15);color:#E9B872;font-weight:600">古风</span><span style="font-size:9px;color:#888">进阶</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 10亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="清明雨上 qingmingyu 许嵩 古风 guofeng" style="flex:0 0 140px;cursor:pointer;background:rgba(168,200,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(168,200,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌧️</div>
+        <div style="font-size:13px;font-weight:700;color:#A8C8FF">清明雨上</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">许嵩 · 古风</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,200,255,.15);color:#A8C8FF;font-weight:600">古风</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 B站+抖音 8亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <!-- 流行/抖音热舞 即将上线 -->
+      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="espresso sabrina carpenter pop" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">☕</div>
+        <div style="font-size:13px;font-weight:700;color:#FFD878">Espresso</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Sabrina C. · Pop</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 150亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="本草纲目 bencaoganmu 刘畊宏 fitness pop" style="flex:0 0 140px;cursor:pointer;background:rgba(120,255,152,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(120,255,152,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">💪</div>
+        <div style="font-size:13px;font-weight:700;color:#78FF98">本草纲目</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">刘畊宏 · 健身操</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,255,152,.15);color:#78FF98;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 80亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="科目三 ketaisan pop 抖音" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">😂</div>
+        <div style="font-size:13px;font-weight:700;color:#FFD878">科目三</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">抖音热舞</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 100亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="野狼disco yelandisco 宝石gem pop" style="flex:0 0 140px;cursor:pointer;background:rgba(168,120,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(168,120,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🕺</div>
+        <div style="font-size:13px;font-weight:700;color:#A878FF">野狼disco</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">宝石Gem · 流行</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,120,255,.15);color:#A878FF;font-weight:600">流行</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 30亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="爱你 aini 王心凌 cyndi wang pop" style="flex:0 0 140px;cursor:pointer;background:rgba(255,184,216,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,184,216,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">💕</div>
+        <div style="font-size:13px;font-weight:700;color:#FFB8D8">爱你</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">王心凌 · 流行</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,184,216,.15);color:#FFB8D8;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 50亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <!-- 爵士 即将上线 -->
+      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="single ladies beyonce jazz" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">💍</div>
+        <div style="font-size:13px;font-weight:700;color:#FFD878">Single Ladies</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Beyoncé · 爵士</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">爵士</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 3亿+ (教程搜索第一)</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="uptown funk bruno mars jazz funk" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🎸</div>
+        <div style="font-size:13px;font-weight:700;color:#FFD878">Uptown Funk</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Bruno Mars · 爵士</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">爵士</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 5亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="about damn time lizzo jazz" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,216,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,216,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">💫</div>
+        <div style="font-size:13px;font-weight:700;color:#FF78D8">About Damn Time</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Lizzo · 爵士</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,216,.15);color:#FF78D8;font-weight:600">爵士</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 20亿话题</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="thriller michael jackson jazz halloween" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🧟</div>
+        <div style="font-size:13px;font-weight:700;color:#FF7878">Thriller</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Michael Jackson</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,120,.15);color:#FF7878;font-weight:600">爵士</span><span style="font-size:9px;color:#888">进阶</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 3亿+ (万圣节常青)</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <!-- 拉丁 即将上线 -->
+      <div class="dc-dance-card dc-coming-card" data-cat="latin" data-search="hips don't lie shakira latin" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌶️</div>
+        <div style="font-size:13px;font-weight:700;color:#FF9878">Hips Don't Lie</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Shakira · 拉丁</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">拉丁</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 28亿</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="latin" data-search="despacito luis fonsi latin reggaeton" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌅</div>
+        <div style="font-size:13px;font-weight:700;color:#FFD878">Despacito</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Luis Fonsi · 拉丁</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">拉丁</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 83亿 (史上第2)</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="latin" data-search="vivir mi vida marc anthony latin salsa" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🎻</div>
+        <div style="font-size:13px;font-weight:700;color:#FF9878">Vivir Mi Vida</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">Marc Anthony · 拉丁</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">拉丁</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 2亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <!-- 广场舞 即将上线 -->
+      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="小苹果 xiaopingguo 筷子兄弟 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🍎</div>
+        <div style="font-size:13px;font-weight:700;color:#FF7878">小苹果</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">筷子兄弟 · 广场舞</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,120,.15);color:#FF7878;font-weight:600">广场</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 全平台 30亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="最炫民族风 zuixuan 凤凰传奇 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌈</div>
+        <div style="font-size:13px;font-weight:700;color:#FF9878">最炫民族风</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">凤凰传奇 · 广场舞</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">广场</span><span style="font-size:9px;color:#888">入门</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 全平台 20亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="火红的萨日朗 huohong 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🌺</div>
+        <div style="font-size:13px;font-weight:700;color:#FF7878">火红的萨日朗</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">乌兰图雅 · 广场舞</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,120,.15);color:#FF7878;font-weight:600">广场</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 20亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="中国美 zhongguomei 龙梅子 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
+        <div style="font-size:22px;margin-bottom:8px">🏯</div>
+        <div style="font-size:13px;font-weight:700;color:#FF9878">中国美</div>
+        <div style="font-size:10px;color:#888;margin-top:4px">龙梅子 · 广场舞</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">广场</span></div>
+        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 8亿+</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
+      </div>
+      <!-- 上传自己的 -->
+      <div class="dc-dance-card dc-coming-soon" data-cat="all" data-search="" onclick="showDecomposeUpload()" style="flex:0 0 140px;cursor:pointer;background:rgba(255,255,255,.03);border-radius:14px;padding:14px 12px;border:1px dashed rgba(255,255,255,.12);transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">➕</div>
         <div style="font-size:12px;font-weight:600;color:#666">更多舞蹈</div>
         <div style="font-size:10px;color:#555;margin-top:4px;line-height:1.5">每周上新<br>或上传你的</div>
@@ -4298,7 +4508,10 @@ function dcShowStampToast(n){var t=document.createElement('div');t.style.cssText
 function dcShowStampAchievement(){var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;';ov.innerHTML='<div style="background:linear-gradient(135deg,#1a1f35,#0f1220);border:2px solid rgba(255,200,80,0.5);border-radius:20px;padding:40px 32px;text-align:center;max-width:300px;"><div style="font-size:56px;margin-bottom:12px;">🏆</div><div style="font-size:24px;font-weight:bold;color:#ffc850;margin-bottom:8px;">连续练习成就！</div><div style="color:rgba(255,255,255,0.7);font-size:15px;margin-bottom:24px;">集满'+STAMP_TARGET+'个印章，解锁全套慢动作合集</div><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;padding:12px 32px;border-radius:20px;font-size:16px;cursor:pointer;">太棒了！</button></div>';document.body.appendChild(ov);ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});}
 function dcRenderStampBar(){var d=dcGetStamps();var bar=document.getElementById('dcStampBar');if(!bar)return;var filled=d.total%STAMP_TARGET;var html='🔥 '+d.total+'个印章 ';for(var i=0;i<STAMP_TARGET;i++){html+=i<filled?'⭐':'☆';}bar.textContent=html;if(d.total===0)bar.style.display='none';else bar.style.display='block';}
 // ===== 今日一句 =====
+var _dcCurrentCat='all';
+var _dcSearchQ='';
 function dcFilterCat(cat){
+  _dcCurrentCat=cat;
   // Update tab styles
   document.querySelectorAll('.dc-cat-btn').forEach(function(b){
     b.style.background='transparent';b.style.color='#888';b.style.borderColor='rgba(255,255,255,.1)';
@@ -4306,14 +4519,31 @@ function dcFilterCat(cat){
   });
   var active=document.getElementById('dc-cat-'+cat);
   if(active){active.style.background='rgba(233,184,114,.15)';active.style.color='#E9B872';active.style.borderColor='rgba(233,184,114,.5)';active.classList.add('dc-cat-active');}
-  // Show/hide cards
+  dcApplyLibraryFilter();
+}
+function dcLibrarySearch(q){
+  _dcSearchQ=(q||'').toLowerCase().trim();
+  dcApplyLibraryFilter();
+}
+function dcApplyLibraryFilter(){
+  var cat=_dcCurrentCat,q=_dcSearchQ;
   document.querySelectorAll('.dc-dance-card').forEach(function(c){
-    var cardCat=c.getAttribute('data-cat');
-    var show=(cat==='all')||(cardCat===cat)||(cardCat==='all');
-    c.style.display=show?'':'none';
+    var cardCat=c.getAttribute('data-cat')||'';
+    var catOk=(cat==='all')||(cardCat===cat)||(cardCat==='all');
+    var searchText=(c.getAttribute('data-search')||c.innerText||'').toLowerCase();
+    var searchOk=!q||searchText.includes(q);
+    c.style.display=(catOk&&searchOk)?'':'none';
   });
-  // Always show the "more" card
-  document.querySelectorAll('.dc-coming-soon').forEach(function(c){c.style.display='';});
+  // "upload your own" card always visible when no filter or all
+  document.querySelectorAll('.dc-coming-soon').forEach(function(c){
+    if(!q&&(cat==='all'||c.getAttribute('data-cat')==='all')){c.style.display='';}
+  });
+}
+function dcShowComingSoon(){
+  var t=document.createElement('div');
+  t.textContent='🔒 这支舞正在拆解中，马上来！';
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#7c3aed;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:9999;white-space:nowrap';
+  document.body.appendChild(t);setTimeout(function(){t.remove();},2500);
 }
 
 function dcInitDailyPhrase(){var demos=['vid_1679971642','vid_2130688639','vid_563626483'];var dayIdx=Math.floor(Date.now()/86400000);var did=demos[dayIdx%demos.length];fetch('api/decompose/'+did).then(function(r){return r.json();}).then(function(d){if(!d.phrases||!d.phrases.length)return;var p=d.phrases[dayIdx%d.phrases.length];var el=document.getElementById('dcDailyPhrase');if(el)el.style.display='block';var t=document.getElementById('dcDailyTitle');if(t)t.textContent='《'+(d.title||'')+'》第'+p.i+'句 · '+(p.name||'');var k=document.getElementById('dcDailyKou');if(k)k.textContent='口诀：'+(p.kou||p.action||'').slice(0,24);var btn=document.getElementById('dcDailyBtn');if(btn)btn.onclick=function(){window.DC_ID=did;DC_DATA=null;dcLoading();pollDecompose(did);};}).catch(function(){});dcRenderStampBar();}

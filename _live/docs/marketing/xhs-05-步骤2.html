@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Helvetica Neue',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:80px 72px;position:relative}
+.step-badge{display:inline-flex;align-items:center;gap:12px;margin-bottom:36px;width:fit-content}
+.step-num-big{width:68px;height:68px;background:linear-gradient(135deg,#5a96ff,#7c6fff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff}
+.step-of{font-size:22px;color:rgba(255,255,255,0.4)}
+h1{font-size:68px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+h1 em{color:#5a96ff;font-style:normal}
+.sub{font-size:28px;color:rgba(255,255,255,0.45);margin-bottom:48px}
+.ai-progress{flex:1;display:flex;flex-direction:column;gap:20px}
+.speed-stat{background:rgba(90,150,255,0.1);border:1px solid rgba(90,150,255,0.25);border-radius:20px;padding:24px 32px;display:flex;align-items:center;justify-content:space-between}
+.speed-label{font-size:22px;color:rgba(255,255,255,0.5)}
+.speed-val{font-size:36px;font-weight:900;color:#5a96ff}
+.phrases-list{flex:1;display:flex;flex-direction:column;gap:14px}
+.phrase-item{background:rgba(255,255,255,0.04);border-radius:16px;padding:20px 26px;display:flex;align-items:center;gap:20px;border-left:3px solid transparent}
+.phrase-item.done{border-left-color:#5a96ff}
+.phrase-item.active{border-left-color:#ffc850;background:rgba(255,200,80,0.06)}
+.phrase-item.pending{opacity:0.3}
+.p-icon{font-size:28px;flex-shrink:0}
+.p-info{flex:1}
+.p-name{font-size:24px;color:#fff;font-weight:500;margin-bottom:4px}
+.p-time{font-size:18px;color:rgba(255,255,255,0.35)}
+.p-status{font-size:22px}
+.pulse-bar{background:rgba(255,200,80,0.08);border:1px solid rgba(255,200,80,0.2);border-radius:14px;padding:20px 26px;display:flex;align-items:center;gap:16px}
+.pulse-dot{width:14px;height:14px;background:#ffc850;border-radius:50%}
+.pulse-text{font-size:24px;color:#ffc850;font-weight:500}
+.progress-bar-wrap{margin-top:8px}
+.progress-label{font-size:18px;color:rgba(255,255,255,0.35);margin-bottom:10px}
+.progress-track{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;width:62%;background:linear-gradient(90deg,#5a96ff,#7c6fff);border-radius:4px}
+.brand{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:20px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="step-badge">
+    <div class="step-num-big">2</div>
+    <div class="step-of">共 3 步</div>
+  </div>
+  <h1>AI 正在<em>拆解</em><br>动作识别中</h1>
+  <div class="sub">比人工快100倍 · 2分钟内完成全部拆解</div>
+  <div class="ai-progress">
+    <div class="speed-stat">
+      <div class="speed-label">预计完成时间</div>
+      <div class="speed-val">约 2 分钟</div>
+    </div>
+    <div class="pulse-bar">
+      <div class="pulse-dot"></div>
+      <div class="pulse-text">正在识别第 5 句动作…</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-label">已完成 5 / 8 句</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    <div class="phrases-list">
+      <div class="phrase-item done"><div class="p-icon">✅</div><div class="p-info"><div class="p-name">第 1 句 · 起势亮相</div><div class="p-time">0.0s – 4.2s</div></div><div class="p-status">✓</div></div>
+      <div class="phrase-item done"><div class="p-icon">✅</div><div class="p-info"><div class="p-name">第 2 句 · 展臂提步</div><div class="p-time">4.2s – 8.6s</div></div><div class="p-status">✓</div></div>
+      <div class="phrase-item done"><div class="p-icon">✅</div><div class="p-info"><div class="p-name">第 3 句 · 云手移步</div><div class="p-time">8.6s – 12.9s</div></div><div class="p-status">✓</div></div>
+      <div class="phrase-item done"><div class="p-icon">✅</div><div class="p-info"><div class="p-name">第 4 句 · 转身摆袖</div><div class="p-time">12.9s – 17.4s</div></div><div class="p-status">✓</div></div>
+      <div class="phrase-item active"><div class="p-icon">⚡</div><div class="p-info"><div class="p-name">第 5 句 · 飞燕转身</div><div class="p-time">17.4s – 22.0s</div></div><div class="p-status">…</div></div>
+      <div class="phrase-item pending"><div class="p-icon">○</div><div class="p-info"><div class="p-name">第 6 句</div><div class="p-time">待识别</div></div></div>
+      <div class="phrase-item pending"><div class="p-icon">○</div><div class="p-info"><div class="p-name">第 7 句</div><div class="p-time">待识别</div></div></div>
+      <div class="phrase-item pending"><div class="p-icon">○</div><div class="p-info"><div class="p-name">第 8 句</div><div class="p-time">待识别</div></div></div>
+    </div>
+  </div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

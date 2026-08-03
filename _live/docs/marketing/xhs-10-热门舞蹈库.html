@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Helvetica Neue',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:80px 72px;position:relative}
+.lib-tag{display:inline-flex;align-items:center;gap:10px;background:rgba(90,150,255,0.15);border:1px solid rgba(90,150,255,0.4);color:#5a96ff;font-size:24px;padding:10px 24px;border-radius:30px;margin-bottom:36px;width:fit-content}
+h1{font-size:66px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+h1 span{color:#5a96ff}
+.sub{font-size:26px;color:rgba(255,255,255,0.45);margin-bottom:44px}
+.categories{display:flex;gap:12px;margin-bottom:28px}
+.cat{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);font-size:20px;padding:8px 20px;border-radius:20px}
+.cat.active{background:rgba(90,150,255,0.15);border-color:rgba(90,150,255,0.4);color:#5a96ff}
+.dance-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}
+.dance-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px}
+.dance-card.featured{border-color:rgba(90,150,255,0.3);background:rgba(90,150,255,0.06)}
+.dance-card.kpop{border-color:rgba(220,100,200,0.3);background:rgba(220,100,200,0.05)}
+.d-genre{font-size:16px;padding:4px 12px;border-radius:12px;width:fit-content;margin-bottom:4px}
+.featured .d-genre{background:rgba(90,150,255,0.15);color:#5a96ff}
+.kpop .d-genre{background:rgba(220,100,200,0.15);color:#dc64c8}
+.d-genre.cn{background:rgba(255,200,80,0.15);color:#ffc850}
+.d-genre.pop{background:rgba(80,210,130,0.15);color:#50d282}
+.d-title{font-size:22px;font-weight:bold;color:#fff;line-height:1.3}
+.d-artist{font-size:17px;color:rgba(255,255,255,0.4)}
+.d-phrases{font-size:16px;color:rgba(255,255,255,0.3);margin-top:4px}
+.d-phrases span{color:#5a96ff}
+.more-hint{text-align:center;margin-top:16px}
+.more-text{font-size:22px;color:rgba(255,255,255,0.35)}
+.more-dot{display:inline-block;width:6px;height:6px;background:rgba(90,150,255,0.5);border-radius:50%;margin:0 4px}
+.cta{text-align:center;margin-top:20px}
+.cta-btn{display:inline-block;background:linear-gradient(90deg,#5a96ff,#7c6fff);color:#fff;font-size:28px;font-weight:bold;padding:18px 52px;border-radius:50px;letter-spacing:2px}
+.brand{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-size:20px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="lib-tag">📚 舞蹈内容库</div>
+  <h1>30+ 热门舞蹈<br><span>已完整拆解</span></h1>
+  <div class="sub">上传即拆 · 或直接选库里的开练</div>
+  <div class="categories">
+    <div class="cat active">全部</div>
+    <div class="cat">国风</div>
+    <div class="cat">K-pop</div>
+    <div class="cat">流行</div>
+    <div class="cat">古风</div>
+  </div>
+  <div class="dance-grid">
+    <div class="dance-card featured">
+      <div class="d-genre">国风</div>
+      <div class="d-title">虞兮叹</div>
+      <div class="d-artist">项羽·古风舞</div>
+      <div class="d-phrases">已拆解 <span>9 句</span></div>
+    </div>
+    <div class="dance-card kpop">
+      <div class="d-genre">K-pop</div>
+      <div class="d-title">Hype Boy</div>
+      <div class="d-artist">NewJeans</div>
+      <div class="d-phrases">已拆解 <span>8 句</span></div>
+    </div>
+    <div class="dance-card featured">
+      <div class="d-genre cn">国风</div>
+      <div class="d-title">起风了</div>
+      <div class="d-artist">买辣椒也用券</div>
+      <div class="d-phrases">已拆解 <span>7 句</span></div>
+    </div>
+    <div class="dance-card kpop">
+      <div class="d-genre">K-pop</div>
+      <div class="d-title">Pink Venom</div>
+      <div class="d-artist">BLACKPINK</div>
+      <div class="d-phrases">已拆解 <span>7 句</span></div>
+    </div>
+    <div class="dance-card">
+      <div class="d-genre pop">流行</div>
+      <div class="d-title">舞狮少年</div>
+      <div class="d-artist">传统狮舞融合</div>
+      <div class="d-phrases">已拆解 <span>8 句</span></div>
+    </div>
+    <div class="dance-card kpop">
+      <div class="d-genre">K-pop</div>
+      <div class="d-title">Dynamite</div>
+      <div class="d-artist">BTS</div>
+      <div class="d-phrases">已拆解 <span>8 句</span></div>
+    </div>
+    <div class="dance-card">
+      <div class="d-genre cn">国风</div>
+      <div class="d-title">赤伶</div>
+      <div class="d-artist">HITA</div>
+      <div class="d-phrases">已拆解 <span>6 句</span></div>
+    </div>
+    <div class="dance-card">
+      <div class="d-genre pop">流行</div>
+      <div class="d-title">嘉年华</div>
+      <div class="d-artist">TFBoys</div>
+      <div class="d-phrases">已拆解 <span>9 句</span></div>
+    </div>
+  </div>
+  <div class="more-hint">
+    <span class="more-dot"></span><span class="more-dot"></span><span class="more-dot"></span>
+    <div class="more-text">更多持续更新中 · 也可上传自己想学的</div>
+  </div>
+  <div class="cta"><div class="cta-btn">🔗 免费体验完整库</div></div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

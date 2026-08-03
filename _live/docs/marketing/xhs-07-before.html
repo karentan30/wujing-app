@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Helvetica Neue',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:72px 72px;position:relative}
+.eyebrow{font-size:24px;color:rgba(255,255,255,0.35);margin-bottom:20px;letter-spacing:2px}
+h1{font-size:64px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:52px}
+.vs-row{display:flex;gap:20px;flex:1}
+.col{flex:1;border-radius:24px;padding:32px 28px;display:flex;flex-direction:column;gap:18px}
+.col-before{background:rgba(255,80,80,0.06);border:1px solid rgba(255,80,80,0.2)}
+.col-after{background:rgba(80,200,130,0.06);border:1px solid rgba(80,200,130,0.2)}
+.col-header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.col-emoji{font-size:42px}
+.col-title{font-size:28px;font-weight:bold}
+.col-before .col-title{color:#ff5050}
+.col-after .col-title{color:#50c882}
+.col-time{font-size:52px;font-weight:900;line-height:1}
+.col-before .col-time{color:#ff5050}
+.col-after .col-time{color:#50c882}
+.col-time-unit{font-size:22px;font-weight:400;color:rgba(255,255,255,0.4)}
+.divider{height:1px;background:rgba(255,255,255,0.08)}
+.item{display:flex;align-items:flex-start;gap:12px;font-size:21px;line-height:1.5}
+.col-before .item{color:rgba(255,150,150,0.8)}
+.col-after .item{color:rgba(150,255,200,0.8)}
+.item-dot{flex-shrink:0;margin-top:4px;font-size:16px}
+.vs-divider{display:flex;align-items:center;justify-content:center;width:60px;flex-shrink:0}
+.vs-circle{width:60px;height:60px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:rgba(255,255,255,0.5);margin:auto;position:sticky;top:50%}
+.bottom-stat{margin-top:24px;background:linear-gradient(90deg,rgba(90,150,255,0.12),rgba(124,111,255,0.12));border:1px solid rgba(90,150,255,0.25);border-radius:20px;padding:28px 36px;text-align:center}
+.stat-num{font-size:72px;font-weight:900;color:#5a96ff;line-height:1}
+.stat-label{font-size:24px;color:rgba(255,255,255,0.55);margin-top:8px}
+.brand{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-size:20px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">真实对比 · 亲测有效</div>
+  <h1>学同一支舞<br>差距有多大？</h1>
+  <div class="vs-row">
+    <div class="col col-before">
+      <div class="col-header"><div class="col-emoji">😮‍💨</div><div class="col-title">以前</div></div>
+      <div class="col-time">2h+<div class="col-time-unit">才学会一支舞</div></div>
+      <div class="divider"></div>
+      <div class="item"><div class="item-dot">✗</div>反复倒视频找动作</div>
+      <div class="item"><div class="item-dot">✗</div>记不住先后顺序</div>
+      <div class="item"><div class="item-dot">✗</div>学了上句忘下句</div>
+      <div class="item"><div class="item-dot">✗</div>不知道哪里动作错了</div>
+      <div class="item"><div class="item-dot">✗</div>跟不上节奏卡住停</div>
+      <div class="item"><div class="item-dot">✗</div>练完还是不像原版</div>
+    </div>
+    <div class="vs-divider"><div class="vs-circle">VS</div></div>
+    <div class="col col-after">
+      <div class="col-header"><div class="col-emoji">🔥</div><div class="col-title">用舞镜</div></div>
+      <div class="col-time">20m<div class="col-time-unit">就能跟上完整版</div></div>
+      <div class="divider"></div>
+      <div class="item"><div class="item-dot">✓</div>AI自动切分每一句</div>
+      <div class="item"><div class="item-dot">✓</div>8帧图对照练不卡</div>
+      <div class="item"><div class="item-dot">✓</div>口诀记住就记住了</div>
+      <div class="item"><div class="item-dot">✓</div>0.5x慢放看清动作</div>
+      <div class="item"><div class="item-dot">✓</div>一句练熟再到下句</div>
+      <div class="item"><div class="item-dot">✓</div>有人告诉你哪句是哪句</div>
+    </div>
+  </div>
+  <div class="bottom-stat">
+    <div class="stat-num">节省 87%</div>
+    <div class="stat-label">平均学习时间缩短幅度（用户反馈）</div>
+  </div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

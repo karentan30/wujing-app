@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Helvetica Neue',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:80px 72px;position:relative}
+.day-badge{display:inline-flex;align-items:center;gap:12px;background:rgba(255,200,80,0.15);border:1px solid rgba(255,200,80,0.4);color:#ffc850;font-size:26px;padding:12px 28px;border-radius:30px;margin-bottom:36px;width:fit-content}
+h1{font-size:72px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+h1 em{color:#ffc850;font-style:normal}
+.sub{font-size:26px;color:rgba(255,255,255,0.45);margin-bottom:48px}
+.stamp-row{display:flex;gap:14px;margin-bottom:32px;flex-wrap:wrap}
+.stamp{width:84px;height:84px;background:rgba(255,200,80,0.2);border:2px solid rgba(255,200,80,0.5);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stamp.done{background:rgba(255,200,80,0.3);border-color:#ffc850}
+.stamp-icon{font-size:32px}
+.stamp-day{font-size:16px;color:#ffc850;margin-top:2px}
+.stamp.empty{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)}
+.stamp.empty .stamp-icon{font-size:20px;color:rgba(255,255,255,0.15)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.stat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 26px}
+.stat-val{font-size:52px;font-weight:900;color:#5a96ff;line-height:1}
+.stat-label{font-size:20px;color:rgba(255,255,255,0.45);margin-top:6px}
+.achievement{background:rgba(255,200,80,0.08);border:1px solid rgba(255,200,80,0.25);border-radius:20px;padding:24px 28px;display:flex;align-items:center;gap:20px}
+.ach-icon{font-size:52px;flex-shrink:0}
+.ach-info{flex:1}
+.ach-title{font-size:26px;font-weight:bold;color:#ffc850;margin-bottom:6px}
+.ach-desc{font-size:20px;color:rgba(255,255,255,0.5)}
+.motivation{background:rgba(90,150,255,0.08);border:1px solid rgba(90,150,255,0.2);border-radius:20px;padding:24px 28px;text-align:center}
+.mot-text{font-size:26px;color:#5a96ff;font-weight:500;line-height:1.5}
+.mot-emoji{font-size:40px;margin-bottom:10px}
+.cta{text-align:center;margin-top:20px}
+.cta-btn{display:inline-block;background:linear-gradient(90deg,#ffc850,#ff9d00);color:#1a1400;font-size:28px;font-weight:bold;padding:18px 52px;border-radius:50px;letter-spacing:2px}
+.brand{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-size:20px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="day-badge">📅 打卡第 7 天</div>
+  <h1>7天后<br>这个我<em>进步了</em></h1>
+  <div class="sub">每天20分钟 · 量变引起质变</div>
+  <div class="stamp-row">
+    <div class="stamp done"><div class="stamp-icon">🔥</div><div class="stamp-day">第1天</div></div>
+    <div class="stamp done"><div class="stamp-icon">🔥</div><div class="stamp-day">第2天</div></div>
+    <div class="stamp done"><div class="stamp-icon">🔥</div><div class="stamp-day">第3天</div></div>
+    <div class="stamp done"><div class="stamp-icon">🔥</div><div class="stamp-day">第4天</div></div>
+    <div class="stamp done"><div class="stamp-icon">🔥</div><div class="stamp-day">第5天</div></div>
+    <div class="stamp done"><div class="stamp-icon">🔥</div><div class="stamp-day">第6天</div></div>
+    <div class="stamp done"><div class="stamp-icon">⭐</div><div class="stamp-day">第7天</div></div>
+    <div class="stamp empty"><div class="stamp-icon">○</div></div>
+    <div class="stamp empty"><div class="stamp-icon">○</div></div>
+    <div class="stamp empty"><div class="stamp-icon">○</div></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-val">23</div>
+      <div class="stat-label">已学会的句子</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">3</div>
+      <div class="stat-label">完整学会的舞蹈</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">45s</div>
+      <div class="stat-label">最快记忆一句用时</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">87%</div>
+      <div class="stat-label">时间节省幅度</div>
+    </div>
+  </div>
+  <div class="achievement">
+    <div class="ach-icon">🏆</div>
+    <div class="ach-info">
+      <div class="ach-title">获得成就：「火力全开」</div>
+      <div class="ach-desc">连续打卡7天 · 解锁进阶训练模式</div>
+    </div>
+  </div>
+  <div class="motivation">
+    <div class="mot-emoji">💪</div>
+    <div class="mot-text">明天继续 · 下一支舞<br>《起风了》等着你</div>
+  </div>
+  <div class="cta"><div class="cta-btn">开始我的打卡挑战</div></div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

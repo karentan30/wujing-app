@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Helvetica Neue',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:80px 72px;position:relative}
+.step-badge{display:inline-flex;align-items:center;gap:12px;margin-bottom:36px;width:fit-content}
+.step-num-big{width:68px;height:68px;background:linear-gradient(135deg,#5a96ff,#7c6fff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff}
+.step-of{font-size:22px;color:rgba(255,255,255,0.4)}
+h1{font-size:68px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+h1 em{color:#5a96ff;font-style:normal}
+.sub{font-size:28px;color:rgba(255,255,255,0.45);margin-bottom:48px}
+.cards-showcase{flex:1;display:flex;flex-direction:column;gap:24px}
+.card-type{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 32px;display:flex;align-items:center;gap:24px}
+.card-type.type1{border-color:rgba(90,150,255,0.3)}
+.card-type.type2{border-color:rgba(80,210,130,0.3)}
+.card-type.type3{border-color:rgba(255,200,80,0.3)}
+.type-icon{width:80px;height:80px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0}
+.type1 .type-icon{background:rgba(90,150,255,0.15)}
+.type2 .type-icon{background:rgba(80,210,130,0.15)}
+.type3 .type-icon{background:rgba(255,200,80,0.15)}
+.type-info{flex:1}
+.type-name{font-size:30px;font-weight:bold;margin-bottom:6px}
+.type1 .type-name{color:#5a96ff}
+.type2 .type-name{color:#50d282}
+.type3 .type-name{color:#ffc850}
+.type-desc{font-size:20px;color:rgba(255,255,255,0.5);line-height:1.5}
+.type-check{font-size:28px;color:rgba(255,255,255,0.6)}
+.print-tip{background:rgba(90,150,255,0.06);border:1px solid rgba(90,150,255,0.15);border-radius:16px;padding:22px 28px;display:flex;align-items:center;gap:16px}
+.print-icon{font-size:36px}
+.print-text{font-size:23px;color:rgba(255,255,255,0.6);line-height:1.4}
+.print-text em{color:#5a96ff;font-style:normal}
+.cta{text-align:center;padding-top:12px}
+.cta-btn{display:inline-block;background:linear-gradient(90deg,#5a96ff,#7c6fff);color:#fff;font-size:30px;font-weight:bold;padding:22px 56px;border-radius:50px;letter-spacing:2px}
+.brand{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:20px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="step-badge">
+    <div class="step-num-big">3</div>
+    <div class="step-of">共 3 步</div>
+  </div>
+  <h1>下载<em>3种</em>卡片<br>选你最顺手的</h1>
+  <div class="sub">打印出来练更香 · PNG 一键保存到手机</div>
+  <div class="cards-showcase">
+    <div class="card-type type1">
+      <div class="type-icon">🎞️</div>
+      <div class="type-info">
+        <div class="type-name">八拍卡</div>
+        <div class="type-desc">8帧截图 + 口诀 + 时间轴<br>跟着帧图一拍一拍对着练</div>
+      </div>
+      <div class="type-check">✓</div>
+    </div>
+    <div class="card-type type2">
+      <div class="type-icon">🪞</div>
+      <div class="type-info">
+        <div class="type-name">镜面卡</div>
+        <div class="type-desc">帧图已翻转 · 镜像练习<br>不用再想「左右反着来」</div>
+      </div>
+      <div class="type-check">✓</div>
+    </div>
+    <div class="card-type type3">
+      <div class="type-icon">🧠</div>
+      <div class="type-info">
+        <div class="type-name">记忆卡</div>
+        <div class="type-desc">核心字 + 谐音故事 + 步骤<br>睡前背3遍次日不会忘</div>
+      </div>
+      <div class="type-check">✓</div>
+    </div>
+    <div class="print-tip">
+      <div class="print-icon">🖨️</div>
+      <div class="print-text">贴在镜子旁边练 · <em>打印A4刚好一句一页</em><br>效果比反复倒视频好10倍</div>
+    </div>
+    <div class="cta"><div class="cta-btn">✨ 免费下载我的卡片</div></div>
+  </div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

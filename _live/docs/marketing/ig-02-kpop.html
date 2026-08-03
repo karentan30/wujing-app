@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(145deg,#0a0f20 0%,#1a0d2e 55%,#0d0f20 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:72px 88px;position:relative}
+.kpop-tag{display:inline-flex;align-items:center;gap:10px;background:rgba(220,100,200,0.15);border:1px solid rgba(220,100,200,0.4);color:#dc64c8;font-size:22px;padding:10px 24px;border-radius:30px;margin-bottom:32px;width:fit-content;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:70px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px;letter-spacing:-1px}
+h1 em{color:#dc64c8;font-style:normal}
+.sub{font-size:24px;color:rgba(255,255,255,0.4);margin-bottom:44px}
+.songs{display:flex;flex-direction:column;gap:16px;flex:1}
+.song-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 28px;display:flex;align-items:center;gap:20px}
+.song-card.s1{border-color:rgba(220,100,200,0.3)}
+.song-card.s2{border-color:rgba(255,200,80,0.25)}
+.song-card.s3{border-color:rgba(90,150,255,0.25)}
+.song-cover{width:72px;height:72px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0}
+.s1 .song-cover{background:rgba(220,100,200,0.2)}
+.s2 .song-cover{background:rgba(255,200,80,0.15)}
+.s3 .song-cover{background:rgba(90,150,255,0.2)}
+.song-info{flex:1}
+.song-title{font-size:28px;font-weight:bold;color:#fff;margin-bottom:4px}
+.song-artist{font-size:20px;color:rgba(255,255,255,0.4)}
+.song-phrases{text-align:right}
+.phrases-num{font-size:36px;font-weight:900;color:#dc64c8}
+.phrases-label{font-size:16px;color:rgba(255,255,255,0.3)}
+.cta-box{background:linear-gradient(135deg,rgba(220,100,200,0.1),rgba(90,150,255,0.1));border:1px solid rgba(220,100,200,0.2);border-radius:20px;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:20px}
+.cta-text{font-size:22px;color:rgba(255,255,255,0.6)}
+.cta-btn{background:linear-gradient(90deg,#dc64c8,#5a96ff);color:#fff;font-size:22px;font-weight:bold;padding:14px 32px;border-radius:30px}
+.brand{position:absolute;bottom:36px;right:60px;font-size:18px;color:rgba(255,255,255,0.15)}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="kpop-tag">🎵 K-pop Breakdown</div>
+  <h1>Master K-pop<br>Moves Like a <em>Pro</em></h1>
+  <div class="sub">Already broken down — just hit play and practice</div>
+  <div class="songs">
+    <div class="song-card s1">
+      <div class="song-cover">🎀</div>
+      <div class="song-info">
+        <div class="song-title">Hype Boy</div>
+        <div class="song-artist">NewJeans</div>
+      </div>
+      <div class="song-phrases">
+        <div class="phrases-num">8</div>
+        <div class="phrases-label">phrases</div>
+      </div>
+    </div>
+    <div class="song-card s2">
+      <div class="song-cover">🖤</div>
+      <div class="song-info">
+        <div class="song-title">Pink Venom</div>
+        <div class="song-artist">BLACKPINK</div>
+      </div>
+      <div class="song-phrases">
+        <div class="phrases-num">7</div>
+        <div class="phrases-label">phrases</div>
+      </div>
+    </div>
+    <div class="song-card s3">
+      <div class="song-cover">💎</div>
+      <div class="song-info">
+        <div class="song-title">Dynamite</div>
+        <div class="song-artist">BTS</div>
+      </div>
+      <div class="song-phrases">
+        <div class="phrases-num">8</div>
+        <div class="phrases-label">phrases</div>
+      </div>
+    </div>
+  </div>
+  <div class="cta-box">
+    <div class="cta-text">More K-pop coming soon →</div>
+    <div class="cta-btn">Try Free</div>
+  </div>
+</div>
+<div class="brand">wujing.mylumee.app</div>
+</body></html>

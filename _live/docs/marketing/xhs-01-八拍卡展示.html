@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Noto Sans CJK SC',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:80px 72px}
+.tag{display:inline-block;background:rgba(90,150,255,0.2);border:1px solid rgba(90,150,255,0.5);color:#5a96ff;font-size:26px;padding:10px 24px;border-radius:30px;margin-bottom:40px;letter-spacing:2px}
+h1{font-size:68px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:20px}
+h1 span{color:#5a96ff}
+.sub{font-size:30px;color:rgba(255,255,255,0.5);margin-bottom:60px}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:32px;flex:1;display:flex;flex-direction:column;gap:20px}
+.card-header{display:flex;align-items:center;gap:16px}
+.phrase-num{width:54px;height:54px;background:rgba(90,150,255,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#5a96ff;font-size:28px;font-weight:bold;flex-shrink:0}
+.phrase-info{flex:1}
+.phrase-name{font-size:28px;color:#fff;font-weight:bold}
+.phrase-time{font-size:20px;color:rgba(255,255,255,0.4)}
+.frames-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.frame{background:rgba(255,255,255,0.06);border-radius:12px;aspect-ratio:9/16;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.frame-num{font-size:22px;color:rgba(255,255,255,0.3)}
+.frame-icon{font-size:28px}
+.kou{background:rgba(255,200,80,0.12);border:1px solid rgba(255,200,80,0.3);border-radius:12px;padding:18px 22px;margin-top:8px}
+.kou-label{font-size:20px;color:rgba(255,200,80,0.7);margin-bottom:8px;letter-spacing:1px}
+.kou-text{font-size:30px;font-weight:bold;color:#ffc850;letter-spacing:4px}
+.action-text{font-size:22px;color:rgba(255,255,255,0.5);margin-top:8px}
+.cta{margin-top:auto;text-align:center;padding-top:40px}
+.cta-btn{display:inline-block;background:linear-gradient(90deg,#5a96ff,#7c6fff);color:#fff;font-size:34px;font-weight:bold;padding:22px 60px;border-radius:50px;letter-spacing:2px}
+.brand{position:absolute;bottom:40px;right:60px;font-size:22px;color:rgba(255,255,255,0.2)}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="tag">✨ AI 舞蹈拆解</div>
+  <h1>记不住动作？<br>AI 帮你把每一句<br><span>都拆出来</span></h1>
+  <div class="sub">8张帧图 · 动作口诀 · 一句一卡</div>
+  <div class="card">
+    <div class="card-header">
+      <div class="phrase-num">3</div>
+      <div class="phrase-info">
+        <div class="phrase-name">转身摆袖</div>
+        <div class="phrase-time">12.3s – 16.8s</div>
+      </div>
+    </div>
+    <div class="frames-grid">
+      <div class="frame"><div class="frame-icon">💃</div><div class="frame-num">1</div></div>
+      <div class="frame"><div class="frame-icon">🩰</div><div class="frame-num">2</div></div>
+      <div class="frame"><div class="frame-icon">💃</div><div class="frame-num">3</div></div>
+      <div class="frame"><div class="frame-icon">🩰</div><div class="frame-num">4</div></div>
+      <div class="frame"><div class="frame-icon">💃</div><div class="frame-num">5</div></div>
+      <div class="frame"><div class="frame-icon">🩰</div><div class="frame-num">6</div></div>
+      <div class="frame"><div class="frame-icon">💃</div><div class="frame-num">7</div></div>
+      <div class="frame"><div class="frame-icon">🩰</div><div class="frame-num">8</div></div>
+    </div>
+    <div class="kou">
+      <div class="kou-label">动作口诀</div>
+      <div class="kou-text">转 · 摆 · 收 · 定</div>
+      <div class="action-text">右转身，甩袖摆臂，收势定格</div>
+    </div>
+  </div>
+  <div class="cta"><div class="cta-btn">🔗 扫码免费试用</div></div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

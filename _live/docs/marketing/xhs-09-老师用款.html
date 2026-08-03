@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1440px;overflow:hidden;font-family:'PingFang SC','Helvetica Neue',sans-serif;background:linear-gradient(160deg,#0d1025 0%,#1a2040 60%,#0f1830 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;padding:80px 72px;position:relative}
+.teacher-tag{display:inline-flex;align-items:center;gap:10px;background:rgba(255,200,80,0.15);border:1px solid rgba(255,200,80,0.4);color:#ffc850;font-size:24px;padding:10px 24px;border-radius:30px;margin-bottom:36px;width:fit-content}
+h1{font-size:66px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+h1 em{color:#ffc850;font-style:normal}
+.sub{font-size:26px;color:rgba(255,255,255,0.45);margin-bottom:44px}
+.features{display:flex;flex-direction:column;gap:18px;flex:1}
+.feature{background:rgba(255,255,255,0.04);border-radius:20px;padding:28px 30px;display:flex;gap:24px;align-items:flex-start}
+.feat-icon{font-size:44px;flex-shrink:0}
+.feat-info{flex:1}
+.feat-title{font-size:28px;font-weight:bold;color:#fff;margin-bottom:8px}
+.feat-desc{font-size:20px;color:rgba(255,255,255,0.5);line-height:1.5}
+.feat-tag{display:inline-block;background:rgba(90,150,255,0.15);color:#5a96ff;font-size:16px;padding:4px 12px;border-radius:20px;margin-top:8px}
+.hw-demo{background:rgba(90,150,255,0.08);border:1px solid rgba(90,150,255,0.2);border-radius:16px;padding:20px 24px;margin-top:4px}
+.hw-title{font-size:18px;color:rgba(255,255,255,0.35);margin-bottom:6px}
+.hw-url{font-size:20px;color:#5a96ff;font-family:monospace}
+.price-box{background:linear-gradient(135deg,rgba(255,200,80,0.15),rgba(255,157,0,0.1));border:1px solid rgba(255,200,80,0.35);border-radius:20px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between}
+.price-info{flex:1}
+.price-plan{font-size:22px;color:rgba(255,200,80,0.7);margin-bottom:6px}
+.price-num{font-size:56px;font-weight:900;color:#ffc850}
+.price-period{font-size:20px;color:rgba(255,255,255,0.4);margin-left:4px}
+.price-perks{font-size:18px;color:rgba(255,255,255,0.45);margin-top:8px;line-height:1.6}
+.price-cta{background:linear-gradient(90deg,#ffc850,#ff9d00);color:#1a1400;font-size:22px;font-weight:bold;padding:16px 28px;border-radius:14px;text-align:center;width:160px}
+.brand{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:20px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="teacher-tag">🎓 老师专属版</div>
+  <h1>一键生成<em>作业</em><br>再也不用手写</h1>
+  <div class="sub">舞蹈老师·编舞师·舞团教练 专属工具</div>
+  <div class="features">
+    <div class="feature">
+      <div class="feat-icon">🔗</div>
+      <div class="feat-info">
+        <div class="feat-title">生成专属作业链接</div>
+        <div class="feat-desc">上传你编排的动作视频，AI自动拆解后生成一个链接，学生扫码即可跟练</div>
+        <div class="hw-demo">
+          <div class="hw-title">分享链接示例</div>
+          <div class="hw-url">wujing.mylumee.app/hw/abc123</div>
+        </div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">📊</div>
+      <div class="feat-info">
+        <div class="feat-title">查看学生练习数据</div>
+        <div class="feat-desc">哪句练了多少次 · 哪句卡住了 · 什么时间练的</div>
+        <div class="feat-tag">即将上线</div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">🃏</div>
+      <div class="feat-info">
+        <div class="feat-title">批量导出卡片打印版</div>
+        <div class="feat-desc">3种卡片一键下载 · A4打印发给学生<br>课前发一套，课上效率提升50%</div>
+      </div>
+    </div>
+    <div class="price-box">
+      <div class="price-info">
+        <div class="price-plan">老师专属方案</div>
+        <div class="price-num">¥99<span class="price-period">/月</span></div>
+        <div class="price-perks">无限视频拆解 · 无限学生分享<br>优先体验新功能 · 专属客服</div>
+      </div>
+      <div class="price-cta">立即申请</div>
+    </div>
+  </div>
+</div>
+<div class="brand">舞镜 wujing.mylumee.app</div>
+</body></html>

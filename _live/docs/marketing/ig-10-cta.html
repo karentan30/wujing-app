@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(145deg,#0a0f20 0%,#111830 55%,#0d1525 100%)}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px;position:relative;text-align:center}
+.icon{font-size:88px;margin-bottom:28px}
+h1{font-size:80px;font-weight:900;color:#fff;line-height:1.05;margin-bottom:20px;letter-spacing:-2px}
+h1 em{color:#5a96ff;font-style:normal}
+.sub{font-size:26px;color:rgba(255,255,255,0.45);margin-bottom:52px;max-width:700px;line-height:1.5}
+.price-row{display:flex;gap:20px;margin-bottom:44px}
+.price-box{flex:1;border-radius:20px;padding:24px 26px}
+.price-free{background:rgba(90,150,255,0.08);border:1px solid rgba(90,150,255,0.25)}
+.price-paid{background:rgba(255,200,80,0.08);border:1px solid rgba(255,200,80,0.25)}
+.price-tier{font-size:18px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.price-free .price-tier{color:rgba(90,150,255,0.7)}
+.price-paid .price-tier{color:rgba(255,200,80,0.7)}
+.price-amount{font-size:44px;font-weight:900;line-height:1}
+.price-free .price-amount{color:#5a96ff}
+.price-paid .price-amount{color:#ffc850}
+.price-desc{font-size:17px;color:rgba(255,255,255,0.4);margin-top:8px;line-height:1.4}
+.cta-btn{display:inline-block;background:linear-gradient(90deg,#5a96ff,#7c6fff);color:#fff;font-size:30px;font-weight:bold;padding:22px 64px;border-radius:50px;letter-spacing:1px;margin-bottom:24px}
+.url{font-size:24px;color:rgba(255,255,255,0.3);letter-spacing:1px}
+.decor{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:800px;height:800px;border-radius:50%;border:1px solid rgba(90,150,255,0.04);pointer-events:none}
+.decor2{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;border:1px solid rgba(90,150,255,0.06);pointer-events:none}
+.brand{position:absolute;bottom:36px;right:52px;font-size:18px;color:rgba(255,255,255,0.15)}
+</style></head>
+<body>
+<div class="decor"></div>
+<div class="decor2"></div>
+<div class="wrap">
+  <div class="icon">🕺</div>
+  <h1>Start <em>Learning</em><br>Today</h1>
+  <div class="sub">Your next dance is already waiting. Upload any video and get your breakdown in 2 minutes.</div>
+  <div class="price-row">
+    <div class="price-box price-free">
+      <div class="price-tier">Free</div>
+      <div class="price-amount">¥0</div>
+      <div class="price-desc">First 2 phrases of any dance. No signup needed.</div>
+    </div>
+    <div class="price-box price-paid">
+      <div class="price-tier">Full Breakdown</div>
+      <div class="price-amount">¥9.9</div>
+      <div class="price-desc">Unlock all phrases + 3 card downloads per dance.</div>
+    </div>
+  </div>
+  <div class="cta-btn">Try Free Now →</div>
+  <div class="url">wujing.mylumee.app</div>
+</div>
+<div class="brand">wujing.mylumee.app</div>
+</body></html>
