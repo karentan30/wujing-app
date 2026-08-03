@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "total": 80,
+  "total": 83,
   "updated": "2026-08-02",
   "genres": [
     "kpop",
@@ -2459,6 +2459,15 @@
         "platform": "抖音",
         "label": "🔥 抖音 4亿+"
       }
+    },
+    {
+      "id": "vid_qingshan",
+      "title_zh": "青山烟雨客",
+      "title_en": "Green Mountain in Misty Rain",
+      "genre": "guofeng",
+      "status": "ready",
+      "phrases": 10,
+      "heat_score": 88
     }
   ]
 }

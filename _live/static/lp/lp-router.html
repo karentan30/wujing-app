@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B5922A">
+  <title>舞镜 WuJing AI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FAF7F0;
+      --gold: #B5922A;
+      --gold-light: #D4AF4E;
+      --dark: #1F1A14;
+      --mid: #4A3F2F;
+      --soft: #8C7A5A;
+      --card-bg: #FDF5E4;
+      --line: rgba(181,146,42,0.2);
+      --red: #C0392B;
+      --green: #27AE60;
+    }
+    html { font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      line-height: 1.6;
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding: 0 16px 32px;
+    }
+
+    /* ===== LOADING STATE ===== */
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 16px;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--line);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--soft); font-size: 0.9rem; }
+
+    /* ===== ADMIN DASHBOARD ===== */
+    #admin { display: none; }
+    .admin-header {
+      padding: 24px 0 8px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .admin-header h1 { font-size: 1.4rem; color: var(--gold); font-weight: 700; }
+    .admin-header p { font-size: 0.85rem; color: var(--soft); margin-top: 4px; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .variant-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      line-height: 32px;
+      margin-bottom: 8px;
+    }
+    .stat-card .count {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1;
+    }
+    .stat-card .pct {
+      font-size: 0.85rem;
+      color: var(--soft);
+      margin-top: 4px;
+    }
+    .bar-wrap {
+      background: var(--line);
+      border-radius: 4px;
+      height: 6px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-light), var(--gold));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .admin-total {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .admin-total .label { color: var(--soft); font-size: 0.9rem; }
+    .admin-total .value { font-size: 1.5rem; font-weight: 700; color: var(--dark); }
+
+    .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-gold { background: var(--gold); color: #fff; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+    .btn-danger { background: var(--red); color: #fff; }
+
+    .variant-list { display: flex; flex-direction: column; gap: 10px; }
+    .variant-row {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s;
+    }
+    .variant-row:hover { border-color: var(--gold); }
+    .variant-row .badge {
+      background: var(--gold);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      min-width: 28px; height: 28px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .variant-row .info { flex: 1; }
+    .variant-row .info .name { font-weight: 600; font-size: 0.95rem; }
+    .variant-row .info .desc { font-size: 0.8rem; color: var(--soft); margin-top: 2px; }
+    .variant-row .arrow { color: var(--soft); font-size: 1.1rem; }
+
+    .current-tag {
+      background: var(--green);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-left: 6px;
+    }
+
+    .admin-note {
+      font-size: 0.8rem;
+      color: var(--soft);
+      background: var(--card-bg);
+      border-left: 3px solid var(--gold);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading state (shown during redirect) -->
+<div id="loading">
+  <div class="spinner"></div>
+  <p class="loading-text">正在进入舞镜…</p>
+</div>
+
+<!-- Admin Dashboard (shown when ?admin=1) -->
+<div id="admin">
+  <div class="admin-header">
+    <h1>舞镜 A/B 测试看板</h1>
+    <p id="admin-date">数据来自 localStorage（本机累积）</p>
+  </div>
+
+  <div class="admin-total">
+    <span class="label">本机总分配次数</span>
+    <span class="value" id="total-count">0</span>
+  </div>
+
+  <div class="stat-grid" id="stat-grid">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="admin-actions">
+    <button class="btn btn-outline" onclick="resetMyVariant()">重置我的变体分配</button>
+    <button class="btn btn-danger" onclick="clearAllStats()">清空所有统计</button>
+    <a class="btn btn-gold" href="lp-index.html">变体预览总览</a>
+  </div>
+
+  <div class="variant-list" id="variant-links">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="admin-note">
+    注：统计数据存于浏览器 localStorage，仅反映本机访问情况。<br>
+    生产环境全量数据请查看 PostHog 事件 <code>ab_assigned</code>。
+  </div>
+</div>
+
+<!-- PostHog -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+" (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_PLACEHOLDER_KEY', {
+  api_host: 'https://app.posthog.com',
+  loaded: function(posthog) {
+    // PostHog loaded
+  }
+});
+</script>
+
+<script>
+(function() {
+  'use strict';
+
+  // ─── CONFIG ───────────────────────────────────────────────────────────────
+  var VARIANTS = ['A', 'B', 'C', 'D', 'E'];
+  var STORAGE_KEY = 'wujing_ab_variant';
+  var STATS_KEY   = 'wujing_ab_stats';
+
+  var VARIANT_META = {
+    A: { name: '¥9.9 超低价钩子', desc: '价格锚点 + 社会认同 + 稀缺感', hook: '一杯奶茶钱，AI量角度精准到度' },
+    B: { name: '痛点直击版',       desc: '问题-解决方案 + 对比钩子',     hook: '跟了3个月还是跳不对？AI帮你看清楚' },
+    C: { name: '结果前置版',       desc: '成果展示 + 数字证明 + 权威感', hook: '30秒生成8张专业分解卡' },
+    D: { name: '社群从众版',       desc: '社会认同 + 损失厌恶 + 紧迫感', hook: '已有12,847名舞者用它找到差距' },
+    E: { name: '免费试用版',       desc: '0风险承诺 + 渐进承诺',         hook: '免费体验一次，看清你和专业差多远' }
+  };
+
+  // ─── URL PARAMS ───────────────────────────────────────────────────────────
+  var params  = new URLSearchParams(window.location.search);
+  var isAdmin = params.get('admin') === '1';
+  var forced  = (params.get('variant') || '').toUpperCase();
+
+  // ─── ADMIN MODE ───────────────────────────────────────────────────────────
+  if (isAdmin) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('admin').style.display   = 'block';
+    renderAdmin();
+    return;
+  }
+
+  // ─── VARIANT ASSIGNMENT ───────────────────────────────────────────────────
+  var variant;
+
+  if (forced && VARIANTS.indexOf(forced) !== -1) {
+    // URL override: ?variant=B — does NOT overwrite localStorage, does NOT bump stats
+    variant = forced;
+  } else {
+    // Check localStorage first
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && VARIANTS.indexOf(stored) !== -1) {
+      variant = stored;
+    } else {
+      // Fresh assignment
+      var idx = Math.floor(Math.random() * VARIANTS.length);
+      variant = VARIANTS[idx];
+      localStorage.setItem(STORAGE_KEY, variant);
+
+      // Bump stat counter
+      var stats = getStats();
+      stats[variant] = (stats[variant] || 0) + 1;
+      stats.__total  = (stats.__total  || 0) + 1;
+      saveStats(stats);
+
+      // Fire PostHog event
+      firePostHog(variant, true /* isNew */);
+    }
+  }
+
+  // ─── REDIRECT ─────────────────────────────────────────────────────────────
+  var dest = 'lp-' + variant.toLowerCase() + '.html';
+  // Preserve any extra utm params
+  var extras = [];
+  params.forEach(function(v, k) {
+    if (k !== 'variant' && k !== 'admin') extras.push(k + '=' + encodeURIComponent(v));
+  });
+  extras.push('ab_variant=' + variant);
+  window.location.replace(dest + (extras.length ? '?' + extras.join('&') : ''));
+
+  // ─── POSTHOG ──────────────────────────────────────────────────────────────
+  function firePostHog(v, isNew) {
+    try {
+      if (window.posthog && typeof window.posthog.capture === 'function') {
+        window.posthog.capture('ab_assigned', {
+          variant: v,
+          is_new_assignment: isNew,
+          page: 'lp-router'
+        });
+      }
+    } catch(e) {}
+  }
+
+  // ─── STATS HELPERS ────────────────────────────────────────────────────────
+  function getStats() {
+    try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveStats(s) {
+    try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch(e) {}
+  }
+
+  // ─── ADMIN RENDER ─────────────────────────────────────────────────────────
+  function renderAdmin() {
+    var stats   = getStats();
+    var total   = stats.__total || 0;
+    var current = localStorage.getItem(STORAGE_KEY) || null;
+
+    document.getElementById('admin-date').textContent =
+      '本机累积数据 · 最后查看 ' + new Date().toLocaleString('zh-CN');
+    document.getElementById('total-count').textContent = total;
+
+    // Stat grid
+    var grid = document.getElementById('stat-grid');
+    grid.innerHTML = '';
+    VARIANTS.forEach(function(v) {
+      var cnt = stats[v] || 0;
+      var pct = total > 0 ? Math.round(cnt / total * 100) : 0;
+      var card = document.createElement('div');
+      card.className = 'stat-card';
+      card.innerHTML =
+        '<div class="variant-badge">' + v + '</div>' +
+        '<div class="count">' + cnt + '</div>' +
+        '<div class="pct">' + pct + '% (' + VARIANT_META[v].name + ')</div>' +
+        '<div class="bar-wrap"><div class="bar-fill" style="width:' + pct + '%"></div></div>';
+      grid.appendChild(card);
+    });
+
+    // Variant links
+    var list = document.getElementById('variant-links');
+    list.innerHTML = '';
+    VARIANTS.forEach(function(v) {
+      var isCurrent = v === current;
+      var a = document.createElement('a');
+      a.className = 'variant-row';
+      a.href = 'lp-' + v.toLowerCase() + '.html?ab_variant=' + v;
+      a.innerHTML =
+        '<div class="badge">' + v + '</div>' +
+        '<div class="info">' +
+          '<div class="name">' + VARIANT_META[v].name +
+            (isCurrent ? '<span class="current-tag">你当前</span>' : '') +
+          '</div>' +
+          '<div class="desc">' + VARIANT_META[v].desc + '</div>' +
+        '</div>' +
+        '<div class="arrow">›</div>';
+      list.appendChild(a);
+    });
+  }
+
+  // ─── ADMIN ACTIONS (global scope for onclick) ─────────────────────────────
+  window.resetMyVariant = function() {
+    localStorage.removeItem(STORAGE_KEY);
+    alert('已重置，下次访问 lp-router.html 将重新随机分配。');
+    renderAdmin();
+  };
+  window.clearAllStats = function() {
+    if (!confirm('确认清空所有本机统计数据？此操作不可恢复。')) return;
+    localStorage.removeItem(STATS_KEY);
+    renderAdmin();
+  };
+
+})();
+</script>
+</body>
+</html>

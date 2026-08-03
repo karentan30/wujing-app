@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B5922A">
+  <title>舞镜 A/B Test 总览 | 运营后台</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FAF7F0;
+      --gold: #B5922A;
+      --gold-light: #D4AF4E;
+      --gold-dark: #8A6E1E;
+      --dark: #1F1A14;
+      --mid: #4A3F2F;
+      --soft: #8C7A5A;
+      --card-bg: #FDF5E4;
+      --line: rgba(181,146,42,0.2);
+      --green: #27AE60;
+      --blue: #2980B9;
+      --purple: #8E44AD;
+      --red: #C0392B;
+      --orange: #D35400;
+    }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      line-height: 1.6;
+      max-width: 560px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding: 0 16px 48px;
+    }
+
+    /* ===== HEADER ===== */
+    .page-header {
+      padding: 28px 0 16px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .page-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+    }
+    .page-header .subtitle {
+      font-size: 0.875rem;
+      color: var(--soft);
+      margin-top: 4px;
+    }
+
+    /* ===== QUICK ACTIONS ===== */
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-gold { background: var(--gold); color: #fff; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+    .btn-dark { background: var(--dark); color: #fff; }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-bottom: 12px;
+    }
+
+    /* ===== VARIANT CARDS ===== */
+    .variant-cards { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+
+    .variant-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .variant-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(181,146,42,0.12);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px 12px;
+    }
+    .variant-badge {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .badge-a { background: linear-gradient(135deg, #B5922A, #D4AF4E); }
+    .badge-b { background: linear-gradient(135deg, #27AE60, #2ECC71); }
+    .badge-c { background: linear-gradient(135deg, #2980B9, #3498DB); }
+    .badge-d { background: linear-gradient(135deg, #8E44AD, #9B59B6); }
+    .badge-e { background: linear-gradient(135deg, #D35400, #E67E22); }
+
+    .card-title-wrap { flex: 1; min-width: 0; }
+    .card-name { font-weight: 700; font-size: 1rem; color: var(--dark); }
+    .card-principle { font-size: 0.78rem; color: var(--soft); margin-top: 2px; }
+
+    /* ===== HOOK QUOTE ===== */
+    .hook-quote {
+      margin: 0 18px 14px;
+      padding: 12px 14px;
+      background: rgba(181,146,42,0.06);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      color: var(--mid);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* ===== PSYCHOLOGY TAGS ===== */
+    .psych-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 18px 14px;
+    }
+    .psych-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: rgba(181,146,42,0.1);
+      color: var(--gold-dark);
+      border: 1px solid rgba(181,146,42,0.2);
+    }
+
+    /* ===== CARD ACTIONS ===== */
+    .card-actions {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+    .card-action {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 12px 8px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-decoration: none;
+      transition: background 0.15s;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+    .card-action:hover { background: rgba(181,146,42,0.07); }
+    .card-action + .card-action { border-left: 1px solid var(--line); }
+    .card-action .icon { font-size: 0.9rem; }
+
+    /* ===== PRICE STRATEGY ===== */
+    .strategy-block {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 28px;
+    }
+    .strategy-block h3 { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.875rem;
+    }
+    .price-row:last-child { border-bottom: none; }
+    .price-row .label { color: var(--mid); }
+    .price-row .value { font-weight: 700; color: var(--dark); }
+    .tag-highlight { background: var(--gold); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: 6px; }
+    .tag-control { background: var(--soft); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: 6px; }
+
+    /* ===== HOW IT WORKS ===== */
+    .how-block {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 28px;
+    }
+    .how-block h3 { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-bottom: 14px; }
+    .step-list { display: flex; flex-direction: column; gap: 10px; }
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.875rem;
+      color: var(--mid);
+    }
+    .step-num {
+      min-width: 22px; height: 22px;
+      background: var(--gold);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    code {
+      background: rgba(181,146,42,0.1);
+      color: var(--gold-dark);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.82em;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer-note {
+      font-size: 0.78rem;
+      color: var(--soft);
+      text-align: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    /* ===== COPY TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--dark);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: transform 0.25s ease;
+      z-index: 999;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>舞镜 A/B Test 总览</h1>
+  <p class="subtitle">运营后台 · 五个落地页变体管理</p>
+</div>
+
+<div class="quick-actions">
+  <a class="btn btn-gold" href="lp-router.html?admin=1">数据看板</a>
+  <a class="btn btn-outline" href="lp-router.html">随机进入（测试分配）</a>
+  <button class="btn btn-dark" onclick="copyRouterLink()">复制路由链接</button>
+</div>
+
+<!-- Variant Cards -->
+<div class="section-title">五个变体</div>
+<div class="variant-cards" id="variant-cards">
+
+  <!-- A -->
+  <div class="variant-card">
+    <div class="card-top">
+      <div class="variant-badge badge-a">A</div>
+      <div class="card-title-wrap">
+        <div class="card-name">¥9.9 超低价钩子版</div>
+        <div class="card-principle">价格锚定 · 社会认同 · 稀缺感</div>
+      </div>
+    </div>
+    <div class="hook-quote">"一杯奶茶钱，AI量角度精准到度。左臂差了102°，一眼看穿。"</div>
+    <div class="psych-tags">
+      <span class="psych-tag">价格锚定</span>
+      <span class="psych-tag">具体数字</span>
+      <span class="psych-tag">类比熟悉消费</span>
+      <span class="psych-tag">AI权威感</span>
+    </div>
+    <div class="card-actions">
+      <a class="card-action" href="lp-a.html" target="_blank"><span class="icon">👁</span> 预览</a>
+      <a class="card-action" href="lp-router.html?variant=A"><span class="icon">→</span> 强制进入</a>
+      <button class="card-action" onclick="copyLink('A')"><span class="icon">🔗</span> 复制链接</button>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="variant-card">
+    <div class="card-top">
+      <div class="variant-badge badge-b">B</div>
+      <div class="card-title-wrap">
+        <div class="card-name">痛点直击版</div>
+        <div class="card-principle">问题–解决方案 · 对比钩子 · 挫败感共鸣</div>
+      </div>
+    </div>
+    <div class="hook-quote">"跟了3个月课，还是跳不对？不是你不努力，是你看不清自己在哪里差。"</div>
+    <div class="psych-tags">
+      <span class="psych-tag">痛点共鸣</span>
+      <span class="psych-tag">归因转移</span>
+      <span class="psych-tag">问题–解决方案</span>
+      <span class="psych-tag">挫败感出口</span>
+    </div>
+    <div class="card-actions">
+      <a class="card-action" href="lp-b.html" target="_blank"><span class="icon">👁</span> 预览</a>
+      <a class="card-action" href="lp-router.html?variant=B"><span class="icon">→</span> 强制进入</a>
+      <button class="card-action" onclick="copyLink('B')"><span class="icon">🔗</span> 复制链接</button>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="variant-card">
+    <div class="card-top">
+      <div class="variant-badge badge-c">C</div>
+      <div class="card-title-wrap">
+        <div class="card-name">结果前置版</div>
+        <div class="card-principle">成果展示 · 数字证明 · 速度承诺</div>
+      </div>
+    </div>
+    <div class="hook-quote">"上传视频，30秒出8张专业分解卡。AI量角度 + 慢放 + 逐拍点评，一次看清全部。"</div>
+    <div class="psych-tags">
+      <span class="psych-tag">结果前置</span>
+      <span class="psych-tag">速度承诺</span>
+      <span class="psych-tag">数字具体化</span>
+      <span class="psych-tag">专业背书</span>
+    </div>
+    <div class="card-actions">
+      <a class="card-action" href="lp-c.html" target="_blank"><span class="icon">👁</span> 预览</a>
+      <a class="card-action" href="lp-router.html?variant=C"><span class="icon">→</span> 强制进入</a>
+      <button class="card-action" onclick="copyLink('C')"><span class="icon">🔗</span> 复制链接</button>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="variant-card">
+    <div class="card-top">
+      <div class="variant-badge badge-d">D</div>
+      <div class="card-title-wrap">
+        <div class="card-name">社群从众版</div>
+        <div class="card-principle">社会认同 · 损失厌恶 · FOMO紧迫感</div>
+      </div>
+    </div>
+    <div class="hook-quote">"已有 12,847 名舞者用舞镜找到了差距。你还在靠感觉跳？"</div>
+    <div class="psych-tags">
+      <span class="psych-tag">社会认同</span>
+      <span class="psych-tag">损失厌恶</span>
+      <span class="psych-tag">FOMO</span>
+      <span class="psych-tag">大数字</span>
+      <span class="psych-tag">反问钩子</span>
+    </div>
+    <div class="card-actions">
+      <a class="card-action" href="lp-d.html" target="_blank"><span class="icon">👁</span> 预览</a>
+      <a class="card-action" href="lp-router.html?variant=D"><span class="icon">→</span> 强制进入</a>
+      <button class="card-action" onclick="copyLink('D')"><span class="icon">🔗</span> 复制链接</button>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="variant-card">
+    <div class="card-top">
+      <div class="variant-badge badge-e">E</div>
+      <div class="card-title-wrap">
+        <div class="card-name">免费试用版</div>
+        <div class="card-principle">0风险承诺 · 渐进承诺 · 互惠原则</div>
+      </div>
+    </div>
+    <div class="hook-quote">"免费体验一次，看清你和专业舞者差多远。不满意不收一分钱。"</div>
+    <div class="psych-tags">
+      <span class="psych-tag">0风险</span>
+      <span class="psych-tag">渐进承诺</span>
+      <span class="psych-tag">互惠原则</span>
+      <span class="psych-tag">无痛入口</span>
+      <span class="psych-tag">信任建立</span>
+    </div>
+    <div class="card-actions">
+      <a class="card-action" href="lp-e.html" target="_blank"><span class="icon">👁</span> 预览</a>
+      <a class="card-action" href="lp-router.html?variant=E"><span class="icon">→</span> 强制进入</a>
+      <button class="card-action" onclick="copyLink('E')"><span class="icon">🔗</span> 复制链接</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Price Strategy -->
+<div class="section-title">各变体价格/钩子策略</div>
+<div class="strategy-block">
+  <h3>核心定价逻辑</h3>
+  <div class="price-row">
+    <span class="label">变体 A — 低价锚定</span>
+    <span class="value">¥9.9 <span class="tag-control">对照组</span></span>
+  </div>
+  <div class="price-row">
+    <span class="label">变体 B — 痛点+价格</span>
+    <span class="value">¥9.9</span>
+  </div>
+  <div class="price-row">
+    <span class="label">变体 C — 结果前置</span>
+    <span class="value">¥9.9</span>
+  </div>
+  <div class="price-row">
+    <span class="label">变体 D — 从众+紧迫</span>
+    <span class="value">¥9.9 <span class="tag-highlight">+限时</span></span>
+  </div>
+  <div class="price-row">
+    <span class="label">变体 E — 免费试用</span>
+    <span class="value">¥0 → ¥9.9 <span class="tag-highlight">漏斗</span></span>
+  </div>
+</div>
+
+<!-- How It Works -->
+<div class="section-title">路由器工作原理</div>
+<div class="how-block">
+  <h3>分配逻辑</h3>
+  <div class="step-list">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>用户访问 <code>lp-router.html</code>，检查 <code>localStorage['wujing_ab_variant']</code></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>首次访问：随机均等分配至 A/B/C/D/E（各20%），写入 localStorage，记录到本机统计</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>同一用户再次访问：读取 localStorage，保持同一变体（用户体验一致性）</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>触发 PostHog 事件 <code>ab_assigned</code>，携带 <code>variant</code> 属性</div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div>立即跳转至对应 <code>lp-a.html</code> … <code>lp-e.html</code>，URL 附带 <code>ab_variant=X</code></div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div>强制指定：<code>?variant=B</code> 直接进入B（不改写 localStorage，不计入统计）</div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div>查看看板：<code>?admin=1</code> 显示各变体本机分配比例 + 快捷跳转链接</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  舞镜 WuJing AI · A/B Test 运营后台 · 仅限内部使用<br>
+  全量数据请查看 PostHog Dashboard → event: <code>ab_assigned</code>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  var BASE = window.location.origin + window.location.pathname.replace('lp-index.html', '');
+
+  function copyLink(variant) {
+    var url = BASE + 'lp-router.html?variant=' + variant;
+    navigator.clipboard.writeText(url).then(function() {
+      showToast('已复制变体 ' + variant + ' 链接');
+    }).catch(function() {
+      prompt('手动复制：', url);
+    });
+  }
+
+  function copyRouterLink() {
+    var url = BASE + 'lp-router.html';
+    navigator.clipboard.writeText(url).then(function() {
+      showToast('已复制路由链接');
+    }).catch(function() {
+      prompt('手动复制：', url);
+    });
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2000);
+  }
+</script>
+</body>
+</html>

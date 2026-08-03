@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B5922A">
+  <title>舞镜 WuJing AI - 上传舞蹈视频，AI自动生成八拍分解卡</title>
+  <meta name="description" content="上传任意舞蹈视频，30秒出8张专业分解卡+慢放+AI点评。AI量角度精准到度，左臂差102°一眼看穿。¥9.9/支，约一杯奶茶。">
+
+  <!-- Open Graph / 微信分享 -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://wujing.mylumee.app/lp/lp-a.html?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_a">
+  <meta property="og:title" content="上传你的舞，30秒出8张这样的卡 | 舞镜 AI">
+  <meta property="og:description" content="AI量角度：左臂差了102° | 八拍分解卡+慢放+AI点评 | ¥9.9一杯奶茶钱">
+  <meta property="og:image" content="https://wujing.mylumee.app/static/og-cover.jpg">
+  <meta property="og:site_name" content="舞镜 WuJing AI">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAF7F0;
+      --gold: #B5922A;
+      --gold-light: #D4AF4E;
+      --gold-dark: #8A6E1E;
+      --dark: #1F1A14;
+      --mid: #4A3F2F;
+      --soft: #8C7A5A;
+      --card-bg: #FDF5E4;
+      --line: rgba(181,146,42,0.2);
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== SKELETON SCREEN ===== */
+    .skeleton {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; padding: 40px 24px;
+      transition: opacity 0.4s ease;
+    }
+    .skeleton.hidden { opacity: 0; pointer-events: none; }
+    .skel-bar {
+      background: linear-gradient(90deg, #EDE8DC 25%, #F5F0E4 50%, #EDE8DC 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 8px;
+    }
+    .skel-logo { width: 80px; height: 80px; border-radius: 20px; }
+    .skel-h1 { width: 90%; height: 52px; }
+    .skel-h2 { width: 75%; height: 28px; }
+    .skel-card { width: 100%; height: 200px; border-radius: 16px; }
+    .skel-btn { width: 100%; height: 56px; border-radius: 28px; }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    .serif { font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', Georgia, serif; }
+
+    /* ===== SECTIONS ===== */
+    section { padding: 48px 20px; position: relative; }
+
+    /* ===== CTA BUTTON ===== */
+    .btn-cta {
+      display: block; width: 100%; height: 56px;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+      color: #FFF9EE; font-size: 18px; font-weight: 700; letter-spacing: 0.05em;
+      border: none; border-radius: 28px; cursor: pointer; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      box-shadow: 0 4px 20px rgba(181,146,42,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .btn-cta::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    }
+    .btn-cta:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(181,146,42,0.3); }
+    .btn-cta .arrow { font-size: 20px; transition: transform 0.2s; }
+    .btn-cta:hover .arrow { transform: translateX(3px); }
+
+    /* ===== DIVIDER ===== */
+    .divider {
+      width: 40px; height: 3px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      margin: 12px auto 0;
+    }
+
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(181,146,42,0.12); color: var(--gold-dark);
+      border: 1px solid rgba(181,146,42,0.3);
+      border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600;
+    }
+
+    /* ===================================
+       SECTION 1: HERO
+    =================================== */
+    #hero {
+      min-height: 100svh;
+      display: flex; flex-direction: column;
+      padding: 20px 20px 32px;
+      background:
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(181,146,42,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 10% 90%, rgba(181,146,42,0.06) 0%, transparent 70%),
+        var(--bg);
+    }
+
+    .hero-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .hero-logo {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; background: var(--dark); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 22px; height: 22px; }
+    .logo-text { font-size: 15px; font-weight: 700; color: var(--dark); letter-spacing: 0.02em; }
+    .logo-sub { font-size: 10px; color: var(--soft); letter-spacing: 0.05em; }
+
+    .hero-main { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0; }
+
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    }
+    .eyebrow-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold); animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+    .eyebrow-text { font-size: 13px; color: var(--gold-dark); font-weight: 600; letter-spacing: 0.06em; }
+
+    .hero-h1 {
+      font-size: clamp(32px, 9vw, 48px);
+      font-weight: 900; line-height: 1.15;
+      color: var(--dark); margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+    .hero-h1 .highlight {
+      color: var(--gold);
+      display: inline;
+    }
+    .hero-h1 .num {
+      font-size: clamp(40px, 11vw, 60px);
+      font-weight: 900;
+    }
+
+    .hero-sub {
+      font-size: 14px; color: var(--mid); line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .hero-sub .example-tag {
+      display: inline-block;
+      background: var(--card-bg); border: 1px solid var(--line);
+      border-radius: 6px; padding: 2px 8px;
+      font-size: 12px; color: var(--gold-dark); font-weight: 600;
+      margin: 4px 2px 0 0;
+    }
+
+    /* Film strip card mock */
+    .film-mock {
+      margin: 0 -8px 24px;
+      border-radius: 16px; overflow: hidden;
+      background: #FDF5E4;
+      border: 1px solid rgba(181,146,42,0.25);
+      box-shadow: 0 8px 32px rgba(31,26,20,0.12);
+    }
+    .film-header {
+      background: var(--dark); padding: 8px 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .film-perfs {
+      display: flex; gap: 4px;
+    }
+    .film-perf {
+      width: 8px; height: 6px; border-radius: 1px;
+      background: rgba(255,255,255,0.25);
+    }
+    .film-title-bar {
+      flex: 1; text-align: center;
+      font-size: 11px; color: rgba(255,255,255,0.7); letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .film-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: rgba(181,146,42,0.15);
+    }
+    .film-cell {
+      background: var(--card-bg);
+      aspect-ratio: 3/4;
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .cell-num {
+      position: absolute; top: 4px; left: 5px;
+      font-size: 9px; font-weight: 700; color: var(--gold);
+      font-family: 'Courier New', monospace;
+    }
+    .cell-beat {
+      font-size: 9px; font-weight: 700; color: var(--mid);
+      text-align: center; padding: 2px 3px; line-height: 1.3;
+    }
+    .cell-beat span { display: block; color: var(--gold-dark); }
+    .cell-angle {
+      position: absolute; bottom: 3px; right: 4px;
+      font-size: 8px; color: var(--gold);
+      font-weight: 700; font-family: monospace;
+    }
+    /* stick figure SVG */
+    .stick-fig { width: 28px; height: 36px; margin-bottom: 2px; }
+
+    /* Row 2 of film */
+    .film-grid-2 { border-top: 1px solid rgba(181,146,42,0.15); }
+
+    .film-footer {
+      background: var(--dark); padding: 6px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .film-perfs-bot { display: flex; gap: 4px; }
+    .film-score-tag {
+      font-size: 10px; color: var(--gold); font-weight: 700; letter-spacing: 0.05em;
+    }
+    .film-ai-tag {
+      font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 0.04em;
+    }
+
+    .hero-cta-wrap { margin-top: 4px; }
+    .hero-cta-note {
+      text-align: center; font-size: 12px; color: var(--soft);
+      margin-top: 10px;
+    }
+    .hero-cta-note strong { color: var(--gold-dark); }
+
+    /* ===================================
+       SECTION 2: PAIN POINTS
+    =================================== */
+    #pain {
+      background: #FDF5E4;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .section-label {
+      text-align: center; margin-bottom: 28px;
+    }
+    .section-label h2 {
+      font-size: 22px; font-weight: 800; color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .pain-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .pain-item {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 12px;
+    }
+    .pain-left {
+      background: #F5EFE0;
+      border: 1px solid #E0D0B0;
+      border-radius: 12px; padding: 12px 14px;
+      text-align: right;
+    }
+    .pain-left .emoji { font-size: 18px; margin-bottom: 4px; display: block; }
+    .pain-left p { font-size: 13px; color: #6B5A3A; line-height: 1.4; }
+
+    .pain-arrow {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .pain-arrow-line {
+      width: 28px; height: 2px;
+      background: linear-gradient(90deg, #E0D0B0, var(--gold));
+    }
+    .pain-arrow-head { font-size: 10px; color: var(--gold); }
+
+    .pain-right {
+      background: var(--dark);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .pain-right .emoji { font-size: 18px; margin-bottom: 4px; display: block; }
+    .pain-right p { font-size: 13px; color: #D4C29A; line-height: 1.4; font-weight: 600; }
+
+    /* ===================================
+       SECTION 3: PRODUCT DEMO
+    =================================== */
+    #demo { background: var(--bg); }
+
+    .demo-header { text-align: center; margin-bottom: 28px; }
+    .demo-header h2 { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+    .demo-header p { font-size: 14px; color: var(--soft); }
+
+    /* 八拍卡展示 */
+    .eight-beat-card {
+      background: var(--card-bg);
+      border: 1.5px solid rgba(181,146,42,0.3);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(31,26,20,0.1);
+      margin-bottom: 20px;
+    }
+    .ebc-header {
+      background: linear-gradient(135deg, var(--dark) 0%, #2D2519 100%);
+      padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ebc-title { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 0.04em; }
+    .ebc-meta { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+    .ebc-beats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .beat-cell {
+      padding: 10px 6px; text-align: center;
+      border-right: 1px solid rgba(181,146,42,0.12);
+      border-bottom: 1px solid rgba(181,146,42,0.12);
+    }
+    .beat-cell:nth-child(4n) { border-right: none; }
+    .beat-cell:nth-last-child(-n+4) { border-bottom: none; }
+    .beat-no { font-size: 9px; font-weight: 700; color: var(--gold); margin-bottom: 4px; font-family: monospace; }
+    .beat-keyword { font-size: 11px; font-weight: 700; color: var(--dark); line-height: 1.3; }
+    .beat-keyword span { display: block; font-size: 9px; color: var(--soft); font-weight: 400; margin-top: 2px; }
+
+    /* AI评分 + 角度标注区 */
+    .ai-analysis-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .score-ring-card {
+      background: var(--card-bg);
+      border: 1.5px solid rgba(181,146,42,0.3);
+      border-radius: 16px; padding: 16px 12px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+    }
+    .score-ring-label { font-size: 11px; color: var(--soft); margin-bottom: 8px; font-weight: 600; }
+    .ring-wrap { position: relative; width: 90px; height: 90px; }
+    .ring-wrap svg { width: 90px; height: 90px; }
+    .ring-score {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .ring-num { font-size: 26px; font-weight: 900; color: var(--dark); line-height: 1; }
+    .ring-unit { font-size: 10px; color: var(--soft); }
+    .score-comment { font-size: 11px; color: var(--mid); margin-top: 8px; line-height: 1.4; }
+
+    .angle-card {
+      background: var(--card-bg);
+      border: 1.5px solid rgba(181,146,42,0.3);
+      border-radius: 16px; padding: 16px 12px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+    }
+    .angle-label { font-size: 11px; color: var(--soft); margin-bottom: 8px; font-weight: 600; }
+    .angle-svg-wrap { width: 90px; height: 90px; position: relative; }
+    .angle-svg-wrap svg { width: 90px; height: 90px; }
+    .angle-diff {
+      font-size: 11px; color: var(--mid); margin-top: 8px; line-height: 1.4; font-weight: 600;
+    }
+    .angle-diff em { color: #C0392B; font-style: normal; }
+
+    /* AI文字点评 */
+    .ai-comment-box {
+      background: linear-gradient(135deg, #1F1A14 0%, #2D2519 100%);
+      border-radius: 16px; padding: 16px;
+      position: relative; overflow: hidden;
+    }
+    .ai-comment-box::before {
+      content: ''; position: absolute;
+      top: -20px; right: -20px;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(181,146,42,0.2) 0%, transparent 70%);
+    }
+    .ai-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(181,146,42,0.2); color: var(--gold);
+      border-radius: 10px; padding: 3px 8px; font-size: 10px; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .ai-tag::before { content: '⚡'; font-size: 9px; }
+    .ai-comment-text {
+      font-size: 13px; color: #D4C49A; line-height: 1.7;
+    }
+    .ai-comment-text strong { color: var(--gold); }
+
+    /* Slow-mo badge */
+    .slowmo-badge {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card-bg); border: 1px solid var(--line);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;
+    }
+    .slowmo-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--dark); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slowmo-text h4 { font-size: 14px; font-weight: 700; color: var(--dark); }
+    .slowmo-text p { font-size: 12px; color: var(--soft); margin-top: 2px; }
+
+    /* ===================================
+       SECTION 4: PRICING
+    =================================== */
+    #pricing {
+      background: linear-gradient(180deg, var(--bg) 0%, #FDF5E4 100%);
+    }
+
+    .pricing-header { text-align: center; margin-bottom: 28px; }
+    .pricing-header h2 { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+
+    .price-compare {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 24px;
+    }
+    .price-card {
+      border-radius: 16px; padding: 20px 16px; text-align: center;
+      border: 1.5px solid;
+    }
+    .price-card.old {
+      background: #F5F0E8; border-color: #D0C4A8;
+      opacity: 0.7;
+    }
+    .price-card.new {
+      background: var(--dark); border-color: var(--gold);
+      box-shadow: 0 8px 32px rgba(181,146,42,0.25);
+    }
+    .price-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .price-card.old .price-tag { color: var(--soft); }
+    .price-card.new .price-tag { color: var(--gold); }
+    .price-icon { font-size: 28px; margin-bottom: 8px; }
+    .price-label { font-size: 13px; margin-bottom: 4px; }
+    .price-card.old .price-label { color: var(--mid); }
+    .price-card.new .price-label { color: #D4C49A; }
+    .price-num { font-size: 28px; font-weight: 900; line-height: 1; }
+    .price-card.old .price-num { color: var(--mid); text-decoration: line-through; }
+    .price-card.new .price-num { color: var(--gold); }
+    .price-sub { font-size: 11px; margin-top: 4px; }
+    .price-card.old .price-sub { color: var(--soft); }
+    .price-card.new .price-sub { color: rgba(212,194,154,0.7); }
+
+    .price-perks {
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 24px;
+    }
+    .perk-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card-bg); border: 1px solid var(--line);
+      border-radius: 10px; padding: 10px 14px;
+    }
+    .perk-icon { font-size: 18px; flex-shrink: 0; }
+    .perk-text { font-size: 13px; color: var(--dark); font-weight: 600; }
+    .perk-sub { font-size: 11px; color: var(--soft); margin-top: 1px; }
+
+    .guarantee-box {
+      text-align: center; padding: 16px;
+      background: rgba(181,146,42,0.06);
+      border: 1px solid rgba(181,146,42,0.2);
+      border-radius: 14px; margin-bottom: 24px;
+    }
+    .guarantee-box p { font-size: 14px; color: var(--mid); }
+    .guarantee-box strong { color: var(--dark); }
+
+    /* ===================================
+       SECTION 5: SOCIAL PROOF
+    =================================== */
+    #proof {
+      background: #FDF5E4;
+      border-top: 1px solid var(--line);
+    }
+
+    .proof-header { text-align: center; margin-bottom: 28px; }
+    .proof-header h2 { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+
+    .stat-row {
+      display: flex; justify-content: center; gap: 24px;
+      margin-bottom: 28px;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 900; color: var(--gold); line-height: 1; }
+    .stat-label { font-size: 11px; color: var(--soft); margin-top: 2px; }
+
+    .review-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .review-card {
+      background: var(--bg); border: 1px solid var(--line);
+      border-radius: 14px; padding: 16px;
+    }
+    .review-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .review-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .review-meta h4 { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .review-meta p { font-size: 11px; color: var(--soft); }
+    .review-stars { margin-left: auto; font-size: 12px; color: var(--gold); }
+    .review-body { font-size: 13px; color: var(--mid); line-height: 1.6; }
+    .review-body strong { color: var(--dark); }
+
+    /* ===================================
+       SECTION 6: BOTTOM CTA
+    =================================== */
+    #cta-bottom {
+      background: linear-gradient(180deg, #FDF5E4 0%, var(--bg) 100%);
+      text-align: center;
+    }
+
+    .cta-bottom-h { font-size: 24px; font-weight: 900; color: var(--dark); margin-bottom: 8px; }
+    .cta-bottom-sub { font-size: 14px; color: var(--soft); margin-bottom: 24px; }
+    .user-count {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .avatar-stack { display: flex; }
+    .avatar-mini {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid var(--bg);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      margin-left: -8px; font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-mini:first-child { margin-left: 0; }
+    .user-count-text { font-size: 13px; color: var(--mid); font-weight: 600; }
+
+    .contact-placeholder {
+      margin-top: 20px;
+      border: 1.5px dashed rgba(181,146,42,0.4);
+      border-radius: 14px; padding: 16px;
+      text-align: center;
+    }
+    .contact-placeholder p { font-size: 12px; color: var(--soft); margin-bottom: 6px; }
+    .wechat-qr-placeholder {
+      width: 80px; height: 80px; background: #EDE8DC; border-radius: 8px;
+      margin: 8px auto 0; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--soft); text-align: center;
+    }
+
+    .footer-note {
+      padding: 20px; text-align: center;
+      border-top: 1px solid var(--line);
+    }
+    .footer-note p { font-size: 11px; color: rgba(140,122,90,0.6); line-height: 1.8; }
+
+    /* ===== STICKY CTA ===== */
+    .sticky-cta {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      padding: 12px 20px 24px; /* extra for safe-area */
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, transparent 0%, var(--bg) 30%);
+      z-index: 100;
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .sticky-cta.visible { opacity: 1; pointer-events: all; }
+
+    /* ===== ANIMATIONS ===== */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  </style>
+
+  <!-- PostHog -->
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+" (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_REPLACE_WITH_REAL_KEY', {
+      api_host: 'https://app.posthog.com',
+      loaded: function(posthog) {
+        posthog.capture('page_view', {
+          page: 'lp-a',
+          variant: 'A',
+          utm_source: 'ab_test',
+          utm_medium: 'h5',
+          utm_campaign: 'variant_a'
+        });
+      }
+    });
+  </script>
+</head>
+<body>
+
+<!-- SKELETON -->
+<div class="skeleton" id="skeleton">
+  <div class="skel-bar skel-logo"></div>
+  <div class="skel-bar skel-h1"></div>
+  <div class="skel-bar skel-h2"></div>
+  <div class="skel-bar skel-card"></div>
+  <div class="skel-bar skel-btn"></div>
+</div>
+
+<!-- ================================
+     SECTION 1: HERO
+================================ -->
+<section id="hero">
+  <div class="hero-top fade-in">
+    <div class="hero-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#B5922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+          <circle cx="12" cy="9" r="2.5" fill="#B5922A" stroke="none"/>
+          <path d="M8 14 Q12 11 16 14" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">舞镜 WuJing AI</div>
+        <div class="logo-sub">AI 舞蹈教练</div>
+      </div>
+    </div>
+    <div class="badge">✦ 限时免费</div>
+  </div>
+
+  <div class="hero-main">
+    <div class="hero-eyebrow fade-in">
+      <div class="eyebrow-dot"></div>
+      <div class="eyebrow-text">实时量角度 · AI精准点评</div>
+    </div>
+
+    <h1 class="hero-h1 serif fade-in">
+      上传你的舞，<br>
+      <span class="highlight"><span class="num">30</span>秒</span>出<br>
+      8张这样的卡
+    </h1>
+
+    <p class="hero-sub fade-in">
+      AI自动识别动作节点，生成专业分解卡+慢放+角度量算<br>
+      <span class="example-tag">第3段：倾腰·探·定</span>
+      <span class="example-tag">8帧连拍</span>
+      <span class="example-tag">左臂差102°</span>
+    </p>
+
+    <!-- Film Strip Mock -->
+    <div class="film-mock fade-in">
+      <div class="film-header">
+        <div class="film-perfs">
+          <div class="film-perf"></div><div class="film-perf"></div><div class="film-perf"></div>
+          <div class="film-perf"></div><div class="film-perf"></div>
+        </div>
+        <div class="film-title-bar">AI · 八拍分解 · 第3段</div>
+        <div class="film-perfs">
+          <div class="film-perf"></div><div class="film-perf"></div><div class="film-perf"></div>
+          <div class="film-perf"></div><div class="film-perf"></div>
+        </div>
+      </div>
+
+      <div class="film-grid">
+        <!-- Cell 1 -->
+        <div class="film-cell">
+          <div class="cell-num">01</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="6" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="11" x2="20" y2="30" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="8" y2="24" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="32" y2="24" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="30" x2="13" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="30" x2="27" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">遮<span>face·cover</span></div>
+          <div class="cell-angle">↑89°</div>
+        </div>
+        <!-- Cell 2 -->
+        <div class="film-cell">
+          <div class="cell-num">02</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="6" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="11" x2="20" y2="30" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="5" y2="12" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="35" y2="22" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="30" x2="13" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="30" x2="27" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">展<span>hand·open</span></div>
+          <div class="cell-angle">↗142°</div>
+        </div>
+        <!-- Cell 3 -->
+        <div class="film-cell">
+          <div class="cell-num">03</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="6" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="11" x2="20" y2="30" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="6" y2="17" stroke="#B5922A" stroke-width="2"/>
+            <line x1="20" y1="17" x2="34" y2="17" stroke="#4A3F2F" stroke-width="2"/>
+            <line x1="20" y1="30" x2="13" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="30" x2="27" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">立<span>body·hold</span></div>
+          <div class="cell-angle">→90°</div>
+        </div>
+        <!-- Cell 4 -->
+        <div class="film-cell">
+          <div class="cell-num">04</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="22" cy="8" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="22" y1="13" x2="18" y2="30" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="19" x2="7" y2="25" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="19" x2="34" y2="26" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="18" y1="30" x2="11" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="18" y1="30" x2="26" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">倾<span>lean·tilt</span></div>
+          <div class="cell-angle">↙68°</div>
+        </div>
+      </div>
+
+      <div class="film-grid film-grid-2">
+        <!-- Cell 5 -->
+        <div class="film-cell">
+          <div class="cell-num">05</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="6" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="11" x2="20" y2="28" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="16" x2="5" y2="10" stroke="#C0392B" stroke-width="2"/>
+            <line x1="20" y1="16" x2="35" y2="22" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="28" x2="12" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="28" x2="28" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <!-- angle annotation -->
+            <path d="M 10 13 A 10 10 0 0 1 20 16" stroke="#C0392B" stroke-width="1" fill="none" stroke-dasharray="2 2"/>
+          </svg>
+          <div class="cell-beat" style="color:#C0392B;">探<span style="color:#C0392B;">★差102°</span></div>
+          <div class="cell-angle" style="color:#C0392B;">⚠️38°</div>
+        </div>
+        <!-- Cell 6 -->
+        <div class="film-cell">
+          <div class="cell-num">06</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="6" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="11" x2="20" y2="30" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="8" y2="24" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="17" x2="32" y2="24" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="30" x2="20" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="44" x2="20" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">定<span>pose·fix</span></div>
+          <div class="cell-angle">↑92°</div>
+        </div>
+        <!-- Cell 7 -->
+        <div class="film-cell">
+          <div class="cell-num">07</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="5" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="10" x2="20" y2="28" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="15" x2="8" y2="6" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="15" x2="32" y2="6" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="28" x2="13" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="28" x2="27" y2="44" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">举<span>raise·up</span></div>
+          <div class="cell-angle">↑135°</div>
+        </div>
+        <!-- Cell 8 -->
+        <div class="film-cell">
+          <div class="cell-num">08</div>
+          <svg class="stick-fig" viewBox="0 0 40 50">
+            <circle cx="20" cy="6" r="5" fill="none" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="11" x2="20" y2="32" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="10" y2="26" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="30" y2="26" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="32" x2="14" y2="46" stroke="#4A3F2F" stroke-width="1.5"/>
+            <line x1="20" y1="32" x2="26" y2="46" stroke="#4A3F2F" stroke-width="1.5"/>
+          </svg>
+          <div class="cell-beat">垂<span>drop·end</span></div>
+          <div class="cell-angle">↓45°</div>
+        </div>
+      </div>
+
+      <div class="film-footer">
+        <div class="film-perfs-bot">
+          <div class="film-perf"></div><div class="film-perf"></div><div class="film-perf"></div>
+        </div>
+        <div class="film-score-tag">AI评分 82分</div>
+        <div class="film-ai-tag">WuJing AI · 自动生成</div>
+      </div>
+    </div>
+
+    <div class="hero-cta-wrap fade-in">
+      <a href="https://wujing.mylumee.app?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_a"
+         class="btn-cta" id="hero-cta" onclick="trackCTA('hero')">
+        免费试试 <span class="arrow">→</span>
+      </a>
+      <p class="hero-cta-note">上传视频即可 · 无需注册 · <strong>首支免费</strong></p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================
+     SECTION 2: PAIN POINTS
+================================ -->
+<section id="pain">
+  <div class="section-label fade-in">
+    <h2 class="serif">练舞的三个难</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="pain-list">
+    <div class="pain-item fade-in">
+      <div class="pain-left">
+        <span class="emoji">😤</span>
+        <p>反复看视频<br>看不出哪里错</p>
+      </div>
+      <div class="pain-arrow">
+        <div class="pain-arrow-line"></div>
+        <div class="pain-arrow-head">▶</div>
+      </div>
+      <div class="pain-right">
+        <span class="emoji">🎯</span>
+        <p>AI量出角度<br>精确到每一度</p>
+      </div>
+    </div>
+
+    <div class="pain-item fade-in">
+      <div class="pain-left">
+        <span class="emoji">💸</span>
+        <p>请老师500元/节<br>负担太重</p>
+      </div>
+      <div class="pain-arrow">
+        <div class="pain-arrow-line"></div>
+        <div class="pain-arrow-head">▶</div>
+      </div>
+      <div class="pain-right">
+        <span class="emoji">✨</span>
+        <p>¥9.9一杯奶茶<br>支支分解到位</p>
+      </div>
+    </div>
+
+    <div class="pain-item fade-in">
+      <div class="pain-left">
+        <span class="emoji">🤯</span>
+        <p>八拍动作记不住<br>一对一才行</p>
+      </div>
+      <div class="pain-arrow">
+        <div class="pain-arrow-line"></div>
+        <div class="pain-arrow-head">▶</div>
+      </div>
+      <div class="pain-right">
+        <span class="emoji">📋</span>
+        <p>口诀卡随时查<br>离线也能练</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================
+     SECTION 3: PRODUCT DEMO
+================================ -->
+<section id="demo">
+  <div class="demo-header fade-in">
+    <h2 class="serif">看看AI怎么拆</h2>
+    <p>真实输出，无美化</p>
+    <div class="divider" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- 八拍口诀卡 -->
+  <div class="eight-beat-card fade-in">
+    <div class="ebc-header">
+      <div class="ebc-title">八拍分解卡 · 第2段</div>
+      <div class="ebc-meta">遮面·展手·立身 · 国风</div>
+    </div>
+    <div class="ebc-beats">
+      <div class="beat-cell">
+        <div class="beat-no">拍1</div>
+        <div class="beat-keyword">遮<span>face·cover</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍2</div>
+        <div class="beat-keyword">展<span>hand·open</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍3</div>
+        <div class="beat-keyword">立身<span>body·hold</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍4</div>
+        <div class="beat-keyword">倾腰<span>lean·tilt</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍5</div>
+        <div class="beat-keyword" style="color:#C0392B;">探<span style="color:#C0392B;">★重点</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍6</div>
+        <div class="beat-keyword">定<span>pose·fix</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍7</div>
+        <div class="beat-keyword">举<span>raise·up</span></div>
+      </div>
+      <div class="beat-cell">
+        <div class="beat-no">拍8</div>
+        <div class="beat-keyword">含垂<span>drop·end</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI评分环 + 角度标注 -->
+  <div class="ai-analysis-grid fade-in">
+    <!-- 评分环 -->
+    <div class="score-ring-card">
+      <div class="score-ring-label">AI 综合评分</div>
+      <div class="ring-wrap">
+        <svg viewBox="0 0 90 90">
+          <!-- track -->
+          <circle cx="45" cy="45" r="36" fill="none" stroke="#EDE8DC" stroke-width="7"/>
+          <!-- progress: 82% of circumference = 82% of 2π*36 ≈ 185 -->
+          <circle cx="45" cy="45" r="36" fill="none"
+            stroke="url(#ringGrad)" stroke-width="7"
+            stroke-linecap="round"
+            stroke-dasharray="185 41"
+            stroke-dashoffset="57"
+            transform="rotate(-90 45 45)"/>
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#D4AF4E"/>
+              <stop offset="100%" stop-color="#B5922A"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="ring-score">
+          <div class="ring-num">82</div>
+          <div class="ring-unit">/ 100</div>
+        </div>
+      </div>
+      <div class="score-comment">节奏准确<br>手臂路线待优化</div>
+    </div>
+
+    <!-- 角度标注 -->
+    <div class="angle-card">
+      <div class="angle-label">角度量算</div>
+      <div class="angle-svg-wrap">
+        <svg viewBox="0 0 90 90">
+          <!-- background circle -->
+          <circle cx="45" cy="45" r="38" fill="#F5EFE0" stroke="none"/>
+          <!-- reference arm (target) -->
+          <line x1="45" y1="45" x2="20" y2="15"
+            stroke="#B5922A" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="20" cy="15" r="3" fill="#B5922A"/>
+          <!-- actual arm (user) -->
+          <line x1="45" y1="45" x2="28" y2="65"
+            stroke="#C0392B" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 2"/>
+          <circle cx="28" cy="65" r="3" fill="#C0392B"/>
+          <!-- angle arc -->
+          <path d="M 35 30 A 20 20 0 0 0 37 58" fill="none" stroke="#C0392B" stroke-width="1.5" opacity="0.7"/>
+          <!-- arrow head -->
+          <polygon points="36,60 40,55 41,62" fill="#C0392B"/>
+          <!-- label -->
+          <text x="52" y="50" font-size="9" fill="#C0392B" font-weight="700">102°</text>
+          <!-- legend -->
+          <line x1="10" y1="75" x2="22" y2="75" stroke="#B5922A" stroke-width="2"/>
+          <text x="24" y="78" font-size="7" fill="#8C7A5A">标准</text>
+          <line x1="50" y1="75" x2="62" y2="75" stroke="#C0392B" stroke-width="2" stroke-dasharray="3 2"/>
+          <text x="64" y="78" font-size="7" fill="#8C7A5A">你的</text>
+        </svg>
+      </div>
+      <div class="angle-diff">左臂 <em>差了 102°</em><br>需向上抬高</div>
+    </div>
+  </div>
+
+  <!-- 慢放标记 -->
+  <div class="slowmo-badge fade-in">
+    <div class="slowmo-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B5922A" stroke-width="2">
+        <polygon points="5 3 19 12 5 21 5 3" fill="#B5922A" stroke="none"/>
+        <line x1="19" y1="5" x2="19" y2="19" stroke="#B5922A" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="slowmo-text">
+      <h4>0.25× 慢放自动生成</h4>
+      <p>每个关键帧自动截取，看清楚每一个细节</p>
+    </div>
+  </div>
+
+  <!-- AI点评框 -->
+  <div class="ai-comment-box fade-in">
+    <div class="ai-tag">AI 点评</div>
+    <div class="ai-comment-text">
+      整体节奏把握 <strong>良好</strong>，拍1-4完成度高。<strong>重点在拍5「探」</strong>：左臂目标角度140°，实测仅38°，差了102°。建议先慢速单练左臂轨迹，感受肩部发力位置，再配合腰部倾斜动作。拍7「举」可以更舒展，手腕收尾给气息留一拍。
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================
+     SECTION 4: PRICING
+================================ -->
+<section id="pricing">
+  <div class="pricing-header fade-in">
+    <h2 class="serif">学舞最划算的钱</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="price-compare fade-in">
+    <div class="price-card old">
+      <div class="price-tag">传统方式</div>
+      <div class="price-icon">👩‍🏫</div>
+      <div class="price-label">请私教老师</div>
+      <div class="price-num">¥500</div>
+      <div class="price-sub">一节课</div>
+    </div>
+    <div class="price-card new">
+      <div class="price-tag">✦ 舞镜 AI</div>
+      <div class="price-icon">🪩</div>
+      <div class="price-label">一支舞全拆解</div>
+      <div class="price-num">¥9.9</div>
+      <div class="price-sub">或首支免费试</div>
+    </div>
+  </div>
+
+  <div class="price-perks fade-in">
+    <div class="perk-item">
+      <div class="perk-icon">🃏</div>
+      <div>
+        <div class="perk-text">8张分解卡 · PDF可保存</div>
+        <div class="perk-sub">按拍数拆，口诀简洁好记</div>
+      </div>
+    </div>
+    <div class="perk-item">
+      <div class="perk-icon">📐</div>
+      <div>
+        <div class="perk-text">AI量角度 · 精确到度</div>
+        <div class="perk-sub">真正知道哪里差了多少</div>
+      </div>
+    </div>
+    <div class="perk-item">
+      <div class="perk-icon">🎬</div>
+      <div>
+        <div class="perk-text">慢放 + 帧对帧比较</div>
+        <div class="perk-sub">标准动作对比，一眼看穿</div>
+      </div>
+    </div>
+    <div class="perk-item">
+      <div class="perk-icon">💬</div>
+      <div>
+        <div class="perk-text">AI文字点评 · 有的放矢</div>
+        <div class="perk-sub">不是泛泛而谈，针对你的具体问题</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guarantee-box fade-in">
+    <p>🛡️ <strong>不满意不花钱</strong> · 首支完全免费体验<br>觉得值再解锁完整版</p>
+  </div>
+
+  <a href="https://wujing.mylumee.app?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_a"
+     class="btn-cta fade-in" id="pricing-cta" onclick="trackCTA('pricing')">
+    免费试试 <span class="arrow">→</span>
+  </a>
+</section>
+
+
+<!-- ================================
+     SECTION 5: SOCIAL PROOF
+================================ -->
+<section id="proof">
+  <div class="proof-header fade-in">
+    <h2 class="serif">真实用户在说</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="stat-row fade-in">
+    <div class="stat-item">
+      <div class="stat-num">24</div>
+      <div class="stat-label">已拆解舞支数</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4.9★</div>
+      <div class="stat-label">平均评分</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30s</div>
+      <div class="stat-label">平均生成时间</div>
+    </div>
+  </div>
+
+  <div class="review-list">
+    <div class="review-card fade-in">
+      <div class="review-top">
+        <div class="review-avatar">🎭</div>
+        <div class="review-meta">
+          <h4>广州 · 古典舞学员</h4>
+          <p>练舞2年 / 中级</p>
+        </div>
+        <div class="review-stars">★★★★★</div>
+      </div>
+      <div class="review-body">
+        一直知道自己手臂有问题但不知道差多少，<strong>AI量出来差了102°</strong>，我当场惊了。终于知道要往哪个方向改了，不是瞎练。
+      </div>
+    </div>
+
+    <div class="review-card fade-in">
+      <div class="review-top">
+        <div class="review-avatar">💃</div>
+        <div class="review-meta">
+          <h4>上海 · 流行舞爱好者</h4>
+          <p>自学半年</p>
+        </div>
+        <div class="review-stars">★★★★★</div>
+      </div>
+      <div class="review-body">
+        八拍口诀卡太实用了，<strong>睡前看一遍，第二天进健身房直接上</strong>，不用一直盯着手机看视频。慢放功能也比我手动调好用很多。
+      </div>
+    </div>
+
+    <div class="review-card fade-in">
+      <div class="review-top">
+        <div class="review-avatar">🪷</div>
+        <div class="review-meta">
+          <h4>北京 · 古风汉舞社团</h4>
+          <p>社团编导</p>
+        </div>
+        <div class="review-stars">★★★★☆</div>
+      </div>
+      <div class="review-body">
+        我们社团用来拆解难点片段，<strong>把分解卡发给社员练习</strong>，比之前自己截图好多了。¥9.9完全值，比我花时间自己做划算太多。
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================
+     SECTION 6: BOTTOM CTA
+================================ -->
+<section id="cta-bottom">
+  <div class="user-count fade-in">
+    <div class="avatar-stack">
+      <div class="avatar-mini">💃</div>
+      <div class="avatar-mini">🎭</div>
+      <div class="avatar-mini">🪷</div>
+      <div class="avatar-mini">✨</div>
+    </div>
+    <div class="user-count-text">已有 <strong>200+</strong> 舞者在用</div>
+  </div>
+
+  <h2 class="cta-bottom-h serif fade-in">上传你的舞<br>AI帮你找到差在哪</h2>
+  <p class="cta-bottom-sub fade-in">首支免费 · 30秒出卡 · 无需注册</p>
+
+  <a href="https://wujing.mylumee.app?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_a"
+     class="btn-cta fade-in" id="bottom-cta" onclick="trackCTA('bottom')" style="margin-bottom:20px;">
+    免费试试 <span class="arrow">→</span>
+  </a>
+
+  <!-- 微信联系占位 -->
+  <div class="contact-placeholder fade-in">
+    <p>加微信 · 有问题直接问</p>
+    <div class="wechat-qr-placeholder">
+      微信二维码<br>占位符
+    </div>
+    <p style="margin-top:8px;font-size:11px;">或直接发消息：<strong>[微信号占位]</strong></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer-note">
+  <p>
+    舞镜 WuJing AI · wujing.mylumee.app<br>
+    AI生成内容仅供参考 · 专业指导请咨询认证舞蹈教师<br>
+    [备案号占位] · © 2026 WuJing AI<br>
+    <a href="https://wujing.mylumee.app/privacy" style="color:rgba(140,122,90,0.5);font-size:10px;">隐私政策</a>
+    &nbsp;·&nbsp;
+    <a href="https://wujing.mylumee.app/terms" style="color:rgba(140,122,90,0.5);font-size:10px;">用户协议</a>
+  </p>
+</div>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta" id="sticky-cta">
+  <a href="https://wujing.mylumee.app?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_a"
+     class="btn-cta" id="sticky-cta-btn" onclick="trackCTA('sticky')">
+    免费试试 → 首支舞免费拆解
+  </a>
+</div>
+
+
+<script>
+  // ===== SKELETON REMOVAL =====
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var skel = document.getElementById('skeleton');
+      if (skel) { skel.classList.add('hidden'); }
+    }, 300);
+  });
+
+  // ===== CTA TRACKING =====
+  function trackCTA(position) {
+    if (window.posthog) {
+      posthog.capture('cta_click', {
+        position: position,
+        page: 'lp-a',
+        variant: 'A',
+        utm_source: 'ab_test',
+        utm_medium: 'h5',
+        utm_campaign: 'variant_a'
+      });
+    }
+  }
+
+  // ===== INTERSECTION OBSERVER (fade in) =====
+  var fadeEls = document.querySelectorAll('.fade-in');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(function(el) { observer.observe(el); });
+
+  // ===== STICKY CTA =====
+  var heroCta = document.getElementById('hero-cta');
+  var stickyCta = document.getElementById('sticky-cta');
+  var heroObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        stickyCta.classList.remove('visible');
+      } else {
+        stickyCta.classList.add('visible');
+      }
+    });
+  }, { threshold: 0 });
+  heroObs.observe(heroCta);
+
+  // ===== UTM PARAMS in all CTAs =====
+  // Already baked into href. Dynamic override if ?utm_* present:
+  var urlParams = new URLSearchParams(window.location.search);
+  var utmSource = urlParams.get('utm_source') || 'ab_test';
+  var utmMedium = urlParams.get('utm_medium') || 'h5';
+  var utmCampaign = urlParams.get('utm_campaign') || 'variant_a';
+
+  document.querySelectorAll('a[href*="wujing.mylumee.app"]').forEach(function(a) {
+    var url = new URL(a.href);
+    url.searchParams.set('utm_source', utmSource);
+    url.searchParams.set('utm_medium', utmMedium);
+    url.searchParams.set('utm_campaign', utmCampaign);
+    a.href = url.toString();
+  });
+
+  // ===== SCROLL DEPTH TRACKING =====
+  var depths = [25, 50, 75, 100];
+  var tracked = {};
+  window.addEventListener('scroll', function() {
+    var scrolled = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100;
+    depths.forEach(function(d) {
+      if (scrolled >= d && !tracked[d]) {
+        tracked[d] = true;
+        if (window.posthog) {
+          posthog.capture('scroll_depth', { depth: d, page: 'lp-a', variant: 'A' });
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

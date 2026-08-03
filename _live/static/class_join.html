@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>舞镜 · 加入班级测评</title>
+<style>
+/* ═══ 敦煌金缮 · 色系（对齐 report.html）═══ */
+:root{
+  --gold:#C8A45C; --gold-light:#E8D5A0; --gold-pale:#F5EDD0; --gold-ghost:rgba(200,164,92,0.08);
+  --gold-foil:linear-gradient(135deg,#E8D5A0,#C8A45C,#B8923E,#C8A45C);
+  --cream:#FDF8F0; --card:#fff;
+  --ink:#2c2418; --ink-80:#4a3f30; --ink-60:#6a5a42; --ink-40:#9a8a72; --ink-20:#c0b8a8;
+  --red:#c43a30; --green:#5a8a5c;
+  --font-sans:"PingFang SC","SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --font-serif:"Songti SC","STSong",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--cream);color:var(--ink);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 18px 40px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+.topbar{width:100%;max-width:480px;padding:16px 0;display:flex;align-items:center;gap:8px}
+.logo{font-size:17px;font-weight:700;letter-spacing:.05em}
+.logo span{font-weight:300;color:var(--gold);font-family:var(--font-serif)}
+.wrap{width:100%;max-width:480px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.card{background:var(--card);border-radius:18px;padding:26px 22px;
+  box-shadow:0 6px 30px rgba(120,90,40,.08);border:1px solid rgba(200,164,92,.15)}
+.brand-head{text-align:center;margin-bottom:18px}
+.brand-logo{width:64px;height:64px;border-radius:16px;margin:0 auto 12px;
+  background:var(--gold-foil);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:26px;font-weight:700;overflow:hidden}
+.brand-logo img{width:100%;height:100%;object-fit:cover}
+.brand-name{font-size:19px;font-weight:700;color:var(--ink)}
+.brand-dance{font-size:14px;color:var(--gold);margin-top:4px;font-family:var(--font-serif)}
+.brand-sub{font-size:12px;color:var(--ink-40);margin-top:6px}
+label{display:block;font-size:13px;color:var(--ink-60);margin:14px 0 6px;font-weight:600}
+input[type=text]{width:100%;padding:13px 14px;border:1.5px solid rgba(200,164,92,.3);
+  border-radius:11px;font-size:15px;background:var(--cream);color:var(--ink);outline:none;transition:.2s}
+input[type=text]:focus{border-color:var(--gold);background:#fff}
+.hint{font-size:11px;color:var(--ink-40);margin-top:5px}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;
+  cursor:pointer;margin-top:18px;background:var(--gold-foil);color:#fff;transition:.2s;
+  box-shadow:0 4px 14px rgba(200,164,92,.35)}
+.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.btn-ghost{background:#fff;color:var(--ink-60);border:1.5px solid rgba(200,164,92,.3);box-shadow:none}
+.tips{background:var(--gold-ghost);border-radius:12px;padding:14px;font-size:12.5px;color:var(--ink-60);line-height:1.7}
+.tips b{color:var(--ink-80)}
+.tips-icon{color:var(--gold);font-weight:700}
+.step-progress{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.step{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-40)}
+.step .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink-20);
+  display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.step.active{color:var(--ink)}
+.step.active .dot{border-color:var(--gold);background:var(--gold);color:#fff}
+.step.done{color:var(--green)}
+.step.done .dot{border-color:var(--green);background:var(--green);color:#fff}
+.spinner{width:34px;height:34px;border:3px solid rgba(200,164,92,.2);border-top-color:var(--gold);
+  border-radius:50%;animation:spin 1s linear infinite;margin:6px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.center{text-align:center}
+.err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;min-height:16px}
+.disclaimer{font-size:10.5px;color:var(--ink-20);text-align:center;margin-top:18px;line-height:1.6}
+.hidden{display:none}
+.file-drop{border:2px dashed rgba(200,164,92,.4);border-radius:14px;padding:26px 16px;text-align:center;
+  cursor:pointer;transition:.2s;background:var(--cream)}
+.file-drop:hover{border-color:var(--gold);background:#fff}
+.file-drop .big{font-size:30px;margin-bottom:8px}
+.file-name{font-size:13px;color:var(--green);margin-top:8px;word-break:break-all}
+.badge{display:inline-block;font-size:10px;background:var(--gold);color:#fff;padding:2px 8px;border-radius:8px;
+  letter-spacing:.05em;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo">舞镜<span>WuJing</span> <span class="badge">班级测评</span></div></div>
+<div class="wrap">
+
+  <!-- STEP 0: 加载中 -->
+  <div class="card center" id="cardLoading">
+    <div class="spinner"></div>
+    <div style="color:var(--ink-40);font-size:13px">正在核对班级码…</div>
+  </div>
+
+  <!-- STEP 1: 加入（填昵称）-->
+  <div class="card hidden" id="cardJoin">
+    <div class="brand-head">
+      <div class="brand-logo" id="brandLogo">镜</div>
+      <div class="brand-name" id="brandName">舞蹈班级</div>
+      <div class="brand-dance" id="danceName">《舞名》班级测评</div>
+      <div class="brand-sub" id="brandMotto"></div>
+    </div>
+    <label>你的昵称 <span style="color:var(--red)">*</span></label>
+    <input type="text" id="nickname" maxlength="20" placeholder="报告里显示这个名字">
+    <label>真实姓名（可选 · 仅老师可见）</label>
+    <input type="text" id="realname" maxlength="20" placeholder="方便老师对应到你">
+    <button class="btn" id="btnJoin">进入班级 →</button>
+    <div class="err" id="joinErr"></div>
+    <div class="disclaimer">舞镜AI辅助评分，供训练参考，不替代老师专业判断。</div>
+  </div>
+
+  <!-- STEP 2: 上传自己那段 -->
+  <div class="card hidden" id="cardUpload">
+    <div class="brand-head">
+      <div class="brand-name" id="uName">上传你的舞蹈片段</div>
+      <div class="brand-dance" id="uDance"></div>
+    </div>
+    <div class="tips">
+      <div style="margin-bottom:8px"><span class="tips-icon">✦ 拍好的关键（直接决定评分准不准）</span></div>
+      <b>· 单人出镜</b>，画面里只有你一个人<br>
+      <b>· 全身入镜</b>，头到脚都要拍到<br>
+      <b>· 15–30 秒</b>，太短测不准<br>
+      <b>· 光线充足</b>，别逆光别太暗
+    </div>
+    <div class="file-drop" id="fileDrop" style="margin-top:16px">
+      <div class="big">🎬</div>
+      <div style="font-size:14px;color:var(--ink-60);font-weight:600">点击选择你的舞蹈视频</div>
+      <div class="hint">MP4 / MOV · 最大 500MB</div>
+      <div class="file-name hidden" id="fileName"></div>
+    </div>
+    <input type="file" id="fileInput" accept="video/*" class="hidden">
+    <button class="btn" id="btnUpload" disabled>上传</button>
+    <div class="err" id="uploadErr"></div>
+  </div>
+
+  <!-- STEP 3: 上传中/等评分 -->
+  <div class="card hidden" id="cardProgress">
+    <div class="brand-head"><div class="brand-name">正在处理你的视频</div></div>
+    <div class="step-progress" id="stepProgress">
+      <div class="step" data-step="upload"><span class="dot">1</span> 上传视频</div>
+      <div class="step" data-step="queue"><span class="dot">2</span> 进入评分队列</div>
+      <div class="step" data-step="score"><span class="dot">3</span> 舞镜AI逐帧分析</div>
+      <div class="step" data-step="done"><span class="dot">4</span> 生成你的报告</div>
+    </div>
+    <div class="spinner" id="progSpinner"></div>
+    <div class="center" style="font-size:13px;color:var(--ink-40)" id="progHint">上传成功，等待老师开始评分…</div>
+    <div class="disclaimer">舞镜AI辅助评分，供训练参考。</div>
+  </div>
+
+  <!-- STEP 4: 结果（自己那页 + 名次）-->
+  <div class="card hidden" id="cardResult">
+    <div class="brand-head">
+      <div class="brand-name" id="rName">你的测评结果</div>
+      <div class="brand-dance" id="rRank"></div>
+    </div>
+    <div id="rScore" class="center" style="font-size:40px;font-weight:800;color:var(--gold);font-family:var(--font-serif)"></div>
+    <div class="center" style="font-size:12px;color:var(--ink-40);margin-bottom:14px">综合分（满分10）</div>
+    <div id="rComment" style="background:var(--gold-ghost);border-radius:12px;padding:12px;font-size:13px;color:var(--ink-80);line-height:1.7;margin-bottom:14px"></div>
+    <div id="rFb"></div>
+    <div id="rNote" class="hidden" style="margin-top:12px;background:#fff;border:1.5px solid rgba(200,164,92,.25);border-radius:12px;padding:12px;font-size:13px;color:var(--ink-80)"></div>
+    <button class="btn btn-ghost" onclick="location.reload()" style="margin-top:16px">刷新查看</button>
+    <div class="disclaimer">舞镜AI辅助评分，供训练参考，不替代老师专业判断。</div>
+  </div>
+
+</div>
+
+<script>
+function _esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+// ═══ 学员端加入 → 上传 → 等分 → 看自己那页（脱敏：只见自己+名次）═══
+const QS = new URLSearchParams(location.search);
+// 支持两种入口：/class_join.html?code=ABC123  或  /j/ABC123（后端重写到本页并带 code）
+let CODE = (QS.get('code') || location.pathname.split('/j/')[1] || '').trim().toUpperCase();
+let CLASS_ID = null, MEMBER_TOKEN = localStorage.getItem('wj_mem_'+CODE) || null;
+
+const $ = id => document.getElementById(id);
+function show(id){ ['cardLoading','cardJoin','cardUpload','cardProgress','cardResult'].forEach(c=>$(c).classList.add('hidden')); $(id).classList.remove('hidden'); }
+function setStep(name, state){ const el = document.querySelector(`.step[data-step="${name}"]`); if(el){ el.classList.remove('active','done'); if(state) el.classList.add(state);} }
+
+async function lookup(){
+  if(!CODE){ show('cardJoin'); $('joinErr').textContent='缺少班级码，请用老师给的链接进入'; return; }
+  try{
+    const r = await fetch('/api/join/'+encodeURIComponent(CODE));
+    if(!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.detail||'班级码无效'); }
+    const d = await r.json();
+    CLASS_ID = d.class_id;
+    // 品牌落地
+    $('brandName').textContent = (d.brand && d.brand.schoolName) || '舞蹈班级';
+    $('danceName').textContent = '《'+d.dance_name+'》班级测评';
+    $('uDance').textContent = '《'+d.dance_name+'》';
+    if(d.brand && d.brand.motto) $('brandMotto').textContent = d.brand.motto;
+    if(d.brand && d.brand.logoUrl){ $('brandLogo').innerHTML = '<img src="'+d.brand.logoUrl+'" alt="logo">'; }
+    // 已加入过？直接进上传/进度
+    if(MEMBER_TOKEN){ enterAfterJoin(d.dance_name); }
+    else show('cardJoin');
+  }catch(e){ show('cardJoin'); $('cardJoin').querySelector('.brand-head').innerHTML='<div class="brand-name">无法加入</div>'; $('joinErr').textContent = e.message; $('btnJoin').disabled=true; }
+}
+
+$('btnJoin').onclick = async () => {
+  const nickname = $('nickname').value.trim();
+  if(!nickname){ $('joinErr').textContent='请填昵称'; return; }
+  $('btnJoin').disabled = true; $('joinErr').textContent='';
+  try{
+    const r = await fetch('/api/class/'+CLASS_ID+'/join', {method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({nickname, real_name: $('realname').value.trim()})});
+    if(!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.detail||'加入失败'); }
+    const d = await r.json();
+    MEMBER_TOKEN = d.member_token;
+    localStorage.setItem('wj_mem_'+CODE, MEMBER_TOKEN);
+    enterAfterJoin(d.dance_name);
+  }catch(e){ $('joinErr').textContent = e.message; $('btnJoin').disabled=false; }
+};
+
+function enterAfterJoin(dance){
+  $('uName').textContent = '上传你的舞蹈片段';
+  // 已上传过？直接看进度/结果
+  pollResult(true);
+}
+
+// ── 文件选择 ──
+$('fileDrop').onclick = () => $('fileInput').click();
+$('fileInput').onchange = () => {
+  const f = $('fileInput').files[0];
+  if(f){ $('fileName').textContent = f.name; $('fileName').classList.remove('hidden'); $('btnUpload').disabled=false; }
+};
+
+$('btnUpload').onclick = async () => {
+  const f = $('fileInput').files[0];
+  if(!f){ return; }
+  if(f.size > 500*1024*1024){ $('uploadErr').textContent='视频过大，请压到 500MB 以内'; return; }
+  $('btnUpload').disabled = true; $('uploadErr').textContent='';
+  show('cardProgress'); setStep('upload','active');
+  try{
+    const fd = new FormData();
+    fd.append('member_token', MEMBER_TOKEN);
+    fd.append('video', f);
+    const r = await fetch('/api/class/'+CLASS_ID+'/member/upload', {method:'POST', body: fd});
+    if(!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.detail||'上传失败'); }
+    setStep('upload','done'); setStep('queue','active');
+    $('progHint').textContent = '上传成功，等待老师开始评分…';
+    pollResult(false);
+  }catch(e){ show('cardUpload'); $('uploadErr').textContent = e.message; $('btnUpload').disabled=false; }
+};
+
+// ── 轮询自己的结果 ──
+async function pollResult(firstEntry){
+  try{
+    const r = await fetch('/api/class/'+CLASS_ID+'/member/'+MEMBER_TOKEN+'/result');
+    if(!r.ok){ if(firstEntry) show('cardUpload'); return; }
+    const d = await r.json();
+    if(d.status === 'joined'){ if(firstEntry){ show('cardUpload'); } return; }
+    // uploaded / scoring / scored / failed → 进度或结果页
+    if(d.status === 'scored' && d.self){ renderResult(d); return; }
+    if(d.status === 'failed'){ show('cardProgress'); $('progSpinner').classList.add('hidden');
+      $('progHint').innerHTML = '<span style="color:var(--red)">检出失败：'+(d.error||'请重传更清晰的单人全身视频')+'</span>';
+      setTimeout(()=>{ show('cardUpload'); $('btnUpload').disabled=false; }, 2500); return; }
+    // 进行中
+    show('cardProgress');
+    if(d.status==='uploaded'){ setStep('upload','done'); setStep('queue','active'); $('progHint').textContent='已上传，等待老师开始评分…'; }
+    if(d.status==='scoring'){ setStep('upload','done'); setStep('queue','done'); setStep('score','active'); $('progHint').textContent='舞镜AI正在分析你的动作…'; }
+    setTimeout(()=>pollResult(false), 3000);
+  }catch(e){ setTimeout(()=>pollResult(false), 4000); }
+}
+
+function renderResult(d){
+  setStep('score','done'); setStep('done','done');
+  const s = d.self;
+  $('rName').textContent = (s.name||'你')+' 的测评结果';
+  if(d.rank && d.rank.my_rank){ $('rRank').textContent = '班级第 '+d.rank.my_rank+' 名 / 共 '+d.rank.total+' 人'; }
+  $('rScore').textContent = s.score || '–';
+  $('rComment').textContent = s.comment || '动作已完成分析，见下方针对建议。';
+  const dims = [
+    ['S曲线', s.sc.v+'%', '目标≥6%'],
+    ['臂高', s.ah.v+'%', '目标≥80%'],
+    ['旋转', s.sp.v+'次', '目标≥12'],
+    ['臂展', (s.as_.v||0).toFixed(3), '目标≥0.35'],
+    ['屈膝', (s.kn.v||0).toFixed(2), '目标≤0.92'],
+    ['动作量', (s.mv.v||0).toFixed(3), '目标≥0.18'],
+  ];
+  let fbHtml = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
+  dims.forEach(d=>{ fbHtml += `<div style="background:var(--cream);border-radius:10px;padding:10px 8px;text-align:center">
+    <div style="font-size:11px;color:var(--ink-40)">${d[0]}</div>
+    <div style="font-size:16px;font-weight:700;color:var(--ink)">${d[1]}</div>
+    <div style="font-size:9px;color:var(--ink-20)">${d[2]}</div></div>`; });
+  fbHtml += '</div>';
+  (s.fb||[]).forEach(f=>{ const clr = f[0]==='P0'?'var(--red)':f[0]==='P1'?'var(--gold)':'var(--ink-40)';
+    fbHtml += `<div style="border-left:3px solid ${clr};padding:8px 12px;margin-bottom:8px;background:#fff;border-radius:0 8px 8px 0">
+      <div style="font-size:12px;font-weight:700;color:${clr}">${_esc(f[0])} · ${_esc(f[1])}</div>
+      <div style="font-size:12.5px;color:var(--ink-60);margin-top:3px;line-height:1.6">${_esc(f[2])}</div></div>`; });
+  $('rFb').innerHTML = fbHtml;
+  if(s.teacher_note){ $('rNote').classList.remove('hidden'); $('rNote').innerHTML = '<b style="color:var(--gold)">老师评语：</b><br>'+_esc(s.teacher_note); }
+  show('cardResult');
+}
+
+lookup();
+</script>
+</body>
+</html>

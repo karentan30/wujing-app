@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>舞镜AI · 把任意舞蹈变成PDF教材 | 专业舞室工具</title>
+  <meta name="description" content="上传舞蹈视频，AI自动生成八拍分解卡+慢放+量角点评。左臂差102°，精确到帧。舞室老师/博主专用，¥9.9/支。">
+
+  <!-- Open Graph（微信分享） -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="舞镜AI · 把任意舞蹈变成PDF教材">
+  <meta property="og:description" content="上传视频 → AI生成八拍分解卡+量角点评。舞室老师专用工具，¥9.9/支。">
+  <meta property="og:image" content="https://wujing.mylumee.app/og-cover.jpg">
+  <meta property="og:url" content="https://wujing.mylumee.app/lp/lp-e.html?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_e">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FAF7F0;
+      --gold: #B5922A;
+      --gold-light: #D4AF50;
+      --dark: #1F1A14;
+      --accent: #805AD5;
+      --accent-light: #9F7AEA;
+      --gray: #7A7268;
+      --card-bg: #FFFDF7;
+      --border: #E8E0CC;
+      --red: #C0392B;
+      --green: #27AE60;
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ===== SKELETON ===== */
+    .skeleton-screen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      transition: opacity 0.4s ease;
+    }
+    .skeleton-screen.hidden { opacity: 0; pointer-events: none; }
+    .skeleton-logo {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .skeleton-bar {
+      width: 200px; height: 16px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #E8E0CC 25%, #F5F0E8 50%, #E8E0CC 75%);
+      background-size: 400% 100%;
+      animation: shimmer 1.2s infinite;
+    }
+    .skeleton-bar.short { width: 140px; height: 12px; }
+    @keyframes shimmer { 0%{background-position:100% 0} 100%{background-position:-100% 0} }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1, h2, h3 {
+      font-family: 'Noto Serif SC', 'STSong', 'SimSun', Georgia, serif;
+      line-height: 1.3;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content { opacity: 0; transition: opacity 0.5s ease; }
+    .main-content.visible { opacity: 1; }
+
+    /* ===== SECTION BASE ===== */
+    section { padding: 40px 20px; }
+
+    /* ===== STICKY TOP BAR ===== */
+    .top-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250, 247, 240, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 10px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-bar-logo {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--dark);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .top-bar-logo .dot { color: var(--gold); }
+    .top-bar-badge {
+      font-size: 11px; font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: #fff;
+      padding: 4px 10px; border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 24px 20px 40px;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -40px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(128, 90, 213, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(128, 90, 213, 0.1);
+      border: 1px solid rgba(128, 90, 213, 0.25);
+      color: var(--accent);
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      margin-bottom: 20px; width: fit-content;
+      letter-spacing: 0.3px;
+    }
+    .hero-tag::before { content: '⬡'; font-size: 10px; }
+
+    h1.hero-title {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--dark);
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    h1.hero-title .accent { color: var(--accent); }
+    h1.hero-title .gold { color: var(--gold); }
+
+    .hero-sub {
+      font-size: 15px; color: var(--gray);
+      margin-bottom: 28px; line-height: 1.65;
+    }
+    .hero-sub strong { color: var(--dark); font-weight: 600; }
+
+    /* Eight-beat card mock */
+    .card-mock {
+      background: #FFFDF5;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 28px;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(31,26,20,0.08);
+    }
+    .card-mock-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .card-mock-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 13px; font-weight: 700; color: var(--dark);
+    }
+    .card-mock-seg {
+      font-size: 10px; color: var(--gray);
+      background: #F0EBE0; padding: 2px 8px; border-radius: 10px;
+    }
+
+    /* Film strip row */
+    .film-strip {
+      display: flex; gap: 5px; overflow-x: auto;
+      scrollbar-width: none; padding-bottom: 4px;
+      margin-bottom: 12px;
+    }
+    .film-strip::-webkit-scrollbar { display: none; }
+    .film-frame {
+      flex: 0 0 60px;
+      height: 72px;
+      background: linear-gradient(145deg, #EDE8DC, #DDD5C0);
+      border-radius: 6px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 4px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #D4CAAF;
+    }
+    .film-frame::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 8px;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent 4px, rgba(0,0,0,0.08) 4px, rgba(0,0,0,0.08) 6px);
+    }
+    .film-frame::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 8px;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent 4px, rgba(0,0,0,0.08) 4px, rgba(0,0,0,0.08) 6px);
+    }
+    .frame-figure {
+      width: 36px; height: 48px;
+      position: relative;
+    }
+    /* SVG stick figure embedded */
+    .frame-label {
+      font-size: 9px; font-weight: 700; color: var(--dark);
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      white-space: nowrap; letter-spacing: 0.3px;
+      background: rgba(255,255,255,0.7);
+      padding: 1px 3px; border-radius: 3px;
+    }
+    .frame-beat {
+      position: absolute; top: 10px; left: 4px;
+      font-size: 8px; font-weight: 800; color: var(--gold);
+    }
+
+    /* Keyword row */
+    .kw-row {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .kw-chip {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 10px;
+      background: rgba(181, 146, 42, 0.12);
+      color: var(--gold);
+      border: 1px solid rgba(181, 146, 42, 0.25);
+    }
+    .kw-chip.purple {
+      background: rgba(128, 90, 213, 0.1);
+      color: var(--accent);
+      border-color: rgba(128, 90, 213, 0.2);
+    }
+
+    .angle-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(192, 57, 43, 0.08);
+      border: 1px solid rgba(192, 57, 43, 0.2);
+      color: var(--red); border-radius: 8px;
+      padding: 4px 10px; font-size: 11px; font-weight: 700;
+      margin-top: 8px;
+    }
+    .angle-badge::before { content: '⟲'; font-size: 13px; }
+
+    /* ===== CTA BUTTON ===== */
+    .cta-btn {
+      display: block; width: 100%;
+      height: 52px; border: none; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, #6B3FA0 100%);
+      color: #fff;
+      font-size: 17px; font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      box-shadow: 0 6px 20px rgba(128, 90, 213, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cta-btn:active { transform: scale(0.97); box-shadow: 0 3px 10px rgba(128, 90, 213, 0.25); }
+    .cta-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+    }
+    .cta-btn .cta-inner {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .cta-note {
+      text-align: center; font-size: 12px; color: var(--gray);
+      margin-top: 10px;
+    }
+    .cta-note strong { color: var(--accent); }
+
+    /* ===== PAIN POINT ===== */
+    .pain-section {
+      background: #F5F1E8;
+      border-radius: 24px;
+      margin: 0 12px;
+      padding: 32px 20px;
+    }
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      color: var(--gray); text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 22px; font-weight: 800;
+      margin-bottom: 24px;
+      color: var(--dark);
+    }
+
+    .pain-item {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; margin-bottom: 0;
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      background: #fff;
+    }
+    .pain-left {
+      padding: 14px 12px;
+      background: #FFF9F0;
+      border-right: 1px solid var(--border);
+    }
+    .pain-right {
+      padding: 14px 12px;
+      background: rgba(128,90,213,0.04);
+    }
+    .pain-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+    .pain-label.red { color: var(--red); }
+    .pain-label.purple { color: var(--accent); }
+    .pain-text {
+      font-size: 13px; line-height: 1.5; color: var(--dark);
+    }
+    .pain-icon { font-size: 16px; margin-bottom: 4px; display: block; }
+
+    /* ===== DEMO SECTION ===== */
+    .demo-section { background: var(--bg); padding: 40px 20px; }
+    .demo-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(31,26,20,0.06);
+    }
+    .demo-card-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--gray);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .demo-card-title::before { content: ''; display: block; width: 3px; height: 12px; background: var(--accent); border-radius: 2px; }
+
+    /* Eight beat grid */
+    .beat-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; margin-bottom: 16px;
+    }
+    .beat-cell {
+      background: linear-gradient(145deg, #F0EBE0, #E5DEC8);
+      border-radius: 10px; padding: 10px 6px 8px;
+      text-align: center; position: relative;
+      border: 1px solid #D4CAB0;
+    }
+    .beat-cell.highlight {
+      background: linear-gradient(145deg, rgba(128,90,213,0.12), rgba(128,90,213,0.05));
+      border-color: rgba(128,90,213,0.3);
+    }
+    .beat-num {
+      font-size: 9px; font-weight: 800; color: var(--gold);
+      position: absolute; top: 4px; left: 5px;
+    }
+    .beat-figure { margin-bottom: 2px; }
+    .beat-kw {
+      font-size: 10px; font-weight: 700; color: var(--dark);
+      line-height: 1.3; letter-spacing: 0.3px;
+    }
+    .beat-kw.accent { color: var(--accent); }
+
+    /* Score ring */
+    .score-row {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .score-ring-wrap { flex: 0 0 88px; position: relative; }
+    .score-ring-wrap svg { display: block; }
+    .score-number {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .score-num-big { font-size: 22px; font-weight: 900; color: var(--dark); line-height: 1; }
+    .score-num-unit { font-size: 9px; color: var(--gray); font-weight: 600; }
+    .score-detail { flex: 1; }
+    .score-detail-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .score-bar-row { margin-bottom: 5px; }
+    .score-bar-label { font-size: 11px; color: var(--gray); margin-bottom: 2px; display: flex; justify-content: space-between; }
+    .score-bar-track {
+      height: 5px; background: #E8E0CC; border-radius: 3px; overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      transition: width 1s ease;
+    }
+
+    /* Angle annotation */
+    .angle-card {
+      background: linear-gradient(135deg, #FFF5F5, #FFF9F5);
+      border: 1.5px solid rgba(192,57,43,0.15);
+      border-radius: 16px; padding: 16px;
+    }
+    .angle-card-title {
+      font-size: 12px; font-weight: 700; color: var(--red);
+      display: flex; align-items: center; gap: 5px;
+      margin-bottom: 12px;
+    }
+    .angle-card-title::before { content: '△'; }
+    .angle-svg-wrap { display: flex; justify-content: center; margin-bottom: 10px; }
+    .angle-desc {
+      font-size: 13px; color: var(--dark); line-height: 1.6;
+    }
+    .angle-number { font-size: 22px; font-weight: 900; color: var(--red); }
+
+    /* ===== PRICE SECTION ===== */
+    .price-section {
+      padding: 40px 20px;
+      background: linear-gradient(180deg, var(--bg) 0%, #F0EBE0 100%);
+    }
+    .price-compare {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 20px;
+    }
+    .price-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .price-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .price-row-label { font-size: 14px; color: var(--gray); }
+    .price-row-value { font-size: 16px; font-weight: 700; }
+    .price-row-value.strike { text-decoration: line-through; color: #AAA; font-size: 15px; }
+    .price-row-value.big {
+      font-size: 28px; font-weight: 900; color: var(--accent);
+    }
+    .price-row-value.free-trial { color: var(--green); font-size: 16px; }
+    .guarantee-badge {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(39, 174, 96, 0.08);
+      border: 1px solid rgba(39, 174, 96, 0.2);
+      border-radius: 12px; padding: 12px 16px;
+    }
+    .guarantee-icon { font-size: 24px; flex: 0 0 auto; }
+    .guarantee-text { font-size: 13px; color: var(--dark); line-height: 1.5; }
+    .guarantee-text strong { color: var(--green); }
+
+    /* ===== SOCIAL PROOF ===== */
+    .social-section { padding: 40px 20px; }
+    .stats-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 16px 12px; text-align: center;
+    }
+    .stat-number { font-size: 28px; font-weight: 900; color: var(--accent); line-height: 1; }
+    .stat-unit { font-size: 13px; font-weight: 600; color: var(--accent); }
+    .stat-label { font-size: 11px; color: var(--gray); margin-top: 3px; }
+
+    .review-list { display: flex; flex-direction: column; gap: 12px; }
+    .review-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 16px;
+    }
+    .review-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .review-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex: 0 0 auto;
+    }
+    .review-avatar.a1 { background: linear-gradient(135deg, #E8D5B0, #C9B080); }
+    .review-avatar.a2 { background: linear-gradient(135deg, #D5C4E8, #B09CCB); }
+    .review-avatar.a3 { background: linear-gradient(135deg, #C4DDE8, #80B4C9); }
+    .review-name { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .review-role { font-size: 11px; color: var(--gray); }
+    .review-stars { font-size: 12px; letter-spacing: 1px; }
+    .review-body { font-size: 13px; color: var(--dark); line-height: 1.65; }
+    .review-tag {
+      display: inline-block; margin-top: 8px;
+      font-size: 10px; font-weight: 700;
+      background: rgba(128,90,213,0.08); color: var(--accent);
+      padding: 2px 8px; border-radius: 8px;
+    }
+
+    /* ===== BOTTOM CTA ===== */
+    .bottom-cta {
+      padding: 40px 20px 60px;
+      background: linear-gradient(180deg, var(--bg), #EDE8DC);
+      text-align: center;
+    }
+    .bottom-headline {
+      font-size: 26px; font-weight: 900; line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .bottom-sub { font-size: 14px; color: var(--gray); margin-bottom: 24px; }
+    .user-count {
+      font-size: 12px; color: var(--gray); margin-top: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .user-count::before {
+      content: '';
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--green); border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+
+    .divider {
+      height: 1px; background: var(--border);
+      margin: 32px 0 20px;
+    }
+    .contact-placeholder {
+      background: var(--card-bg); border: 1.5px dashed var(--border);
+      border-radius: 14px; padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .contact-placeholder p {
+      font-size: 12px; color: var(--gray); line-height: 1.6;
+    }
+    .qr-placeholder {
+      width: 80px; height: 80px;
+      background: linear-gradient(145deg, #EDE8DC, #DDD5C0);
+      border-radius: 10px; margin: 10px auto;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--gray); text-align: center;
+    }
+    .footer-legal {
+      font-size: 10px; color: #B0A898; text-align: center; line-height: 1.7;
+    }
+    .footer-legal a { color: #B0A898; }
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== FLOATING CTA (appears after scroll) ===== */
+    .floating-cta {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      padding: 12px 20px 20px;
+      background: linear-gradient(180deg, transparent, rgba(250,247,240,0.98) 30%);
+      z-index: 200;
+      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0; transform: translateX(-50%) translateY(100%);
+    }
+    .floating-cta.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Stick figures (SVG inline) */
+    .stick {
+      display: block; width: 100%; height: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .cta-btn, .floating-cta { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SKELETON SCREEN -->
+<div class="skeleton-screen" id="skeleton">
+  <div class="skeleton-logo">🪞</div>
+  <div class="skeleton-bar"></div>
+  <div class="skeleton-bar short"></div>
+  <div class="skeleton-bar"></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="mainContent">
+
+  <!-- STICKY TOP BAR -->
+  <header class="top-bar">
+    <div class="top-bar-logo">舞镜 <span class="dot">·</span> WuJing</div>
+    <div class="top-bar-badge">专业工具版</div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero-tag">舞室老师 / 博主专用</div>
+
+    <h1 class="hero-title">
+      把任意一支舞<br>
+      变成 <span class="accent">PDF教材</span><br>
+      <span class="gold">发给学员自己练</span>
+    </h1>
+
+    <p class="hero-sub">
+      上传视频 → AI自动拆解八拍 → 生成连拍分解卡<br>
+      <strong>例：第3段·倾腰·探·定 | 8帧连拍</strong><br>
+      AI量角：「左臂差了<strong>102°</strong>」精确到帧
+    </p>
+
+    <!-- Product mock: 8-beat card -->
+    <div class="card-mock">
+      <div class="card-mock-header">
+        <span class="card-mock-title">分解卡 · 第3段</span>
+        <span class="card-mock-seg">共8拍</span>
+      </div>
+      <!-- Film strip simulation -->
+      <div class="film-strip">
+        <!-- Frame 1 -->
+        <div class="film-frame">
+          <span class="frame-beat">1</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="30" y1="21" x2="30" y2="45" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="28" x2="14" y2="36" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="28" x2="46" y2="24" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="45" x2="22" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="45" x2="38" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">遮面</span>
+        </div>
+        <!-- Frame 2 -->
+        <div class="film-frame">
+          <span class="frame-beat">2</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="30" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="30" y1="21" x2="28" y2="45" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="29" y1="28" x2="10" y2="22" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="29" y1="28" x2="48" y2="32" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="28" y1="45" x2="20" y2="63" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="28" y1="45" x2="36" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">展手</span>
+        </div>
+        <!-- Frame 3 -->
+        <div class="film-frame">
+          <span class="frame-beat">3</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="30" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="30" y1="21" x2="30" y2="44" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="27" x2="12" y2="20" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="27" x2="48" y2="20" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="24" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="36" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">立身</span>
+        </div>
+        <!-- Frame 4 -->
+        <div class="film-frame">
+          <span class="frame-beat">4</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="32" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="32" y1="21" x2="28" y2="44" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="12" y2="35" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="48" y2="22" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="28" y1="44" x2="18" y2="60" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="28" y1="44" x2="38" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">倾腰</span>
+        </div>
+        <!-- Frame 5 -->
+        <div class="film-frame">
+          <span class="frame-beat">5</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="34" cy="14" r="7" fill="#805AD5" opacity="0.6"/>
+            <line x1="34" y1="21" x2="28" y2="44" stroke="#805AD5" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="31" y1="30" x2="10" y2="38" stroke="#805AD5" stroke-width="2" stroke-linecap="round"/>
+            <line x1="31" y1="30" x2="50" y2="24" stroke="#805AD5" stroke-width="2" stroke-linecap="round"/>
+            <line x1="28" y1="44" x2="16" y2="60" stroke="#805AD5" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="28" y1="44" x2="40" y2="62" stroke="#805AD5" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label" style="color:#805AD5">探</span>
+        </div>
+        <!-- Frame 6 -->
+        <div class="film-frame">
+          <span class="frame-beat">6</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="30" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="30" y1="21" x2="30" y2="44" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="27" x2="14" y2="26" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="27" x2="46" y2="26" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="24" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="36" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">定</span>
+        </div>
+        <!-- Frame 7 -->
+        <div class="film-frame">
+          <span class="frame-beat">7</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="30" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="30" y1="21" x2="30" y2="44" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="26" x2="12" y2="14" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="26" x2="48" y2="14" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="23" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="37" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">举</span>
+        </div>
+        <!-- Frame 8 -->
+        <div class="film-frame">
+          <span class="frame-beat">8</span>
+          <svg class="stick" viewBox="0 0 60 72" fill="none">
+            <circle cx="30" cy="14" r="7" fill="#B5922A" opacity="0.6"/>
+            <line x1="30" y1="21" x2="30" y2="44" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="28" x2="18" y2="38" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="28" x2="42" y2="38" stroke="#1F1A14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="24" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="36" y2="62" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="frame-label">垂</span>
+        </div>
+      </div>
+
+      <!-- Keywords -->
+      <div class="kw-row">
+        <span class="kw-chip">遮面·展手·立身</span>
+        <span class="kw-chip purple">倾腰·探·定</span>
+        <span class="kw-chip">举·含·垂</span>
+      </div>
+      <div class="angle-badge">左臂角度偏差 102° — 第5拍</div>
+    </div>
+
+    <button class="cta-btn" id="heroCta" onclick="trackCta('hero')">
+      <span class="cta-inner">生成我的教材 →</span>
+    </button>
+    <p class="cta-note">首支免费体验 · <strong>¥9.9/支</strong> · 30秒出结果</p>
+  </section>
+
+  <!-- ===================== PAIN POINT ===================== -->
+  <section style="padding: 32px 12px;">
+    <div class="pain-section reveal">
+      <p class="section-eyebrow">你是不是也遇到过</p>
+      <h2 class="section-title">教舞老师的<br>三个日常头疼</h2>
+
+      <div class="pain-item">
+        <div class="pain-left">
+          <span class="pain-icon">😮‍💨</span>
+          <div class="pain-label red">痛点</div>
+          <div class="pain-text">反复示范同一段，学员还是记不住</div>
+        </div>
+        <div class="pain-right">
+          <span class="pain-icon">📋</span>
+          <div class="pain-label purple">舞镜方案</div>
+          <div class="pain-text">八拍分解卡发给学员，自己对着练</div>
+        </div>
+      </div>
+
+      <div class="pain-item">
+        <div class="pain-left">
+          <span class="pain-icon">🤔</span>
+          <div class="pain-label red">痛点</div>
+          <div class="pain-text">说"手臂再高一点"，到底哪个角度？</div>
+        </div>
+        <div class="pain-right">
+          <span class="pain-icon">📐</span>
+          <div class="pain-label purple">舞镜方案</div>
+          <div class="pain-text">AI量角：「左臂还差102°」有图有据</div>
+        </div>
+      </div>
+
+      <div class="pain-item">
+        <div class="pain-left">
+          <span class="pain-icon">⏰</span>
+          <div class="pain-label red">痛点</div>
+          <div class="pain-text">做一套教材要剪视频截图，半天没了</div>
+        </div>
+        <div class="pain-right">
+          <span class="pain-icon">⚡</span>
+          <div class="pain-label purple">舞镜方案</div>
+          <div class="pain-text">上传视频，30秒自动生成可打印PDF</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PRODUCT DEMO ===================== -->
+  <section class="demo-section">
+    <div class="reveal">
+      <p class="section-eyebrow" style="padding-left:4px">实际产出效果</p>
+      <h2 class="section-title" style="padding-left:4px">AI生成的内容<br>长这个样子</h2>
+    </div>
+
+    <!-- 8-beat grid -->
+    <div class="demo-card reveal">
+      <div class="demo-card-title">八拍分解卡 · 可打印PDF</div>
+      <div class="beat-grid">
+        <div class="beat-cell">
+          <span class="beat-num">1</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="21" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="21" y1="14" x2="21" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="20" x2="9" y2="26" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="20" x2="33" y2="16" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="32" x2="14" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="32" x2="28" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">遮面</div>
+        </div>
+        <div class="beat-cell">
+          <span class="beat-num">2</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="21" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="21" y1="14" x2="19" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="20" y1="20" x2="5" y2="15" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="20" y1="20" x2="35" y2="22" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="19" y1="32" x2="12" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="19" y1="32" x2="27" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">展手</div>
+        </div>
+        <div class="beat-cell">
+          <span class="beat-num">3</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="21" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="21" y1="14" x2="21" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="18" x2="6" y2="13" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="18" x2="36" y2="13" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="32" x2="15" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="32" x2="27" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">立身</div>
+        </div>
+        <div class="beat-cell">
+          <span class="beat-num">4</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="23" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="23" y1="14" x2="19" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="21" x2="7" y2="24" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="21" x2="36" y2="15" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="19" y1="32" x2="10" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="19" y1="32" x2="28" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">倾腰</div>
+        </div>
+        <div class="beat-cell highlight">
+          <span class="beat-num" style="color:var(--accent)">5</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="24" cy="8" r="6" fill="#805AD5" opacity="0.5"/>
+              <line x1="24" y1="14" x2="19" y2="32" stroke="#805AD5" stroke-width="2"/>
+              <line x1="22" y1="20" x2="4" y2="26" stroke="#C0392B" stroke-width="2.5"/>
+              <line x1="22" y1="20" x2="37" y2="16" stroke="#805AD5" stroke-width="1.8"/>
+              <line x1="19" y1="32" x2="9" y2="46" stroke="#805AD5" stroke-width="2"/>
+              <line x1="19" y1="32" x2="29" y2="46" stroke="#805AD5" stroke-width="2"/>
+              <!-- angle arc -->
+              <path d="M10 26 Q7 20 12 15" stroke="#C0392B" stroke-width="1.5" fill="none" stroke-dasharray="2,2"/>
+            </svg>
+          </div>
+          <div class="beat-kw accent">探 ⚠️</div>
+        </div>
+        <div class="beat-cell">
+          <span class="beat-num">6</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="21" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="21" y1="14" x2="21" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="19" x2="8" y2="19" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="19" x2="34" y2="19" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="32" x2="15" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="32" x2="27" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">定</div>
+        </div>
+        <div class="beat-cell">
+          <span class="beat-num">7</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="21" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="21" y1="14" x2="21" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="17" x2="7" y2="6" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="17" x2="35" y2="6" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="32" x2="15" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="32" x2="27" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">举</div>
+        </div>
+        <div class="beat-cell">
+          <span class="beat-num">8</span>
+          <div class="beat-figure">
+            <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
+              <circle cx="21" cy="8" r="6" fill="#B5922A" opacity="0.5"/>
+              <line x1="21" y1="14" x2="21" y2="32" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="20" x2="12" y2="28" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="20" x2="30" y2="28" stroke="#1F1A14" stroke-width="1.8"/>
+              <line x1="21" y1="32" x2="15" y2="46" stroke="#1F1A14" stroke-width="2"/>
+              <line x1="21" y1="32" x2="27" y2="46" stroke="#1F1A14" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="beat-kw">垂</div>
+        </div>
+      </div>
+      <div style="text-align:center; font-size:12px; color:var(--gray)">
+        ⚠️ 第5拍高亮 = AI标记问题动作
+      </div>
+    </div>
+
+    <!-- Score ring -->
+    <div class="demo-card reveal">
+      <div class="demo-card-title">AI综合评分</div>
+      <div class="score-row">
+        <div class="score-ring-wrap">
+          <svg width="88" height="88" viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="36" fill="none" stroke="#E8E0CC" stroke-width="8"/>
+            <circle cx="44" cy="44" r="36" fill="none" stroke="url(#scoreGrad)" stroke-width="8"
+              stroke-dasharray="226" stroke-dashoffset="40"
+              stroke-linecap="round" transform="rotate(-90 44 44)"/>
+            <defs>
+              <linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#805AD5"/>
+                <stop offset="100%" stop-color="#9F7AEA"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="score-number">
+            <div class="score-num-big" id="scoreNum">0</div>
+            <div class="score-num-unit">分</div>
+          </div>
+        </div>
+        <div class="score-detail">
+          <div class="score-detail-title">这支舞整体82分</div>
+          <div class="score-bar-row">
+            <div class="score-bar-label"><span>节奏准确</span><span>90</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:90%"></div></div>
+          </div>
+          <div class="score-bar-row">
+            <div class="score-bar-label"><span>手臂延伸</span><span>68</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:68%"></div></div>
+          </div>
+          <div class="score-bar-row">
+            <div class="score-bar-label"><span>重心稳定</span><span>85</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:85%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Angle annotation -->
+    <div class="demo-card reveal">
+      <div class="demo-card-title">角度精确标注</div>
+      <div class="angle-card">
+        <div class="angle-card-title">发现角度偏差</div>
+        <div class="angle-svg-wrap">
+          <svg width="220" height="130" viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Body outline simplified -->
+            <circle cx="110" cy="20" r="14" fill="#E8D5B0" stroke="#B5922A" stroke-width="1.5"/>
+            <line x1="110" y1="34" x2="110" y2="80" stroke="#1F1A14" stroke-width="3" stroke-linecap="round"/>
+            <!-- correct arm (right) -->
+            <line x1="110" y1="48" x2="155" y2="30" stroke="#27AE60" stroke-width="3" stroke-linecap="round"/>
+            <text x="158" y="34" font-size="10" fill="#27AE60" font-weight="700">正确</text>
+            <!-- actual arm (left) - wrong angle -->
+            <line x1="110" y1="48" x2="60" y2="58" stroke="#C0392B" stroke-width="3" stroke-linecap="round"/>
+            <!-- angle arc -->
+            <path d="M 95 38 A 22 22 0 0 0 73 54" stroke="#C0392B" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+            <!-- 102° label -->
+            <text x="58" y="38" font-size="11" fill="#C0392B" font-weight="800">差102°</text>
+            <!-- arrow tip -->
+            <polygon points="62,57 70,52 66,64" fill="#C0392B"/>
+            <!-- legs -->
+            <line x1="110" y1="80" x2="96" y2="120" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="110" y1="80" x2="124" y2="120" stroke="#1F1A14" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- dashed target line for left arm -->
+            <line x1="110" y1="48" x2="65" y2="28" stroke="#27AE60" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
+            <text x="30" y="26" font-size="9" fill="#27AE60" font-weight="600">目标位置</text>
+          </svg>
+        </div>
+        <div class="angle-desc">
+          第5拍「探」：左臂实际角度与标准动作<br>
+          偏差 <span class="angle-number">102°</span>，需向上延伸约<strong>一个手臂长度</strong><br>
+          <span style="font-size:12px;color:var(--gray)">AI基于骨骼追踪·精确到2°误差内</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta-btn reveal" onclick="trackCta('demo')">
+      <span class="cta-inner">分析我的视频 →</span>
+    </button>
+    <p class="cta-note" style="margin-top:10px">上传视频后30秒出结果</p>
+  </section>
+
+  <!-- ===================== PRICE ===================== -->
+  <section class="price-section">
+    <div class="reveal">
+      <p class="section-eyebrow">定价</p>
+      <h2 class="section-title">专业级工具<br>奶茶钱的价格</h2>
+    </div>
+
+    <div class="price-compare reveal">
+      <div class="price-row">
+        <div class="price-row-label">找老师私教一节课</div>
+        <div class="price-row-value strike">¥500起</div>
+      </div>
+      <div class="price-row">
+        <div class="price-row-label">舞镜拆解一支视频</div>
+        <div class="price-row-value big">¥9.9</div>
+      </div>
+      <div class="price-row">
+        <div class="price-row-label">首支体验</div>
+        <div class="price-row-value free-trial">免费</div>
+      </div>
+    </div>
+
+    <div class="guarantee-badge reveal">
+      <div class="guarantee-icon">🛡️</div>
+      <div class="guarantee-text">
+        <strong>不满意不花钱</strong><br>
+        觉得结果没用？直接联系我们，全额退款，不问原因
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SOCIAL PROOF ===================== -->
+  <section class="social-section">
+    <div class="reveal">
+      <p class="section-eyebrow">用户反馈</p>
+      <h2 class="section-title">已有老师在用</h2>
+    </div>
+
+    <div class="stats-row reveal">
+      <div class="stat-card">
+        <div><span class="stat-number">24</span><span class="stat-unit">支</span></div>
+        <div class="stat-label">已拆解视频数</div>
+      </div>
+      <div class="stat-card">
+        <div><span class="stat-number">30</span><span class="stat-unit">秒</span></div>
+        <div class="stat-label">平均出卡时间</div>
+      </div>
+    </div>
+
+    <div class="review-list">
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="review-avatar a1">👩</div>
+          <div>
+            <div class="review-name">某古典舞工作室主理人</div>
+            <div class="review-role">开班7年 · 深圳</div>
+          </div>
+          <div class="review-stars" style="margin-left:auto">★★★★★</div>
+        </div>
+        <div class="review-body">
+          之前发学员的练习素材都是截图+手写笔记，一套下来要两三个小时。用舞镜传完视频等一会儿就出来了，分解卡直接发群里，学员说比我手写的清楚多了。
+        </div>
+        <span class="review-tag">效率提升</span>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="review-avatar a2">👩‍🦱</div>
+          <div>
+            <div class="review-name">小红书舞蹈博主（粉丝3.2万）</div>
+            <div class="review-role">日常更新跟学教程</div>
+          </div>
+          <div class="review-stars" style="margin-left:auto">★★★★★</div>
+        </div>
+        <div class="review-body">
+          我在小红书发了一个「AI帮我找出自己跳舞哪里差了」的视频，就用的舞镜的角度分析截图，那期播放量是平时的4倍。评论区很多人问哪里生成的。
+        </div>
+        <span class="review-tag">内容素材</span>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="review-avatar a3">🧑</div>
+          <div>
+            <div class="review-name">大学社团舞队队长</div>
+            <div class="review-role">负责教队员日常训练</div>
+          </div>
+          <div class="review-stars" style="margin-left:auto">★★★★☆</div>
+        </div>
+        <div class="review-body">
+          我们队有个同学腿部发力的问题说了很多次都改不好，用了这个把她那段单独分析，打印出来贴在她镜子旁边，两周后真的改过来了。比我口头说管用。
+        </div>
+        <span class="review-tag">针对性训练</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BOTTOM CTA ===================== -->
+  <section class="bottom-cta">
+    <div class="reveal">
+      <h2 class="bottom-headline">上传一支舞<br>30秒看效果</h2>
+      <p class="bottom-sub">首支免费 · 不满意不收钱 · 无需注册</p>
+    </div>
+
+    <button class="cta-btn reveal" id="bottomCta" onclick="trackCta('bottom')" style="max-width:380px; margin:0 auto; display:block;">
+      <span class="cta-inner">生成我的教材 →</span>
+    </button>
+    <div class="user-count reveal">已有 <strong>200+</strong> 位老师和博主在使用</div>
+
+    <div class="divider"></div>
+
+    <!-- Contact / QR placeholder -->
+    <div class="contact-placeholder reveal">
+      <p>微信扫码咨询 / 合作</p>
+      <div class="qr-placeholder">
+        <span>微信<br>二维码<br>占位</span>
+      </div>
+      <p>或发邮件至 <strong>hi@wujing.app</strong></p>
+      <p style="margin-top:4px; font-size:11px; color:#B0A898">客服响应时间：工作日 10:00–20:00</p>
+    </div>
+
+    <!-- Phone number placeholder -->
+    <div class="contact-placeholder reveal" style="margin-top:12px;">
+      <p style="font-size:12px; color:var(--gray)">[ 电话/手机号 占位区 ]</p>
+    </div>
+
+    <div class="footer-legal reveal">
+      wujing.mylumee.app &nbsp;·&nbsp; 舞镜 AI<br>
+      <a href="#">隐私政策</a> &nbsp;|&nbsp; <a href="#">用户协议</a><br>
+      [ 备案号占位 ] &nbsp;·&nbsp; AI生成内容仅供参考
+    </div>
+  </section>
+
+</div><!-- /main-content -->
+
+<!-- FLOATING CTA -->
+<div class="floating-cta" id="floatingCta">
+  <button class="cta-btn" onclick="trackCta('floating')" style="box-shadow: 0 8px 24px rgba(128,90,213,0.4);">
+    <span class="cta-inner">生成我的教材 → ¥9.9/支</span>
+  </button>
+</div>
+
+<script>
+  // ========== SKELETON ==========
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var sk = document.getElementById('skeleton');
+      var mc = document.getElementById('mainContent');
+      sk.classList.add('hidden');
+      mc.classList.add('visible');
+      setTimeout(function() { sk.style.display = 'none'; }, 450);
+      initScrollReveal();
+      animateScore();
+    }, 400);
+  });
+
+  // ========== POSTHOG ==========
+  (function() {
+    try {
+      window.posthog = window.posthog || { capture: function(){} };
+      // Replace phc_xxx with real key
+      var PH_KEY = 'phc_PLACEHOLDER_KEY';
+      var PH_HOST = 'https://app.posthog.com';
+      // Lightweight stub — swap for real snippet when key is available
+      window._phStub = { key: PH_KEY, host: PH_HOST };
+      // page_view event
+      setTimeout(function() {
+        window.posthog.capture && window.posthog.capture('page_view', {
+          page: 'lp-e',
+          variant: 'E',
+          utm_source: 'ab_test',
+          utm_medium: 'h5',
+          utm_campaign: 'variant_e'
+        });
+      }, 600);
+    } catch(e) {}
+  })();
+
+  // ========== UTM PARAMS ==========
+  function appendUTM(url) {
+    var params = '?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_e';
+    return url + (url.indexOf('?') > -1 ? '&' : '') + 'utm_source=ab_test&utm_medium=h5&utm_campaign=variant_e';
+  }
+
+  // ========== CTA TRACKING ==========
+  function trackCta(location) {
+    try {
+      window.posthog.capture && window.posthog.capture('cta_click', {
+        location: location,
+        variant: 'E',
+        utm_campaign: 'variant_e'
+      });
+    } catch(e) {}
+    // Navigate to product
+    var dest = 'https://wujing.mylumee.app/?utm_source=ab_test&utm_medium=h5&utm_campaign=variant_e&ref=lp_e_' + location;
+    window.location.href = dest;
+  }
+
+  // ========== SCROLL REVEAL ==========
+  function initScrollReveal() {
+    var els = document.querySelectorAll('.reveal');
+    if (!window.IntersectionObserver) {
+      els.forEach(function(el) { el.classList.add('visible'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function(el) { obs.observe(el); });
+  }
+
+  // ========== SCORE ANIMATION ==========
+  function animateScore() {
+    var el = document.getElementById('scoreNum');
+    if (!el) return;
+    var start = 0, end = 82, dur = 1200;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / dur, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(ease * end);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    // Trigger when section visible
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        requestAnimationFrame(step);
+        obs.disconnect();
+      }
+    }, { threshold: 0.3 });
+    var card = el.closest('.demo-card');
+    if (card) obs.observe(card);
+  }
+
+  // ========== FLOATING CTA ==========
+  var floatingCta = document.getElementById('floatingCta');
+  var heroCta = document.getElementById('heroCta');
+  var floatingShown = false;
+  window.addEventListener('scroll', function() {
+    if (!heroCta) return;
+    var heroBottom = heroCta.getBoundingClientRect().bottom;
+    if (heroBottom < 0 && !floatingShown) {
+      floatingCta.classList.add('show');
+      floatingShown = true;
+    } else if (heroBottom >= 0 && floatingShown) {
+      floatingCta.classList.remove('show');
+      floatingShown = false;
+    }
+  }, { passive: true });
+
+  // ========== GOOGLE ANALYTICS placeholder ==========
+  // Replace GA_MEASUREMENT_ID with real ID
+  // window.dataLayer = window.dataLayer || [];
+  // function gtag(){dataLayer.push(arguments);}
+  // gtag('js', new Date());
+  // gtag('config', 'GA_MEASUREMENT_ID');
+</script>
+
+</body>
+</html>

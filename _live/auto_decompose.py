@@ -25,7 +25,7 @@ ANGLE_CN = {"right_elbow": "右肘", "left_elbow": "左肘", "right_shoulder": "
 
 
 def _run(cmd):
-    return subprocess.run(cmd, capture_output=True, text=True)
+    return subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
 
 def _dur(path):

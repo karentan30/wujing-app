@@ -134,6 +134,22 @@ def get_optional_user(authorization: str = Header(None)):
 set_decompose_runner(run_decompose, get_decompose)
 set_optional_user_resolver(get_optional_user)
 
+def _check_video_magic(data: bytes) -> bool:
+    """Verify uploaded file has a valid video magic byte signature."""
+    if len(data) < 12:
+        return False
+    if data[:4] == b'RIFF':  # AVI
+        return True
+    if data[4:8] == b'ftyp':  # MP4/MOV/M4V
+        return True
+    if data[:3] == b'\x00\x00\x00' and data[4:8] in (b'ftyp', b'moov'):
+        return True
+    return False
+
+@app.get("/ping")
+def ping():
+    return {"pong": True}
+
 @app.get("/health")
 def health():
     return {"ok": True, "service": "wujing-api"}
@@ -341,6 +357,10 @@ async def upload_video(
         import shutil as _sh
         _sh.rmtree(review_dir, ignore_errors=True)
         raise HTTPException(status_code=413, detail="视频过大，请压到 500MB 以内")
+    if not _check_video_magic(content):
+        import shutil as _sh
+        _sh.rmtree(review_dir, ignore_errors=True)
+        raise HTTPException(status_code=400, detail="请上传有效的视频文件（MP4 / MOV / AVI）")
     with open(video_path, "wb") as f:
         f.write(content)
     # Create review record in DB（游客 user_id=None，登录用户绑账号）
@@ -557,6 +577,10 @@ async def decompose_video(
         import shutil as _sh
         _sh.rmtree(ddir, ignore_errors=True)
         raise HTTPException(status_code=413, detail="视频过大，请压到 500MB 以内")
+    if not _check_video_magic(content):
+        import shutil as _sh
+        _sh.rmtree(ddir, ignore_errors=True)
+        raise HTTPException(status_code=400, detail="请上传有效的视频文件（MP4 / MOV / AVI）")
     with open(video_path, "wb") as f:
         f.write(content)
 
@@ -697,6 +721,12 @@ def serve_class_teacher():
 @app.get("/class_join.html")
 def serve_class_join():
     _p = os.path.join(BASE_DIR, "static", "class_join.html")
+    return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
+
+@app.get("/teacher-partner")
+@app.get("/teacher-partner.html")
+def serve_teacher_partner():
+    _p = os.path.join(BASE_DIR, "static", "teacher-partner.html")
     return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
 
 @app.get("/j/{code}")

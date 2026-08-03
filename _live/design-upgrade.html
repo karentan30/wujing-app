@@ -2,18 +2,17 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta property="og:title" content="Wujing — Learn Any Dance, Move by Move">
-<meta property="og:description" content="AI breaks down any dance video into frame-by-frame cards. Learn K-pop, Chinese dance, and more — move by move.">
+<meta property="og:title" content="舞镜 · AI 自动拆舞">
+<meta property="og:description" content="上传舞蹈视频，AI 自动拆解每一拍 · 八拍卡 + 慢放 + AI 老师点评 · 30秒出结果">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://wujing.mylumee.app">
 <meta property="og:image" content="https://wujing.mylumee.app/static/og-cover.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Wujing · AI Dance Breakdown">
-<meta name="twitter:description" content="AI splits every dance into frame-by-frame cards. Practice with slow-motion and mirror mode.">
-<meta name="description" content="AI breaks down any dance video into frame-by-frame cards. Learn K-pop, Chinese dance, and more — move by move.">
+<meta name="twitter:title" content="WuJing · AI Dance Breakdown">
+<meta name="twitter:description" content="Upload your dance · AI breaks down every beat · 8-beat cards + slow-mo + AI coach · Results in 30s">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Wujing · Learn Any Dance in 20 Minutes | AI Dance Breakdown</title>
+<title>舞镜 · Dance Mirror</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -839,7 +838,6 @@ body{
 .auth-avatar .badge{display:none;width:6px;height:6px;border-radius:50%;background:var(--green-done)}
 .auth-avatar.logged-in .badge{display:block}
 
-.dc-lib-views{font-size:11px;color:#fb923c;font-weight:600;margin-top:3px}
 </style>
 </head>
 <body>
@@ -874,333 +872,52 @@ body{
   <!-- Hero -->
   <div class="hero">
     <div class="hero-brand">舞镜</div>
-    <div class="hero-tagline" data-i18n="heroTitle" style="font-size:16px;font-weight:700;color:var(--ink);letter-spacing:.02em">学一支舞，从 2 小时到 20 分钟</div>
-    <div class="hero-desc" data-i18n="heroSub">AI 自动拆解每一句动作 · 镜面跟练 · 记忆口诀 · 生成卡片</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px">
-      <div class="hero-cta" onclick="document.getElementById('demo-library').scrollIntoView({behavior:'smooth'})" tabindex="0" role="button" aria-label="选热门舞蹈跟练">
-        <span class="hero-cta-icon">▶</span>
-        <span data-i18n="heroCta1">选一支开始跟练 ↓</span>
-      </div>
-      <div class="hero-cta secondary" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传自己的视频" style="font-size:13px;padding:9px 22px">
-        <span data-i18n="heroCta2">上传自己的视频 →</span>
-      </div>
+    <div class="hero-tagline">AI 自动拆舞 · 每一拍都能跟练</div>
+    <div class="hero-desc">上传舞蹈视频，AI 拆成八拍卡 + 故事卡 + 记忆卡，慢放镜像跟练。</div>
+    <div class="hero-cta" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频自动拆卡">
+      <span class="hero-cta-icon">✦</span>
+      <span>上传你的舞</span>
     </div>
     <div class="hero-trust">不留存视频 · 结果仅你可见 · AI 生成标识</div>
+    <div style="margin-top:8px;font-size:12px;color:var(--mute);letter-spacing:.5px">上传免费 · 拆解结果 ¥9.9</div>
   </div>
 
-  <!-- 今日一句 + 印章栏 -->
-  <div id="dcDailyPhrase" style="margin:12px 0 12px;padding:14px 16px;background:rgba(255,200,80,0.08);border:1px solid rgba(255,200,80,0.25);border-radius:14px;display:none;">
-    <div style="font-size:11px;color:rgba(255,200,80,0.8);margin-bottom:5px;">🌟 今日一句</div>
-    <div id="dcDailyTitle" style="font-size:16px;font-weight:bold;color:#fff;margin-bottom:3px;"></div>
-    <div id="dcDailyKou" style="font-size:13px;color:#ffc850;margin-bottom:10px;"></div>
-    <button id="dcDailyBtn" style="background:rgba(255,200,80,0.2);border:1px solid rgba(255,200,80,0.4);color:#ffc850;padding:6px 16px;border-radius:8px;cursor:pointer;font-size:13px;">⏯ 立即跟练</button>
+  <!-- Upload（首屏核心 CTA） -->
+  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解">
+    <div class="upload-card-icon">📹</div>
+    <div class="upload-card-info">
+      <div class="upload-card-title">上传你的舞 · 免费</div>
+      <div class="upload-card-desc">AI 自动拆成八拍卡 + 故事卡 + 记忆卡，慢放/镜像跟练</div>
+    </div>
+    <div class="upload-card-arrow">→</div>
   </div>
-  <div id="dcStampBar" style="text-align:center;font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:6px;"></div>
 
-  <!-- Demo library — PRIMARY CTA（舞蹈库置顶，跟练优先） -->
-  <div id="demo-library" style="margin:16px 0 0">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <div data-i18n="libraryTitle" style="font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em">选一支，现在就开始 ↓</div>
-      <div style="font-size:10px;color:#888" data-i18n="libraryCount">30+ 支 · 持续更新</div>
+  <!-- Demo preview card -->
+  <div style="margin:16px 0 0">
+    <div style="font-size:11px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+      <span style="width:6px;height:6px;border-radius:50%;background:#E9B872;display:inline-block"></span>
+      <span>真实拆解示例 · 点击查看完整卡片</span>
     </div>
-    <!-- 搜索框 -->
-    <input id="dc-library-search" type="text" placeholder="搜歌名 / 歌手... Search dance..."
-      oninput="dcLibrarySearch(this.value)"
-      style="width:100%;box-sizing:border-box;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:13px;margin-bottom:10px;outline:none">
-    <!-- 分类 tabs -->
-    <div id="dc-cat-tabs" style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
-      <button onclick="dcFilterCat('all')" id="dc-cat-all" class="dc-cat-btn dc-cat-active" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(233,184,114,.5);background:rgba(233,184,114,.15);color:#E9B872;transition:all .2s">全部</button>
-      <button onclick="dcFilterCat('guofeng')" id="dc-cat-guofeng" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🏮 古风</button>
-      <button onclick="dcFilterCat('kpop')" id="dc-cat-kpop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🎵 K-pop</button>
-      <button onclick="dcFilterCat('pop')" id="dc-cat-pop" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">⭐ 流行</button>
-      <button onclick="dcFilterCat('jazz')" id="dc-cat-jazz" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🎷 爵士</button>
-      <button onclick="dcFilterCat('latin')" id="dc-cat-latin" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">💃 拉丁</button>
-      <button onclick="dcFilterCat('guangchang')" id="dc-cat-guangchang" class="dc-cat-btn" style="flex:0 0 auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;transition:all .2s">🌹 广场</button>
-    </div>
-    <!-- 舞蹈卡片容器 -->
-    <div id="dc-dance-grid" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-      <!-- 古风 -->
-      <div class="dc-dance-card" data-cat="guofeng" data-search="虞兮叹 yuxitan 古风 guofeng 剑舞" onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 140px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      <div onclick="window.DC_ID='vid_1679971642';DC_DATA=null;dcLoading();pollDecompose('vid_1679971642')" style="flex:0 0 130px;cursor:pointer;background:#1A1209;border-radius:14px;padding:14px 12px;border:1px solid #3A2A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">⚔️</div>
         <div style="font-size:13px;font-weight:700;color:#E9B872">虞兮叹</div>
         <div style="font-size:10px;color:#888;margin-top:4px">剑舞 · 9段</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
-          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(233,184,114,.15);color:#E9B872;font-weight:600">古风</span>
-          <span style="font-size:9px;color:#888">中难度</span>
-        </div>
-        <div style="font-size:11px;color:#E9B872;margin-top:8px;font-weight:600">▶ 立即跟练</div>
+        <div style="font-size:10px;color:#555;margin-top:8px">查看卡片 →</div>
       </div>
-      <div class="dc-dance-card" data-cat="guofeng" data-search="孽 nie 古风 guofeng 双人" onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 140px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div onclick="window.DC_ID='vid_2130688639';DC_DATA=null;dcLoading();pollDecompose('vid_2130688639')" style="flex:0 0 130px;cursor:pointer;background:#1A0A1A;border-radius:14px;padding:14px 12px;border:1px solid #3A1040;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🎭</div>
         <div style="font-size:13px;font-weight:700;color:#C878E8">孽</div>
         <div style="font-size:10px;color:#888;margin-top:4px">双人 · 8段</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
-          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(200,120,232,.15);color:#C878E8;font-weight:600">古风</span>
-          <span style="font-size:9px;color:#888">进阶</span>
-        </div>
-        <div style="font-size:11px;color:#C878E8;margin-top:8px;font-weight:600">▶ 立即跟练</div>
+        <div style="font-size:10px;color:#555;margin-top:8px">查看卡片 →</div>
       </div>
-      <div class="dc-dance-card" data-cat="guofeng" data-search="春满园 chunmanyuan 民族舞 guofeng folk" onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 140px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+      <div onclick="window.DC_ID='vid_563626483';DC_DATA=null;dcLoading();pollDecompose('vid_563626483')" style="flex:0 0 130px;cursor:pointer;background:#0A1A0A;border-radius:14px;padding:14px 12px;border:1px solid #103A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
         <div style="font-size:22px;margin-bottom:8px">🌸</div>
         <div style="font-size:13px;font-weight:700;color:#78C878">春满园</div>
         <div style="font-size:10px;color:#888;margin-top:4px">民族舞 · 6段</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
-          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,200,120,.15);color:#78C878;font-weight:600">民族</span>
-          <span style="font-size:9px;color:#888">入门</span>
-        </div>
-        <div style="font-size:11px;color:#78C878;margin-top:8px;font-weight:600">▶ 立即跟练</div>
-      </div>
-      <!-- K-pop -->
-      <div class="dc-dance-card" data-cat="kpop" data-search="hype boy newjeans kpop" onclick="window.DC_ID='vid_kpop_newjeans';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_newjeans')" style="flex:0 0 140px;cursor:pointer;background:#0A0F1A;border-radius:14px;padding:14px 12px;border:1px solid #1A3A5A;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
-        <div style="font-size:22px;margin-bottom:8px">🎵</div>
-        <div style="font-size:13px;font-weight:700;color:#78B8FF">Hype Boy</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">NewJeans · 8 moves</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
-          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,184,255,.15);color:#78B8FF;font-weight:600">K-pop</span>
-          <span style="font-size:9px;color:#888">入门</span>
-        </div>
-        <div style="font-size:11px;color:#78B8FF;margin-top:8px;font-weight:600">▶ Practice now</div>
-      </div>
-      <div class="dc-dance-card" data-cat="kpop" data-search="pink venom blackpink kpop" onclick="window.DC_ID='vid_kpop_blackpink';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_blackpink')" style="flex:0 0 140px;cursor:pointer;background:#1A0A10;border-radius:14px;padding:14px 12px;border:1px solid #5A1030;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
-        <div style="font-size:22px;margin-bottom:8px">💗</div>
-        <div style="font-size:13px;font-weight:700;color:#FF78A8">Pink Venom</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">BLACKPINK · 7 moves</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
-          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,168,.15);color:#FF78A8;font-weight:600">K-pop</span>
-          <span style="font-size:9px;color:#888">中难度</span>
-        </div>
-        <div style="font-size:11px;color:#FF78A8;margin-top:8px;font-weight:600">▶ Practice now</div>
-      </div>
-      <div class="dc-dance-card" data-cat="kpop" data-search="dynamite bts kpop" onclick="window.DC_ID='vid_kpop_bts';DC_DATA=null;dcLoading();pollDecompose('vid_kpop_bts')" style="flex:0 0 140px;cursor:pointer;background:#0A100A;border-radius:14px;padding:14px 12px;border:1px solid #2A5A10;transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
-        <div style="font-size:22px;margin-bottom:8px">✨</div>
-        <div style="font-size:13px;font-weight:700;color:#A8E878">Dynamite</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">BTS · 8 moves</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
-          <span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,232,120,.15);color:#A8E878;font-weight:600">K-pop</span>
-          <span style="font-size:9px;color:#888">入门</span>
-        </div>
-        <div style="font-size:11px;color:#A8E878;margin-top:8px;font-weight:600">▶ Practice now</div>
-      </div>
-      <!-- K-pop 即将上线 -->
-      <div class="dc-dance-card dc-coming-card" data-cat="kpop" data-search="supernova aespa kpop" style="flex:0 0 140px;cursor:pointer;background:rgba(200,168,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(200,168,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌟</div>
-        <div style="font-size:13px;font-weight:700;color:#C8A8FF">Supernova</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">aespa · K-pop</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(200,168,255,.15);color:#C8A8FF;font-weight:600">K-pop</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 50亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 80亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 120亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 30亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 60亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div</div</div</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="kpop" data-search="magnetic illit kpop" style="flex:0 0 140px;cursor:pointer;background:rgba(255,184,216,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,184,216,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🧲</div>
-        <div style="font-size:13px;font-weight:700;color:#FFB8D8">Magnetic</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">ILLIT · K-pop</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,184,216,.15);color:#FFB8D8;font-weight:600">K-pop</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 40亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="kpop" data-search="eta newjeans kpop" style="flex:0 0 140px;cursor:pointer;background:rgba(120,184,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(120,184,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🎶</div>
-        <div style="font-size:13px;font-weight:700;color:#78B8FF">ETA</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">NewJeans · K-pop</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,184,255,.15);color:#78B8FF;font-weight:600">K-pop</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 30亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <!-- 古风 即将上线 -->
-      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="执笔 zhibi 古风 guofeng" style="flex:0 0 140px;cursor:pointer;background:rgba(233,184,114,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(233,184,114,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🖌️</div>
-        <div style="font-size:13px;font-weight:700;color:#E9B872">执笔</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">古风 · 8段</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(233,184,114,.15);color:#E9B872;font-weight:600">古风</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 25亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="凉凉 liangliang 古风 guofeng 张碧晨" style="flex:0 0 140px;cursor:pointer;background:rgba(168,200,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(168,200,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌙</div>
-        <div style="font-size:13px;font-weight:700;color:#A8C8FF">凉凉</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">张碧晨 · 古风</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,200,255,.15);color:#A8C8FF;font-weight:600">古风</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 全平台 12亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="赤伶 chiling hita 古风 guofeng" style="flex:0 0 140px;cursor:pointer;background:rgba(255,136,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,136,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🎭</div>
-        <div style="font-size:13px;font-weight:700;color:#FF8878">赤伶</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">HITA · 戏腔</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,136,120,.15);color:#FF8878;font-weight:600">古风</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 20亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="探窗 tanchuang 古风 guofeng 武侠" style="flex:0 0 140px;cursor:pointer;background:rgba(233,184,114,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(233,184,114,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🏮</div>
-        <div style="font-size:13px;font-weight:700;color:#E9B872">探窗</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">古风 · 进阶</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(233,184,114,.15);color:#E9B872;font-weight:600">古风</span><span style="font-size:9px;color:#888">进阶</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 10亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guofeng" data-search="清明雨上 qingmingyu 许嵩 古风 guofeng" style="flex:0 0 140px;cursor:pointer;background:rgba(168,200,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(168,200,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌧️</div>
-        <div style="font-size:13px;font-weight:700;color:#A8C8FF">清明雨上</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">许嵩 · 古风</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,200,255,.15);color:#A8C8FF;font-weight:600">古风</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 B站+抖音 8亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <!-- 流行/抖音热舞 即将上线 -->
-      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="espresso sabrina carpenter pop" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">☕</div>
-        <div style="font-size:13px;font-weight:700;color:#FFD878">Espresso</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Sabrina C. · Pop</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 150亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="本草纲目 bencaoganmu 刘畊宏 fitness pop" style="flex:0 0 140px;cursor:pointer;background:rgba(120,255,152,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(120,255,152,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">💪</div>
-        <div style="font-size:13px;font-weight:700;color:#78FF98">本草纲目</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">刘畊宏 · 健身操</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(120,255,152,.15);color:#78FF98;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 80亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="科目三 ketaisan pop 抖音" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">😂</div>
-        <div style="font-size:13px;font-weight:700;color:#FFD878">科目三</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">抖音热舞</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 100亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="野狼disco yelandisco 宝石gem pop" style="flex:0 0 140px;cursor:pointer;background:rgba(168,120,255,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(168,120,255,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🕺</div>
-        <div style="font-size:13px;font-weight:700;color:#A878FF">野狼disco</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">宝石Gem · 流行</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(168,120,255,.15);color:#A878FF;font-weight:600">流行</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 30亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="pop" data-search="爱你 aini 王心凌 cyndi wang pop" style="flex:0 0 140px;cursor:pointer;background:rgba(255,184,216,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,184,216,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">💕</div>
-        <div style="font-size:13px;font-weight:700;color:#FFB8D8">爱你</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">王心凌 · 流行</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,184,216,.15);color:#FFB8D8;font-weight:600">流行</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 50亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <!-- 爵士 即将上线 -->
-      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="single ladies beyonce jazz" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">💍</div>
-        <div style="font-size:13px;font-weight:700;color:#FFD878">Single Ladies</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Beyoncé · 爵士</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">爵士</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 3亿+ (教程搜索第一)</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="uptown funk bruno mars jazz funk" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🎸</div>
-        <div style="font-size:13px;font-weight:700;color:#FFD878">Uptown Funk</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Bruno Mars · 爵士</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">爵士</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 5亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="about damn time lizzo jazz" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,216,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,216,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">💫</div>
-        <div style="font-size:13px;font-weight:700;color:#FF78D8">About Damn Time</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Lizzo · 爵士</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,216,.15);color:#FF78D8;font-weight:600">爵士</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 TikTok 20亿话题</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="jazz" data-search="thriller michael jackson jazz halloween" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🧟</div>
-        <div style="font-size:13px;font-weight:700;color:#FF7878">Thriller</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Michael Jackson</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,120,.15);color:#FF7878;font-weight:600">爵士</span><span style="font-size:9px;color:#888">进阶</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 3亿+ (万圣节常青)</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <!-- 拉丁 即将上线 -->
-      <div class="dc-dance-card dc-coming-card" data-cat="latin" data-search="hips don't lie shakira latin" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌶️</div>
-        <div style="font-size:13px;font-weight:700;color:#FF9878">Hips Don't Lie</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Shakira · 拉丁</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">拉丁</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 28亿</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="latin" data-search="despacito luis fonsi latin reggaeton" style="flex:0 0 140px;cursor:pointer;background:rgba(255,216,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,216,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌅</div>
-        <div style="font-size:13px;font-weight:700;color:#FFD878">Despacito</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Luis Fonsi · 拉丁</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,216,120,.15);color:#FFD878;font-weight:600">拉丁</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 83亿 (史上第2)</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="latin" data-search="vivir mi vida marc anthony latin salsa" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🎻</div>
-        <div style="font-size:13px;font-weight:700;color:#FF9878">Vivir Mi Vida</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">Marc Anthony · 拉丁</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">拉丁</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 YouTube 2亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <!-- 广场舞 即将上线 -->
-      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="小苹果 xiaopingguo 筷子兄弟 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🍎</div>
-        <div style="font-size:13px;font-weight:700;color:#FF7878">小苹果</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">筷子兄弟 · 广场舞</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,120,.15);color:#FF7878;font-weight:600">广场</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 全平台 30亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="最炫民族风 zuixuan 凤凰传奇 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌈</div>
-        <div style="font-size:13px;font-weight:700;color:#FF9878">最炫民族风</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">凤凰传奇 · 广场舞</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">广场</span><span style="font-size:9px;color:#888">入门</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 全平台 20亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="火红的萨日朗 huohong 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,120,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,120,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🌺</div>
-        <div style="font-size:13px;font-weight:700;color:#FF7878">火红的萨日朗</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">乌兰图雅 · 广场舞</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,120,120,.15);color:#FF7878;font-weight:600">广场</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 20亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <div class="dc-dance-card dc-coming-card" data-cat="guangchang" data-search="中国美 zhongguomei 龙梅子 广场 guangchang" style="flex:0 0 140px;cursor:pointer;background:rgba(255,152,120,.06);border-radius:14px;padding:14px 12px;border:1px solid rgba(255,152,120,.15);transition:all .2s;opacity:.8" onclick="dcShowComingSoon()" ontouchstart="this.style.opacity='.5'" ontouchend="this.style.opacity='.8'">
-        <div style="font-size:22px;margin-bottom:8px">🏯</div>
-        <div style="font-size:13px;font-weight:700;color:#FF9878">中国美</div>
-        <div style="font-size:10px;color:#888;margin-top:4px">龙梅子 · 广场舞</div>
-        <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(255,152,120,.15);color:#FF9878;font-weight:600">广场</span></div>
-        <div style="font-size:10px;color:#666;margin-top:8px"><div style="font-size:10px;color:#fb923c;font-weight:600;margin-top:6px">🔥 抖音 8亿+</div>
-        <div style="font-size:10px;color:#555;margin-top:2px">🔒 即将上线</div</div>
-      </div>
-      <!-- 上传自己的 -->
-      <div class="dc-dance-card dc-coming-soon" data-cat="all" data-search="" onclick="showDecomposeUpload()" style="flex:0 0 140px;cursor:pointer;background:rgba(255,255,255,.03);border-radius:14px;padding:14px 12px;border:1px dashed rgba(255,255,255,.12);transition:all .2s" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
-        <div style="font-size:22px;margin-bottom:8px">➕</div>
-        <div style="font-size:12px;font-weight:600;color:#666">更多舞蹈</div>
-        <div style="font-size:10px;color:#555;margin-top:4px;line-height:1.5">每周上新<br>或上传你的</div>
-        <div style="font-size:11px;color:#888;margin-top:16px;font-weight:600">↑ 上传视频</div>
+        <div style="font-size:10px;color:#555;margin-top:8px">查看卡片 →</div>
       </div>
     </div>
-  </div>
-
-  <!-- Upload（次要 CTA） -->
-  <div class="upload-card" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传舞蹈视频，AI拆解" style="margin-top:20px">
-    <div class="upload-card-icon">📹</div>
-    <div class="upload-card-info">
-      <div class="upload-card-title" data-i18n="uploadTitle">上传自己的视频</div>
-      <div class="upload-card-desc">想拆自己练的那支舞？上传视频，AI 自动拆成八拍卡 + 跟练模式</div>
-    </div>
-    <div class="upload-card-arrow">→</div>
   </div>
 
   <!-- How it works -->
@@ -1208,7 +925,7 @@ body{
   <div class="steps">
     <div class="step">
       <div class="step-icon">①</div>
-      <div class="step-info"><div class="step-t">选一支或上传你的舞</div><div class="step-d">热门舞蹈直接跟练，或上传自己的视频免费拆解</div></div>
+      <div class="step-info"><div class="step-t">上传舞蹈视频</div><div class="step-d">任意一支舞都行，上传免费无需登录</div></div>
     </div>
     <div class="step">
       <div class="step-icon">②</div>
@@ -3284,29 +3001,6 @@ function renderDetailArchive(p){
 .pay-stripe-load{display:flex;flex-direction:column;align-items:center}
 .pay-stripe-hint{font-size:13px;color:#8C857A;margin-top:8px}
 .pay-foot{text-align:center;font-size:11px;color:#B8AE97;margin-top:16px;letter-spacing:.02em}
-/* ── 付费墙 ── */
-.dc-paywall{margin:16px;padding:32px 20px;background:linear-gradient(135deg,#1a1f35,#0f1220);border:1px solid rgba(90,150,255,.25);border-radius:14px;text-align:center}
-.dc-paywall-icon{font-size:36px;margin-bottom:10px}
-.dc-paywall-title{font-size:22px;font-weight:bold;color:#fff;margin-bottom:6px}
-.dc-paywall-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;line-height:1.6}
-.dc-paywall-btn{background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;font-size:17px;font-weight:bold;padding:14px 36px;border-radius:30px;cursor:pointer;display:block;width:100%;max-width:240px;margin:0 auto 10px}
-.dc-paywall-note{font-size:12px;color:rgba(255,255,255,.3)}
-.dc-paywall-progress{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:6px;letter-spacing:.5px}
-/* ── 跟练模式 overlay ── */
-.dc-practice-overlay{display:none;position:fixed;inset:0;background:#07090f;z-index:9999;flex-direction:column;align-items:center}
-.dc-practice-overlay.active{display:flex}
-.dc-practice-top{flex:1;display:flex;align-items:center;justify-content:center;width:100%;max-height:60vh;overflow:hidden}
-.dc-practice-top video{max-height:60vh;max-width:100%;object-fit:contain;border-radius:8px;background:#000}
-.dc-practice-bottom{padding:8px 4px;display:flex;gap:4px;overflow-x:auto;width:100%;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.dc-practice-bottom::-webkit-scrollbar{display:none}
-.dc-practice-bottom img{height:80px;width:auto;border-radius:4px;object-fit:cover;opacity:.85;flex-shrink:0}
-.dc-practice-nav{display:flex;gap:16px;padding:8px 0 16px;align-items:center}
-.dc-practice-nav button{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:22px;padding:10px 24px;border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.dc-practice-title{font-size:16px;color:rgba(255,255,255,.7);min-width:120px;text-align:center}
-.dc-practice-close{position:absolute;top:12px;right:16px;background:none;border:none;color:rgba(255,255,255,.5);font-size:28px;cursor:pointer;padding:8px;z-index:1}
-.dc-practice-no-clip{color:rgba(255,255,255,.35);font-size:13px;padding:20px;text-align:center}
-.dc-practice-btn{background:rgba(90,150,255,.18);border:1px solid rgba(90,150,255,.4);color:#5a96ff;font-size:12px;padding:3px 10px;border-radius:6px;cursor:pointer;margin-left:6px;vertical-align:middle;-webkit-tap-highlight-color:transparent}
-.dc-practice-share-btn{background:rgba(255,200,80,.15);border:1px solid rgba(255,200,80,.4);color:#ffc850;font-size:14px;padding:8px 16px;border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 </style>
 
 <div class="dc-modal" id="dcModal">
@@ -3545,10 +3239,7 @@ function pollDecompose(id){
           _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">😥</div><div class="dc-load-t">这支舞暂时打不开</div><div class="dc-load-d">'+(res.status===403?'这支作品未公开或属于他人':'请求出错了('+res.status+')')+'</div><div style="margin-top:20px"><button class="dc-btn" id="dcErrBack" style="width:auto;padding:11px 26px">返回</button></div></div>';
           var _eb=document.getElementById('dcErrBack'); if(_eb) _eb.onclick=function(){ showView(_dcFromTab()); }; }
         else if(d.status==='awaiting_payment'){ clearInterval(iv); _dcLoadStop();
-          DC_ID=d.id;
-          if(d.phrases && d.phrases.length){
-            DC_DATA=d; renderDecompose(d);
-          } else { showPayment(d.id, d.price_cny||9.9); } }
+          DC_ID=d.id; showPayment(d.id, d.price_cny||9.9); }
         else if(d.status==='completed'){ clearInterval(iv); _dcLoadStop();
           DC_STEPS.forEach(function(_,i){var e=document.getElementById('dcstep'+i);if(e)e.className='dc-step done';});
           setTimeout(function(){ DC_DATA=d; renderDecompose(d); }, 350); }
@@ -3618,7 +3309,6 @@ function renderDecompose(d){
   WJ.track('decompose_done', {dance_id: d.id||''});
   var strip=d.strip||4;
   var beats='';
-  var _isPreview = d.is_preview && !d.is_demo;
   (d.phrases||[]).forEach(function(p,idx){
     var col=DC_COLORS[idx%DC_COLORS.length];
     var film='';
@@ -3634,22 +3324,10 @@ function renderDecompose(d){
         (p.feet?'<div class="int">脚下 · '+_esc(p.feet)+'</div>':'')+
         (p.intent?'<div class="int mood">意境 · '+_esc(p.intent)+'</div>':'')+
         dcAngHtml(p.angles)+
-        '<div class="ctl"><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'norm\')">▷ 正常速</span><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'slow\')">慢放</span><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'mir\')">🪞 镜像</span><button class="dc-practice-btn" onclick="dcPracticeOpen(DC_DATA.id,DC_DATA.phrases,'+idx+',DC_DATA.strip||4)">⏯ 跟练</button></div>'+
+        '<div class="ctl"><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'norm\')">▷ 正常速</span><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'slow\')">慢放</span><span onclick="dcPlayClip(\'p'+p.i+'\',null,\'mir\')">🪞 镜像</span></div>'+
         '<div class="shr" onclick="dcShare(\'beat\','+p.i+')">分享这拍 ↗</div>'+
       '</div></div>';
   });
-  if(_isPreview){
-    var _total=d.total_phrases||'?';
-    var _left=(_total==='?'?'更多':(_total-2));
-    beats+='<div class="dc-paywall">'+
-      '<div class="dc-paywall-progress">学习进度</div>'+
-      '<div class="dc-paywall-icon">🎉</div>'+
-      '<div class="dc-paywall-title">你已学会 2 / '+_total+' 句！</div>'+
-      '<div class="dc-paywall-sub">解锁剩余 '+_left+' 句动作 · 三张学习卡片 · 慢速跟练模式</div>'+
-      '<button class="dc-paywall-btn" onclick="showPayment(DC_ID,9.9)">¥9.9 继续解锁</button>'+
-      '<div class="dc-paywall-note">微信扫码 · 秒到账 · 永久解锁</div>'+
-    '</div>';
-  }
   var st=d.story||{}, mem=d.memory||{};
   _dcView().innerHTML=
     '<div class="dc-res">'+
@@ -3682,7 +3360,6 @@ function renderDecompose(d){
           '<span class="dc-card-hint">口诀+歌词</span>'+
         '</a>'+
       '</div>'+
-      '<div style="margin:4px 16px 8px;"><button class="dc-practice-btn" style="width:100%;text-align:center;padding:10px;" onclick="dcGenHomeworkLink(\''+d.id+'\',1,'+(d.phrases?d.phrases.length:9)+')">📤 生成作业链接（发给学员）</button></div>'+
       '<div class="dc-sec">八拍卡 · 跟练</div>'+
       beats+
       (st.title?'<div class="dc-sec">故事卡</div>'+
@@ -4369,335 +4046,6 @@ renderDecompose = function(d){
     new MutationObserver(function(){ applyEN(); applyPayChannels(); }).observe(document.body, {childList:true, subtree:true});
   }catch(e){}
 })();
-</script>
-
-<!-- ── 跟练模式 overlay ── -->
-<div class="dc-practice-overlay" id="dcPracticeOverlay">
-  <button class="dc-practice-close" onclick="dcPracticeClose()">✕</button>
-  <div class="dc-practice-top" id="dcPracticeTop">
-    <video id="dcPracticeVideo" autoplay loop playsinline controls></video>
-  </div>
-  <div class="dc-practice-bottom" id="dcPracticeFrames"></div>
-  <div class="dc-practice-nav">
-    <button onclick="dcPracticeNav(-1)">←</button>
-    <div class="dc-practice-title" id="dcPracticeLabel"></div>
-    <button onclick="dcPracticeNav(1)">→</button>
-    <button class="dc-practice-share-btn" onclick="dcShareCard()" title="生成分享卡">📤 分享</button>
-  </div>
-</div>
-<script>
-var _dcPracticeData=null,_dcPracticeIdx=0;
-function dcPracticeOpen(id,phrases,idx,strip){
-  _dcPracticeData={id:id,phrases:phrases,strip:strip||4};
-  _dcPracticeIdx=idx;
-  document.getElementById('dcPracticeOverlay').classList.add('active');
-  document.body.style.overflow='hidden';
-  dcPracticeRender();
-}
-function dcPracticeRender(){
-  var d=_dcPracticeData;if(!d)return;
-  var p=d.phrases[_dcPracticeIdx];
-  var vid=document.getElementById('dcPracticeVideo');
-  var slowSrc='api/decompose/'+d.id+'/clip/p'+p.i+'_slow';
-  var normSrc='api/decompose/'+d.id+'/clip/p'+p.i;
-  var top=document.getElementById('dcPracticeTop');
-  vid.style.display='block';
-  top.querySelector('.dc-practice-no-clip') && top.querySelector('.dc-practice-no-clip').remove();
-  vid.src=slowSrc;
-  vid.playbackRate=0.5;
-  vid.load();
-  vid.play().catch(function(){
-    // fallback to regular clip at 0.5x
-    vid.src=normSrc; vid.playbackRate=0.5; vid.load(); vid.play().catch(function(){
-      vid.style.display='none';
-      var msg=document.createElement('div');
-      msg.className='dc-practice-no-clip';
-      msg.textContent='视频加载失败，请稍后重试';
-      top.appendChild(msg);
-    });
-  });
-  var label=p.i+'/'+(d.phrases.length)+' · '+(p.name||'');
-  document.getElementById('dcPracticeLabel').textContent=label;
-  var fb=document.getElementById('dcPracticeFrames');
-  fb.innerHTML='';
-  for(var f=0;f<(d.strip||4);f++){
-    (function(fi){
-      var img=document.createElement('img');
-      img.src='api/decompose/'+d.id+'/frame/p'+p.i+'_'+fi;
-      img.alt='帧'+(fi+1);
-      img.onerror=function(){this.style.display='none';};
-      fb.appendChild(img);
-    })(f);
-  }
-}
-function dcPracticeNav(dir){
-  if(!_dcPracticeData)return;
-  var n=_dcPracticeData.phrases.length;
-  _dcPracticeIdx=(_dcPracticeIdx+dir+n)%n;
-  dcPracticeRender();
-}
-function dcPracticeClose(){
-  document.getElementById('dcPracticeOverlay').classList.remove('active');
-  document.body.style.overflow='';
-  var vid=document.getElementById('dcPracticeVideo');
-  vid.pause();vid.src='';
-  dcAddStamp();dcRenderStampBar();
-  var top=document.getElementById('dcPracticeTop');
-  var msg=top.querySelector('.dc-practice-no-clip');
-  if(msg)msg.remove();
-  vid.style.display='block';
-}
-function dcShareCard(){
-  var d=_dcPracticeData;if(!d)return;
-  var p=d.phrases[_dcPracticeIdx];
-  var did=d.id;
-  if(!CanvasRenderingContext2D.prototype.roundRect){
-    CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
-      this.beginPath();this.moveTo(x+r,y);this.lineTo(x+w-r,y);
-      this.arcTo(x+w,y,x+w,y+r,r);this.lineTo(x+w,y+h-r);
-      this.arcTo(x+w,y+h,x+w-r,y+h,r);this.lineTo(x+r,y+h);
-      this.arcTo(x,y+h,x,y+h-r,r);this.lineTo(x,y+r);
-      this.arcTo(x,y,x+r,y,r);this.closePath();
-    };
-  }
-  var W=750,H=420;
-  var canvas=document.createElement('canvas');
-  canvas.width=W;canvas.height=H;
-  var ctx=canvas.getContext('2d');
-  var grad=ctx.createLinearGradient(0,0,W,H);
-  grad.addColorStop(0,'#0d1025');grad.addColorStop(1,'#1a2040');
-  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='20px sans-serif';
-  ctx.fillText('我学会了第 '+p.i+' 句',30,44);
-  ctx.fillStyle='#fff';ctx.font='bold 32px sans-serif';
-  ctx.fillText('《'+(d.title||'')+'》',30,84);
-  var total=4,FW=(W-90)/4,FH=180,FY=110;
-  var loadedCount=0,frameImgs=Array(total).fill(null);
-  function drawFrame(fi,img){
-    var fx=30+fi*(FW+10);
-    ctx.save();ctx.beginPath();ctx.roundRect(fx,FY,FW,FH,8);
-    ctx.clip();ctx.drawImage(img,fx,FY,FW,FH);ctx.restore();
-  }
-  function finalize(){
-    ctx.fillStyle='#ffc850';ctx.font='bold 24px sans-serif';
-    ctx.fillText('♪ '+(p.kou||p.name||''),30,FY+FH+44);
-    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='18px sans-serif';
-    ctx.fillText((p.action||'').slice(0,28),30,FY+FH+74);
-    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='14px sans-serif';
-    ctx.textAlign='right';ctx.fillText('舞镜 wujing.mylumee.app',W-20,H-16);ctx.textAlign='left';
-    try{
-      var link=document.createElement('a');
-      link.download='舞镜分享卡-第'+p.i+'句.png';
-      link.href=canvas.toDataURL('image/png');link.click();
-    }catch(e){alert('请长按图片保存分享卡');}
-  }
-  for(var fi=0;fi<total;fi++){
-    (function(i){
-      var img=new Image();img.crossOrigin='anonymous';
-      img.src='api/decompose/'+did+'/frame/p'+p.i+'_'+i+'.jpg';
-      img.onload=function(){frameImgs[i]=img;loadedCount++;if(loadedCount===total){frameImgs.forEach(function(im,idx){if(im)drawFrame(idx,im);});finalize();}};
-      img.onerror=function(){loadedCount++;if(loadedCount===total){frameImgs.forEach(function(im,idx){if(im)drawFrame(idx,im);});finalize();}};
-    })(fi);
-  }
-}
-// ===== 印章系统 =====
-var STAMP_KEY='wujing_stamps',STAMP_TARGET=7;
-function dcGetStamps(){try{return JSON.parse(localStorage.getItem(STAMP_KEY)||'{"total":0,"stamps":[]}');}catch(e){return{total:0,stamps:[]};}}
-function dcAddStamp(){var d=dcGetStamps();d.total++;d.stamps.push(Date.now());localStorage.setItem(STAMP_KEY,JSON.stringify(d));dcShowStampToast(d.total);if(d.total%STAMP_TARGET===0)setTimeout(dcShowStampAchievement,800);}
-function dcShowStampToast(n){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(255,200,80,0.95);color:#1a1200;padding:10px 22px;border-radius:20px;font-size:15px;font-weight:bold;z-index:99999;pointer-events:none;transition:opacity 0.4s';t.textContent='🔥 第'+n+'个印章！'+(n%STAMP_TARGET===0?' 达成成就！':' 集满'+STAMP_TARGET+'个解锁彩蛋');document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove();},400);},2200);}
-function dcShowStampAchievement(){var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;';ov.innerHTML='<div style="background:linear-gradient(135deg,#1a1f35,#0f1220);border:2px solid rgba(255,200,80,0.5);border-radius:20px;padding:40px 32px;text-align:center;max-width:300px;"><div style="font-size:56px;margin-bottom:12px;">🏆</div><div style="font-size:24px;font-weight:bold;color:#ffc850;margin-bottom:8px;">连续练习成就！</div><div style="color:rgba(255,255,255,0.7);font-size:15px;margin-bottom:24px;">集满'+STAMP_TARGET+'个印章，解锁全套慢动作合集</div><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;padding:12px 32px;border-radius:20px;font-size:16px;cursor:pointer;">太棒了！</button></div>';document.body.appendChild(ov);ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});}
-function dcRenderStampBar(){var d=dcGetStamps();var bar=document.getElementById('dcStampBar');if(!bar)return;var filled=d.total%STAMP_TARGET;var html='🔥 '+d.total+'个印章 ';for(var i=0;i<STAMP_TARGET;i++){html+=i<filled?'⭐':'☆';}bar.textContent=html;if(d.total===0)bar.style.display='none';else bar.style.display='block';}
-// ===== 今日一句 =====
-var _dcCurrentCat='all';
-var _dcSearchQ='';
-function dcFilterCat(cat){
-  _dcCurrentCat=cat;
-  // Update tab styles
-  document.querySelectorAll('.dc-cat-btn').forEach(function(b){
-    b.style.background='transparent';b.style.color='#888';b.style.borderColor='rgba(255,255,255,.1)';
-    b.classList.remove('dc-cat-active');
-  });
-  var active=document.getElementById('dc-cat-'+cat);
-  if(active){active.style.background='rgba(233,184,114,.15)';active.style.color='#E9B872';active.style.borderColor='rgba(233,184,114,.5)';active.classList.add('dc-cat-active');}
-  dcApplyLibraryFilter();
-}
-function dcLibrarySearch(q){
-  _dcSearchQ=(q||'').toLowerCase().trim();
-  dcApplyLibraryFilter();
-}
-function dcApplyLibraryFilter(){
-  var cat=_dcCurrentCat,q=_dcSearchQ;
-  document.querySelectorAll('.dc-dance-card').forEach(function(c){
-    var cardCat=c.getAttribute('data-cat')||'';
-    var catOk=(cat==='all')||(cardCat===cat)||(cardCat==='all');
-    var searchText=(c.getAttribute('data-search')||c.innerText||'').toLowerCase();
-    var searchOk=!q||searchText.includes(q);
-    c.style.display=(catOk&&searchOk)?'':'none';
-  });
-  // "upload your own" card always visible when no filter or all
-  document.querySelectorAll('.dc-coming-soon').forEach(function(c){
-    if(!q&&(cat==='all'||c.getAttribute('data-cat')==='all')){c.style.display='';}
-  });
-}
-function dcShowComingSoon(){
-  var t=document.createElement('div');
-  t.textContent='🔒 这支舞正在拆解中，马上来！';
-  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#7c3aed;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:9999;white-space:nowrap';
-  document.body.appendChild(t);setTimeout(function(){t.remove();},2500);
-}
-
-function dcInitDailyPhrase(){var demos=['vid_1679971642','vid_2130688639','vid_563626483'];var dayIdx=Math.floor(Date.now()/86400000);var did=demos[dayIdx%demos.length];fetch('api/decompose/'+did).then(function(r){return r.json();}).then(function(d){if(!d.phrases||!d.phrases.length)return;var p=d.phrases[dayIdx%d.phrases.length];var el=document.getElementById('dcDailyPhrase');if(el)el.style.display='block';var t=document.getElementById('dcDailyTitle');if(t)t.textContent='《'+(d.title||'')+'》第'+p.i+'句 · '+(p.name||'');var k=document.getElementById('dcDailyKou');if(k)k.textContent='口诀：'+(p.kou||p.action||'').slice(0,24);var btn=document.getElementById('dcDailyBtn');if(btn)btn.onclick=function(){window.DC_ID=did;DC_DATA=null;dcLoading();pollDecompose(did);};}).catch(function(){});dcRenderStampBar();}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){dcInitDailyPhrase();dcApplyI18n();});}else{dcInitDailyPhrase();dcApplyI18n();}
-
-// ===== i18n =====
-var _dcLang=(navigator.language||navigator.userLanguage||'zh').startsWith('zh')?'zh':'en';
-var _dcI18n={
-  heroTitle:{zh:'学一支舞，从 2 小时到 20 分钟',en:'Learn any dance, move by move — in 20 minutes'},
-  heroSub:{zh:'AI 自动拆解每一句动作 · 镜面跟练 · 记忆口诀 · 生成卡片',en:'AI breaks down every move into frame-by-frame cards · Mirror practice · Memory cues'},
-  heroCta1:{zh:'选一支开始跟练 ↓',en:'Pick a dance to start ↓'},
-  heroCta2:{zh:'上传自己的视频 →',en:'Upload your video →'},
-  libraryTitle:{zh:'选一支，现在就开始 ↓',en:'Pick one, start now ↓'},
-  librarySub:{zh:'热门舞蹈已拆解好 · 点击直接跟练，无需上传',en:'Pre-analyzed dances · Click to practice instantly, no upload needed'},
-  uploadTitle:{zh:'上传自己的视频',en:'Upload your own video'},
-  dailyLabel:{zh:'🌟 今日一句',en:'🌟 Move of the Day'},
-  shareBtn:{zh:'📤 分享',en:'📤 Share'}
-};
-function dcT(k){var d=_dcI18n[k];if(!d)return k;return d[_dcLang]||d['zh']||k;}
-function dcApplyI18n(){
-  if(_dcLang==='zh')return;
-  document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var k=el.getAttribute('data-i18n');var t=dcT(k);if(t)el.textContent=t;
-  });
-  // paywall price
-  var pb=document.querySelector('.dc-paywall-btn');
-  if(pb&&pb.textContent.indexOf('9.9')>-1)pb.textContent='$2.99 Unlock Full Dance';
-  var pn=document.querySelector('.dc-paywall-note');
-  if(pn&&pn.textContent.indexOf('微信')>-1)pn.textContent='One-time · Instant access';
-  // share btn
-  document.querySelectorAll('.dc-practice-share-btn').forEach(function(el){el.textContent='📤 Share';});
-  // daily label
-  var dl=document.getElementById('dcDailyPhrase');
-  if(dl){var lbl=dl.querySelector('div');if(lbl&&lbl.textContent.indexOf('今日')>-1)lbl.textContent='🌟 Move of the Day';}
-}
-// ===== 老师专业版 =====
-function dcShowTeacherModal(){
-  var ov=document.createElement('div');
-  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
-  ov.innerHTML='<div style="background:#1a1f35;border-radius:20px 20px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;">'+
-    '<div style="font-size:20px;font-weight:bold;color:#fff;margin-bottom:4px;">👩‍🏫 老师专业版</div>'+
-    '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;">帮你把 AI 拆解变成真正的教学工具</div>'+
-    '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">'+
-      '<div style="padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📤</span><div><div style="color:#fff;font-size:14px;font-weight:bold;">一键发作业</div><div style="color:rgba(255,255,255,0.4);font-size:12px;">生成链接发群里，学员打开直接跟练指定句</div></div></div>'+
-      '<div style="padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📊</span><div><div style="color:#fff;font-size:14px;font-weight:bold;">学员进度追踪</div><div style="color:rgba(255,255,255,0.4);font-size:12px;">哪些学员练了多少次，一目了然</div></div></div>'+
-      '<div style="padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">✏️</span><div><div style="color:#fff;font-size:14px;font-weight:bold;">动作备注校对</div><div style="color:rgba(255,255,255,0.4);font-size:12px;">给每句加老师备注，纠正 AI 识别偏差</div></div></div>'+
-      '<div style="padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📱</span><div><div style="color:#fff;font-size:14px;font-weight:bold;">批量上传</div><div style="color:rgba(255,255,255,0.4);font-size:12px;">一次上传多个教学视频，批量生成卡片</div></div></div>'+
-    '</div>'+
-    '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:28px;font-weight:bold;color:#fff;">¥99<span style="font-size:14px;color:rgba(255,255,255,0.4)">/月</span></div><div style="font-size:12px;color:rgba(255,255,255,0.3);">年付 ¥599，节省 ¥600</div></div>'+
-    '<button onclick="dcTeacherSignup()" style="width:100%;background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;font-size:17px;font-weight:bold;padding:15px;border-radius:12px;cursor:pointer;margin-bottom:10px;">申请内测资格</button>'+
-    '<div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.25);">内测期间免费体验，正式上线再付费</div>'+
-    '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;background:none;border:none;color:rgba(255,255,255,0.3);padding:12px;cursor:pointer;font-size:14px;margin-top:4px;">暂不需要</button>'+
-  '</div>';
-  document.body.appendChild(ov);
-  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
-}
-function dcTeacherSignup(){
-  var wx=prompt('请留下你的微信号，我们会第一时间联系你开通内测：');
-  if(wx&&wx.trim()){
-    fetch('api/teacher/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact:wx.trim(),ts:Date.now()})}).catch(function(){});
-    alert('✅ 已收到！我们会在24小时内联系你。感谢你的支持 🙏');
-  }
-}
-function dcGenHomeworkLink(did,from,to){
-  var link='https://wujing.mylumee.app/?homework='+did+'&from='+from+'&to='+to;
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(link).then(function(){dcShowToast('✅ 作业链接已复制！发到微信群让学员点开跟练');}).catch(function(){prompt('复制这个链接发给学员：',link);});
-  } else { prompt('复制这个链接发给学员：',link); }
-}
-function dcShowToast(msg){
-  var t=document.createElement('div');
-  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(80,200,120,0.95);color:#fff;padding:10px 22px;border-radius:20px;font-size:14px;font-weight:bold;z-index:99999;pointer-events:none;';
-  t.textContent=msg;document.body.appendChild(t);
-  setTimeout(function(){t.style.opacity='0';t.style.transition='opacity 0.4s';setTimeout(function(){t.remove();},400);},2500);
-}
-// 键盘导航
-document.addEventListener('keydown',function(e){
-  if(!_dcPracticeData||!document.getElementById('dcPracticeOverlay').classList.contains('active'))return;
-  if(e.key==='ArrowLeft')dcPracticeNav(-1);
-  else if(e.key==='ArrowRight')dcPracticeNav(1);
-  else if(e.key==='Escape')dcPracticeClose();
-});
-</script>
-<!-- 老师版底部入口 -->
-<div style="text-align:center;padding:24px 16px 40px;border-top:1px solid rgba(255,255,255,0.06);margin-top:20px;">
-  <div style="font-size:12px;color:rgba(255,255,255,0.25);margin-bottom:8px;">专业教学工具</div>
-  <button onclick="dcShowTeacherModal()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);padding:8px 20px;border-radius:20px;font-size:13px;cursor:pointer;">👩‍🏫 老师专业版</button>
-</div>
-
-<!-- 微信登录浮层按钮 -->
-<div id="dcWxUserBar" style="position:fixed;top:10px;right:12px;z-index:200;font-size:13px;"></div>
-
-<script>
-// ── 微信登录 ──────────────────────────────────────
-var _dcWxUser = null;
-
-function dcCheckWxLogin() {
-  // 检查回调 hash
-  var hash = window.location.hash;
-  if (hash.includes('wx_token=')) {
-    var raw = hash.split('wx_token=')[1].split('&')[0];
-    try {
-      var info = JSON.parse(atob(raw));
-      if (info.token) {
-        localStorage.setItem('wujing_jwt', info.token);
-        localStorage.setItem('wujing_wx_user', JSON.stringify({nickname: info.nickname, avatar: info.avatar}));
-      }
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    } catch(e) {}
-  }
-  if (hash.includes('wx_error=')) {
-    console.warn('[wx] login error:', hash);
-    history.replaceState(null, '', window.location.pathname);
-  }
-  // 从 localStorage 恢复
-  var saved = localStorage.getItem('wujing_wx_user');
-  var jwt = localStorage.getItem('wujing_jwt');
-  if (saved && jwt) {
-    try { _dcWxUser = JSON.parse(saved); dcRenderWxBar(); } catch(e) {}
-  } else {
-    dcRenderWxBar();
-  }
-}
-
-function dcRenderWxBar() {
-  var bar = document.getElementById('dcWxUserBar');
-  if (!bar) return;
-  if (_dcWxUser) {
-    bar.innerHTML = '<img src="' + (_dcWxUser.avatar||'') + '" onerror="this.style.display=\'none\'" style="width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px">'
-      + '<span style="color:rgba(255,255,255,0.7)">' + (_dcWxUser.nickname||'') + '</span>'
-      + ' <button onclick="dcWxLogout()" style="background:none;border:none;color:rgba(255,255,255,0.3);font-size:11px;cursor:pointer;margin-left:4px">退出</button>';
-  } else {
-    // 只在微信浏览器内显示微信登录按钮
-    var isWx = /MicroMessenger/i.test(navigator.userAgent);
-    if (isWx) {
-      bar.innerHTML = '<button onclick="dcWxLoginBtn()" style="background:rgba(7,193,96,0.18);border:1px solid #07c160;color:#07c160;padding:5px 14px;border-radius:18px;font-size:13px;cursor:pointer;">微信登录</button>';
-    }
-  }
-}
-
-function dcWxLoginBtn() {
-  var cur = encodeURIComponent(window.location.href.split('#')[0]);
-  window.location.href = '/api/wx/login?redirect_uri=' + cur;
-}
-
-function dcWxLogout() {
-  localStorage.removeItem('wujing_jwt');
-  localStorage.removeItem('wujing_wx_user');
-  _dcWxUser = null;
-  dcRenderWxBar();
-}
-
-// 初始化
-dcCheckWxLogin();
 </script>
 </body>
 </html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>舞镜 · 班级管理台（老师端）</title>
+<style>
+:root{
+  --gold:#C8A45C; --gold-light:#E8D5A0; --gold-pale:#F5EDD0; --gold-ghost:rgba(200,164,92,0.08);
+  --gold-foil:linear-gradient(135deg,#E8D5A0,#C8A45C,#B8923E,#C8A45C);
+  --cream:#FDF8F0; --card:#fff;
+  --ink:#2c2418; --ink-80:#4a3f30; --ink-60:#6a5a42; --ink-40:#9a8a72; --ink-20:#c0b8a8;
+  --red:#c43a30; --green:#5a8a5c; --blue:#3a6ea5; --yellow:#c49028;
+  --font-sans:"PingFang SC","SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --font-serif:"Songti SC","STSong",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--cream);color:var(--ink);padding:0 16px 50px;padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}
+.topbar{max-width:640px;margin:0 auto;padding:16px 0;display:flex;align-items:center;gap:8px}
+.logo{font-size:17px;font-weight:700;letter-spacing:.05em}
+.logo span{font-weight:300;color:var(--gold);font-family:var(--font-serif)}
+.badge{display:inline-block;font-size:10px;background:var(--gold);color:#fff;padding:2px 8px;border-radius:8px;letter-spacing:.05em}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--card);border-radius:16px;padding:22px 20px;box-shadow:0 4px 24px rgba(120,90,40,.07);border:1px solid rgba(200,164,92,.14)}
+h2{font-size:16px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+h2::before{content:'';width:4px;height:16px;background:var(--gold-foil);border-radius:2px}
+label{display:block;font-size:13px;color:var(--ink-60);margin:12px 0 6px;font-weight:600}
+input,select{width:100%;padding:11px 13px;border:1.5px solid rgba(200,164,92,.3);border-radius:10px;
+  font-size:14px;background:var(--cream);color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--gold);background:#fff}
+.row{display:flex;gap:12px}.row>*{flex:1}
+.btn{padding:12px 16px;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;
+  background:var(--gold-foil);color:#fff;box-shadow:0 3px 12px rgba(200,164,92,.3)}
+.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.btn-ghost{background:#fff;color:var(--ink-60);border:1.5px solid rgba(200,164,92,.3);box-shadow:none}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn-full{width:100%;margin-top:14px}
+.hidden{display:none}
+.code-box{text-align:center;padding:8px 0}
+.code{font-size:34px;font-weight:800;letter-spacing:.18em;color:var(--gold);font-family:var(--font-serif)}
+.code-hint{font-size:12px;color:var(--ink-40);margin-top:6px}
+.qr{width:150px;height:150px;margin:14px auto;background:#fff;padding:8px;border-radius:12px;border:1px solid rgba(200,164,92,.2)}
+.qr img{width:100%;height:100%}
+.share-link{background:var(--cream);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--ink-60);word-break:break-all;margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.stat{text-align:center;background:var(--cream);border-radius:10px;padding:10px 4px}
+.stat .n{font-size:20px;font-weight:800}
+.stat .l{font-size:10px;color:var(--ink-40);margin-top:2px}
+.progress-bar{height:8px;border-radius:4px;background:var(--gold-pale);overflow:hidden;margin-bottom:16px}
+.progress-bar>div{height:100%;background:var(--gold-foil);transition:width .4s}
+.member{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:11px;background:var(--cream);margin-bottom:8px}
+.m-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.m-name{flex:1;font-size:14px;font-weight:600}
+.m-real{font-size:11px;color:var(--ink-40);font-weight:400;margin-left:6px}
+.m-status{font-size:11.5px;padding:3px 9px;border-radius:8px;font-weight:600}
+.st-joined{background:#eee;color:#888}
+.st-uploaded{background:#fdf0d0;color:var(--yellow)}
+.st-scoring{background:#dceaf5;color:var(--blue)}
+.st-scored{background:#dcefdc;color:var(--green)}
+.st-failed{background:#f8dcd8;color:var(--red)}
+.m-score{font-size:13px;font-weight:700;color:var(--gold);min-width:34px;text-align:right}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--ink);color:#fff;padding:11px 20px;border-radius:24px;font-size:13px;
+  transition:.3s;opacity:0;z-index:200}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.err{color:var(--red);font-size:13px;margin-top:8px}
+.disclaimer{font-size:10.5px;color:var(--ink-20);text-align:center;margin-top:8px;line-height:1.6}
+.queue-info{font-size:11px;color:var(--ink-40);text-align:right;margin-top:-6px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo">舞镜<span>WuJing</span></div> <span class="badge">班级管理台</span></div>
+
+<div class="wrap">
+
+  <!-- 建班 -->
+  <div class="card" id="cardCreate">
+    <h2>创建班级测评</h2>
+    <label>舞名 <span style="color:var(--red)">*</span></label>
+    <input type="text" id="danceName" maxlength="30" placeholder="例如：千年一顾">
+    <div class="row">
+      <div><label>舞种</label>
+        <select id="genre">
+          <option value="guofeng">古典 / 敦煌 / 民族 / 国风</option>
+          <option value="kpop">K-pop / 爆款 / 手势舞</option>
+        </select></div>
+      <div><label>班级人数上限</label>
+        <input type="text" id="maxStudents" value="30" inputmode="numeric"></div>
+    </div>
+    <label>机构名称（挂在报告上 · 招生素材）</label>
+    <input type="text" id="schoolName" maxlength="40" placeholder="例如：敦煌艺术舞蹈学院">
+    <div class="row">
+      <div><label>授课老师</label><input type="text" id="teacherName" maxlength="20" placeholder="王老师"></div>
+      <div><label>机构标语</label><input type="text" id="motto" maxlength="30" placeholder="以舞载道"></div>
+    </div>
+    <button class="btn btn-full" id="btnCreate">生成班级邀请码 →</button>
+    <div class="err hidden" id="createErr"></div>
+    <div class="disclaimer">舞镜AI辅助评分，供教学参考，不替代老师专业判断。</div>
+  </div>
+
+  <!-- 邀请码 -->
+  <div class="card hidden" id="cardCode">
+    <h2>班级邀请码</h2>
+    <div class="code-box"><div class="code" id="codeText">------</div>
+      <div class="code-hint" id="danceTitle">《》· 让学员扫码或输码加入</div></div>
+    <div class="qr" id="qrBox"></div>
+    <div class="share-link"><span id="shareLink"></span>
+      <button class="btn btn-ghost btn-sm" onclick="copyLink()">复制</button></div>
+    <button class="btn-ghost btn btn-full btn-sm" style="margin-top:12px" onclick="copyInvite()">复制邀请文案（发群里催交）</button>
+  </div>
+
+  <!-- 进度看板 -->
+  <div class="card hidden" id="cardBoard">
+    <h2>进度看板</h2>
+    <div class="summary" id="summary"></div>
+    <div class="progress-bar"><div id="progFill" style="width:0%"></div></div>
+    <div class="queue-info" id="queueInfo"></div>
+    <div id="memberList"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="btnScore" style="flex:2">开始评分（缺席不阻塞）</button>
+      <button class="btn btn-ghost" id="btnReport" style="flex:1">查看报告</button>
+    </div>
+    <div class="err hidden" id="boardErr"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function _esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+// ═══ 老师端：建班 → 发码 → 进度看板 → 开评 → 看报告 ═══
+const $ = id => document.getElementById(id);
+const QS = new URLSearchParams(location.search);
+let CLASS_ID = QS.get('class') || localStorage.getItem('wj_teacher_last_class') || null;
+let CODE = null, POLL = null;
+// 老师若已登录单人线，token 复用（可选，游客也能试建体验版）
+const AUTH = localStorage.getItem('wujing_token') || localStorage.getItem('AUTH_TOKEN') || '';
+const authHdr = () => AUTH ? {'Authorization':'Bearer '+AUTH} : {};
+
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+$('btnCreate').onclick = async () => {
+  const dance = $('danceName').value.trim();
+  if(!dance){ $('createErr').textContent='请填舞名'; $('createErr').classList.remove('hidden'); return; }
+  $('btnCreate').disabled = true; $('createErr').classList.add('hidden');
+  try{
+    const fd = new FormData();
+    fd.append('dance_name', dance);
+    fd.append('genre', $('genre').value);
+    fd.append('max_students', ($('maxStudents').value||'30').replace(/\D/g,'')||'30');
+    fd.append('school_name', $('schoolName').value.trim());
+    fd.append('teacher_name', $('teacherName').value.trim());
+    fd.append('motto', $('motto').value.trim());
+    const r = await fetch('/api/class/create', {method:'POST', headers: authHdr(), body: fd});
+    if(!r.ok){ const e=await r.json().catch(()=>({})); throw new Error(e.detail||'建班失败'); }
+    const d = await r.json();
+    CLASS_ID = d.class_id; CODE = d.invite_code;
+    localStorage.setItem('wj_teacher_last_class', CLASS_ID);
+    showClass(d.invite_code, d.dance_name);
+  }catch(e){ $('createErr').textContent = e.message; $('createErr').classList.remove('hidden'); $('btnCreate').disabled=false; }
+};
+
+function joinUrl(code){ return location.origin + '/j/' + code; }
+
+function showClass(code, dance){
+  CODE = code;
+  $('cardCreate').classList.add('hidden');
+  $('cardCode').classList.remove('hidden');
+  $('cardBoard').classList.remove('hidden');
+  $('codeText').textContent = code;
+  $('danceTitle').textContent = '《'+(dance||'')+'》· 让学员扫码或输码加入';
+  const url = joinUrl(code);
+  $('shareLink').textContent = url;
+  // 二维码：用公共 QR 服务生成（无外网时降级为纯文字链接，不阻断）
+  $('qrBox').innerHTML = '<img alt="二维码" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='+encodeURIComponent(url)+'" onerror="this.parentNode.innerHTML=\'<div style=&quot;font-size:11px;color:#9a8a72;padding:40px 6px&quot;>扫码服务不可用，请直接分享下方链接</div>\'">';
+  startPoll();
+}
+
+function copyLink(){ navigator.clipboard.writeText(joinUrl(CODE)).then(()=>toast('链接已复制')); }
+function copyInvite(){
+  const dance = $('danceName').value.trim() || '本班';
+  const txt = `【${$('schoolName').value.trim()||'舞蹈班级'}】${dance} 班级测评\n扫码或点链接加入，上传你自己那段（单人·全身·15-30秒）：\n${joinUrl(CODE)}\n班级码：${CODE}`;
+  navigator.clipboard.writeText(txt).then(()=>toast('邀请文案已复制，发群里吧'));
+}
+
+// ── 进度看板轮询 ──
+const STATUS_CN = {joined:'待上传', uploaded:'已上传', scoring:'评分中', scored:'已出分', failed:'失败·可重传'};
+async function refresh(){
+  if(!CLASS_ID) return;
+  try{
+    const r = await fetch('/api/class/'+CLASS_ID, {headers: authHdr()});
+    if(!r.ok) return;
+    const d = await r.json();
+    if(!CODE){ showClass(d.class.invite_code, d.class.dance_name); }
+    renderBoard(d.progress);
+  }catch(e){}
+}
+function startPoll(){ refresh(); if(POLL) clearInterval(POLL); POLL = setInterval(refresh, 4000); }
+
+function renderBoard(p){
+  const c = p.counts||{};
+  const cells = [['total','共',p.total],['uploaded','已上传',c.uploaded||0],['scoring','评分中',c.scoring||0],['scored','已出分',c.scored||0],['failed','失败',c.failed||0]];
+  $('summary').innerHTML = cells.map(x=>`<div class="stat"><div class="n">${x[2]}</div><div class="l">${x[1]}</div></div>`).join('');
+  const pct = p.total ? Math.round((c.scored||0)/p.total*100) : 0;
+  $('progFill').style.width = pct+'%';
+  if(p.queue){ $('queueInfo').textContent = `评分队列：排队 ${p.queue.queued} · 处理中 ${p.queue.active}（限流并发≤${p.queue.max_concurrency}）`; }
+  $('memberList').innerHTML = (p.members||[]).map(m=>{
+    const dotClr = {joined:'#ccc',uploaded:'var(--yellow)',scoring:'var(--blue)',scored:'var(--green)',failed:'var(--red)'}[m.status]||'#ccc';
+    const real = m.real_name ? `<span class="m-real">(${_esc(m.real_name)})</span>` : '';
+    const score = (m.status==='scored'&&m.score!=null) ? `<span class="m-score">${m.score}</span>` : '';
+    const rescore = (m.status==='failed'||m.status==='scored') ? `<button class="btn btn-ghost btn-sm" onclick="rescore('${m.member_id}')">重跑</button>` : '';
+    return `<div class="member"><span class="m-dot" style="background:${dotClr}"></span>
+      <span class="m-name">${_esc(m.nickname||'学员')}${real}</span>
+      ${score}<span class="m-status st-${m.status}">${STATUS_CN[m.status]||m.status}</span>${rescore}</div>`;
+  }).join('') || '<div style="text-align:center;color:var(--ink-40);font-size:13px;padding:16px">还没有学员加入，把邀请码发出去吧</div>';
+}
+
+$('btnScore').onclick = async () => {
+  $('btnScore').disabled = true;
+  try{
+    const r = await fetch('/api/class/'+CLASS_ID+'/start-scoring', {method:'POST', headers: authHdr()});
+    const d = await r.json();
+    if(!r.ok){ throw new Error(d.detail||'开评失败'); }
+    toast(`已开始评分：入队 ${d.queued} 人${d.rejected?('，'+d.rejected+' 人队列繁忙稍后自动重试'):''}`);
+    refresh();
+  }catch(e){ toast(e.message); }
+  finally{ setTimeout(()=>{ $('btnScore').disabled=false; }, 3000); }
+};
+
+async function rescore(mid){
+  try{
+    const r = await fetch('/api/class/'+CLASS_ID+'/rescore-member', {method:'POST',
+      headers:{'Content-Type':'application/json', ...authHdr()}, body: JSON.stringify({member_id: mid})});
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.detail||'重跑失败');
+    toast('已重新入队评分'); refresh();
+  }catch(e){ toast(e.message); }
+}
+
+$('btnReport').onclick = () => {
+  // 喂进 report.html（带 class 参数 → 前端 fetch 真数据）
+  window.open('report.html?class='+encodeURIComponent(CLASS_ID), '_blank');
+};
+
+// 若带 ?class= 直接进看板
+if(CLASS_ID && QS.get('class')){ $('cardCreate').classList.add('hidden'); $('cardBoard').classList.remove('hidden'); $('cardCode').classList.remove('hidden'); startPoll(); }
+</script>
+</body>
+</html>
