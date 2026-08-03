@@ -14,7 +14,7 @@
 
 上传了我和老师的视频，AI直接给我量出来了：
 📐 左臂外展角度：我68°，老师170°
-⏱ 节拍：我比正确节拍**提前了0.3拍**
+⏱ 节拍：我比正确节拍**提前了将近1/4拍**
 🦵 膝盖弯曲：少弯了约22°
 
 不是"你不到位"，是**差了102°**。
@@ -26,7 +26,7 @@
 
 一个礼拜后，我又测了一次。
 左臂：68° → 124°
-节拍：提前0.3拍 → 基本准确
+节拍：提前将近1/4拍 → 基本准确
 
 进步了多少，AI帮我存着呢📈
 
@@ -42,7 +42,7 @@ wujing.mylumee.app
 
 差哪？我不知道。
 
-舞镜AI直接量出来了：左臂差102°，节拍提前0.3拍🎯
+舞镜AI直接量出来了：左臂差102°，节拍提前将近1/4拍🎯
 
 有了数字，我知道练什么了。一周后真的进步了！
 
@@ -55,7 +55,7 @@ Three months of dance practice, and my teacher kept saying "almost there." Almos
 
 I uploaded my video to Dance Mirror (舞镜) and the AI measured everything:
 → My left arm: 68° (should be 170°)
-→ My timing: 0.3 beats early
+→ My timing: nearly a quarter-beat early
 → Knee bend: 22° short
 
 For the first time, I knew *exactly* what to fix. One week later, my arm angle improved from 68° to 124°. Progress you can actually SEE. ✨
@@ -69,7 +69,7 @@ For the first time, I knew *exactly* what to fix. One week later, my arm angle i
 
 I've been taking Chinese classical dance lessons for three months. My teacher is great, but her feedback always sounded like: "your left arm needs to be more open," "you're a bit early on the beat," "the knee isn't quite right." All perfectly accurate, but I had zero idea how to actually correct any of it.
 
-Last week I tried this app called Dance Mirror (舞镜). You upload your video alongside a reference, and AI measures the actual angle differences. My left arm was 68° when it should be 170°. I was hitting beats 0.3 seconds early. My knee bend was 22° short of the target.
+Last week I tried this app called Dance Mirror (舞镜). You upload your video alongside a reference, and AI measures the actual angle differences. My left arm was 68° when it should be 170°. I was hitting beats nearly a quarter-beat early. My knee bend was 22° short of the target.
 
 I'd been practicing vague feelings. Now I'm practicing specific numbers.
 
@@ -181,7 +181,7 @@ wujing.mylumee.app
 
 ### 配图建议
 1. **八拍卡特写**：一张清晰的八拍卡截图，重点展示"口诀"三字显示在金色背景上，下方是连拍帧
-2. **手机相册截图**：模拟手机相册里整齐排列多张八拍卡截图，配文"我的舞蹈备忘录"
+2. **手机相册截图**：手机相册里整齐排列多张八拍卡截图，配文"我的舞蹈备忘录"（建议用真实用户截图替换）
 3. **慢放对比**：左边正常速模糊的动作，右边0.5倍清晰的手部细节对比图
 
 ---
@@ -202,8 +202,8 @@ wujing.mylumee.app
 
 AI不说"差一点"，AI说：
 📐 你的手臂外展：112°，标准：170°，差 **58°**
-📐 你的重心：偏右3.2cm
-⏱ 你的节拍延迟：-0.15拍
+📐 你的重心：偏右约3厘米
+⏱ 你的节拍延迟：约1/6拍
 
 第一次，我看到了具体的数字。
 不是感受，是**测量**。
@@ -220,7 +220,7 @@ wujing.mylumee.app
 老师说"再开一点"说了三个月
 我："哪里？多少？"🥹
 
-舞镜AI直接量出来：手臂差58°，重心偏右3.2cm
+舞镜AI直接量出来：手臂差58°，重心偏右约3厘米
 
 有了数字我才知道怎么练！
 
@@ -233,8 +233,8 @@ HOW much more? WHERE exactly? 😭
 
 Dance Mirror measures the actual gap:
 → Your arm angle: 112° | Target: 170° | Difference: 58°
-→ Weight shift: 3.2cm off center
-→ Timing offset: -0.15 beats
+→ Weight shift: a few centimeters off center
+→ Timing offset: about 1/6 of a beat
 
 Numbers replace vague feedback. You know exactly what to drill. My arm went from 112° to 148° in one month of targeted practice. My teacher actually said "much better" last week. ✨
 
@@ -249,7 +249,7 @@ Three months, three classes per week, one teacher who is genuinely excellent. Bu
 
 I don't doubt she sees exactly what needs fixing. The problem is I couldn't translate that into motor instructions my body could execute.
 
-Tried Dance Mirror last month. Upload your video alongside reference, AI outputs angle measurements for arm positions, weight distribution, timing offset. My "open your arm a little more" turned out to be a 58-degree gap I didn't know existed.
+Tried Dance Mirror last month. Upload your video alongside reference, AI outputs angle measurements for arm positions, weight distribution, timing offset. My "open your arm a little more" turned out to be a 58-degree gap — something I had zero idea about until it was measured.
 
 Spent the next two weeks specifically drilling elbow height. Month-end measurement: 112° → 148°. Teacher said "much better" unprompted. First time in three months.
 
@@ -798,7 +798,7 @@ wujing.mylumee.app
 
 ### 配图建议
 1. **分段时间轴**：横向时间轴图，9个色块各自标注"第X句：名称"，类似视频剪辑轨道样式
-2. **三位老师对话截图**：模拟微信聊天截图，"老师A说4段 老师B说6段"，最后舞镜说9段+时间戳
+2. **三位老师对话截图**：微信聊天截图，"老师A说4段 老师B说6段"，最后舞镜说9段+时间戳（建议用真实用户截图替换，或改用示意文字卡替代）
 3. **段落练习规划**：周练习计划截图："周一第1-3段 周二第4-6段"，结构化感强
 
 ---
@@ -816,7 +816,7 @@ wujing.mylumee.app
 AI出的报告，让我沉默了一分钟：
 
 **群舞协调度评估**
-- 你的节拍偏移：比全班平均提前 **0.24拍**
+- 你的节拍偏移：比全班平均提前 **将近1/4拍**
 - 臂展：比全班平均小 **32°**
 - 重心稳定：在全班5人中排名**第4**
 
@@ -824,7 +824,7 @@ AI出的报告，让我沉默了一分钟：
 我是"自我感觉还行，但数据显示落后"。
 
 知道了这些，再练就有方向了。
-两周后再测：节拍偏移从0.24拍 → 0.08拍
+两周后再测：节拍偏移从将近1/4拍降到基本准了
 
 这次没被刷。
 
@@ -835,7 +835,7 @@ wujing.mylumee.app，¥9.9
 ### TikTok（中文）
 群舞被刷了，我以为自己跳得还行😶
 
-舞镜AI给了数据：比全班提前0.24拍，臂展小32°，排名第4/5
+舞镜AI给了数据：比全班提前将近1/4拍，臂展小32°，排名第4/5
 
 知道落后在哪里，两周后再测进步了
 
@@ -847,13 +847,13 @@ Got cut from the ensemble piece. Teacher said I "wasn't quite in sync."
 I thought I was doing fine. 😶
 
 Uploaded the rehearsal video to Dance Mirror. The group analysis showed:
-→ My timing: 0.24 beats early vs. class average
+→ My timing: nearly a quarter-beat early vs. class average
 → Arm extension: 32° below class average
 → Balance stability: ranked 4th out of 5
 
 I wasn't "doing fine." I was "feeling fine while falling behind."
 
-Two weeks of targeted work on timing: improved from 0.24 → 0.08 beats off. Made the ensemble in the next selection.
+Two weeks of targeted work on timing: went from nearly a quarter-beat off to close to on the mark. Made the ensemble in the next selection.
 
 Data beats feelings. 📊 wujing.mylumee.app
 
@@ -865,13 +865,13 @@ Data beats feelings. 📊 wujing.mylumee.app
 Got cut from a Chinese classical dance group performance. Teacher's feedback: "overall coordination issues." I genuinely didn't understand it — from inside the performance, I felt like I was keeping up fine.
 
 Ran the rehearsal video through Dance Mirror, which does comparative analysis against others in frame:
-- My timing was 0.24 beats ahead of the class average (not behind — AHEAD, which actually throws off everyone else)
+- My timing was nearly a quarter-beat ahead of the class average (not behind — AHEAD, which actually throws off everyone else)
 - My arm extension was 32° smaller than class average
 - Balance stability ranked 4th out of 5
 
 This was genuinely uncomfortable to read. But it was exactly what I needed.
 
-Spent two weeks fixing the timing issue specifically. Re-tested: 0.08 beats off. Made the ensemble in the next selection round.
+Spent two weeks fixing the timing issue specifically. Re-tested: down to just a sliver off. Made the ensemble in the next selection round.
 
 The self-perception vs. data gap was the real problem all along.
 
@@ -893,5 +893,5 @@ wujing.mylumee.app
 
 ### 配图建议
 1. **班级排名图**：5个人的比较条形图，你的数据用红色标出，其他人灰色，清晰显示差距
-2. **进步前后数字对比**：0.24拍 → 0.08拍的大字视觉，金色背景，简洁有力
+2. **进步前后数字对比**：「将近1/4拍 → 基本准了」的大字视觉，金色背景，简洁有力
 3. **群舞排练场景**：从侧面拍摄一排舞者，重点放在整齐的队列感上，配文"这次，我在里面了"

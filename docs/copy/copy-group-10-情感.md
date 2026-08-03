@@ -23,6 +23,8 @@
 
 你有没有第一次看到自己跳舞的瞬间？那一刻你在想什么。
 
+舞镜帮我把那支舞拆成了我能掌握的一段一段，才有了那个晚上独自跳完的自己。
+
 💃 wujing.mylumee.app
 
 #跳舞 #自我发现 #学舞日记 #舞蹈初学者 #治愈系
@@ -54,6 +56,8 @@ I cried a little. Not from sadness. From recognition.
 That girl on the screen? She'd been waiting a long time to come out.
 
 What did you feel the first time you saw yourself dance? ✨
+
+Dance Mirror (舞镜) helped me break that piece down until I could actually get through it — that's what made the recording possible.
 
 wujing.mylumee.app
 
@@ -125,6 +129,8 @@ Haven't told anyone in real life. Just wanted to say it somewhere.
 
 如果你也有一件事放下很久了，还没扔掉——也许是时候了。
 
+舞镜让我不需要重新找老师、重新报班，就在家里，一个动作一个动作地把那个感觉捡回来。
+
 💃 wujing.mylumee.app
 
 #重新开始 #跳舞 #成年人学舞 #放弃了又重拾 #舞蹈治愈
@@ -159,6 +165,8 @@ Tonight I put them on again. Just in my living room. Just me, my phone, an app t
 Just starting over. And it felt completely like coming home.
 
 If you've been holding onto something you haven't let yourself go back to — maybe today is the day.
+
+Dance Mirror let me start again at my own pace, no class to catch up to, no pressure — just me and a breakdown of each move until it clicked.
 
 wujing.mylumee.app
 
@@ -229,6 +237,8 @@ That part's quieter now.
 
 生日快到了，不知道送自己什么礼物？学一支舞吧。
 
+舞镜帮我把每个动作拆开来，一句一句练，三个月里那些腿酸的夜晚，全是我自己挣来的。
+
 💃 wujing.mylumee.app
 
 #跳舞 #给自己的礼物 #成年人学舞 #自我关爱 #舞蹈初学者
@@ -260,6 +270,8 @@ Three months ago I started learning on my own, breaking down choreography piece 
 But last week I ran through an entire piece without stopping, alone in my living room, and I stood there afterward with this feeling I don't have a word for. Not pride exactly. More like — *ownership*. Like something was mine that hadn't been before.
 
 Nobody can take that away from you. That's the gift.
+
+Dance Mirror breaks each movement down until it lives in your body — that slow, repetitive process of earning it is the whole point.
 
 wujing.mylumee.app
 
@@ -326,6 +338,8 @@ Nobody gave that to me. I made it. That distinction, I've realized, matters quit
 
 它就住在我身体里，跟着我走。
 
+舞镜的慢放和逐帧分解，让我能把一个动作练到它真的"住进来"——不是背下来，是感觉到了。
+
 💃 wujing.mylumee.app
 
 #肌肉记忆 #跳舞 #舞蹈日记 #学舞感悟 #身体的力量
@@ -354,6 +368,8 @@ That moment — the first time your body just *knows* — it's almost eerie. And
 I've been breaking down choreography slowly, move by move, on repeat, until each piece sinks below the level of thought. It takes longer that way. But what you end up with isn't a memory stored in your head. It's something stored in your *body*.
 
 That kind of learning doesn't fade the way remembered facts fade. It lives differently.
+
+Dance Mirror's frame-by-frame breakdown lets you repeat a move slowly enough that it actually sinks below the level of thought — that's where muscle memory starts.
 
 wujing.mylumee.app
 
@@ -420,6 +436,8 @@ I think that's what people mean when they say dancing is freeing. It's not metap
 
 就这样，已经够了。
 
+舞镜就是那扇门后的陪伴——没有评分压力，没有等着看你的观众，只是帮你一个动作一个动作地玩下去。
+
 💃 wujing.mylumee.app
 
 #为自己跳舞 #跳舞快乐 #成年人玩耍 #不需要观众 #舞蹈治愈
@@ -451,6 +469,8 @@ Just a song I like and my body moving to it and a few minutes where my brain fin
 I think somewhere along the way we learned to only do things that have an outcome. But joy is an outcome too. Happiness in your body, right now, while the song is playing — that counts.
 
 You don't need an audience for something to matter.
+
+Dance Mirror is just for this — no grades, no class to keep up with, just you and the move until you feel it. At wujing.mylumee.app.
 
 wujing.mylumee.app
 
@@ -512,6 +532,8 @@ I don't know why that's so rare. I also don't know why it took me this long to f
 
 答案是：用对了方法，比你想的快很多。
 
+舞镜就是那个方法——AI逐帧分析你的动作，告诉你具体哪里不对，不是"再开一点"，是让你看到准确的差距在哪里。
+
 💃 wujing.mylumee.app
 
 #AI学舞 #普通人跳舞 #舞镜 #成年人学舞 #跳出专业感
@@ -545,6 +567,8 @@ That changed for me when I started using AI to break down my movement. Suddenly 
 Three months later, people ask me how long I've been dancing.
 
 The answer surprised me too.
+
+Dance Mirror watches your movement and tells you specifically what's off — not "try harder," but "this joint, this angle." That's the feedback that actually closes the gap. wujing.mylumee.app.
 
 wujing.mylumee.app
 
@@ -610,6 +634,8 @@ Still not a professional. But I've heard "how long have you been dancing?" three
 
 去学一支舞吧。不是为了给人看，不是为了发朋友圈，是为了那一刻你会知道的感觉。
 
+我用舞镜把那支舞拆成了一段一段，第七周脚踝还在酸，但就是不愿意停。那个感觉，你跳完就懂了。
+
 💃 wujing.mylumee.app
 
 #学会一支舞 #成就感 #成年人学舞 #属于自己的胜利 #舞蹈日记
@@ -641,6 +667,8 @@ And I stood there in the silence after and felt something I hadn't felt in a lon
 Not because someone approved it. Not because a metric went up. Not because I performed it for anyone. Just because I set a goal, worked at it in private, and got there.
 
 That kind of win is rare as an adult. And I hadn't realized how much I'd been missing it.
+
+Dance Mirror broke the piece into sections I could actually practice one at a time — that's the only reason I got there. wujing.mylumee.app.
 
 wujing.mylumee.app
 
@@ -711,6 +739,8 @@ I forgot that feeling was still available to me. Glad I found it again.
 
 有时候最好的休息不是什么都不做，是做一件完全需要你在场的事。
 
+我用舞镜跟练，有具体的动作要对准、有节奏要跟上——脑子没有空档留给那些乱七八糟的事了。
+
 💃 wujing.mylumee.app
 
 #跳舞减压 #暂时逃离 #下班解压 #舞蹈治愈 #成年人减压
@@ -743,6 +773,8 @@ Because when you're counting beats and tracking your arms and remembering where 
 It's the only reliable way I've found to be completely present in my own life for forty minutes at a time.
 
 Not an escape, exactly. More like a reset.
+
+Dance Mirror gives me specific things to track — angles, rhythm, sequence — so there's no mental bandwidth left for anything else. That's the mechanism. wujing.mylumee.app.
 
 wujing.mylumee.app
 
@@ -808,6 +840,8 @@ That's worth more to me than most things I've tried that are officially categori
 
 不需要多完美。就是，我们一起跳过。
 
+舞镜帮我们一帧一帧把那个动作拆开来看，笑的时候根本忘了是在"学习"——这才是最好的亲子时光。
+
 💃 wujing.mylumee.app
 
 #亲子时光 #跟孩子跳舞 #妈妈学舞 #家庭时光 #舞蹈亲子
@@ -841,6 +875,8 @@ Instead I walked in and joined her.
 We looked up a tutorial together and broke it down, one step at a time — her correcting my arms, me trying to catch up to her natural sense of rhythm that I definitely don't have. We laughed until we couldn't stand up straight. We fell on the couch.
 
 I'm going to forget a lot of days from this year. I won't forget that afternoon.
+
+We used Dance Mirror to slow everything down — she'd watch once and just do it, I needed to see it four times. It was the most delightful way to feel outclassed by a seven-year-old. wujing.mylumee.app.
 
 wujing.mylumee.app
 
@@ -908,6 +944,8 @@ I became her hobby. I'll take it.
 
 如果你也觉得晚了——你不晚。你只是还没开始。
 
+我用舞镜自己在家拆动作，笨也没关系，没有人在旁边看，慢慢来就行——六个月后真的有人问我学多久了。
+
 💃 wujing.mylumee.app
 
 #三十岁学舞 #永不嫌晚 #成年人学舞 #现在开始 #舞蹈初学者
@@ -940,6 +978,8 @@ There's no committee deciding your deadline. There's no official window that clo
 I started. I was bad at it. I got less bad. And six months in, someone asked me how long I'd been dancing in a way that implied it had been longer than "I literally just started this year."
 
 Thirty-one was not too late. Neither is whatever age you are right now.
+
+I started with Dance Mirror — no class to keep up with, just me breaking down each move at whatever pace I needed. Six months later someone asked how long I'd been dancing. That was the moment. wujing.mylumee.app.
 
 wujing.mylumee.app
 
