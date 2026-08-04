@@ -81,6 +81,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.middleware("http")
+async def add_charset_header(request, call_next):
+    response = await call_next(request)
+    ct = response.headers.get("content-type", "")
+    if ct.startswith("application/json") and "charset" not in ct:
+        response.headers["content-type"] = "application/json; charset=utf-8"
+    return response
 # BASE_DIR 支持 env 覆盖（生产默认 /www/wujing-api；staging/本地测试可指向副本，不碰生产库/数据）
 BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -477,6 +484,25 @@ def update_task(review_id: str, data: dict, user: dict = Depends(get_current_use
 def get_global_stats(user: dict = Depends(get_current_user)):
     stats = get_user_stats(user["id"])
     return stats
+
+@app.get("/api/public/stats")
+def get_public_stats():
+    """公开接口：返回已拆解舞蹈数量（首页社会证明用，无需登录）。"""
+    try:
+        import glob
+        djs = glob.glob(os.path.join(DATA_DIR, "*", "decompose.json"))
+        count = 0
+        for p in djs:
+            try:
+                with open(p) as f:
+                    d = json.load(f)
+                if d.get("status") == "completed":
+                    count += 1
+            except Exception:
+                pass
+        return {"decompose_count": count}
+    except Exception:
+        return {"decompose_count": 38}
 @app.post("/api/generate-bg")
 def generate_bg(data: dict, user: dict = Depends(get_current_user)):
     prompt = data.get("prompt", "")
@@ -706,6 +732,13 @@ def get_decompose_card(did: str, name: str):
                         headers={"Content-Disposition": f"attachment; filename*=UTF-8''{safe_filename}"})
 
 @app.get("/")
+def serve_home():
+    _h = os.path.join(BASE_DIR, "static", "home-v2.html")
+    if not os.path.exists(_h):
+        return RedirectResponse("/app")
+    return FileResponse(_h, media_type="text/html")
+
+@app.get("/app")
 @app.get("/design-upgrade.html")
 def serve_app():
     _app_html = os.path.join(BASE_DIR, "static", "design-upgrade.html")
@@ -766,3 +799,93 @@ def health():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=3006)
+
+# ---------- Compare Video (复习对比视频) ----------
+import threading as _threading
+
+_compare_jobs: dict = {}   # compare_id -> {"status": ..., "url": ...}
+_COMPARE_DIR = os.path.join(DATA_DIR, "../static/compare")
+os.makedirs(_COMPARE_DIR, exist_ok=True)
+
+def _run_compare_job(cid, orig_path, learn_path, dance_title):
+    try:
+        out_path = os.path.join(_COMPARE_DIR, f"{cid}.mp4")
+        from compare_video import generate_compare_video
+        ok = generate_compare_video(orig_path, learn_path, out_path, dance_title)
+        if ok and os.path.exists(out_path):
+            _compare_jobs[cid] = {
+                "status": "done",
+                "url": f"/static/compare/{cid}.mp4",
+                "size": os.path.getsize(out_path),
+            }
+        else:
+            _compare_jobs[cid] = {"status": "error", "detail": "generation failed"}
+    except Exception as e:
+        _compare_jobs[cid] = {"status": "error", "detail": str(e)[:200]}
+    finally:
+        # cleanup source uploads
+        import shutil as _sh
+        for p in [orig_path, learn_path]:
+            try:
+                _sh.rmtree(os.path.dirname(p), ignore_errors=True)
+            except:
+                pass
+
+@app.post("/api/compare")
+async def create_compare_video(
+    original: UploadFile = File(...),
+    learner: UploadFile = File(...),
+    dance_title: str = Form(""),
+    user: dict = Depends(get_optional_user),
+    x_device_id: str = Header(None),
+):
+    """上传原版+学员视频 → 异步生成AI复习对比视频"""
+    # 每设备每天限3次
+    ident = _identity_for(user, x_device_id)
+    with _FREE_LOCK:
+        rec = _free_hits.setdefault(f"cmp:{ident}", {"h": [], "d": []})
+        import time as _t
+        now = _t.time()
+        rec["d"] = [x for x in rec["d"] if now - x < 86400]
+        if len(rec["d"]) >= 3:
+            raise HTTPException(status_code=429, detail="今日对比视频次数已用完（每天3次）")
+        rec["d"].append(now)
+
+    cid = str(uuid.uuid4())
+    tmp_dir = os.path.join(DATA_DIR, f"cmp_{cid}")
+    os.makedirs(tmp_dir, exist_ok=True)
+
+    # 保存并校验magic byte
+    orig_path = os.path.join(tmp_dir, "original.mp4")
+    learn_path = os.path.join(tmp_dir, "learner.mp4")
+    for up, path in [(original, orig_path), (learner, learn_path)]:
+        content = await up.read()
+        if len(content) > 200 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="视频过大，请压到200MB以内")
+        if not _check_video_magic(content):
+            raise HTTPException(status_code=400, detail="请上传真实视频文件（MP4/MOV）")
+        with open(path, "wb") as f:
+            f.write(content)
+
+    _compare_jobs[cid] = {"status": "processing"}
+    _threading.Thread(
+        target=_run_compare_job,
+        args=(cid, orig_path, learn_path, dance_title),
+        daemon=True
+    ).start()
+
+    return {"compare_id": cid, "status": "processing",
+            "poll_url": f"/api/compare/{cid}"}
+
+@app.get("/api/compare/{compare_id}")
+def get_compare_status(compare_id: str):
+    """查询对比视频生成状态"""
+    job = _compare_jobs.get(compare_id)
+    if not job:
+        # 检查文件是否存在（重启后内存丢失）
+        path = os.path.join(_COMPARE_DIR, f"{compare_id}.mp4")
+        if os.path.exists(path):
+            return {"status": "done", "url": f"/static/compare/{compare_id}.mp4",
+                    "size": os.path.getsize(path)}
+        raise HTTPException(status_code=404, detail="任务不存在")
+    return job

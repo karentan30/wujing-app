@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舞镜 · 把你想学的舞逐句拆开</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF7F0;      /* 浅米金背景 */
+    --card:#ffffff;    /* 卡片白 */
+    --edge:#EDE4CF;    /* 米金边 */
+    --gold:#B5922A;    /* 金 */
+    --gold-soft:#C9A94A;
+    --ink:#1F1A14;     /* 正文墨 */
+    --mute:#8C857A;    /* 辅助银灰 */
+    --dark:#0E0B14;    /* 成果暗区（舞台） */
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:#e9e2d3;}
+  body{
+    font-family:"Noto Sans SC",system-ui,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  .serif{font-family:"Noto Serif SC",serif;}
+  .phone{
+    width:440px;margin:0 auto;background:var(--bg);
+    min-height:100vh;overflow:visible;position:relative;
+  }
+  section{padding:34px 24px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:44px 24px 38px;text-align:center;position:relative;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #FFFBF0 0%, var(--bg) 60%);
+  }
+  .brand{
+    font-family:"Noto Serif SC",serif;font-weight:900;
+    font-size:40px;letter-spacing:.12em;color:var(--ink);
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .brand .moon{
+    width:13px;height:13px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#F3E3AE,var(--gold));
+    box-shadow:0 0 14px rgba(181,146,42,.5);
+  }
+  .brand-en{font-size:11px;letter-spacing:.42em;color:var(--gold);
+    margin-top:8px;font-weight:700;}
+  .hero h1{
+    font-family:"Noto Serif SC",serif;font-weight:700;
+    font-size:26px;line-height:1.42;margin:22px 0 12px;color:var(--ink);
+  }
+  .hero h1 em{font-style:normal;color:var(--gold);}
+  .hero p{font-size:14px;color:var(--mute);max-width:340px;margin:0 auto;}
+  .cta{
+    display:inline-block;margin-top:26px;
+    background:linear-gradient(135deg,#C9A94A,#B5922A);
+    color:#fff;font-weight:700;font-size:16px;
+    padding:15px 42px;border-radius:40px;text-decoration:none;
+    box-shadow:0 8px 22px rgba(181,146,42,.32);
+    letter-spacing:.04em;
+  }
+  .cta.block{display:block;text-align:center;padding:17px;font-size:17px;}
+  .cta-sub{font-size:12px;color:var(--mute);margin-top:12px;}
+
+  /* 全链路小条 */
+  .fulllink{margin:24px auto 0;display:flex;flex-wrap:wrap;
+    align-items:center;justify-content:center;gap:8px;max-width:320px;}
+  .fulllink span{
+    font-size:12.5px;font-weight:700;color:var(--ink);
+    background:var(--card);border:1px solid var(--edge);
+    padding:5px 13px;border-radius:20px;letter-spacing:.02em;
+  }
+  .fulllink i{color:var(--gold);font-style:normal;font-size:12px;}
+  .fulllink em{
+    flex:0 0 100%;font-style:normal;font-size:12px;color:var(--mute);
+    text-align:center;margin-top:9px;letter-spacing:.02em;
+  }
+
+  /* ---------- 信任条 ---------- */
+  .trust{
+    background:var(--card);border-top:1px solid var(--edge);
+    border-bottom:1px solid var(--edge);padding:14px 24px;
+    display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+    font-size:11.5px;color:var(--mute);text-align:center;
+  }
+  .trust b{color:var(--gold);font-weight:700;}
+  .trust .dot{color:var(--edge);}
+
+  /* ---------- 区块标题 ---------- */
+  .kicker{
+    font-size:11px;letter-spacing:.28em;color:var(--gold);
+    font-weight:700;text-align:center;margin-bottom:8px;
+  }
+  .sec-title{
+    font-family:"Noto Serif SC",serif;font-weight:700;
+    font-size:23px;text-align:center;line-height:1.4;margin-bottom:6px;
+  }
+  .sec-sub{font-size:13px;color:var(--mute);text-align:center;
+    max-width:340px;margin:0 auto 26px;}
+
+  /* ---------- 成果块通用 ---------- */
+  .result{margin-bottom:38px;}
+  .result-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
+  .rnum{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:15px;
+    color:#fff;background:var(--gold);width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+    font-size:13px;
+  }
+  .rtitle{font-family:"Noto Serif SC",serif;font-weight:700;font-size:18px;}
+  .rauto{
+    font-size:11px;color:var(--gold);font-weight:700;
+    border:1px solid var(--edge);background:#FBF6E8;
+    padding:2px 9px;border-radius:20px;margin-left:auto;flex:0 0 auto;
+  }
+  .rdesc{font-size:12.5px;color:var(--mute);margin:2px 0 14px 36px;}
+
+  /* 手机截图相框（展示深色成果图） */
+  .frame{
+    background:var(--dark);border-radius:22px;padding:9px;
+    box-shadow:0 16px 40px rgba(20,14,30,.28), 0 0 0 1px rgba(255,255,255,.04) inset;
+    position:relative;
+  }
+  .frame::before{
+    content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);
+    width:52px;height:4px;border-radius:3px;background:rgba(255,255,255,.14);
+  }
+  .frame img{width:100%;display:block;border-radius:14px;}
+  .frame.tall{padding-top:20px;}
+
+  /* 横滑八拍卡 */
+  .scroller{
+    display:flex;gap:14px;overflow-x:auto;padding:4px 24px 10px;
+    margin:0 -24px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  }
+  .scroller::-webkit-scrollbar{height:0;}
+  .snapcard{flex:0 0 300px;scroll-snap-align:center;}
+  .snapcard .frame img{border-radius:12px;}
+  .swipe-hint{
+    font-size:11px;color:var(--mute);text-align:center;margin-top:8px;
+    letter-spacing:.04em;
+  }
+  .swipe-hint span{color:var(--gold);}
+
+  /* 慢放视频 */
+  .video-wrap{position:relative;border-radius:22px;overflow:hidden;
+    background:var(--dark);box-shadow:0 16px 40px rgba(20,14,30,.28);}
+  .video-wrap video{width:100%;display:block;transition:transform .3s ease;}
+  .video-wrap video.mirrored{transform:scaleX(-1);}
+  .slow-badge{
+    position:absolute;top:14px;left:14px;z-index:3;
+    background:rgba(14,11,20,.72);backdrop-filter:blur(6px);
+    color:#F3E3AE;font-size:12px;font-weight:700;letter-spacing:.04em;
+    padding:7px 13px;border-radius:20px;border:1px solid rgba(243,227,174,.3);
+  }
+  /* 镜像切换按钮（相框内，深色小胶囊） */
+  .mirror-btn{
+    position:absolute;top:14px;right:14px;z-index:4;cursor:pointer;
+    background:rgba(14,11,20,.72);backdrop-filter:blur(6px);
+    color:#EDE4CF;font-size:12px;font-weight:700;letter-spacing:.03em;
+    padding:7px 13px;border-radius:20px;border:1px solid rgba(243,227,174,.3);
+    display:flex;align-items:center;gap:6px;user-select:none;
+    font-family:"Noto Sans SC",sans-serif;
+  }
+  .mirror-btn.on{background:rgba(181,146,42,.9);color:#fff;
+    border-color:rgba(243,227,174,.55);}
+  .mirror-btn .m-ic{font-size:13px;line-height:1;}
+  .slow-note{
+    position:absolute;bottom:0;left:0;right:0;z-index:3;
+    background:linear-gradient(transparent,rgba(14,11,20,.85));
+    color:#EDE4CF;font-size:12px;padding:26px 16px 14px;
+  }
+  .slow-note b{color:#F3E3AE;}
+  /* 整支正常速主视频 */
+  .full-block{margin-top:14px;}
+  .full-head{
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+  }
+  .full-head .fh-t{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:14.5px;
+    color:var(--ink);
+  }
+  .full-head .fh-badge{
+    font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.02em;
+    border:1px solid var(--edge);background:#FBF6E8;
+    padding:2px 10px;border-radius:20px;
+  }
+  .full-head .fh-line{flex:1;height:1px;background:var(--edge);}
+  .full-badge{
+    position:absolute;top:14px;left:14px;z-index:3;
+    background:rgba(14,11,20,.72);backdrop-filter:blur(6px);
+    color:#F3E3AE;font-size:12px;font-weight:700;letter-spacing:.04em;
+    padding:7px 13px;border-radius:20px;border:1px solid rgba(243,227,174,.3);
+  }
+  .full-note{
+    position:absolute;bottom:0;left:0;right:0;z-index:3;
+    background:linear-gradient(transparent,rgba(14,11,20,.85));
+    color:#EDE4CF;font-size:12px;padding:26px 16px 14px;
+  }
+  .full-note b{color:#F3E3AE;}
+  /* 分隔：整支 → 逐句 */
+  .slow-divide{
+    display:flex;align-items:center;gap:10px;margin:22px 0 2px;
+  }
+  .slow-divide .sd-line{flex:1;height:1px;background:var(--edge);}
+  .slow-divide .sd-t{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:14px;
+    color:var(--ink);white-space:nowrap;
+  }
+  .slow-divide .sd-t i{font-style:normal;color:var(--gold);}
+
+  /* 逐句 tab（起探游放收） */
+  .verse-tabs{
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+    margin:16px 0 4px;
+  }
+  .verse-tab{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:15px;
+    width:44px;height:44px;border-radius:50%;cursor:pointer;
+    background:var(--card);border:1px solid var(--edge);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .2s ease;position:relative;
+  }
+  .verse-tab .vn{
+    position:absolute;top:-6px;right:-4px;font-family:"Noto Sans SC",sans-serif;
+    font-size:9px;font-weight:700;color:var(--mute);
+    background:var(--bg);border:1px solid var(--edge);
+    width:15px;height:15px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .verse-tab.active{
+    background:linear-gradient(135deg,#C9A94A,#B5922A);color:#fff;
+    border-color:var(--gold);box-shadow:0 6px 14px rgba(181,146,42,.28);
+  }
+  .verse-tab.active .vn{color:var(--gold);border-color:var(--gold-soft);
+    background:#FFFDF6;}
+  .verse-caption{
+    text-align:center;font-size:12px;color:var(--mute);
+    margin-top:12px;letter-spacing:.02em;
+  }
+  .verse-caption b{color:var(--gold);font-weight:700;}
+
+  /* ---------- 价格锚点 ---------- */
+  .price-sec{padding-bottom:30px;}
+  .price-card{
+    background:linear-gradient(180deg,#FFFDF6,var(--card));
+    border:1px solid var(--gold-soft);border-radius:22px;
+    padding:26px 22px 22px;margin-top:22px;
+    box-shadow:0 14px 34px rgba(181,146,42,.14),
+      0 0 0 4px rgba(201,169,74,.08);
+    text-align:center;
+  }
+  .price-top{display:flex;align-items:flex-end;justify-content:center;gap:6px;}
+  .price-num{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:52px;
+    line-height:1;color:var(--gold);letter-spacing:-.01em;
+  }
+  .price-num .cur{font-size:26px;font-weight:700;vertical-align:top;
+    margin-right:1px;position:relative;top:2px;}
+  .price-per{font-size:14px;color:var(--mute);font-weight:500;
+    padding-bottom:7px;}
+  .price-feat{list-style:none;margin:18px 0 20px;text-align:left;
+    display:inline-block;}
+  .price-feat li{
+    font-size:13px;color:var(--ink);padding:6px 0 6px 24px;position:relative;
+    line-height:1.45;
+  }
+  .price-feat li::before{
+    content:"✓";position:absolute;left:0;top:6px;color:var(--gold);
+    font-weight:900;font-size:13px;
+  }
+  .price-card .cta.block{margin-top:2px;}
+  .price-foot{font-size:12px;color:var(--mute);margin-top:12px;
+    letter-spacing:.02em;}
+
+  /* ---------- 产品说明 ---------- */
+  .how-pay{background:var(--card);border-top:1px solid var(--edge);
+    border-bottom:1px solid var(--edge);}
+  .pay-list{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
+  .pay-item{display:flex;gap:13px;align-items:flex-start;}
+  .pay-ic{
+    width:30px;height:30px;border-radius:50%;flex:0 0 auto;
+    background:#FBF6E8;border:1px solid var(--gold-soft);color:var(--gold);
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pay-item .t{font-weight:700;font-size:14.5px;color:var(--ink);}
+  .pay-item .d{font-size:12.5px;color:var(--mute);margin-top:1px;}
+
+  /* ---------- 三步 ---------- */
+  .steps{display:flex;flex-direction:column;gap:0;margin-top:6px;}
+  .step{display:flex;gap:15px;align-items:flex-start;position:relative;
+    padding-bottom:22px;}
+  .step:not(:last-child)::before{
+    content:"";position:absolute;left:16px;top:34px;bottom:0;width:2px;
+    background:linear-gradient(var(--gold-soft),var(--edge));
+  }
+  .step-n{
+    width:34px;height:34px;border-radius:50%;flex:0 0 auto;z-index:1;
+    background:linear-gradient(135deg,#C9A94A,#B5922A);color:#fff;
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .step .t{font-weight:700;font-size:15px;}
+  .step .d{font-size:12.5px;color:var(--mute);margin-top:2px;}
+
+  /* ---------- 真实累计数据条 ---------- */
+  .stat{text-align:center;}
+  .stat-card{
+    background:linear-gradient(180deg,#FFFDF6,var(--card));
+    border:1px solid var(--edge);border-radius:22px;
+    padding:34px 22px 30px;max-width:340px;margin:0 auto;
+    box-shadow:0 12px 30px rgba(181,146,42,.10);
+  }
+  .stat-lead{
+    font-size:13px;color:var(--mute);font-weight:500;
+    letter-spacing:.02em;margin-bottom:6px;
+  }
+  .stat-num{
+    font-family:"Noto Serif SC",serif;font-weight:900;
+    font-size:66px;line-height:1;color:var(--gold);
+    letter-spacing:-.01em;display:block;
+  }
+  .stat-num .unit{font-size:22px;font-weight:700;margin-left:4px;
+    color:var(--gold-soft);vertical-align:baseline;}
+  .stat-title{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:17px;
+    color:var(--ink);margin-top:12px;
+  }
+  .stat-note{font-size:12px;color:var(--mute);margin-top:10px;
+    letter-spacing:.02em;}
+  .stat-note b{color:var(--gold);font-weight:700;}
+
+  /* ---------- 底部CTA ---------- */
+  .final{
+    background:radial-gradient(120% 90% at 50% 0%,#FFFBF0,var(--bg));
+    text-align:center;padding:44px 24px 40px;
+    border-top:1px solid var(--edge);
+  }
+  .final .moon-big{
+    width:60px;height:60px;border-radius:50%;margin:0 auto 18px;
+    background:radial-gradient(circle at 36% 30%,#FBF0C8,var(--gold));
+    box-shadow:0 0 34px rgba(181,146,42,.4);
+  }
+  .final h2{font-family:"Noto Serif SC",serif;font-weight:700;font-size:22px;
+    line-height:1.4;margin-bottom:10px;}
+  .final p{font-size:13px;color:var(--mute);margin-bottom:24px;}
+
+  .footer{padding:22px 24px 34px;text-align:center;color:#B8AE97;font-size:11px;
+    background:var(--bg);}
+  .footer .wm{color:var(--gold);font-weight:700;letter-spacing:.1em;}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="brand"><span class="moon"></span>舞镜</div>
+    <div class="brand-en">WUJING · DANCE MIRROR</div>
+    <h1>把你想学的那支舞，<br><em>逐句拆开、量化到拍点</em>，<br>照着练就行</h1>
+    <p>上传任意一支舞，AI 帮你拆成八拍卡、歌词记忆卡、舞曲故事卡，还能慢放逐句跟练。</p>
+    <a class="cta" href="/app?upload=true">上传你的舞</a>
+    <div class="fulllink">
+      <span>课前预习</span><i>·</i><span>课上跟</span><i>·</i><span>课后复盘</span>
+      <em>学一支舞的全程，舞镜都替你拆好了</em>
+    </div>
+  </section>
+
+  <!-- 核心成果呈现 -->
+  <section>
+    <div class="kicker">你上传后，屏幕会变成这样</div>
+    <h2 class="sec-title">一支舞被拆开后<br>长这样</h2>
+    <p class="sec-sub">下面是真实拆解成果。上传你自己的舞，屏幕上出现的就是你这支舞的这几张卡。</p>
+
+    <!-- ① 八拍卡 -->
+    <div class="result">
+      <div class="result-head">
+        <span class="rnum">1</span>
+        <span class="rtitle">八拍卡</span>
+        <span class="rauto">AI 自动拆</span>
+      </div>
+      <div class="rdesc" style="text-align:center;margin-left:0;">整支舞分成 5 句 · 每句配时间戳、口诀和 8 张连拍帧，照着帧练动作。</div>
+    </div>
+  </section>
+  <!-- 横滑：这里用整张八拍卡放进相框，横滑提示看5句 -->
+  <div class="scroller">
+    <div class="snapcard">
+      <div class="frame"><img src="assets/baipai.png" alt="清别欢 八拍卡：起探游放收 5句 连拍帧"></div>
+    </div>
+  </div>
+  <div class="swipe-hint">起 · 探 · 游 · 放 · 收 <span>← 左右滑看每一句 →</span></div>
+
+  <section>
+    <!-- ② 歌词记忆卡 -->
+    <div class="result">
+      <div class="result-head">
+        <span class="rnum">2</span>
+        <span class="rtitle">歌词记忆卡</span>
+        <span class="rauto">AI 自动拆</span>
+      </div>
+      <div class="rdesc">歌词 × 动作 × 记忆钩子，配一段串记故事，一遍就记住动作顺序。</div>
+      <div class="frame tall">
+        <img src="assets/jiyi.png" alt="清别欢 歌词记忆卡：托月/旋身/展翅/云手收/行步 + 串记故事">
+      </div>
+    </div>
+
+    <!-- ③ 舞曲故事卡 -->
+    <div class="result">
+      <div class="result-head">
+        <span class="rnum">3</span>
+        <span class="rtitle">舞曲故事卡</span>
+        <span class="rauto">AI 自动拆</span>
+      </div>
+      <div class="rdesc">歌词全文、意境解读、动作叙事弧线、舞台意象——懂了意思，跳得才有感情。</div>
+      <div class="frame tall">
+        <img src="assets/gushi.png" alt="清别欢 舞曲故事卡：意境解读 + 动作叙事弧线 + 舞台意象">
+      </div>
+    </div>
+
+    <!-- ④ 慢放模式：整支逐句 + 镜像 -->
+    <div class="result">
+      <div class="result-head">
+        <span class="rnum">4</span>
+        <span class="rtitle">慢放模式</span>
+        <span class="rauto">AI 自动拆</span>
+      </div>
+      <div class="rdesc">先看整支正常速跳一遍找全貌 · 再逐句 0.5× 慢下来抠细节 · 可镜像翻转，对着屏幕跟不别扭。</div>
+
+      <!-- 整支·正常速 主视频（看全貌） -->
+      <div class="full-block">
+        <div class="full-head">
+          <span class="fh-t">先看整支跳一遍</span>
+          <span class="fh-badge">正常速 · 看全貌</span>
+          <span class="fh-line"></span>
+        </div>
+        <div class="video-wrap">
+          <span class="full-badge">整支《清别欢》· 正常速</span>
+          <video id="fullVideo" src="assets/full.mp4" poster="assets/full_poster.jpg"
+                 muted loop playsinline controls preload="metadata"></video>
+          <div class="full-note">整支 <b>正常速</b> 完整跳一遍，先在脑子里有整支舞的样子</div>
+        </div>
+      </div>
+
+      <!-- 分隔：整支 → 逐句 -->
+      <div class="slow-divide">
+        <span class="sd-line"></span>
+        <span class="sd-t">再<i>逐句</i>慢下来抠细节</span>
+        <span class="sd-line"></span>
+      </div>
+
+      <!-- 逐句 tab：起 探 游 放 收 -->
+      <div class="verse-tabs" id="verseTabs">
+        <div class="verse-tab active" data-src="assets/slow.mp4" data-verse="起" data-i="1"><span class="vn">1</span>起</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">2</span>探</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">3</span>游</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">4</span>放</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">5</span>收</div>
+      </div>
+
+      <div class="video-wrap" style="margin-top:14px;">
+        <span class="slow-badge">0.5× 逐句慢练</span>
+        <div class="mirror-btn" id="mirrorBtn"><span class="m-ic">⇄</span><span id="mirrorLabel">镜像跟练</span></div>
+        <video id="slowVideo" src="assets/slow.mp4"
+               muted loop playsinline controls preload="metadata"></video>
+        <div class="slow-note"><span id="verseNote">第 1 句「起」</span> · <b>0.5× 慢放</b>，看清每个转身与收势</div>
+      </div>
+      <div class="verse-caption">演示第 1 句「起」· 上传你的舞后，<b>每一句</b>都有自己的慢放片段 · 一键 <b>镜像跟练</b></div>
+    </div>
+  </section>
+
+  <!-- 9.9 价格锚点 -->
+  <section class="price-sec">
+    <div class="kicker">看完满意，再决定</div>
+    <h2 class="sec-title">这支舞的完整拆解<br>只要一杯奶茶钱</h2>
+    <div class="price-card">
+      <div class="price-top">
+        <div class="price-num"><span class="cur">¥</span>9.9</div>
+        <div class="price-per">/ 一支舞</div>
+      </div>
+      <ul class="price-feat">
+        <li>八拍卡 · 歌词记忆卡 · 舞曲故事卡 全套高清</li>
+        <li>可下载保存，永久收藏</li>
+      </ul>
+      <a class="cta block" href="/app?upload=true">立即免费体验</a>
+      <div class="price-foot">测试期间完全免费 · 上传无需登录</div>
+    </div>
+  </section>
+
+  <!-- 三步 -->
+  <section class="how-pay">
+    <div class="kicker">很简单，先看后买</div>
+    <h2 class="sec-title">怎么用</h2>
+    <p class="sec-sub">上传免费、无需登录，测试期间拆解结果完全免费获取。</p>
+    <div class="steps" style="margin-top:8px;">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><div class="t">上传你的舞</div>
+        <div class="d">任意一支舞视频，无需登录，上传即开始。</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><div class="t">AI 逐句拆</div>
+        <div class="d">自动切成八拍句，配连拍帧、口诀、歌词记忆钩、故事解读。</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><div class="t">跟练 / 慢放 / 镜像</div>
+        <div class="d">照着卡练，卡壳就 0.5× 慢放、镜像翻转跟着做。</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 真实累计数据条 -->
+  <section class="stat">
+    <div class="stat-card">
+      <div class="stat-lead">已为舞者拆解</div>
+      <span class="stat-num serif"><span id="danceCount">38</span><span class="unit">支舞</span></span>
+      <div class="stat-title">真实累计</div>
+      <div class="stat-note">每一次拆解都在增长 · <b>下一支就是你的</b></div>
+    </div>
+  </section>
+
+  <!-- 底部CTA -->
+  <section class="final">
+    <div class="moon-big"></div>
+    <h2>想学的那支舞，<br>现在就拆给你看</h2>
+    <p>测试期间免费体验 · 上传无需登录</p>
+    <a class="cta block" href="/app?upload=true">上传你的舞</a>
+  </section>
+
+  <div class="footer">
+    <div class="wm">舞镜 WUJING</div>
+    <div style="margin-top:6px;">wujing.mylumee.app · 成果均为真实拆解示例《清别欢》</div>
+  </div>
+
+</div>
+
+<script>
+  const v=document.getElementById('slowVideo');
+  const tabs=document.querySelectorAll('#verseTabs .verse-tab');
+  const note=document.getElementById('verseNote');
+
+  // 逐句切换：起 探 游 放 收
+  tabs.forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      v.src=tab.dataset.src;
+      v.load();
+      v.play().catch(()=>{});
+      note.textContent='第 '+tab.dataset.i+' 句「'+tab.dataset.verse+'」';
+    });
+  });
+
+  // 镜像跟练：左右翻转
+  const mirrorBtn=document.getElementById('mirrorBtn');
+  const mirrorLabel=document.getElementById('mirrorLabel');
+  mirrorBtn.addEventListener('click',()=>{
+    const on=v.classList.toggle('mirrored');
+    mirrorBtn.classList.toggle('on',on);
+    mirrorLabel.textContent=on?'镜像中':'镜像跟练';
+  });
+
+  // 整支正常速主视频：进入视口自动播放；开始播时暂停逐句慢放，避免两个视频抢戏
+  const full=document.getElementById('fullVideo');
+  if(full){
+    full.addEventListener('play',()=>{ if(v) v.pause(); });
+    const ioF=new IntersectionObserver((es)=>{
+      es.forEach(e=>{ if(e.isIntersecting){full.play().catch(()=>{});} else {full.pause();} });
+    },{threshold:.4});
+    ioF.observe(full);
+  }
+
+  // 逐句慢放视频进入视口自动播放（更有"慢练"冲击力）；播时暂停整支
+  if(v){
+    v.addEventListener('play',()=>{ if(full) full.pause(); });
+    const io=new IntersectionObserver((es)=>{
+      es.forEach(e=>{ if(e.isIntersecting){v.play().catch(()=>{});} else {v.pause();} });
+    },{threshold:.4});
+    io.observe(v);
+  }
+
+  // 动态拉真实拆解数量
+  fetch('/api/public/stats').then(r=>r.json()).then(d=>{
+    const n = d.decompose_count || d.total || 38;
+    const el = document.getElementById('danceCount');
+    if(el) el.textContent = n;
+  }).catch(()=>{});
+</script>
+</body>
+</html>

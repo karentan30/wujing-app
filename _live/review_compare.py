@@ -353,6 +353,51 @@ def _weighted_total(dim):
     return _clamp_score(num / den)
 
 
+
+def _run_vision_only_review(review_id, my_video, title, result_placeholder):
+    """Vision-only fallback when reference has no angle data.
+    Uses _vision_coach on user video frames — real AI feedback, no comparison score."""
+    rdir = _review_dir(review_id)
+    fdir = os.path.join(rdir, "frames")
+    os.makedirs(fdir, exist_ok=True)
+    try:
+        dur = _dur(my_video)
+        n = max(3, min(5, int(dur / 3)))
+        frame_paths = []
+        for i in range(n):
+            t = dur * (i + 0.5) / n
+            p = os.path.join(fdir, f"mine{i+1}.jpg")
+            _grab(my_video, t, p)
+            if os.path.exists(p):
+                frame_paths.append(p)
+        coach = None
+        if frame_paths:
+            try:
+                coach = _vision_coach(frame_paths, title)
+            except Exception:
+                coach = None
+        if not coach:
+            result_placeholder.update({"status": "failed",
+                "message": "AI 视觉分析失败，请确保视频光线充足、全身入镜后重试"})
+            _write(review_id, result_placeholder)
+            return
+        problems = []
+        for i, item in enumerate(coach.get("improve", [])[:3]):
+            problems.append({"seg": i + 1,
+                "severity": "severe" if i == 0 else "mild",
+                "title": item.split("：")[0].strip() if "：" in item else item[:20],
+                "detail": item, "fix": "", "slowmo": None, "frames": None})
+        highlights = [{"seg": 0, "desc": h} for h in coach.get("good", [])[:2]]
+        result_placeholder.update({"status": "completed", "score": None,
+            "score_note": "纯视觉分析模式 · 无参考角度数据，不出对比分",
+            "measured_ratio": 0, "vision_only": True, "dims": [],
+            "problems": problems, "highlights": highlights,
+            "coach_comment": coach.get("comment", "")})
+        _write(review_id, result_placeholder)
+    except Exception as e:
+        result_placeholder.update({"status": "failed", "message": f"分析失败：{str(e)[:100]}"})
+        _write(review_id, result_placeholder)
+
 # ------------------------------------------------------------------ 顶层编排
 
 def run_solo_review(review_id, my_video, standard_ref, title="我的舞", mode="reference", user_id=None):
@@ -373,6 +418,15 @@ def run_solo_review(review_id, my_video, standard_ref, title="我的舞", mode="
         # 1) 标准分段角度（A/C 读缓存免测；B 现拆标准）
         std_segs = _standard_segments(standard_ref)
         n_std = len(std_segs)
+
+        # 无角度数据时降级为纯 vision 点评（诚实：不假装能对比）
+        has_std_angles = any(
+            seg.get("angles") and any(v is not None for v in seg["angles"].values())
+            for seg in std_segs if seg.get("angles")
+        )
+        if not has_std_angles:
+            _run_vision_only_review(review_id, my_video, title, result)
+            return
 
         # 2) 我的视频：对齐标准段数抽中帧，姿态引擎逐段实测（帧落盘供对比/慢放）
         my_segs, my_bounds, _n = _measure_video_segments(
