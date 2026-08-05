@@ -152,6 +152,7 @@ input[type=text]:focus{border-color:var(--gold);background:#fff}
 </div>
 
 <script>
+function _esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 // ═══ 学员端加入 → 上传 → 等分 → 看自己那页（脱敏：只见自己+名次）═══
 const QS = new URLSearchParams(location.search);
 // 支持两种入口：/class_join.html?code=ABC123  或  /j/ABC123（后端重写到本页并带 code）
@@ -273,7 +274,7 @@ function renderResult(d){
       <div style="font-size:12px;font-weight:700;color:${clr}">${f[0]} · ${f[1]}</div>
       <div style="font-size:12.5px;color:var(--ink-60);margin-top:3px;line-height:1.6">${f[2]}</div></div>`; });
   $('rFb').innerHTML = fbHtml;
-  if(s.teacher_note){ $('rNote').classList.remove('hidden'); $('rNote').innerHTML = '<b style="color:var(--gold)">老师评语：</b><br>'+s.teacher_note; }
+  if(s.teacher_note){ $('rNote').classList.remove('hidden'); $('rNote').innerHTML = '<b style="color:var(--gold)">老师评语：</b><br>'+_esc(s.teacher_note); }
   show('cardResult');
 }
 

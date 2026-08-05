@@ -128,6 +128,7 @@ input:focus,select:focus{border-color:var(--gold);background:#fff}
 <div class="toast" id="toast"></div>
 
 <script>
+function _esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 // ═══ 老师端：建班 → 发码 → 进度看板 → 开评 → 看报告 ═══
 const $ = id => document.getElementById(id);
 const QS = new URLSearchParams(location.search);
@@ -206,11 +207,11 @@ function renderBoard(p){
   if(p.queue){ $('queueInfo').textContent = `评分队列：排队 ${p.queue.queued} · 处理中 ${p.queue.active}（限流并发≤${p.queue.max_concurrency}）`; }
   $('memberList').innerHTML = (p.members||[]).map(m=>{
     const dotClr = {joined:'#ccc',uploaded:'var(--yellow)',scoring:'var(--blue)',scored:'var(--green)',failed:'var(--red)'}[m.status]||'#ccc';
-    const real = m.real_name ? `<span class="m-real">(${m.real_name})</span>` : '';
+    const real = m.real_name ? `<span class="m-real">(${_esc(m.real_name)})</span>` : '';
     const score = (m.status==='scored'&&m.score!=null) ? `<span class="m-score">${m.score}</span>` : '';
-    const rescore = (m.status==='failed'||m.status==='scored') ? `<button class="btn btn-ghost btn-sm" onclick="rescore('${m.member_id}')">重跑</button>` : '';
+    const rescore = (m.status==='failed'||m.status==='scored') ? `<button class="btn btn-ghost btn-sm" onclick="rescore('${_esc(m.member_id)}')">重跑</button>` : '';
     return `<div class="member"><span class="m-dot" style="background:${dotClr}"></span>
-      <span class="m-name">${m.nickname||'学员'}${real}</span>
+      <span class="m-name">${_esc(m.nickname)||'学员'}${real}</span>
       ${score}<span class="m-status st-${m.status}">${STATUS_CN[m.status]||m.status}</span>${rescore}</div>`;
   }).join('') || '<div style="text-align:center;color:var(--ink-40);font-size:13px;padding:16px">还没有学员加入，把邀请码发出去吧</div>';
 }

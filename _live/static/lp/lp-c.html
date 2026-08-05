@@ -859,14 +859,10 @@
         「第3段：倾腰·探·定 | 8帧连拍」
       </span>
 
-      <!-- Slots bar -->
+      <!-- 免费体验提示 -->
       <div class="slots-bar-wrap" style="width:100%;max-width:340px;">
         <div class="slots-bar-label">
-          <span>名额已领取</span>
-          <span class="taken">已领 <span id="slots-taken">347</span>/500</span>
-        </div>
-        <div class="slots-bar">
-          <div class="slots-bar-fill" id="slots-fill" style="width:69%"></div>
+          <span>🎯 上传即可免费体验拆解预览</span>
         </div>
       </div>
 
@@ -942,7 +938,7 @@
         <span class="arrow">→</span>
       </a>
       <p class="cta-sub">
-        仅剩 <span class="slots" id="slots-left">153</span> 个免费名额 · 不满意不花钱
+        上传免费体验 · 拆解结果 ¥9.9
       </p>
     </section>
 
@@ -1347,17 +1343,6 @@
       if (taken) taken.textContent = slotsBase;
       if (left) left.textContent = 500 - slotsBase;
       if (stickySlots) stickySlots.textContent = 500 - slotsBase;
-      // Slowly increment slots taken every 20-60 seconds (feel real)
-      setInterval(function() {
-        if (slotsBase < 498) {
-          slotsBase += 1;
-          var newPct = (slotsBase / 500 * 100).toFixed(1);
-          if (fill) fill.style.width = newPct + '%';
-          if (taken) taken.textContent = slotsBase;
-          if (left) left.textContent = 500 - slotsBase;
-          if (stickySlots) stickySlots.textContent = 500 - slotsBase;
-        }
-      }, 30000 + Math.random() * 30000);
     }
 
     // ===== Countdown timer =====
@@ -1368,9 +1353,6 @@
       var stored = sessionStorage.getItem('wj_cd_target');
       if (stored) {
         target = parseInt(stored, 10);
-        if (target < Date.now()) {
-          target = Date.now() + (2 * 3600 + 47 * 60 + 33) * 1000;
-        }
       }
       sessionStorage.setItem('wj_cd_target', target);
 
