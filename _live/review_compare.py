@@ -34,6 +34,8 @@
 """
 import os
 import json
+import subprocess
+import threading
 import traceback
 
 # 复用拆解引擎的常量与工具（同 _live 目录，一字不改地借用）。
@@ -672,6 +674,69 @@ try:
             if os.path.exists(path):
                 return FileResponse(path, media_type="image/jpeg")
         raise HTTPException(status_code=404, detail="Frame not found")
+
+    @router.post("/review/{review_id}/video")
+    async def gen_solo_compare_video(review_id: str):
+        """AI 比对点评完成后生成对比视频（可下载/分享）。异步触发，立即返回。"""
+        rev = get_review(review_id)
+        if not rev:
+            raise HTTPException(status_code=404, detail="点评不存在")
+        if rev.get("status") != "completed":
+            raise HTTPException(status_code=400, detail="点评尚未完成，请等待")
+
+        rdir = _review_dir(review_id)
+        review_json = os.path.join(rdir, "review.json")
+        learner_video = os.path.join(rdir, "input.mp4")
+        out_mp4 = os.path.join(rdir, "compare_video.mp4")
+
+        if not os.path.exists(learner_video):
+            raise HTTPException(status_code=404, detail="用户视频不存在")
+
+        # 找标准视频
+        std_ref = rev.get("standard_ref", {})
+        if std_ref.get("kind") == "decompose_id":
+            did = std_ref["id"]
+            did_dir = os.path.join(DATA_DIR, did)
+            # auto_decompose 不产 full.mp4，找目录下任意 .mp4
+            _mp4s = [f for f in os.listdir(did_dir) if f.endswith(".mp4")] if os.path.isdir(did_dir) else []
+            std_video = os.path.join(did_dir, _mp4s[0]) if _mp4s else ""
+        elif std_ref.get("kind") == "video":
+            std_video = std_ref.get("path", "")
+        else:
+            std_video = ""
+        if not std_video or not os.path.exists(std_video):
+            # fallback: 用学员自己的视频左右比对
+            std_video = learner_video
+
+        # 已有视频直接返回
+        if os.path.exists(out_mp4):
+            return {"status": "ready", "video_url": f"/api/solo/review/{review_id}/download"}
+
+        _HERE = os.path.dirname(os.path.abspath(__file__))
+
+        def _gen():
+            gen_script = os.path.join(_HERE, "gen_compare_video.py")
+            if not os.path.exists(gen_script):
+                print(f"[compare_video] gen_compare_video.py not found"); return
+            r = subprocess.run(
+                ["python3", gen_script, review_json, std_video, learner_video, out_mp4],
+                capture_output=True, text=True, timeout=300)
+            if r.returncode == 0:
+                print(f"[compare_video] ✅ {out_mp4}")
+            else:
+                print(f"[compare_video] ❌ {r.stderr[-300:]}")
+
+        threading.Thread(target=_gen, daemon=True).start()
+        return {"status": "generating", "message": "对比视频生成中，约 30 秒后可下载"}
+
+    @router.get("/review/{review_id}/download")
+    def download_compare_video(review_id: str):
+        """下载对比视频 MP4。"""
+        path = os.path.join(_review_dir(review_id), "compare_video.mp4")
+        if not os.path.exists(path):
+            raise HTTPException(status_code=404, detail="视频尚未生成，请先调用 /video 端点")
+        return FileResponse(path, media_type="video/mp4",
+                           filename=f"wujing_compare_{review_id[:8]}.mp4")
 
 except ImportError:
     router = None

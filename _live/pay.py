@@ -34,6 +34,20 @@ import urllib.error
 from fastapi import APIRouter, Request, Header, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
+try:
+    from analytics import track as _ph_track
+except Exception:
+    def _ph_track(*a, **kw): pass
+
+try:
+    from hub_pay import HubPay as _HubPay
+    _hp = _HubPay(os.environ.get("HUB_PROJECT_ID", "wujing"))
+except ImportError:
+    _hp = None
+
+def _hub_ready():
+    return _hp is not None and _hp.ready()
+
 # 与 server.py / auto_decompose.py 保持同一路径
 BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
 DB_PATH = os.environ.get("WUJING_DB_PATH", os.path.join(BASE_DIR, "wujing.db"))
@@ -371,6 +385,13 @@ def _mark_paid_and_fulfill(out_trade_no, trade_no, channel, paid_amount_check,
                 print(f"[pay/ref_award] 奖励异常（不影响履约）: {_e}")
             con.commit()
             print(f"[pay/{channel}] PAID {out_trade_no} {summary}")
+            try:
+                _ph_track(str(user_id or "guest"), "payment_success", {
+                    "channel": channel, "dance_id": dance_id,
+                    "amount": float(amount), "product": product,
+                })
+            except Exception:
+                pass
             return "ok"
         finally:
             con.close()
@@ -454,7 +475,26 @@ async def wechat_create(payload: dict, authorization: str = Header(None),
     if not dance_id:
         raise HTTPException(status_code=400, detail="缺少 dance_id")
     if not _wechat_ready():
-        raise HTTPException(status_code=503, detail="微信支付暂未开放")
+        if not _hub_ready():
+            raise HTTPException(status_code=503, detail="微信支付暂未开放")
+        price_cny, _ = _resolve_price(user_id, bool(payload.get("discount")))
+        try:
+            order = _hp.create("wechat", PRODUCT_NAME, price_cny, out_ref=dance_id)
+        except RuntimeError as e:
+            raise HTTPException(status_code=502, detail=f"发起支付失败：{e}")
+        hub_oid = order.get("order_no") or _new_oid("WJHWX")
+        con = get_db()
+        try:
+            con.execute(
+                "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,ref_code,discount,created_at)"
+                " VALUES(?,?,?,?,'pending','hub_wechat','CNY','',?,?,?)",
+                (hub_oid, user_id, dance_id, "%.2f" % price_cny, ref_code or None,
+                 1 if price_cny < PRICE_CNY else 0, _now_iso()))
+            con.commit()
+        finally:
+            con.close()
+        return {"ok": True, "out_trade_no": hub_oid,
+                "code_url": order.get("code_url", ""), "amount": price_cny}
     price_cny, _ = _resolve_price(user_id, bool(payload.get("discount")))
     oid = _new_oid("WJWX")
     con = get_db()
@@ -467,6 +507,11 @@ async def wechat_create(payload: dict, authorization: str = Header(None),
         con.commit()
     finally:
         con.close()
+    try:
+        _ph_track(str(user_id or "guest"), "payment_start", {
+            "channel": "wechat", "dance_id": dance_id, "amount": price_cny})
+    except Exception:
+        pass
     try:
         r = _wx_unifiedorder(oid, int(round(price_cny * 100)), PRODUCT_NAME, "127.0.0.1")
     except Exception as e:
@@ -557,7 +602,26 @@ async def alipay_create(payload: dict, authorization: str = Header(None),
         raise HTTPException(status_code=400, detail="缺少 dance_id")
     client = get_alipay()
     if not client:
-        raise HTTPException(status_code=503, detail="支付宝暂未开放")
+        if not _hub_ready():
+            raise HTTPException(status_code=503, detail="支付宝暂未开放")
+        price_cny, _ = _resolve_price(user_id, bool(payload.get("discount")))
+        try:
+            order = _hp.create("alipay", PRODUCT_NAME, price_cny, out_ref=dance_id)
+        except RuntimeError as e:
+            raise HTTPException(status_code=502, detail=f"发起支付失败：{e}")
+        hub_oid = order.get("order_no") or _new_oid("WJHAL")
+        con = get_db()
+        try:
+            con.execute(
+                "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,breakdown_status,ref_code,discount,created_at)"
+                " VALUES(?,?,?,?,'pending','hub_alipay','CNY','',?,?,?)",
+                (hub_oid, user_id, dance_id, "%.2f" % price_cny, ref_code or None,
+                 1 if price_cny < PRICE_CNY else 0, _now_iso()))
+            con.commit()
+        finally:
+            con.close()
+        qr = order.get("qr_code") or order.get("code_url", "")
+        return {"ok": True, "out_trade_no": hub_oid, "qr_code": qr, "amount": price_cny}
     price_cny, _ = _resolve_price(user_id, bool(payload.get("discount")))
     oid = _new_oid("WJAL")
     con = get_db()
@@ -862,6 +926,14 @@ def _pay_status_query(out_trade_no, channel=None):
                         and q.get("trade_status") in ("TRADE_SUCCESS", "TRADE_FINISHED")):
                     _mark_paid_and_fulfill(out_trade_no, q.get("trade_no", ""), "alipay",
                                            q.get("total_amount", ""), background_tasks=None)
+        elif ch in ("hub_wechat", "hub_alipay") and _hub_ready():
+            try:
+                hresp = _hp.status(out_trade_no)
+                if hresp.get("status") == "paid":
+                    _mark_paid_and_fulfill(out_trade_no, out_trade_no, ch,
+                                           row["amount"], background_tasks=None)
+            except Exception as e:
+                print(f"[pay/hub/status] poll err {e}")
         elif ch == "stripe" and _stripe_ready():
             # trade_no 存的是 session id → 查 session 支付状态
             sid = None

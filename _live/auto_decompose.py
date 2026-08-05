@@ -37,6 +37,30 @@ def _dur(path):
         return 0.0
 
 
+def _detect_bpm(video_path):
+    """检测视频 BPM。优先 aubiotrack，fallback None。"""
+    import tempfile as _tf
+    tmp = _tf.mktemp(suffix=".wav")
+    try:
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", video_path,
+                       "-ar", "44100", "-ac", "1", tmp],
+                      check=True, timeout=30, capture_output=True)
+        r = subprocess.run(["aubiotrack", "-i", tmp, "-O", "tempo"],
+                          capture_output=True, text=True, timeout=20)
+        bpms = [float(x) for x in r.stdout.strip().split()
+                if x.replace('.', '').replace('-', '').isdigit() and 40 < float(x) < 240]
+        if bpms:
+            return round(sum(bpms) / len(bpms), 1)
+    except Exception:
+        pass
+    finally:
+        try:
+            os.remove(tmp)
+        except Exception:
+            pass
+    return None
+
+
 def _grab(src, t, out):
     _run(["ffmpeg", "-y", "-ss", f"{t}", "-i", src, "-frames:v", "1",
           "-q:v", "3", "-vf", "scale=360:-1", out])
@@ -89,10 +113,11 @@ def _vision_describe(frame_path, idx, t0, t1):
         f"这是一支舞蹈第{idx}段(约{t0:.1f}-{t1:.1f}秒)的定格画面。你是资深舞蹈老师，"
         "用中文描述这个动作帮学员跟练。只输出JSON不要解释：\n"
         '{"name":"2-3字段名如 起势/开手/旋身/亮相","action":"一句话身体和手臂动作要点",'
-        '"feet":"脚下和重心一句话","intent":"这段的意境或情绪一句话","kou":"3-4字记忆口诀如 举—望—转",'
+        '"feet":"脚下和重心一句话","intent":"这段的意境或情绪一句话",'
+        '"kou":"4-8字上口记忆口诀，动词串联成连贯短句，要有节奏感，例如：举一望一转踢、探一沉一开胸腰、拧一旋一回眸。禁止用破折号连接动词列表，必须是连贯短句",'
         '"key":"1个最能代表这段动作的汉字如 遮/抛/仰/拧/甩/举/沉/回/开/点"}'
     )
-    body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 260,
+    body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 320,
             "input": [{"role": "user", "content": [
                 {"type": "input_image", "image_url": _b64(frame_path)},
                 {"type": "input_text", "text": prompt}]}]}
@@ -106,6 +131,29 @@ def _vision_describe(frame_path, idx, t0, t1):
         if out.lstrip().lower().startswith("json"):
             out = out.lstrip()[4:]
     d = json.loads(out.strip())
+    # 口诀质量 loop：含破折号或不足4字 → 自动重试一次
+    kou_val = d.get("kou", "")
+    if "—" in kou_val or len(kou_val) < 4:
+        try:
+            retry_body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 320,
+                          "input": [{"role": "user", "content": [
+                              {"type": "input_image", "image_url": _b64(frame_path)},
+                              {"type": "input_text", "text": prompt + "\n\n注意：口诀必须是连贯短句如'举一望一转踢'，严禁破折号分隔，上次生成不合格请重新生成"}]}]}
+            req2 = urllib.request.Request(ARK_URL, data=json.dumps(retry_body).encode(),
+                headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
+            r2 = json.loads(urllib.request.urlopen(req2, timeout=60).read())
+            out2 = "".join(c.get("text", "") for o in r2.get("output", []) if o.get("type") == "message"
+                           for c in o.get("content", [])).strip()
+            if out2.startswith("```"):
+                out2 = out2.split("```")[1]
+                if out2.lstrip().lower().startswith("json"):
+                    out2 = out2.lstrip()[4:]
+            d2 = json.loads(out2.strip())
+            if d2.get("kou") and len(d2["kou"]) >= 4:
+                d["kou"] = d2["kou"]
+                print(f"[kou loop] {kou_val!r} → {d['kou']!r}")
+        except Exception as _e:
+            print(f"[kou loop] retry fail: {_e}")
     return {"i": idx, "t0": round(t0, 2), "t1": round(t1, 2),
             "name": d.get("name", ""), "full": (d.get("action", "") or "")[:14],
             "action": d.get("action", ""), "feet": d.get("feet", ""),
@@ -167,9 +215,9 @@ def _deepseek_story(title, phrases):
     prompt = (f"你是资深舞蹈老师。下面是《{title}》按八拍自动拆的分段：\n{ctx}\n\n"
               "请生成一张故事卡帮舞者跳出感觉。只输出严格JSON不要markdown：\n"
               '{"title":"故事标题","body":"120字以内情感叙事，讲这支舞的意境和该跳出的眼神状态",'
-              '"chain":"把整支舞串成一句好记的联想口诀"}')
+              '"chain":"用歌谣体把整支舞口诀编成押韵短歌，每段动作对应一句3-4字，句句押韵，朗朗上口，跳舞时能在心里默念。示例：举臂望天探身沉/旋风回眸展袖云/扬手如鸟仰面笑/五式连贯自然成。段数和分段口诀一一对应，押同一个韵脚"}')
     body = json.dumps({"model": "deepseek-chat", "messages": [{"role": "user", "content": prompt}],
-                       "max_tokens": 800, "temperature": 0.7}).encode()
+                       "max_tokens": 1200, "temperature": 0.7}).encode()
     req = urllib.request.Request(DEEPSEEK_URL, data=body,
         headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
     raw = json.loads(urllib.request.urlopen(req, timeout=90).read())["choices"][0]["message"]["content"].strip()
@@ -267,14 +315,23 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
     os.makedirs(os.path.join(ddir, "clips"), exist_ok=True)
     result = {"id": did, "user_id": user_id, "title": title, "genre": genre,
               "song": song, "lyric_first": lyric_first, "lyric_last": lyric_last,
-              "status": "processing"}
+              "bpm": None, "status": "processing"}
     _write(did, result)
     try:
         dur = _dur(video_path)
         if dur <= 0:
             raise RuntimeError("无法读取视频时长（文件损坏或非视频）")
-        n = max(MIN_SEG, min(MAX_SEG, round(dur / SEG_LEN)))
-        seg = dur / n
+        bpm = _detect_bpm(video_path)
+        if bpm and 40 < bpm < 220:
+            bar_dur = 60.0 / bpm * 8  # 一个八拍时长
+            n = max(MIN_SEG, min(MAX_SEG, round(dur / bar_dur)))
+            seg = dur / n
+            print(f"[bpm] {bpm} BPM → 八拍={bar_dur:.2f}s → {n}段")
+        else:
+            bpm = None
+            n = max(MIN_SEG, min(MAX_SEG, round(dur / SEG_LEN)))
+            seg = dur / n
+        result["bpm"] = bpm
         bounds = [round(i * seg, 2) for i in range(n)] + [round(dur, 2)]
 
         STRIP = 4  # 每段胶片帧数（照established八拍卡.py设计）
@@ -351,7 +408,7 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         if det_genre in ("guofeng", "kpop"):
             result["genre"] = det_genre
 
-        result.update({"bpm": None, "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
+        result.update({"bpm": result.get("bpm"), "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
                        "story": story, "memory": memory, "coach": coach, "status": "completed"})
         _write(did, result)
     except Exception:

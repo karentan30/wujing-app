@@ -731,6 +731,32 @@ def get_decompose_card(did: str, name: str):
     return FileResponse(path, media_type="image/png",
                         headers={"Content-Disposition": f"attachment; filename*=UTF-8''{safe_filename}"})
 
+@app.get("/api/decompose/{did}/card_thumb/{name}")
+def get_card_thumb(did: str, name: str):
+    """返回卡片顶部缩略图 JPEG（约 50KB），供前端预览用。"""
+    _safe_did(did)
+    name_clean = name.replace("..", "").replace("/", "").replace("\\", "")
+    path = os.path.join(DATA_DIR, did, name_clean)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Card not found")
+    import io
+    from PIL import Image as _Img
+    try:
+        im = _Img.open(path).convert("RGB")
+        # 取顶部 800px（= 400px 原始 × 2x 输出），等比缩放到宽 320px
+        crop_h = min(800, im.height)
+        im = im.crop((0, 0, im.width, crop_h))
+        scale = 320 / im.width
+        thumb = im.resize((320, int(crop_h * scale)), _Img.LANCZOS)
+        buf = io.BytesIO()
+        thumb.save(buf, format="JPEG", quality=75)
+        buf.seek(0)
+        from fastapi.responses import StreamingResponse
+        return StreamingResponse(buf, media_type="image/jpeg",
+                                 headers={"Cache-Control": "public, max-age=86400"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/")
 def serve_home():
     _h = os.path.join(BASE_DIR, "static", "home-v2.html")

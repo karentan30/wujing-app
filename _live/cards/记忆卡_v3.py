@@ -9,18 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from card_engine import font, safe, COLORS
 from PIL import Image, ImageDraw
 
-LYRICS = [
-    "远方有琴  愀然空灵",
-    "声声催天雨  涓涓心事说给自己听",
-    "月影憧憧  烟火几重  烛花红",
-    "红尘旧梦  梦断都成空",
-    "雨打湿了眼眶",
-    "年年倚井盼归堂",
-    "最怕不觉  泪已拆两行",
-    "我在人间彷徨  寻不到你的天堂",
-    "东瓶西镜放  恨不能遗忘",
-    "又是清明雨上  折菊寄到你身旁",
-]
+LYRICS = []  # 兜底空，避免印错歌曲的歌词到其他舞蹈卡片
 
 def main():
     outdir = sys.argv[1] if len(sys.argv) > 1 else "output/青山烟雨客"
@@ -28,7 +17,7 @@ def main():
     ph     = data["phrases"]
     title  = safe(data.get("title", ""))
     story  = data.get("story", {})
-    mnemo  = safe(data.get("mnemo", ""))
+    mnemo  = safe((data.get("story") or {}).get("chain", ""))
     mnemo_sub = safe(data.get("mnemo_sub", ""))
 
     W       = 900

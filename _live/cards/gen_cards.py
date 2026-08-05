@@ -20,6 +20,37 @@ _ce_mod = _types.ModuleType("card_engine")
 exec(compile(_ce_src, "card_engine.py", "exec"), _ce_mod.__dict__)
 sys.modules["card_engine"] = _ce_mod
 
+def _qa_check(path, name):
+    """生成后自动 sanity check，有问题立刻报警而不是静默通过。"""
+    from PIL import Image
+    issues = []
+    if not os.path.exists(path):
+        print(f"❌ QA FAIL [{name}]: 文件不存在"); return
+    size = os.path.getsize(path)
+    if size < 500_000:
+        issues.append(f"文件 {size//1024}KB 过小（预期>500KB，可能渲染失败）")
+    try:
+        im = Image.open(path)
+        w, h = im.size
+        if h < w:
+            issues.append(f"尺寸 {w}×{h} 异常（卡片应竖版，高>宽）")
+        if h < 2000:
+            issues.append(f"高度 {h}px 过矮（预期>2000px，可能内容被截断）")
+        # 检查 header 区域不是纯黑（说明背景色正常渲染）
+        header = im.crop((0, 0, min(w, 200), min(h, 60))).convert("RGB")
+        pixels = list(header.getdata())
+        avg = sum(r+g+b for r,g,b in pixels) / (len(pixels)*3)
+        if avg < 5:
+            issues.append("Header 区域接近纯黑，背景可能未渲染")
+    except Exception as e:
+        issues.append(f"图片读取失败: {e}")
+    if issues:
+        print(f"⚠️  QA WARNING [{name}]:")
+        for iss in issues:
+            print(f"   · {iss}")
+    else:
+        print(f"✅ {name}  {size//1024}KB  QA通过")
+
 def gen_all(did, video_path, outdir):
     if not os.path.exists(os.path.join(outdir, "breakdown.json")):
         raise FileNotFoundError(f"breakdown.json not found in {outdir}")
@@ -42,8 +73,7 @@ def gen_all(did, video_path, outdir):
             exec(compile(src, script, "exec"), mod.__dict__)
             mod.main()
             out = os.path.join(outdir, card_name)
-            size = os.path.getsize(out) if os.path.exists(out) else 0
-            print(f"✅ {card_name}  {size//1024}KB")
+            _qa_check(out, card_name)
         except Exception as e:
             import traceback; traceback.print_exc()
             print(f"❌ {script_name}: {e}")
