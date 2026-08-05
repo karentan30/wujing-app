@@ -1150,26 +1150,6 @@
         <span class="arrow">→</span>
       </a>
 
-      <!-- Countdown -->
-      <div style="margin-top:28px;">
-        <p style="text-align:center;font-size:12px;color:var(--warm-gray);margin-bottom:12px;">活动倒计时</p>
-        <div class="countdown-wrap">
-          <div class="cd-group">
-            <div class="cd-box" id="cd-h">02</div>
-            <div class="cd-label">小时</div>
-          </div>
-          <div class="cd-sep">:</div>
-          <div class="cd-group">
-            <div class="cd-box" id="cd-m">47</div>
-            <div class="cd-label">分钟</div>
-          </div>
-          <div class="cd-sep">:</div>
-          <div class="cd-group">
-            <div class="cd-box" id="cd-s">33</div>
-            <div class="cd-label">秒</div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <div class="section-divider"></div>
@@ -1260,7 +1240,7 @@
         <span>立即免费领</span>
         <span class="arrow">→</span>
       </a>
-      <p class="user-count">已有 <strong>347+</strong> 人在用舞镜 AI</p>
+      <p class="user-count">🎯 AI 实时拆解 · 随时随地练</p>
     </section>
 
     <footer>
@@ -1277,7 +1257,7 @@
       <span>立即免费领</span>
       <span class="arrow">→</span>
     </a>
-    <p class="sticky-sub">仅剩 <span id="sticky-slots">153</span> 个名额 · 不满意不花钱</p>
+    <p class="sticky-sub">上传免费体验 · 拆解结果 ¥9.9</p>
   </div>
 
   <!-- =================== SCRIPTS =================== -->
@@ -1314,10 +1294,6 @@
       // Switch from skeleton to real content
       document.body.classList.remove('loading');
       document.body.classList.add('loaded');
-      // Animate slots bar
-      setTimeout(function() {
-        animateSlotsBar();
-      }, 400);
     });
 
     // ===== CTA click tracking =====
@@ -1331,47 +1307,6 @@
       });
     }
 
-    // ===== Slots bar animation =====
-    var slotsBase = 347;
-    function animateSlotsBar() {
-      var fill = document.getElementById('slots-fill');
-      var taken = document.getElementById('slots-taken');
-      var left = document.getElementById('slots-left');
-      var stickySlots = document.getElementById('sticky-slots');
-      var pct = (slotsBase / 500 * 100).toFixed(1);
-      if (fill) fill.style.width = pct + '%';
-      if (taken) taken.textContent = slotsBase;
-      if (left) left.textContent = 500 - slotsBase;
-      if (stickySlots) stickySlots.textContent = 500 - slotsBase;
-    }
-
-    // ===== Countdown timer =====
-    (function() {
-      // Set target = ~2h 47m 33s from now
-      var target = Date.now() + (2 * 3600 + 47 * 60 + 33) * 1000;
-      // Persist in sessionStorage so refreshing doesn't reset
-      var stored = sessionStorage.getItem('wj_cd_target');
-      if (stored) {
-        target = parseInt(stored, 10);
-      }
-      sessionStorage.setItem('wj_cd_target', target);
-
-      function pad(n) { return n < 10 ? '0' + n : '' + n; }
-      function tick() {
-        var diff = Math.max(0, target - Date.now());
-        var h = Math.floor(diff / 3600000);
-        var m = Math.floor((diff % 3600000) / 60000);
-        var s = Math.floor((diff % 60000) / 1000);
-        var hEl = document.getElementById('cd-h');
-        var mEl = document.getElementById('cd-m');
-        var sEl = document.getElementById('cd-s');
-        if (hEl) hEl.textContent = pad(h);
-        if (mEl) mEl.textContent = pad(m);
-        if (sEl) sEl.textContent = pad(s);
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
 
     // ===== Sticky bar on scroll =====
     var heroHeight = 0;
