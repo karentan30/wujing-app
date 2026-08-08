@@ -50,7 +50,7 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   input,textarea,select,button{font-size:16px !important;}
   button{min-height:44px;}
-  html,body{background:#e9e2d3;}
+  html,body{background:#E8E8E8;}
   body{
     font-family:"Noto Sans SC",system-ui,sans-serif;
     color:var(--ink);
@@ -181,18 +181,20 @@
   }
   .frame img{
     width:100%;display:block;border-radius:14px;
-    max-width:100%;height:auto;object-fit:cover;
+    max-width:100%;height:auto;object-fit:contain;
     aspect-ratio:1/1;background-color:#f0f0f0;
   }
   .frame.tall{padding-top:20px;}
+  .frame.tall img{aspect-ratio:9/14;object-fit:contain;}
 
   /* 横滑八拍卡 */
   .scroller{
     display:flex;gap:14px;overflow-x:auto;padding:4px 24px 10px;
     margin:0 -24px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    justify-content:center;
   }
   .scroller::-webkit-scrollbar{height:0;}
-  .snapcard{flex:0 0 300px;scroll-snap-align:center;}
+  .snapcard{flex:0 0 480px;scroll-snap-align:center;}
   .snapcard .frame img{border-radius:12px;}
   .swipe-hint{
     font-size:11px;color:var(--mute);text-align:center;margin-top:8px;
@@ -490,9 +492,9 @@
 
   <!-- 核心成果呈现 -->
   <section>
-    <div class="kicker">你上传后，屏幕会变成这样</div>
+    <div class="kicker">上传你的舞后 · 你会看到这些</div>
     <h2 class="sec-title">一支舞被拆开后<br>长这样</h2>
-    <p class="sec-sub">下面是真实拆解成果。上传你自己的舞，屏幕上出现的就是你这支舞的这几张卡。</p>
+    <p class="sec-sub"><span style="background:#f5f0e8;padding:2px 6px;border-radius:3px;font-size:13px;color:#8b7355;">示例基于《清别欢》</span> 上传你自己的舞，屏幕上出现的就是你这支舞的这几张卡。</p>
 
     <!-- ① 八拍卡 -->
     <div class="result">
@@ -590,6 +592,21 @@
     </div>
   </section>
 
+  <!-- 核心功能：跟练伴侣 -->
+  <section style="margin-top:40px;padding:24px 0;border-top:1px solid rgba(200,180,160,.2);border-bottom:1px solid rgba(200,180,160,.2);">
+    <div class="kicker">卡壳的动作</div>
+    <h2 class="sec-title">照着屏幕练<br><em style="font-weight:400;color:#8b7355">不卡拍就不会错</em></h2>
+    <p class="sec-sub">0.5× 慢放 + 镜像翻转 + 逐句切割，每个转身都看清楚</p>
+    <div class="result" style="margin-top:16px;">
+      <div class="result-head">
+        <span class="rnum">④</span>
+        <span class="rtitle">慢放跟练</span>
+        <span class="rauto">按需切割</span>
+      </div>
+      <div class="rdesc" style="text-align:center;margin-left:0;">整支舞逐句拆成单独的慢放片段，一键镜像翻转，照着屏幕卡拍练习。</div>
+    </div>
+  </section>
+
   <!-- 9.9 价格锚点 -->
   <section class="price-sec">
     <div class="kicker">看完满意，再决定</div>
@@ -604,7 +621,7 @@
         <li>可下载保存，永久收藏</li>
       </ul>
       <a class="cta block" href="/app?upload=true">立即免费体验</a>
-      <div class="price-foot">测试期间完全免费 · 上传无需登录</div>
+      <div class="price-foot">测试期间免费 · 正式上线后 ¥9.9/支 · 上传无需登录</div>
     </div>
   </section>
 
@@ -612,7 +629,7 @@
   <section class="how-pay">
     <div class="kicker">很简单，先看后买</div>
     <h2 class="sec-title">怎么用</h2>
-    <p class="sec-sub">上传免费、无需登录，测试期间拆解结果完全免费获取。</p>
+    <p class="sec-sub">测试期间全程免费 · 正式上线后 ¥9.9 一支舞 · 上传无需登录</p>
     <div class="steps" style="margin-top:8px;">
       <div class="step">
         <div class="step-n">1</div>
@@ -646,8 +663,8 @@
   <section class="final">
     <div class="moon-big"></div>
     <h2>想学的那支舞，<br>现在就拆给你看</h2>
-    <p>测试期间免费体验 · 上传无需登录</p>
-    <a class="cta block" href="/app?upload=true">上传你的舞</a>
+    <p>测试期间免费 · 上线后 ¥9.9 一支舞 · 上传无需登录</p>
+    <a class="cta block" href="/app?upload=true">立即免费体验</a>
   </section>
 
   <div class="footer">
