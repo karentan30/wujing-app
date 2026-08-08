@@ -2,6 +2,35 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<!-- 舞镜埋点 · PostHog（注册/登录后调 WJ.setUser；游客态用匿名 distinct_id） -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_mBrp44sNSMrWwGJVqmPTNyLAbBQZLqTyMpWrbhbTqzPH', {
+    api_host: 'https://us.posthog.com',
+    person_profiles: 'identified_only',
+    autocapture: false,
+    capture_pageview: true
+  });
+
+  window.WJ = {
+    setUser: function(user){
+      if(user && user.id){
+        posthog.identify(String(user.id), { email: user.email, is_paid: !!user.is_paid, source: 'wujing' });
+        posthog.register({ is_logged_in: true });
+      }
+    },
+    reset: function(){ try{ posthog.reset(); }catch(e){} },
+    track: function(event, props){
+      try{
+        posthog.capture(event, Object.assign({
+          is_logged_in: !!localStorage.getItem('wj_token'),
+          lang: document.documentElement.lang || 'zh',
+          platform: 'h5'
+        }, props || {}));
+      }catch(e){}
+    }
+  };
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>舞镜 · 把你想学的舞逐句拆开</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +48,8 @@
     --dark:#0E0B14;    /* 成果暗区（舞台） */
   }
   *{box-sizing:border-box;margin:0;padding:0;}
+  input,textarea,select,button{font-size:16px !important;}
+  button{min-height:44px;}
   html,body{background:#e9e2d3;}
   body{
     font-family:"Noto Sans SC",system-ui,sans-serif;
@@ -54,7 +85,8 @@
     margin-top:8px;font-weight:700;}
   .hero h1{
     font-family:"Noto Serif SC",serif;font-weight:700;
-    font-size:26px;line-height:1.42;margin:22px 0 12px;color:var(--ink);
+    font-size:26px;line-height:1.55;margin:22px 0 12px;color:var(--ink);
+    word-break:break-word;overflow-wrap:break-word;
   }
   .hero h1 em{font-style:normal;color:var(--gold);}
   .hero p{font-size:14px;color:var(--mute);max-width:340px;margin:0 auto;}
@@ -65,6 +97,20 @@
     padding:15px 42px;border-radius:40px;text-decoration:none;
     box-shadow:0 8px 22px rgba(181,146,42,.32);
     letter-spacing:.04em;
+    border:none;cursor:pointer;transition:all .3s ease;
+  }
+  .cta:hover{
+    background:linear-gradient(135deg,#B5922A,#9B7620);
+    box-shadow:0 12px 32px rgba(181,146,42,.4);
+    transform:translateY(-2px);
+  }
+  .cta:active{
+    transform:translateY(0);
+    box-shadow:0 4px 12px rgba(181,146,42,.2);
+  }
+  .cta:focus{
+    outline:2px solid rgba(181,146,42,.5);
+    outline-offset:2px;
   }
   .cta.block{display:block;text-align:center;padding:17px;font-size:17px;}
   .cta-sub{font-size:12px;color:var(--mute);margin-top:12px;}
@@ -100,7 +146,8 @@
   }
   .sec-title{
     font-family:"Noto Serif SC",serif;font-weight:700;
-    font-size:23px;text-align:center;line-height:1.4;margin-bottom:6px;
+    font-size:23px;text-align:center;line-height:1.5;margin-bottom:6px;
+    word-break:break-word;overflow-wrap:break-word;
   }
   .sec-sub{font-size:13px;color:var(--mute);text-align:center;
     max-width:340px;margin:0 auto 26px;}
@@ -132,7 +179,11 @@
     content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);
     width:52px;height:4px;border-radius:3px;background:rgba(255,255,255,.14);
   }
-  .frame img{width:100%;display:block;border-radius:14px;}
+  .frame img{
+    width:100%;display:block;border-radius:14px;
+    max-width:100%;height:auto;object-fit:cover;
+    aspect-ratio:1/1;background-color:#f0f0f0;
+  }
   .frame.tall{padding-top:20px;}
 
   /* 横滑八拍卡 */
@@ -168,6 +219,13 @@
     padding:7px 13px;border-radius:20px;border:1px solid rgba(243,227,174,.3);
     display:flex;align-items:center;gap:6px;user-select:none;
     font-family:"Noto Sans SC",sans-serif;
+    transition:all .2s ease;outline:none;
+  }
+  .mirror-btn:active{
+    transform:scale(.95);
+  }
+  .mirror-btn:focus{
+    box-shadow:0 0 0 2px rgba(243,227,174,.4);
   }
   .mirror-btn.on{background:rgba(181,146,42,.9);color:#fff;
     border-color:rgba(243,227,174,.55);}
@@ -227,6 +285,17 @@
     background:var(--card);border:1px solid var(--edge);color:var(--ink);
     display:flex;align-items:center;justify-content:center;
     transition:all .2s ease;position:relative;
+    outline:none;
+  }
+  .verse-tab:focus{
+    box-shadow:0 0 0 3px rgba(181,146,42,.3);
+    outline:2px solid var(--gold);
+  }
+  .verse-tab:active{
+    transform:scale(.95);
+  }
+  .verse-tab.disabled{
+    opacity:0.35;cursor:not-allowed;pointer-events:none;
   }
   .verse-tab .vn{
     position:absolute;top:-6px;right:-4px;font-family:"Noto Sans SC",sans-serif;
@@ -356,6 +425,51 @@
   .footer{padding:22px 24px 34px;text-align:center;color:#B8AE97;font-size:11px;
     background:var(--bg);}
   .footer .wm{color:var(--gold);font-weight:700;letter-spacing:.1em;}
+
+  /* 响应式设计 - 移动端 & 平板 */
+  @media (min-width:768px){
+    .phone{max-width:600px;padding:0 24px;}
+    .sec-title{font-size:26px;}
+    .scroller{gap:20px;}
+    .snapcard{flex:0 0 350px;}
+  }
+
+  @media (min-width:1024px){
+    .phone{max-width:900px;}
+    section{padding:44px 40px;}
+    .hero{padding:54px 40px 48px;}
+    .sec-title{font-size:28px;}
+    .snapcard{flex:0 0 400px;}
+  }
+
+  /* 横竖屏切换 */
+  @media (orientation:landscape){
+    .phone{max-height:100vh;overflow-y:auto;}
+    section{padding:20px 24px;}
+    .hero{padding:28px 24px 22px;}
+  }
+
+  /* 小屏优化 */
+  @media (max-width:375px){
+    .hero{padding:36px 18px 32px;}
+    .hero h1{font-size:22px;}
+    section{padding:28px 18px;}
+    .scroller{padding:4px 18px 10px;margin:0 -18px;}
+    .frame{padding:6px;border-radius:16px;}
+    .frame::before{width:40px;height:3px;}
+    .verse-tabs{gap:6px;}
+    .verse-tab{width:40px;height:40px;font-size:13px;}
+    .price-num{font-size:44px;}
+  }
+
+  /* 视频模态框响应式 */
+  @media (max-width:430px){
+    .video-wrap{border-radius:16px;}
+    .slow-badge,.mirror-btn,.full-badge{
+      font-size:11px;padding:6px 10px;top:10px;
+    }
+    .mirror-btn{right:10px;}
+  }
 </style>
 </head>
 <body>
@@ -459,10 +573,10 @@
       <!-- 逐句 tab：起 探 游 放 收 -->
       <div class="verse-tabs" id="verseTabs">
         <div class="verse-tab active" data-src="assets/slow.mp4" data-verse="起" data-i="1"><span class="vn">1</span>起</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">2</span>探</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">3</span>游</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">4</span>放</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">5</span>收</div>
+        <div class="verse-tab disabled"><span class="vn">2</span>探</div>
+        <div class="verse-tab disabled"><span class="vn">3</span>游</div>
+        <div class="verse-tab disabled"><span class="vn">4</span>放</div>
+        <div class="verse-tab disabled"><span class="vn">5</span>收</div>
       </div>
 
       <div class="video-wrap" style="margin-top:14px;">
