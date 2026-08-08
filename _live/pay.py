@@ -466,10 +466,18 @@ def _wx_orderquery(out_trade_no):
 
 
 @router.post("/wechat/create")
-async def wechat_create(payload: dict, authorization: str = Header(None),
+async def wechat_create(request: Request, authorization: str = Header(None),
                         x_device_id: str = Header(None)):
     """微信 NATIVE 下单。body: {dance_id, discount?, ref_code?}。"""
+    # Step 1: AUTH CHECK FIRST (before payload parsing)
     user_id = _user_id_optional(authorization, x_device_id)
+
+    # Step 2: Parse payload
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+
     dance_id = str(payload.get("dance_id", "") or "").strip()
     ref_code = str(payload.get("ref_code", "") or "").strip()[:64]
     if not dance_id:
@@ -592,10 +600,18 @@ def get_alipay():
 
 
 @router.post("/alipay/create")
-async def alipay_create(payload: dict, authorization: str = Header(None),
+async def alipay_create(request: Request, authorization: str = Header(None),
                         x_device_id: str = Header(None)):
     """支付宝当面付。body: {dance_id, discount?, ref_code?}。"""
+    # Step 1: AUTH CHECK FIRST (before payload parsing)
     user_id = _user_id_optional(authorization, x_device_id)
+
+    # Step 2: Parse payload
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+
     dance_id = str(payload.get("dance_id", "") or "").strip()
     ref_code = str(payload.get("ref_code", "") or "").strip()[:64]
     if not dance_id:

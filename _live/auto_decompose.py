@@ -85,16 +85,24 @@ def _b64(path):
 
 
 def _run_pose(frame_paths):
-    """MediaPipe 姿态角度(独立venv子进程)。返回 {'p1':{angles},...}。失败返回{}。"""
+    """MediaPipe 姿态角度(独立venv子进程)。返回 {'p1':{angles},...}。失败返回{}。
+    ⭐ 新增：低置信度(visibility<0.5)的角度不喂点评，防止不可信数字污染护城河。
+    """
     if not os.path.exists(MPVENV) or not frame_paths:
         return {}
     try:
         r = subprocess.run([MPVENV, POSE_SCRIPT] + frame_paths,
                            capture_output=True, text=True, timeout=120)
         data = json.loads(r.stdout.strip().splitlines()[-1])
-        # 只信高置信度的角度(护城河:不可信的角度比没有更伤·模糊/无人过滤掉)
-        return {k: v.get("angles") for k, v in data.items()
-                if isinstance(v, dict) and v.get("ok") and (v.get("visibility") or 0) >= 0.55}
+        # 高置信度过滤：visibility >= 0.50（能检出就用，低于50%的暗场/模糊/无人都过滤掉）
+        result = {}
+        for k, v in data.items():
+            if isinstance(v, dict) and v.get("ok"):
+                vis = v.get("visibility") or 0
+                if vis >= 0.50:  # ✅ 高置信
+                    result[k] = v.get("angles")
+                # else: 低置信不返回角度，防污染点评
+        return result
     except Exception:
         return {}
 
@@ -309,18 +317,23 @@ def whisper_align_lyrics(video_path, phrases, song="", lyric_first="", lyric_las
 
 def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
                   song="", lyric_first="", lyric_last=""):
-    """后台任务：拆解一支任意上传的舞。全程兜底，绝不留半成品。"""
+    """后台任务：拆解一支任意上传的舞。全程兜底，绝不留半成品。
+    ✨ 改进：中间进度反馈 + user-friendly错误消息 + 完整错误追踪
+    """
     ddir = os.path.join(DATA_DIR, did)
     os.makedirs(os.path.join(ddir, "frames"), exist_ok=True)
     os.makedirs(os.path.join(ddir, "clips"), exist_ok=True)
     result = {"id": did, "user_id": user_id, "title": title, "genre": genre,
               "song": song, "lyric_first": lyric_first, "lyric_last": lyric_last,
-              "bpm": None, "status": "processing"}
+              "bpm": None, "status": "processing", "progress": "准备中..."}
     _write(did, result)
     try:
         dur = _dur(video_path)
         if dur <= 0:
             raise RuntimeError("无法读取视频时长（文件损坏或非视频）")
+
+        result["progress"] = "检测节奏..."
+        _write(did, result)
         bpm = _detect_bpm(video_path)
         if bpm and 40 < bpm < 220:
             bar_dur = 60.0 / bpm * 8  # 一个八拍时长
@@ -334,6 +347,8 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         result["bpm"] = bpm
         bounds = [round(i * seg, 2) for i in range(n)] + [round(dur, 2)]
 
+        result["progress"] = f"提取帧画 (1/{n}段)..."
+        _write(did, result)
         STRIP = 4  # 每段胶片帧数（照established八拍卡.py设计）
         for i in range(n):
             t0, t1 = bounds[i], bounds[i + 1]
@@ -344,6 +359,8 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
                 t = t0 + (t1 - t0) * (k + 0.5) / STRIP
                 _grab(video_path, t, os.path.join(ddir, "frames", f"p{i+1}_{k}.jpg"))
 
+        result["progress"] = "检测姿态..."
+        _write(did, result)
         # MediaPipe 逐帧真实关节角度（测量·非AI猜）
         pose = _run_pose([os.path.join(ddir, "frames", f"p{i+1}.jpg") for i in range(n)])
 
