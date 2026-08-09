@@ -270,7 +270,7 @@ def _claude_runthrough(phrases, title, genre):
     """DeepSeek 生成「过一遍剧本」——演员读完能顺下来的连贯口播文字。
     失败返回空串，不阻塞主流程。
     """
-    key = os.environ.get("DEEPSEEK_API_KEY", "")
+    key = os.environ.get("DS_KEY") or os.environ.get("DEEPSEEK_API_KEY", "")
     if not key:
         return ""
     is_guofeng = "guofeng" in genre or "古" in genre or "国风" in genre
@@ -322,7 +322,7 @@ def _assign_lyrics_deepseek(phrases, song, lyric_first, lyric_last):
     if not (song or lyric_first):
         return
     try:
-        key = os.environ.get("DEEPSEEK_API_KEY", "")
+        key = os.environ.get("DS_KEY") or os.environ.get("DEEPSEEK_API_KEY", "")
         n = len(phrases)
         prompt = (
             f"歌曲：《{song}》  首句：{lyric_first}  末句：{lyric_last}\n"
