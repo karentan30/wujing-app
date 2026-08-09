@@ -876,7 +876,7 @@ body{
     <div class="hero-tagline" data-i18n="heroTitle" style="font-size:16px;font-weight:700;color:var(--ink);letter-spacing:.02em">学一支舞，从 2 小时到 20 分钟</div>
     <div class="hero-desc" data-i18n="heroSub">AI 自动拆解每一句动作 · 镜面跟练 · 记忆口诀 · 生成卡片</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px">
-      <div class="hero-cta" onclick="document.getElementById('demo-library').scrollIntoView({behavior:'smooth'})" tabindex="0" role="button" aria-label="选热门舞蹈跟练">
+      <div class="hero-cta" onclick="var el=document.getElementById('demo-library');if(el)el.scrollIntoView({behavior:'smooth'});else showView('detail')" tabindex="0" role="button" aria-label="选热门舞蹈跟练">
         <span class="hero-cta-icon">▶</span>
         <span data-i18n="heroCta1">选一支开始跟练 ↓</span>
       </div>
@@ -3565,7 +3565,7 @@ function _dcShow(){
   ['home','review','plan','mv'].forEach(function(id){ var e=document.getElementById('view-'+id); if(e) e.classList.add('hidden'); });
   var dv=_dcView(); dv.classList.remove('hidden');
   dv.style.paddingLeft='0'; dv.style.paddingRight='0';  // dc-up/load/res 自带内边距，view 层不加
-  var back=document.querySelector('.back'); if(back){ back.classList.remove('hidden'); back.onclick=function(){ dcCloseModal(); showView(_dcFromTab()); }; }
+  var back=document.querySelector('.back'); if(back){ back.classList.remove('hidden'); back.onclick=function(){ dcCloseModal(); showView(_dcFromTab()||'home'); }; }
   var dn=document.getElementById('detailNav'); if(dn) dn.style.display='none';
   var tb=document.getElementById('tabbar'); if(tb) tb.style.display='none';
   window.scrollTo(0,0);
@@ -3708,7 +3708,7 @@ function pollDecompose(id){
         var d=res.d;
         if(!res.ok){ clearInterval(iv); _dcLoadStop();
           _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">😥</div><div class="dc-load-t">这支舞暂时打不开</div><div class="dc-load-d">'+(res.status===403?'这支作品未公开或属于他人':'请求出错了('+res.status+')')+'</div><div style="margin-top:20px"><button class="dc-btn" id="dcErrBack" style="width:auto;padding:11px 26px">返回</button></div></div>';
-          var _eb=document.getElementById('dcErrBack'); if(_eb) _eb.onclick=function(){ showView(_dcFromTab()); }; }
+          var _eb=document.getElementById('dcErrBack'); if(_eb) _eb.onclick=function(){ showView(_dcFromTab()||'home'); }; }
         else if(d.status==='awaiting_payment'){ clearInterval(iv); _dcLoadStop();
           DC_ID=d.id;
           if(d.phrases && d.phrases.length){
@@ -4584,9 +4584,11 @@ var _dcPracticeData=null,_dcPracticeIdx=0;
 function dcPracticeOpen(id,phrases,idx,strip){
   _dcPracticeData={id:id,phrases:phrases,strip:strip||4};
   _dcPracticeIdx=idx;
+  var btn=event&&event.target;
+  if(btn){ btn.disabled=true; btn.textContent='⏳ 加载中...'; }
   document.getElementById('dcPracticeOverlay').classList.add('active');
   document.body.style.overflow='hidden';
-  dcPracticeRender();
+  setTimeout(function(){ dcPracticeRender(); if(btn){ btn.disabled=false; btn.textContent='⏯ 跟练'; } }, 300);
 }
 function dcPracticeRender(){
   var d=_dcPracticeData;if(!d)return;
