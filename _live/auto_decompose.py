@@ -147,12 +147,14 @@ def _vision_describe(frame_path, idx, t0, t1):
     """豆包 vision 看一帧自动描述动作。关思考+压图=便宜(~¥0.007)。失败抛异常由上层兜底。"""
     key = os.environ["ARK_API_KEY"]
     prompt = (
-        f"这是一支舞蹈第{idx}段(约{t0:.1f}-{t1:.1f}秒)的定格画面。你是资深舞蹈老师，"
-        "用中文描述这个动作帮学员跟练。只输出JSON不要解释：\n"
-        '{"name":"2-3字段名如 起势/开手/旋身/亮相","action":"一句话身体和手臂动作要点",'
-        '"feet":"脚下和重心一句话","intent":"这段的意境或情绪一句话",'
-        '"kou":"3-5个动词用破折号「—」连接，如「抬—拧—展—笑」「跪—举—仰—展」「拧—旋—回眸」，每词1-2字，读出来有节奏感",'
-        '"key":"1个最能代表这段动作的汉字如 遮/抛/仰/拧/甩/举/沉/回/开/点"}'
+        f"这是一支舞蹈第{idx}段(约{t0:.1f}-{t1:.1f}秒)的定格画面。你是专业舞蹈老师，"
+        "用中文描述动作帮学员跟练。只输出JSON不要解释：\n"
+        '{"name":"2-3字段名，如 起势/开手/旋身/亮相",'
+        '"action":"一句话：身体+手臂动作要点，带方向词（如右臂前抬至肩高，身体左拧45度）",'
+        '"feet":"脚下和重心一句话",'
+        '"intent":"这段的意境或情绪一句话",'
+        '"kou":"3-5个单字动词用破折号「—」连接。规则：①每词必须是1个汉字，禁用举扇/侧腰/回眸等2字复合词 ②词序按动作先后顺序 ③默念时每字一拍，4字为佳 ④K-pop用街舞单字：弹/锁/波/抖/甩/踢/踏/闪，古典舞用：抬/拧/展/沉/遮/仰/拢/旋/落/开 ⑤示例「抬—拧—展—笑」「弹—锁—甩—稳」",'
+        '"key":"1个汉字，必须是kou里的某个字，选最难或最容易跳错的那个动作字"}'
     )
     body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 320,
             "input": [{"role": "user", "content": [
@@ -168,15 +170,24 @@ def _vision_describe(frame_path, idx, t0, t1):
         if out.lstrip().lower().startswith("json"):
             out = out.lstrip()[4:]
     d = json.loads(out.strip())
-    # 口诀质量 loop：含破折号或不足4字 → 自动重试一次
+    # 口诀质量 loop：格式/内容不达标 → 自动重试一次
     kou_val = d.get("kou", "")
-    # 连字符"-"是错误格式（正确应用破折号"—"），或口诀太短时重试
-    if ("-" in kou_val and "—" not in kou_val) or len(kou_val) < 4:
+    key_val = d.get("key", "")
+    words = [w for w in kou_val.replace("—", "-").split("-") if w]
+    has_hyphen = "-" in kou_val and "—" not in kou_val
+    has_compound = any(len(w) > 1 for w in words)
+    key_missing = key_val and "—" in kou_val and key_val not in kou_val
+    if has_hyphen or has_compound or key_missing or len(kou_val) < 4:
+        reasons = []
+        if has_hyphen: reasons.append("用了连字符-而非破折号—")
+        if has_compound: reasons.append("口诀含多字词(%s)必须改成单字" % [w for w in words if len(w)>1])
+        if key_missing: reasons.append("key=%s不在口诀里" % key_val)
         try:
+            retry_note = "上次不合格原因：%s。请重新生成，严格遵守：1)每词单字 2)用「—」连接 3)key必须是kou中的某个字" % "、".join(reasons)
             retry_body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 320,
                           "input": [{"role": "user", "content": [
                               {"type": "input_image", "image_url": _b64(frame_path)},
-                              {"type": "input_text", "text": prompt + "\n\n注意：口诀必须用破折号「—」连接动词，如「抬—拧—展—笑」，上次用了连字符-不合格请重新生成"}]}]}
+                              {"type": "input_text", "text": prompt + "\n\n" + retry_note}]}]}
             req2 = urllib.request.Request(ARK_URL, data=json.dumps(retry_body).encode(),
                 headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
             r2 = json.loads(urllib.request.urlopen(req2, timeout=60).read())
@@ -187,11 +198,14 @@ def _vision_describe(frame_path, idx, t0, t1):
                 if out2.lstrip().lower().startswith("json"):
                     out2 = out2.lstrip()[4:]
             d2 = json.loads(out2.strip())
-            if d2.get("kou") and len(d2["kou"]) >= 4:
-                d["kou"] = d2["kou"]
-                print(f"[kou loop] {kou_val!r} → {d['kou']!r}")
+            new_kou = d2.get("kou", "")
+            new_key = d2.get("key", "")
+            if new_kou and len(new_kou) >= 4:
+                d["kou"] = new_kou
+                d["key"] = new_key
+                print("[kou loop] %r → kou=%r key=%r" % (kou_val, new_kou, new_key))
         except Exception as _e:
-            print(f"[kou loop] retry fail: {_e}")
+            print("[kou loop] retry fail: %s" % _e)
     return {"i": idx, "t0": round(t0, 2), "t1": round(t1, 2),
             "name": d.get("name", ""), "full": (d.get("action", "") or "")[:14],
             "action": d.get("action", ""), "feet": d.get("feet", ""),
