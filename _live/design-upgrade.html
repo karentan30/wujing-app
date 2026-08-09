@@ -49,108 +49,38 @@
 </script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  /* ── 银色镜面主题 ── */
-  --bg:#f0f2f8;
-  --card:rgba(255,255,255,.65);
-  --edge:rgba(255,255,255,.4);
-  --gold:#c9a07e;
-  --gold-soft:#e8d0b8;
-  --ink:#0b0d14;
-  --mute:#5a6075;
-  --dark:#0b0d14;
-  --green-done:#5a7a68;
-  --shadow-card:0 2px 12px rgba(200,208,224,.12),0 4px 24px rgba(200,180,160,.06),0 8px 40px rgba(200,180,160,.03);
-  --shadow-lift:0 4px 20px rgba(200,180,160,.12),0 8px 40px rgba(200,180,160,.06);
-  --blur:12px;
-  --silver-light:#f0f2f8;
-  --silver:#dce0ec;
-  --silver-mid:#b8c0d4;
-  --silver-dim:#5a6075;
-  --silver-deep:#3d4254;
-  --glass-bg:rgba(255,255,255,.6);
-  --glass-border:rgba(255,255,255,.4);
-  --frost:rgba(255,255,255,.2);
-  --warm:#c9a07e;
-  --warm-light:#e8d0b8;
-  --warm-dim:#b08860;
-  --warm-glow:rgba(200,160,120,.15);
-  --text:var(--ink);
-}
+:root{--bg:#f0f2f8;--card:rgba(255,255,255,.65);--edge:rgba(255,255,255,.4);--gold:#c9a07e;--gold-soft:#e8d0b8;--ink:#0b0d14;--mute:#5a6075;--dark:#0b0d14;--green-done:#5a7a68;--shadow-card:0 2px 12px rgba(200,208,224,.12),0 4px 24px rgba(200,180,160,.06),0 8px 40px rgba(200,180,160,.03);--shadow-lift:0 4px 20px rgba(200,180,160,.12),0 8px 40px rgba(200,180,160,.06);--blur:12px;--silver-light:#f0f2f8;--silver:#dce0ec;--silver-mid:#b8c0d4;--silver-dim:#5a6075;--silver-deep:#3d4254;--glass-bg:rgba(255,255,255,.6);--glass-border:rgba(255,255,255,.4);--frost:rgba(255,255,255,.2);--warm:#c9a07e;--warm-light:#e8d0b8;--warm-dim:#b08860;--warm-glow:rgba(200,160,120,.15);--text:var(--ink);}
 
 html,body{height:100%}
-body{
-  background:var(--bg);color:var(--ink);
-  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
-  line-height:1.6;-webkit-font-smoothing:antialiased;
-  display:flex;justify-content:center;
-}
-.serif{font-family:"Noto Serif SC","STSong","SimSun",serif;}
-#app{
-  width:100%;max-width:440px;min-height:100vh;position:relative;overflow-y:auto;overflow-x:hidden;
-  background:var(--bg);
-}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;display:flex;justify-content:center}
+.serif{font-family:"Noto Serif SC","STSong","SimSun",serif}
+#app{width:100%;max-width:440px;min-height:100vh;position:relative;overflow-y:auto;overflow-x:hidden;background:var(--bg);margin:0 auto}
 
-/* ═══ SAFE AREA ═══ */
-
-/* ═══ SAFE AREA ═══ */
-.safe-pad{
-  padding-left:max(20px,env(safe-area-inset-left,20px));
-  padding-right:max(20px,env(safe-area-inset-right,20px));
-}
-.safe-pad-b{
-  padding-bottom:max(120px,calc(120px + env(safe-area-inset-bottom,0px)));
-}
-
-/* ═══ TOPBAR ═══ */
-.topbar{
-  display:flex;align-items:center;gap:10px;
-  padding:max(24px,env(safe-area-inset-top,24px)) max(20px,env(safe-area-inset-right,20px)) 12px max(20px,env(safe-area-inset-left,20px));
-  position:sticky;top:0;z-index:20;
-  background:linear-gradient(180deg,rgba(240,242,248,.92) 60%,transparent);
-}
+.safe-pad{padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px))}
+.safe-pad-b{padding-bottom:max(120px,calc(120px + env(safe-area-inset-bottom,0px)))}
+.topbar{display:flex;align-items:center;gap:10px;padding:max(24px,env(safe-area-inset-top,24px)) max(20px,env(safe-area-inset-right,20px)) 12px max(20px,env(safe-area-inset-left,20px));position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(240,242,248,.92) 60%,transparent)}
 .brand-wrap{display:flex;align-items:center;gap:10px}
-.brand-icon{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,#fff,rgba(220,224,236,.4) 40%,rgba(200,208,224,.2) 60%,#f0f2f8);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;box-shadow:0 2px 10px rgba(200,208,224,.4);border:1px solid rgba(255,255,255,.6);
-}
-.brand-icon::after{content:'镜';font-size:16px;font-weight:900;color:#606880;}
+.brand-icon{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#fff,rgba(220,224,236,.4) 40%,rgba(200,208,224,.2) 60%,#f0f2f8);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(200,208,224,.4);border:1px solid rgba(255,255,255,.6)}
+.brand-icon::after{content:'镜';font-size:16px;font-weight:900;color:#606880}
 .brandname{font-size:22px;font-weight:900;letter-spacing:.12em;background:linear-gradient(135deg,#606880,#8890a8 40%,var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:"Noto Serif SC",serif}
 .brandsub{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;font-weight:700}
-.back{
-  margin-left:auto;font-size:12px;color:var(--mute);
-  border:1px solid var(--edge);border-radius:100px;
-  padding:11px 18px;cursor:pointer;background:var(--card);font-family:inherit;
-  transition:border-color .3s,box-shadow .3s;
-}
+.back{margin-left:auto;font-size:12px;color:var(--mute);border:1px solid var(--edge);border-radius:100px;padding:11px 18px;cursor:pointer;background:var(--card);font-family:inherit;transition:border-color .3s,box-shadow .3s;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
 .back:hover{border-color:var(--gold-soft);box-shadow:0 1px 8px rgba(0,0,0,.06)}
 .back:active{transform:scale(.96)}
 .back.hidden{display:none}
 
-/* ═══ VIEW TRANSITIONS ═══ */
 #viewContainer{position:relative;min-height:calc(100vh - 80px);z-index:2}
-.view{
-  opacity:1;transform:translateY(0);filter:blur(0);
-  transition:opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1), filter .5s cubic-bezier(.22,1,.36,1);
-  padding:0 max(20px,env(safe-area-inset-right,20px)) max(100px,calc(100px + env(safe-area-inset-bottom,0px))) max(20px,env(safe-area-inset-left,20px));
-}
+.view{opacity:1;transform:translateY(0);filter:blur(0);transition:opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1), filter .5s cubic-bezier(.22,1,.36,1);padding:0 max(20px,env(safe-area-inset-right,20px)) max(100px,calc(100px + env(safe-area-inset-bottom,0px))) max(20px,env(safe-area-inset-left,20px))}
 .view.hidden{opacity:0;transform:translateY(10px) scale(.98);filter:blur(5px);pointer-events:none;position:absolute;inset:0;z-index:0}
-
-/* ═══ HOME ═══ */
-.home-heading{
-  margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.3;position:relative;z-index:2;
-  color:var(--ink);font-family:"Noto Serif SC",serif;
-}
-.home-sub{font-size:13px;color:var(--mute);margin:6px 0 24px;line-height:1.6;position:relative;z-index:2}
+.home-heading{margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.3;position:relative;z-index:2;color:var(--ink);font-family:"Noto Serif SC",serif}
+.home-sub{font-size:13px;color:var(--silver-deep);margin:6px 0 24px;line-height:1.6;position:relative;z-index:2}
 .home-section-label{font-size:11px;font-weight:700;letter-spacing:.28em;color:var(--gold);margin:2px 0 12px;position:relative;z-index:2;display:flex;align-items:center;gap:8px}
 .home-section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--edge),transparent)}
 
 /* card */
 .entry-card,.piece-card,.plan-card{
   display:flex;align-items:center;gap:16px;
-  border-radius:16px;padding:16px 18px;margin-bottom:16px;cursor:pointer;
+  border-radius:16px;padding:clamp(12px,3vw,18px);margin-bottom:16px;cursor:pointer;
   background:var(--card);border:1px solid var(--edge);
   transition:border-color .3s,transform .2s,box-shadow .3s;
   position:relative;box-shadow:var(--shadow-card);
@@ -162,12 +92,15 @@ body{
 .entry-icon svg path,.entry-icon svg circle,.entry-icon svg rect,.entry-icon svg polygon{opacity:1 !important;stroke:var(--gold) !important;fill:var(--gold-soft) !important;}
 .entry-info{flex:1}
 .entry-title{font-size:16px;font-weight:600;color:var(--ink)}
-.entry-desc{font-size:12px;color:var(--mute);margin-top:2px;line-height:1.5}
+.entry-desc{font-size:12px;color:var(--silver-deep);margin-top:2px;line-height:1.5}
 .entry-arrow{flex-shrink:0;color:var(--gold)}
 
-/* piece cards */
+/* prefers reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
 
-/* ═══ UPLOAD CARD — main action on home page ═══ */
+/* piece cards */
 .upload-card{
   display:flex;align-items:center;gap:14px;
   border-radius:16px;padding:18px 20px;margin-bottom:16px;cursor:pointer;
@@ -189,8 +122,9 @@ body{
   border-radius:16px;overflow:hidden;margin-bottom:14px;cursor:pointer;position:relative;
   background:linear-gradient(145deg,rgba(255,255,255,.65),rgba(255,255,255,.4) 35%,rgba(181,146,42,.12) 60%,rgba(255,255,255,.5));
   background-size:200% 200%;
-  animation:gradFlow 6s ease-in-out infinite;
+  animation:gradFlow 12s ease-in-out infinite;
   animation-delay:-4s;
+  will-change:background-position;
   backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));
   border:1px solid var(--glass-border);
   transition:border-color .3s,transform .2s,box-shadow .3s;
@@ -205,7 +139,7 @@ body{
 .piece-card .banner .piece-label{position:absolute;left:18px;bottom:12px;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--silver-deep);z-index:2}
 .piece-card .banner .piece-label.is-blue{color:var(--silver-dim)}
 .piece-card .body{padding:12px 16px}
-.piece-card .meta{display:flex;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--silver-deep);margin-bottom:8px}
+.piece-card .meta{display:flex;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--silver-deep);margin-bottom:8px}
 .piece-card .meta span{border:1px solid var(--glass-border);border-radius:6px;padding:2px 8px}
 .progress-bar{height:3px;border-radius:2px;background:var(--frost);overflow:hidden;margin-bottom:5px}
 .progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,rgba(200,160,120,.5),var(--warm-dim))}
@@ -214,17 +148,36 @@ body{
 .progress-meta .val{color:var(--silver-deep);font-weight:600}
 .progress-meta .val.dim{color:var(--silver-mid)}
 
+/* ═══ SKELETON LOADING ═══ */
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.4) 25%,rgba(255,255,255,.6) 50%,rgba(255,255,255,.4) 75%);background-size:200% 100%;animation:shimmer 2s infinite;border-radius:4px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{display:flex;align-items:center;gap:16px;border-radius:16px;padding:16px 18px;margin-bottom:16px;background:var(--card);border:1px solid var(--edge);opacity:.6}
+.skeleton-card .skeleton-banner{width:60px;height:60px;border-radius:8px;flex-shrink:0}
+.skeleton-card .skeleton-info{flex:1}
+.skeleton-card .skeleton-title{height:14px;margin-bottom:8px;width:70%}
+.skeleton-card .skeleton-meta{height:10px;margin-bottom:6px;width:50%}
+.skeleton-card .skeleton-text{height:10px;width:60%}
+.phrase-card.skeleton{padding:0;background:transparent;border:none;box-shadow:none}
+.phrase-card.skeleton .idx{height:20px;width:40px;background:rgba(255,255,255,.4);border-radius:4px}
+.phrase-card.skeleton .hd{flex:1}
+.phrase-card.skeleton .nm{height:14px;width:60%;margin-bottom:6px;background:rgba(255,255,255,.4);border-radius:4px}
+.phrase-card.skeleton .full{height:12px;width:50%;margin-bottom:4px;background:rgba(255,255,255,.3);border-radius:4px}
+.phrase-card.skeleton .tt{height:10px;width:40%;background:rgba(255,255,255,.3);border-radius:4px;margin-top:4px}
+.phrase-card.skeleton .beats{height:8px;width:80%;margin:12px 0;background:rgba(255,255,255,.3);border-radius:4px}
+.phrase-card.skeleton .row{height:12px;width:70%;margin-bottom:8px;background:rgba(255,255,255,.3);border-radius:4px}
+
 /* ═══ HERO ═══ */
 .hero{text-align:center;padding:28px 0 30px;position:relative;z-index:2;
   background:radial-gradient(120% 80% at 50% -10%, #FFFBF0 0%, transparent 60%);}
-.hero-brand{font-size:36px;font-weight:900;letter-spacing:.12em;color:var(--ink);margin-bottom:4px;font-family:"Noto Serif SC",serif}
-.hero-tagline{font-size:14px;color:var(--mute);font-weight:500;letter-spacing:.08em;margin-bottom:12px}
+.hero-brand{font-size:clamp(14px,8vw,36px);font-weight:900;letter-spacing:.12em;color:var(--ink);margin-bottom:4px;font-family:"Noto Serif SC",serif}
+.hero-tagline{font-size:14px;color:var(--silver-deep);font-weight:500;letter-spacing:.08em;margin-bottom:12px}
 .hero-desc{font-size:13px;color:var(--mute);line-height:1.7;max-width:340px;margin:0 auto 20px}
 .hero-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;border-radius:100px;
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
   border:none;cursor:pointer;font-size:15px;font-weight:700;
   color:#fff;transition:all .25s;box-shadow:0 6px 20px rgba(181,146,42,.28);
-  font-family:inherit;letter-spacing:.04em}
+  font-family:inherit;letter-spacing:.04em;
+  min-height:44px;min-width:44px;justify-content:center;}
 .hero-cta:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(181,146,42,.35)}
 .hero-cta:active{transform:scale(.96)}
 .hero-cta-icon{font-size:16px}
@@ -255,13 +208,13 @@ body{
 .vs-new{background:linear-gradient(145deg,rgba(200,160,120,.08),rgba(200,160,120,.02))}
 .vs-new .vs-title{color:var(--warm-dim)}
 .vs-title{font-size:12px;font-weight:600;margin-bottom:8px;letter-spacing:.5px;color:var(--text)}
-.vs-item{font-size:10.5px;color:var(--silver-deep);line-height:2}
+.vs-item{font-size:12px;color:var(--silver-deep);line-height:2}
 .vs-divider{width:1px;background:var(--glass-border);flex-shrink:0;margin:0 2px}
 
 /* ═══ AI PREVIEW ═══ */
 .ai-preview{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;margin-bottom:24px;cursor:pointer;
   background:linear-gradient(145deg,rgba(255,255,255,.65),rgba(255,255,255,.4) 30%,rgba(245,240,228,.4) 55%,rgba(255,255,255,.5));
-  background-size:200% 200%;animation:gradFlow 6s ease-in-out infinite reverse;animation-delay:-3s;
+  background-size:200% 200%;animation:gradFlow 12s ease-in-out infinite reverse;animation-delay:-3s;will-change:background-position;
   border:1px solid var(--glass-border);position:relative;overflow:hidden;z-index:2;
   box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.5)}
 .ai-preview:hover{box-shadow:var(--shadow-lift);border-color:rgba(200,160,120,.2)}
@@ -327,7 +280,7 @@ body{
 .score-info{flex:1}
 .score-info .score-label{font-size:17px;font-weight:600;letter-spacing:-.2px}
 .score-info .score-desc{font-size:12px;color:var(--silver-deep);margin-top:3px;line-height:1.6}
-.score-teacher{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--silver-dim);margin-top:6px;font-weight:500}
+.score-teacher{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--silver-deep);margin-top:6px;font-weight:500}
 .score-teacher .dot{width:6px;height:6px;border-radius:50%;background:var(--silver-mid)}
 
 /* ═══ DIMENSIONS ═══ */
@@ -367,15 +320,15 @@ body{
 .tl-mark[data-pos="11"]{left:11%}.tl-mark[data-pos="22"]{left:22%}.tl-mark[data-pos="30"]{left:30%}
 .tl-mark[data-pos="86"]{left:86%}.tl-mark[data-pos="94"]{left:94%}
 .tl-mark-dot{width:12px;height:12px;border-radius:50%;margin:0 auto;position:relative;top:-7px;
-  border:2px solid var(--silver-light)}
+  border:2px solid var(--silver-light);min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;}
 .tl-mark[data-level="major"] .tl-mark-dot{background:var(--silver-deep)}
 .tl-mark[data-level="minor"] .tl-mark-dot{background:var(--silver-mid)}
 .tl-mark:hover .tl-mark-dot{transform:scale(1.4);transition:transform .15s}
 .tl-mark:active .tl-mark-dot{transform:scale(.85);transition:transform .1s}
-.tl-mark-label{font-size:10px;text-align:center;margin-top:4px;white-space:nowrap;position:relative;z-index:3}
+.tl-mark-label{font-size:12px;text-align:center;margin-top:4px;white-space:nowrap;position:relative;z-index:3}
 .tl-mark[data-level="major"] .tl-mark-label{color:var(--silver-deep);font-weight:600}
 .tl-mark[data-level="minor"] .tl-mark-label{color:var(--silver-dim)}
-.tl-legend{display:flex;gap:20px;font-size:11px;color:var(--silver-dim);margin-top:-2px}
+.tl-legend{display:flex;gap:20px;font-size:12px;color:var(--silver-deep);margin-top:-2px;font-weight:500}
 .tl-legend span{display:flex;align-items:center;gap:5px}
 .tl-legend .dot{width:6px;height:6px;border-radius:50%}
 .tl-legend .dot.major{background:var(--silver-deep)}
@@ -388,7 +341,7 @@ body{
   border-radius:12px;overflow:hidden;margin-bottom:12px;transition:border-color .3s,transform .2s,box-shadow .3s;position:relative;z-index:2;
   background:linear-gradient(145deg,rgba(255,255,255,.6),rgba(255,255,255,.35) 40%,rgba(181,146,42,.08) 60%,rgba(255,255,255,.5));
   background-size:200% 200%;
-  animation:gradFlow 15s ease-in-out infinite;
+  animation:gradFlow 18s ease-in-out infinite;will-change:background-position;
   backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));
   border:1px solid var(--glass-border);
 }
@@ -408,8 +361,8 @@ body{
 .slowmo-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .slowmo-lbl{font-size:11px;color:var(--silver-dim)}
 .svid{width:100%;border-radius:10px;display:block;max-height:240px;object-fit:contain;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);border:1px solid var(--glass-border)}
-.sctrl{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
-.sbtn{background:rgba(255,255,255,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--glass-border);color:var(--silver-deep);font-size:12px;padding:11px 18px;border-radius:8px;cursor:pointer;font-family:inherit}
+.sctrl{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;align-items:center}
+.sbtn{background:rgba(255,255,255,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--glass-border);color:var(--silver-deep);font-size:12px;padding:11px 18px;border-radius:8px;cursor:pointer;font-family:inherit;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;}
 .sbtn.on{background:rgba(245,240,228,.4);border-color:var(--silver-mid)}
 .sbtn:active{transform:scale(.95)}
 .svid-fallback{width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;height:140px;background:linear-gradient(135deg,#F5F0E4,#EDE4CF);border:1px solid var(--glass-border);font-size:13px;color:var(--silver-dim);letter-spacing:1px}
@@ -427,7 +380,7 @@ body{
   border-radius:14px;padding:14px 16px;margin-bottom:24px;position:relative;z-index:2;
   background:linear-gradient(145deg,rgba(255,255,255,.6),rgba(245,240,228,.35) 50%,rgba(237,228,207,.25));
   background-size:200% 200%;
-  animation:gradFlow 6s ease-in-out infinite reverse;
+  animation:gradFlow 12s ease-in-out infinite reverse;will-change:background-position;
   backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));
   border:1px solid var(--glass-border);
 }
@@ -442,7 +395,7 @@ body{
   padding:16px;width:100%;position:relative;overflow:hidden;
   background:linear-gradient(135deg,rgba(255,255,255,.75),rgba(245,240,228,.5) 35%,rgba(181,146,42,.1) 60%,rgba(240,242,248,.85));
   background-size:200% 200%;
-  animation:gradFlow 6s ease-in-out infinite;
+  animation:gradFlow 12s ease-in-out infinite;will-change:background-position;
   color:var(--silver-deep);
   font-size:14px;font-weight:600;border:none;border-radius:14px;
   cursor:pointer;font-family:inherit;letter-spacing:.5px;
@@ -576,6 +529,13 @@ body{
 
 .mv-export-progress{height:4px;background:var(--frost);border-radius:3px;overflow:hidden;margin:12px 0 8px}
 .mv-export-progress .fill{height:100%;background:linear-gradient(90deg,var(--silver-mid),var(--silver-deep));border-radius:3px;width:0;transition:width .5s}
+
+/* Enhanced progress styling for upload/analysis */
+.progress-bar{transition:height .2s}
+.progress-fill{transition:width .3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(200,160,120,.3)}
+.progress-meta span{display:inline-block}
+.solo-loading .progress-bar{background:rgba(255,255,255,.1);height:4px}
+.solo-loading .progress-fill{background:linear-gradient(90deg,#C9A07E,#B08860);box-shadow:0 0 12px rgba(201,160,126,.4)}
 
 /* ═══ FOCUS ═══ */
 :focus-visible{outline:2px solid var(--silver-mid);outline-offset:2px}
@@ -839,6 +799,21 @@ body{
 .auth-avatar.logged-in .badge{display:block}
 
 .dc-lib-views{font-size:11px;color:#fb923c;font-weight:600;margin-top:3px}
+
+/* ═══ TABLET RESPONSIVE (768px+) ═══ */
+@media (min-width:768px){
+  #app{max-width:100%;width:100%}
+  .view{max-width:600px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px))}
+  .topbar{max-width:600px;margin:0 auto;width:100%;left:50%;transform:translateX(-50%);border-radius:0 0 16px 16px}
+}
+
+/* ═══ NARROW SCREEN (320px) ═══ */
+@media (max-width:360px){
+  .hero-brand{font-size:clamp(14px,6vw,28px)}
+  .entry-card,.piece-card,.plan-card{padding:clamp(10px,2vw,16px);gap:clamp(10px,2vw,16px)}
+  .upload-card{padding:clamp(12px,2.5vw,20px);gap:clamp(10px,2vw,14px)}
+  .sctrl{gap:10px;margin-top:6px}
+}
 </style>
 </head>
 <body>
@@ -1515,13 +1490,20 @@ function showView(v, idx){
   var target = document.getElementById('view-'+v);
   if(!target && v !== 'detail') return;
 
-  // Hide all static views
+  // Hide all static views + cleanup old view
   views.forEach(function(id){
     if(id === 'detail') return;
     var el = document.getElementById('view-'+id);
     if(!el) return;
-    if(id === v){ el.classList.remove('hidden'); if(id === 'review') replayDimFill(); }
-    else el.classList.add('hidden');
+    if(id !== v) {
+      el.classList.add('hidden');
+      // Cleanup: stop videos, animations, timers
+      var vids = el.querySelectorAll('video');
+      vids.forEach(function(v){ try{ v.pause(); v.src=''; }catch(e){} });
+    } else {
+      el.classList.remove('hidden');
+      if(id === 'review') replayDimFill();
+    }
   });
 
   var back = document.querySelector('.back');
@@ -2159,7 +2141,7 @@ function renderReview(d) {
     var badgeTxt = sev === 'severe' ? '优先攻克' : '后续优化';
     var t = p.timestamp !== undefined ? Math.round(p.timestamp)+'s' : '';
     var sus = 'api/review/'+d.id+'/slowmo/'+(i+1);
-    probHtml += '<div class="pcard open '+badge+'" id="'+pid+'"><div class="pcard-head" onclick="toggleCard(\'' + pid + '\')" tabindex="0" role="button"><span class="badge '+badge+'">'+badgeTxt+'</span><div class="ptitle">'+(p.problem||'')+'</div><div class="ptime">'+t+'</div><div class="pchevron">›</div></div><div class="pbody"><div class="slowmo-wrap"><div class="slowmo-top"><div class="slowmo-lbl">慢放四倍 · 逐帧看</div></div><video class="svid" src="'+sus+'" loop muted playsinline autoplay onerror="this.outerHTML=&#39;<div class=&quot;svid-fallback&quot;>慢动作视频生成中</div>&#39;"></video><div class="sctrl"><button class="sbtn" onclick="this.previousElementSibling.play()">▶播放</button><button class="sbtn" onclick="this.parentNode.previousElementSibling.pause()">⏸暂停</button></div></div><div class="fix-wrap"><div class="fix-row"><div class="fdot shine"></div><div class="ftxt"><strong>问题：</strong>'+(p.detail||'')+'</div></div><div class="fix-row"><div class="fdot light"></div><div class="ftxt"><strong>练习建议：</strong>'+(p.fix||'')+'</div></div></div></div></div>';
+    probHtml += '<div class="pcard open '+badge+'" id="'+pid+'"><div class="pcard-head" onclick="toggleCard(\'' + pid + '\')" tabindex="0" role="button"><span class="badge '+badge+'">'+badgeTxt+'</span><div class="ptitle">'+(p.problem||'')+'</div><div class="ptime">'+t+'</div><div class="pchevron">›</div></div><div class="pbody"><div class="slowmo-wrap"><div class="slowmo-top"><div class="slowmo-lbl">慢放四倍 · 逐帧看</div></div><video class="svid" src="'+sus+'" loop muted playsinline onerror="this.outerHTML=&#39;<div class=&quot;svid-fallback&quot;>慢动作视频生成中</div>&#39;"></video><div class="sctrl"><button class="sbtn" onclick="this.previousElementSibling.play()">▶播放</button><button class="sbtn" onclick="this.parentNode.previousElementSibling.pause()">⏸暂停</button></div></div><div class="fix-wrap"><div class="fix-row"><div class="fdot shine"></div><div class="ftxt"><strong>问题：</strong>'+(p.detail||'')+'</div></div><div class="fix-row"><div class="fdot light"></div><div class="ftxt"><strong>练习建议：</strong>'+(p.fix||'')+'</div></div></div></div></div>';
   });
   var goodHtml = '';
   highlights.forEach(function(h) {
@@ -2543,13 +2525,17 @@ function mvTogglePlay(){
 
 function mvStopVideo(){
   var v = document.getElementById('mvSourceVideo');
-  if(v) { v.pause(); v.src=''; }
+  if(v){
+    try{ v.pause(); v.src=''; v.load(); }catch(e){}
+  }
   mvPlaying=false;
   if(mvRaf){ cancelAnimationFrame(mvRaf); mvRaf=null; }
 }
 function mvStopPreview(){
   mvPlaying=false;
   if(mvRaf){ cancelAnimationFrame(mvRaf); mvRaf=null; }
+  var c=document.getElementById('mvCanvas');
+  if(c&&c.ctx){ c.ctx.clearRect(0,0,c.width,c.height); }
 }
 
 function mvExport(){
@@ -2775,7 +2761,12 @@ function switchDetailTab(tab){
 function renderDetailTab(){
   var p = PIECES[detailCurPieceIdx], b = document.getElementById('detailTabBody');
   if(!b || !p) return;
-  if(detailCurTab === 'cards') b.innerHTML = renderDetailCards(p);
+  if(detailCurTab === 'cards'){
+    // Show skeleton first
+    b.innerHTML = renderDetailCardsSkeleton(p.phrases.length || 4);
+    // Render actual content immediately (data is already loaded)
+    setTimeout(function(){ b.innerHTML = renderDetailCards(p); }, 100);
+  }
   if(detailCurTab === 'hum'){ b.innerHTML = renderDetailHum(p); bindDetailHum(); }
   if(detailCurTab === 'lead'){ b.innerHTML = renderDetailLead(p); bindDetailLead(); }
   if(detailCurTab === 'record'){ b.innerHTML = renderDetailRecord(p); bindDetailRecord(); }
@@ -2798,6 +2789,26 @@ function renderDetailCards(p){
       '<div class="playrow"><div class="pb main" onclick="detailPlayClip(' + f.i + ',true)">慢放 0.5×</div><div class="pb" onclick="detailPlayClip(' + f.i + ',false)">▷ 正常速</div></div>' +
     '</div>';
   }).join('') + '<div class="string-card"><small>整段串起来</small>' + p.string + '</div>';
+}
+
+function renderDetailCardsSkeleton(count){
+  count = count || 4;
+  var html = '';
+  for(var i = 0; i < count; i++){
+    html += '<div class="phrase-card skeleton">' +
+      '<div class="idx skeleton" style="width:40px;height:20px"></div>' +
+      '<div class="hd">' +
+        '<div class="nm skeleton" style="width:60%;height:14px;margin-bottom:8px"></div>' +
+        '<div class="full skeleton" style="width:50%;height:12px;margin-bottom:6px"></div>' +
+        '<div class="tt skeleton" style="width:40%;height:10px"></div>' +
+      '</div>' +
+      '<div class="beats skeleton" style="width:80%;height:8px;margin:12px 0;display:block"></div>' +
+      '<div class="row"><div class="skeleton" style="width:100%;height:12px;margin-bottom:8px"></div></div>' +
+      '<div class="row"><div class="skeleton" style="width:100%;height:12px;margin-bottom:8px"></div></div>' +
+      '<div class="row"><div class="skeleton" style="width:100%;height:12px"></div></div>' +
+    '</div>';
+  }
+  return html;
 }
 
 /* --- Video modal --- */
@@ -3527,7 +3538,7 @@ function renderDetailArchive(p){
     <!-- 扫码展示区 -->
     <div class="pay-qr" id="payQr" style="display:none">
       <div class="pay-qr-frame">
-        <img id="payQrImg" src="" alt="支付二维码">
+        <img id="payQrImg" src="" alt="支付二维码" loading="lazy">
         <div class="pay-qr-load" id="payQrLoad">正在生成二维码…</div>
       </div>
       <div class="pay-qr-hint" id="payQrHint">打开 <b>微信</b> 扫一扫 · 支付 <b>¥9.9</b></div>
@@ -3662,10 +3673,16 @@ function dcLoading(){
     if(cur<DC_STEPS.length-1){ var e=document.getElementById('dcstep'+cur); if(e){e.className='dc-step done';} cur++; var n=document.getElementById('dcstep'+cur); if(n)n.className='dc-step on'; }
   },7000);
   var _cdSec=28;
+  var _cdInitial=28;
   var _cdTimer=setInterval(function(){
     _cdSec--;
     var el=document.getElementById('dcCountdown');
-    if(el && _cdSec>0) el.textContent=(_isZH()?'预计还需 ':'About ')+_cdSec+(_isZH()?'s · 请别退出':' sec left · stay on page');
+    if(el) {
+      if(_cdSec>0) {
+        var progress=Math.round((_cdInitial-_cdSec)/_cdInitial*100);
+        el.textContent=(_isZH()?'还需 ':'About ')+_cdSec+(_isZH()?'s | '+progress+'%':' s | '+progress+'%');
+      }
+    }
     if(_cdSec<=0) clearInterval(_cdTimer);
   },1000);
 }
@@ -3707,7 +3724,12 @@ function pollDecompose(id){
       .then(function(res){
         var d=res.d;
         if(!res.ok){ clearInterval(iv); _dcLoadStop();
-          _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">😥</div><div class="dc-load-t">这支舞暂时打不开</div><div class="dc-load-d">'+(res.status===403?'这支作品未公开或属于他人':'请求出错了('+res.status+')')+'</div><div style="margin-top:20px"><button class="dc-btn" id="dcErrBack" style="width:auto;padding:11px 26px">返回</button></div></div>';
+          var errMsg='';
+          if(res.status===403) errMsg=(_isZH()?'这支舞暂时不可用（已删除或属于他人）':'This dance is not available');
+          else if(res.status===404) errMsg=(_isZH()?'舞蹈不存在，请检查链接':'Dance not found');
+          else if(res.status===500) errMsg=(_isZH()?'服务器维护中，请稍后重试':'Server error, please try again');
+          else errMsg=(_isZH()?'网络连接不稳定，请重新选择':'Network error, please retry');
+          _dcView().innerHTML='<div class="dc-load"><div style="font-size:34px">⚠️</div><div class="dc-load-t">'+(_isZH()?'暂时无法打开':'Cannot open')+'</div><div class="dc-load-d">'+errMsg+'</div><div style="margin-top:20px"><button class="dc-btn" id="dcErrBack" style="width:auto;padding:11px 26px">'+(_isZH()?'返回首页':'Back')+'</button></div></div>';
           var _eb=document.getElementById('dcErrBack'); if(_eb) _eb.onclick=function(){ showView(_dcFromTab()||'home'); }; }
         else if(d.status==='awaiting_payment'){ clearInterval(iv); _dcLoadStop();
           DC_ID=d.id;
@@ -3832,17 +3854,17 @@ function renderDecompose(d){
       '<div class="dc-sec">下载卡片</div>'+
       '<div class="dc-cards-row">'+
         '<a class="dc-card-dl" href="api/decompose/'+d.id+'/card/八拍卡v3.png" download="八拍卡-'+_esc(d.title)+'.png" onclick="setTimeout(function(){showToast(\'八拍卡已保存 🩰 快去小红书发吧！\')},400)">'+
-          '<img src="api/decompose/'+d.id+'/card/八拍卡v3.png" style="width:100%;border-radius:6px;margin-bottom:4px;display:block;object-fit:cover" onerror="this.style.display=\'none\'">'+
+          '<img src="api/decompose/'+d.id+'/card/八拍卡v3.png" loading="lazy" style="width:100%;border-radius:6px;margin-bottom:4px;display:block;object-fit:cover" onerror="this.style.display=\'none\'">'+
           '<span class="dc-card-label">八拍卡</span>'+
           '<span class="dc-card-hint">8帧动作参考</span>'+
         '</a>'+
         '<a class="dc-card-dl" href="api/decompose/'+d.id+'/card/镜面卡v3.png" download="镜面卡-'+_esc(d.title)+'.png" onclick="setTimeout(function(){showToast(\'镜面卡已保存 🪞 翻转跟练更顺！\')},400)">'+
-          '<img src="api/decompose/'+d.id+'/card/镜面卡v3.png" style="width:100%;border-radius:6px;margin-bottom:4px;display:block;object-fit:cover" onerror="this.style.display=\'none\'">'+
+          '<img src="api/decompose/'+d.id+'/card/镜面卡v3.png" loading="lazy" style="width:100%;border-radius:6px;margin-bottom:4px;display:block;object-fit:cover" onerror="this.style.display=\'none\'">'+
           '<span class="dc-card-label">镜面跟练卡</span>'+
           '<span class="dc-card-hint">翻转跟练</span>'+
         '</a>'+
         '<a class="dc-card-dl" href="api/decompose/'+d.id+'/card/记忆卡v3.png" download="记忆卡-'+_esc(d.title)+'.png" onclick="setTimeout(function(){showToast(\'记忆卡已保存 🧠 口诀背起来！\')},400)">'+
-          '<img src="api/decompose/'+d.id+'/card/记忆卡v3.png" style="width:100%;border-radius:6px;margin-bottom:4px;display:block;object-fit:cover" onerror="this.style.display=\'none\'">'+
+          '<img src="api/decompose/'+d.id+'/card/记忆卡v3.png" loading="lazy" style="width:100%;border-radius:6px;margin-bottom:4px;display:block;object-fit:cover" onerror="this.style.display=\'none\'">'+
           '<span class="dc-card-label">记忆卡</span>'+
           '<span class="dc-card-hint">口诀+歌词</span>'+
         '</a>'+
@@ -4074,8 +4096,21 @@ function dcToggleMirror(){
   document.getElementById('dcVideo').classList.toggle('mir',DC_MIR);
   document.getElementById('dcMir').classList.toggle('on',DC_MIR);
 }
-function dcCloseModal(){ var m=document.getElementById('dcModal'); if(m){ m.classList.remove('on'); var v=document.getElementById('dcVideo'); if(v){v.pause();v.src='';} } }
-document.getElementById('dcModal').onclick=function(e){ if(e.target===this) dcCloseModal(); };
+function dcCloseModal(){
+  var m=document.getElementById('dcModal');
+  if(m){
+    m.classList.remove('on');
+    var v=document.getElementById('dcVideo');
+    if(v){
+      try{ v.pause(); v.src=''; v.load(); }catch(e){}
+    }
+  }
+}
+if(document.getElementById('dcModal')){
+  document.getElementById('dcModal').onclick=function(e){
+    if(e.target===this) dcCloseModal();
+  };
+}
 /* 记忆卡整片控制 */
 function dcMemMode(m){ var v=document.getElementById('dcMemVideo'); v.playbackRate=(m==='slow')?0.5:1; document.getElementById('dcMemNorm').classList.toggle('on',m!=='slow'); document.getElementById('dcMemSlow').classList.toggle('on',m==='slow'); }
 function dcMemMirror(){ var v=document.getElementById('dcMemVideo'); var on=!v.classList.contains('mir'); v.classList.toggle('mir',on); document.getElementById('dcMemMir').classList.toggle('on',on); }
@@ -4569,7 +4604,7 @@ renderDecompose = function(d){
 <div class="dc-practice-overlay" id="dcPracticeOverlay">
   <button class="dc-practice-close" onclick="dcPracticeClose()">✕</button>
   <div class="dc-practice-top" id="dcPracticeTop">
-    <video id="dcPracticeVideo" autoplay loop playsinline controls></video>
+    <video id="dcPracticeVideo" loop playsinline controls></video>
   </div>
   <div class="dc-practice-bottom" id="dcPracticeFrames"></div>
   <div class="dc-practice-nav">
@@ -4600,11 +4635,11 @@ function dcPracticeRender(){
   vid.style.display='block';
   top.querySelector('.dc-practice-no-clip') && top.querySelector('.dc-practice-no-clip').remove();
   vid.src=slowSrc;
-  vid.playbackRate=0.5;
   vid.load();
+  vid.playbackRate=0.5;
   vid.play().catch(function(){
     // fallback to regular clip at 0.5x
-    vid.src=normSrc; vid.playbackRate=0.5; vid.load(); vid.play().catch(function(){
+    vid.src=normSrc; vid.load(); vid.playbackRate=0.5; vid.play().catch(function(){
       vid.style.display='none';
       var msg=document.createElement('div');
       msg.className='dc-practice-no-clip';
@@ -4836,6 +4871,55 @@ document.addEventListener('keydown',function(e){
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════
+// 🔴 P0 PERFORMANCE & ERROR HANDLING
+// ══════════════════════════════════════════════════════════
+
+// 1. Fetch 超时保护 (10s 硬超时)
+var _origFetch = window.fetch;
+window.fetch = function(url, opts) {
+  return Promise.race([
+    _origFetch.apply(this, arguments),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('网络超时(>10s)')), 10000))
+  ]).catch(e => {
+    console.error('[fetch] timeout or error:', url, e.message);
+    throw e;
+  });
+};
+
+// 2. 全局JS错误处理
+window.onerror = function(msg, file, line, col, err) {
+  console.error('[JS Error]', msg, 'at', file + ':' + line);
+  return false;
+};
+
+// 3. 未捕获Promise拒绝处理
+window.onunhandledrejection = function(ev) {
+  console.error('[Unhandled Promise]', ev.reason);
+};
+
+// 4. 页面卸载清理（防内存泄漏）
+var _dcTimers = [];
+var _origSetInterval = window.setInterval;
+var _origSetTimeout = window.setTimeout;
+window.setInterval = function(fn, ms) {
+  var id = _origSetInterval.apply(this, arguments);
+  _dcTimers.push({type: 'interval', id: id});
+  return id;
+};
+window.setTimeout = function(fn, ms) {
+  var id = _origSetTimeout.apply(this, arguments);
+  _dcTimers.push({type: 'timeout', id: id});
+  return id;
+};
+window.addEventListener('beforeunload', function() {
+  _dcTimers.forEach(t => t.type === 'interval' ? clearInterval(t.id) : clearTimeout(t.id));
+  document.querySelectorAll('video').forEach(v => { v.pause(); v.src = ''; });
+  document.querySelectorAll('audio').forEach(a => { a.pause(); a.src = ''; });
+});
+
+// ══════════════════════════════════════════════════════════
+
 // ── 微信登录 ──────────────────────────────────────
 var _dcWxUser = null;
 
@@ -4871,7 +4955,7 @@ function dcRenderWxBar() {
   var bar = document.getElementById('dcWxUserBar');
   if (!bar) return;
   if (_dcWxUser) {
-    bar.innerHTML = '<img src="' + (_dcWxUser.avatar||'') + '" onerror="this.style.display=\'none\'" style="width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px">'
+    bar.innerHTML = '<img src="' + (_dcWxUser.avatar||'') + '" loading="lazy" onerror="this.style.display=\'none\'" style="width:26px;height:26px;border-radius:50%;vertical-align:middle;margin-right:6px">'
       + '<span style="color:rgba(255,255,255,0.7)">' + (_dcWxUser.nickname||'') + '</span>'
       + ' <button onclick="dcWxLogout()" style="background:none;border:none;color:rgba(255,255,255,0.3);font-size:11px;cursor:pointer;margin-left:4px">退出</button>';
   } else {
@@ -4940,46 +5024,126 @@ function _soloFileSelect(input) {
 function _soloStart() {
   if (!_soloFile) return;
   var btn = document.getElementById('soloSubmit');
-  if (btn) { btn.disabled = true; btn.textContent = '上传中...'; }
+  if (btn) { btn.disabled = true; }
+  var m = document.getElementById('soloModal');
+
+  // Show upload progress UI
+  m.innerHTML = '<div class="solo-sheet"><div class="solo-loading" style="padding:24px">' +
+    '<div class="solo-load-t">视频上传中...</div>' +
+    '<div style="margin:16px 0">' +
+      '<div class="progress-bar"><div class="progress-fill" id="uploadBar" style="width:0%"></div></div>' +
+      '<div class="progress-meta"><span id="uploadPct">0%</span><span id="uploadSize">0MB / 0MB</span></div>' +
+    '</div>' +
+    '<div style="font-size:12px;color:var(--silver-dim);margin-top:12px;text-align:center">预计剩余时间: <span id="uploadEta">计算中</span></div>' +
+    '<div class="solo-load-d" style="margin-top:16px">视频正在上传到服务器...</div>' +
+  '</div></div>';
+
   var fd = new FormData();
   fd.append('my_video', _soloFile);
   fd.append('standard_id', _soloRefId);
   fd.append('title', _soloTitle || '我的舞');
   fd.append('mode', 'reference');
-    var xhr = new XMLHttpRequest();
+
+  var xhr = new XMLHttpRequest();
   xhr.open('POST', 'api/solo/review');
+  var startTime = Date.now();
+  var uploadedSize = 0;
+
   xhr.upload.onprogress = function(e) {
-    if (e.lengthComputable && btn) {
+    if (e.lengthComputable) {
+      uploadedSize = e.loaded;
+      var totalSize = e.total;
       var pct = Math.round(e.loaded/e.total*100);
-      btn.textContent = '上传中 ' + pct + '%';
+      var elapsedSec = (Date.now() - startTime) / 1000;
+      var speed = uploadedSize / (elapsedSec || 1); // bytes per second
+      var remainingBytes = totalSize - uploadedSize;
+      var etaSec = speed > 0 ? Math.ceil(remainingBytes / speed) : 0;
+      var etaText = etaSec < 60 ? etaSec + '秒' : Math.ceil(etaSec/60) + '分钟';
+
+      var bar = document.getElementById('uploadBar');
+      if(bar) bar.style.width = pct + '%';
+      var pctEl = document.getElementById('uploadPct');
+      if(pctEl) pctEl.textContent = pct + '%';
+      var sizeEl = document.getElementById('uploadSize');
+      if(sizeEl) sizeEl.textContent = (uploadedSize/1024/1024).toFixed(1) + 'MB / ' + (totalSize/1024/1024).toFixed(1) + 'MB';
+      var etaEl = document.getElementById('uploadEta');
+      if(etaEl) etaEl.textContent = etaText;
     }
   };
+
   xhr.onload = function() {
     try {
       var d = JSON.parse(xhr.responseText);
-      if (!d.review_id) { if(btn){btn.disabled=false;btn.textContent='开始 AI 比对测量';} alert(d.detail||'上传失败，请重试'); return; }
+      if (!d.review_id) { alert(d.detail||'上传失败，请重试'); _soloRenderUpload(); return; }
       _soloReviewId = d.review_id;
-      _soloRenderLoading();
+      _soloRenderAnalyzing();
       fetch('api/solo/review/' + d.review_id + '/run', { method: 'POST' })
         .then(function(){ _soloPoll(); })
         .catch(function(){ _soloPoll(); });
-    } catch(e) { if(btn){btn.disabled=false;btn.textContent='开始 AI 比对测量';} alert('上传失败，请重试'); }
+    } catch(e) { alert('上传失败，请重试'); _soloRenderUpload(); }
   };
   xhr.onerror = function() {
-    if(btn){btn.disabled=false;btn.textContent='开始 AI 比对测量';}
     alert('网络错误，请重试');
+    _soloRenderUpload();
   };
   xhr.send(fd);
 }
 
+function _soloRenderAnalyzing() {
+  var m = document.getElementById('soloModal');
+  m.innerHTML = '<div class="solo-sheet"><div class="solo-loading" style="padding:24px">' +
+    '<div class="loading-spinner" style="margin:0 auto 16px"></div>' +
+    '<div class="solo-load-t">视频已上传，开始分析</div>' +
+    '<div style="margin-top:16px;font-size:12px;color:var(--silver-dim)">初始化分析引擎中...</div>' +
+    '<div style="margin-top:20px;font-size:11px;color:#B5922A">约需 5-10 秒</div>' +
+  '</div></div>';
+}
+
 function _soloRenderLoading() {
   var m = document.getElementById('soloModal');
-  m.innerHTML = '<div class="solo-sheet"><div class="solo-loading">' +
+  m.innerHTML = '<div class="solo-sheet"><div class="solo-loading" style="padding:24px">' +
     '<div class="loading-spinner" style="margin:0 auto 16px"></div>' +
     '<div class="solo-load-t">AI 正在逐帧测量...</div>' +
-    '<div class="solo-load-d">抽帧 → 关节角度测量 → 与原视频对比 → 生成点评</div>' +
+    '<div id="soloProgress" style="margin:20px 0">' +
+      '<div class="progress-bar"><div class="progress-fill" id="analysisBar" style="width:0%"></div></div>' +
+      '<div class="progress-meta"><span id="stageName">初始化</span><span id="stageTime">约 30 秒</span></div>' +
+    '</div>' +
+    '<div class="solo-load-d" id="stageLogs" style="min-height:60px">' +
+      '<div style="font-size:12px;color:var(--silver-dim);line-height:1.6">' +
+        '<div>⏳ 抽帧分析视频...</div>' +
+        '<div style="opacity:.6">关节角度测量</div>' +
+        '<div style="opacity:.4">与原视频对比</div>' +
+        '<div style="opacity:.4">生成点评</div>' +
+      '</div>' +
+    '</div>' +
     '<div style="margin-top:20px;font-size:11px;color:#B5922A">约需 30-90 秒，请稍候</div>' +
   '</div></div>';
+  // Start updating progress
+  _updateAnalysisProgress();
+}
+
+function _updateAnalysisProgress() {
+  var stages = [
+    {name:'抽帧分析视频', time:'约 20 秒', progress:30},
+    {name:'关节角度测量', time:'约 40 秒', progress:60},
+    {name:'与原视频对比', time:'约 30 秒', progress:80},
+    {name:'生成点评', time:'约 10 秒', progress:95}
+  ];
+  var currentStage = 0;
+  var pollTimer = setInterval(function(){
+    if(currentStage < stages.length){
+      var stage = stages[currentStage];
+      var bar = document.getElementById('analysisBar');
+      var stageName = document.getElementById('stageName');
+      var stageTime = document.getElementById('stageTime');
+      if(bar) bar.style.width = stage.progress + '%';
+      if(stageName) stageName.textContent = stage.name;
+      if(stageTime) stageTime.textContent = stage.time;
+      currentStage++;
+    } else {
+      clearInterval(pollTimer);
+    }
+  }, 2500);
 }
 
 function _soloPoll() {
@@ -5124,6 +5288,35 @@ function closeSoloModal() {
   var m = document.getElementById('soloModal');
   if (m) m.classList.add('hidden');
 }
+
+/* ═══ GLOBAL MEMORY CLEANUP ═══ */
+function globalCleanup() {
+  // Stop all videos
+  var vids = document.querySelectorAll('video');
+  vids.forEach(function(v){ try{ v.pause(); v.src=''; v.load(); }catch(e){} });
+  // Stop all animations
+  if(mvRaf) { cancelAnimationFrame(mvRaf); mvRaf=null; }
+  if(detailRaf) { cancelAnimationFrame(detailRaf); detailRaf=null; }
+  // Clear timers
+  if(PAY_POLL_TIMER) { clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null; }
+  if(_soloPollTimer) { clearInterval(_soloPollTimer); _soloPollTimer=null; }
+  // Clear modal states
+  var modals = document.querySelectorAll('.mv-modal, .sheet-overlay, .practice-modal, #dcModal');
+  modals.forEach(function(m){ try{ m.remove(); }catch(e){} });
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', globalCleanup, { once: false });
+window.addEventListener('pagehide', globalCleanup, { once: false });
+
+// Cleanup on visibility change (tab switch)
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){
+    // Pause videos when tab is hidden (saves battery)
+    var vids = document.querySelectorAll('video');
+    vids.forEach(function(v){ if(!v.paused) v.pause(); });
+  }
+}, { once: false });
 
 </script>
 </body>

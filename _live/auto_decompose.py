@@ -4,7 +4,7 @@
 用户上传任意舞蹈视频 → 固定八拍分段 → vision看每段自动描述动作 → 出八拍卡+故事卡+慢放切片。
 无需选参考老师、无需预制breakdown。产物写 DATA_DIR/<id>/decompose.json。
 """
-import os, json, math, base64, subprocess, tempfile, traceback, urllib.request
+import os, json, math, base64, subprocess, tempfile, traceback, urllib.request, signal
 import concurrent.futures as cf
 
 BASE_DIR = os.environ.get("WUJING_BASE_DIR", "/www/wujing-api")
@@ -22,6 +22,34 @@ POSE_SCRIPT = os.path.join(BASE_DIR, "pose_angles.py")
 ANGLE_CN = {"right_elbow": "右肘", "left_elbow": "左肘", "right_shoulder": "右肩(抬臂)",
             "left_shoulder": "左肩(抬臂)", "right_knee": "右膝", "left_knee": "左膝",
             "right_hip": "右髋", "left_hip": "左髋", "torso_tilt": "躯干倾斜"}
+
+
+def _user_friendly_error(exc_type, exc_msg):
+    """异常 → 用户友好的中文错误消息（带改进建议）"""
+    exc_str = str(exc_msg).lower()
+    # 音频相关
+    if "audio" in exc_str or "codec" in exc_str or "wav" in exc_str:
+        return "视频音频有损坏，建议重新上传清晰的原始视频"
+    # 帧提取/视频格式
+    if "frame" in exc_str or "demux" in exc_str or "format" in exc_str or isinstance(exc_msg, ValueError):
+        return "视频格式不兼容，建议用 MP4 或 MOV 格式"
+    # 姿态检测失败
+    if "pose" in exc_str or "keypoint" in exc_str or "skeleton" in exc_str:
+        return "未检出清晰的人物姿态，建议选择光线清晰、人物占画面 1/3 的视频"
+    # Vision API 失败
+    if "vision" in exc_str or "ark" in exc_str or "401" in exc_str or "quota" in exc_str:
+        return "AI 视觉服务暂时不可用，请稍后重试"
+    # 网络/API 超时
+    if "timeout" in exc_str or "connection" in exc_str or "resolve" in exc_str:
+        return "网络连接超时，请检查网络后重试"
+    # 全局超时（15分钟）
+    if exc_type == TimeoutError or "15分钟" in exc_str:
+        return "处理时间过长（>15分钟），建议用时长 60-120 秒的清晰视频"
+    # 磁盘/内存
+    if "disk" in exc_str or "space" in exc_str or "memory" in exc_str:
+        return "服务器资源不足，请稍后重试"
+    # 通用降级
+    return "处理失败，请稍后重试或联系技术支持"
 
 
 def _run(cmd):
@@ -222,10 +250,10 @@ def _deepseek_story(title, phrases):
     ctx = "\n".join(f"{p['i']}.{p['name']}｜{p['action']}｜意境:{p['intent']}" for p in phrases)
     prompt = (f"你是资深舞蹈老师。下面是《{title}》按八拍自动拆的分段：\n{ctx}\n\n"
               "请生成一张故事卡帮舞者跳出感觉。只输出严格JSON不要markdown：\n"
-              '{"title":"故事标题","body":"120字以内情感叙事，讲这支舞的意境和该跳出的眼神状态",'
+              '{"title":"故事标题(8字以内)","body":"150字以内情感叙事，讲这支舞的意境和该跳出的眼神状态，不被截断",'
               '"chain":"用歌谣体把整支舞口诀编成押韵短歌，每段动作对应一句3-4字，句句押韵，朗朗上口，跳舞时能在心里默念。示例：举臂望天探身沉/旋风回眸展袖云/扬手如鸟仰面笑/五式连贯自然成。段数和分段口诀一一对应，押同一个韵脚"}')
     body = json.dumps({"model": "deepseek-chat", "messages": [{"role": "user", "content": prompt}],
-                       "max_tokens": 1200, "temperature": 0.7}).encode()
+                       "max_tokens": 1600, "temperature": 0.7}).encode()
     req = urllib.request.Request(DEEPSEEK_URL, data=body,
         headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
     raw = json.loads(urllib.request.urlopen(req, timeout=90).read())["choices"][0]["message"]["content"].strip()
@@ -318,8 +346,14 @@ def whisper_align_lyrics(video_path, phrases, song="", lyric_first="", lyric_las
 def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
                   song="", lyric_first="", lyric_last=""):
     """后台任务：拆解一支任意上传的舞。全程兜底，绝不留半成品。
-    ✨ 改进：中间进度反馈 + user-friendly错误消息 + 完整错误追踪
+    ✨ 改进：中间进度反馈 + user-friendly错误消息 + 全局15分钟超时保护
     """
+    # 全局超时保护：15分钟兜底
+    def _timeout_handler(signum, frame):
+        raise TimeoutError("AI 处理超时（>15分钟）")
+    signal.signal(signal.SIGALRM, _timeout_handler)
+    signal.alarm(900)  # 900秒 = 15分钟
+
     ddir = os.path.join(DATA_DIR, did)
     os.makedirs(os.path.join(ddir, "frames"), exist_ok=True)
     os.makedirs(os.path.join(ddir, "clips"), exist_ok=True)
@@ -364,14 +398,17 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         # MediaPipe 逐帧真实关节角度（测量·非AI猜）
         pose = _run_pose([os.path.join(ddir, "frames", f"p{i+1}.jpg") for i in range(n)])
 
+        result["progress"] = f"生成动作描述 (1/{n}段)..."
+        _write(did, result)
         def _desc(i):
             t0, t1 = bounds[i], bounds[i + 1]
             try:
                 return _vision_describe(os.path.join(ddir, "frames", f"p{i+1}.jpg"), i + 1, t0, t1)
             except Exception as e:
+                # Vision 失败降级：用分段名替代，继续流程不阻塞
                 return {"i": i + 1, "t0": round(t0, 2), "t1": round(t1, 2),
-                        "name": f"第{i+1}段", "full": "", "action": "(此段描述生成失败)",
-                        "feet": "", "intent": "", "kou": ""}
+                        "name": f"第{i+1}段", "full": "", "action": "",
+                        "feet": "", "intent": "", "kou": "", "fallback": True}
         with cf.ThreadPoolExecutor(max_workers=4) as ex:
             phrases = sorted(ex.map(_desc, range(n)), key=lambda x: x["i"])
         # 挂真实角度到每段
@@ -399,12 +436,16 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
             t0, t1 = bounds[i], bounds[i + 1]
             _clip(video_path, t0, t1, os.path.join(ddir, "clips", f"p{i+1}.mp4"), slow=None)
 
+        result["progress"] = "生成故事卡..."
+        _write(did, result)
         try:
             story = _deepseek_story(title, phrases)
         except Exception:
             story = {"title": title, "body": "", "chain": ""}
 
         # 无参考 AI 点评（看首/中/尾帧直接评价用户跳得怎样）
+        result["progress"] = "生成点评卡..."
+        _write(did, result)
         try:
             # 均匀取最多5帧覆盖全程，点评更全更准
             pick = sorted(set(max(1, round(1 + i * (n - 1) / 4)) for i in range(5)))
@@ -412,7 +453,8 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
             measured = [(k, pose.get(f"p{k}")) for k in pick]
             coach = _vision_coach(key_frames, title, measured)
         except Exception:
-            coach = None
+            # Coach 失败降级：显示"未检出"而不是隐藏卡片
+            coach = {"title": "AI 点评", "tips": "暂无检测结果", "fallback": True}
 
         # 记忆卡 = 整支视频卡（前端支持 慢速/镜像 跟练）
         memory = {"title": "记忆卡 · 整支跟练",
@@ -425,12 +467,18 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         if det_genre in ("guofeng", "kpop"):
             result["genre"] = det_genre
 
+        result["progress"] = "保存卡片..."
         result.update({"bpm": result.get("bpm"), "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
                        "story": story, "memory": memory, "coach": coach, "status": "completed"})
         _write(did, result)
-    except Exception:
+        signal.alarm(0)  # 取消全局超时
+    except Exception as e:
+        signal.alarm(0)  # 取消全局超时
         result["status"] = "failed"
-        result["error"] = traceback.format_exc()[-500:]
+        exc_type, exc_val = type(e).__name__, str(e)
+        user_msg = _user_friendly_error(type(e), exc_val)
+        result["error"] = user_msg  # 前端显示
+        result["error_log"] = f"{exc_type}: {exc_val}\n{traceback.format_exc()[-500:]}"  # 日志记录
         _write(did, result)
 
 
