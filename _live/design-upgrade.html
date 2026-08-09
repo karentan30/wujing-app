@@ -3338,6 +3338,9 @@ function renderDetailArchive(p){
 .dc-story .chain{margin-top:16px;padding-top:15px;border-top:1px dashed #E6DABA;font-size:12px;color:#7A5C2A;line-height:1.9}
 .dc-story .chain b{color:#B5922A;letter-spacing:.1em;font-weight:700}
 .dc-story .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:13px;cursor:pointer}
+.dc-story .runthrough{margin-top:16px;padding:14px 16px;background:#FDFAF4;border:1px solid #EBE1CB;border-radius:12px}
+.dc-story .runthrough .rt-label{font-size:11px;font-weight:700;color:#B5922A;letter-spacing:.1em;margin-bottom:8px}
+.dc-story .runthrough .rt-body{font-size:13px;color:#4A3820;line-height:1.9}
 /* ===== 记忆卡 ===== */
 .dc-mem{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;overflow:hidden;box-shadow:0 4px 20px rgba(120,92,30,.07)}
 .dc-mem video{width:100%;display:block;background:#000;transition:transform .15s}
@@ -3876,6 +3879,7 @@ function renderDecompose(d){
       (st.title?'<div class="dc-sec">故事卡</div>'+
         '<div class="dc-story"><div class="h">'+_esc(st.title)+'</div><div class="p">'+_esc(st.body)+'</div>'+
         (st.chain?'<div class="chain"><b>串记口诀</b><br>'+_esc(st.chain)+'</div>':'')+
+        (d.runthrough?'<div class="runthrough"><div class="rt-label">📖 过一遍剧本</div><div class="rt-body">'+_esc(d.runthrough)+'</div></div>':'')+
         '<div class="shr" onclick="dcShare(\'story\')">分享故事卡 ↗</div></div>':
         '<div class="dc-sec">故事卡</div><div class="dc-story" style="color:var(--mute);text-align:center;padding:20px 0">故事卡生成中，请稍后刷新</div>')+
       '<div class="dc-sec">记忆卡 · 整支跟练</div>'+

@@ -680,7 +680,7 @@ def get_decompose_endpoint(did: str, user: dict = Depends(get_optional_user)):
         return d
     owner = d.get("user_id")
     # None / 'guest' 视为匿名，任何人可读；绑定了真实登录用户的才校验归属
-    if owner not in (None, "", "guest"):
+    if owner not in (None, "", "guest", "local_user"):
         if not user or owner != user["id"]:
             raise HTTPException(status_code=403, detail="Access denied")
     return d
