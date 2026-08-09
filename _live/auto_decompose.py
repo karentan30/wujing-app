@@ -12,6 +12,8 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 ARK_URL = "https://ark.cn-beijing.volces.com/api/v3/responses"
 EP = os.environ.get("ARK_VISION_EP", "ep-20260729155405-5l7dj")
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
+CLAUDE_URL = "https://api.anthropic.com/v1/messages"
+CLAUDE_MODEL = "claude-sonnet-4-6"
 
 SEG_LEN = 3.3          # 每段目标秒数（≈130BPM的八拍）
 MIN_SEG, MAX_SEG = 5, 10  # 段数上下限（控成本）
@@ -169,12 +171,13 @@ def _vision_describe(frame_path, idx, t0, t1):
     d = json.loads(out.strip())
     # 口诀质量 loop：含破折号或不足4字 → 自动重试一次
     kou_val = d.get("kou", "")
-    if "—" in kou_val or len(kou_val) < 4:
+    # 连字符"-"是错误格式（正确应用破折号"—"），或口诀太短时重试
+    if ("-" in kou_val and "—" not in kou_val) or len(kou_val) < 4:
         try:
             retry_body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 320,
                           "input": [{"role": "user", "content": [
                               {"type": "input_image", "image_url": _b64(frame_path)},
-                              {"type": "input_text", "text": prompt + "\n\n注意：口诀必须是连贯短句如'举一望一转踢'，严禁破折号分隔，上次生成不合格请重新生成"}]}]}
+                              {"type": "input_text", "text": prompt + "\n\n注意：口诀必须用破折号「—」连接动词，如「抬—拧—展—笑」，上次用了连字符-不合格请重新生成"}]}]}
             req2 = urllib.request.Request(ARK_URL, data=json.dumps(retry_body).encode(),
                 headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
             r2 = json.loads(urllib.request.urlopen(req2, timeout=60).read())
@@ -262,6 +265,52 @@ def _deepseek_story(title, phrases):
         if raw.lstrip().lower().startswith("json"):
             raw = raw.lstrip()[4:]
     return json.loads(raw.strip())
+
+
+def _claude_runthrough(phrases, title, genre):
+    """Claude 生成「过一遍剧本」——演员读完能顺下来的连贯口播文字。
+    失败返回空串，不阻塞主流程。
+    """
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not key:
+        return ""
+    is_guofeng = "guofeng" in genre or "古" in genre or "国风" in genre
+    style_hint = "古典/国风舞，语言优美有意境" if is_guofeng else "K-pop/流行舞，语言简洁有节奏感"
+    ctx = "\n".join(
+        f"{p['i']}. {p['name']}：{p['action']}  脚下：{p['feet']}"
+        for p in phrases
+    )
+    prompt = f"""这是《{title}》的动作拆解（{style_hint}）：
+
+{ctx}
+
+请写一段「过一遍剧本」，让演员读完就能顺着把整支舞跳下来。
+
+要求：
+- 一段话，不分段，不加序号
+- 用「接着」「随之」「紧接着」「同时」「然后」把每个动作自然连起来
+- 写出身体在空间中的方向和流动感，不只是动作名
+- 古典舞用意象语言（如"如柳枝随风"），K-pop用节奏语言（如"卡在第3拍"）
+- 150-220字，不截断
+
+只输出剧本文字，不要标题不要解释。"""
+
+    body = json.dumps({
+        "model": CLAUDE_MODEL,
+        "max_tokens": 512,
+        "messages": [{"role": "user", "content": prompt}]
+    }).encode()
+    req = urllib.request.Request(CLAUDE_URL, data=body, headers={
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json"
+    })
+    try:
+        r = json.loads(urllib.request.urlopen(req, timeout=30).read())
+        return r["content"][0]["text"].strip()
+    except Exception as e:
+        print(f"[claude_runthrough] failed: {e}")
+        return ""
 
 
 def _write(did, obj):
@@ -443,6 +492,10 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         except Exception:
             story = {"title": title, "body": "", "chain": ""}
 
+        result["progress"] = "生成过一遍剧本..."
+        _write(did, result)
+        runthrough = _claude_runthrough(phrases, title, genre)
+
         # 无参考 AI 点评（看首/中/尾帧直接评价用户跳得怎样）
         result["progress"] = "生成点评卡..."
         _write(did, result)
@@ -469,7 +522,7 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
 
         result["progress"] = "保存卡片..."
         result.update({"bpm": result.get("bpm"), "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
-                       "story": story, "memory": memory, "coach": coach, "status": "completed"})
+                       "story": story, "runthrough": runthrough, "memory": memory, "coach": coach, "status": "completed"})
         _write(did, result)
         signal.alarm(0)  # 取消全局超时
     except Exception as e:
