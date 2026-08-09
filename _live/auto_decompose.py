@@ -12,8 +12,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 ARK_URL = "https://ark.cn-beijing.volces.com/api/v3/responses"
 EP = os.environ.get("ARK_VISION_EP", "ep-20260729155405-5l7dj")
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
-CLAUDE_URL = "https://api.anthropic.com/v1/messages"
-CLAUDE_MODEL = "claude-sonnet-4-6"
+DEEPSEEK_CHAT_MODEL = "deepseek-chat"
 
 SEG_LEN = 3.3          # 每段目标秒数（≈130BPM的八拍）
 MIN_SEG, MAX_SEG = 5, 10  # 段数上下限（控成本）
@@ -268,10 +267,10 @@ def _deepseek_story(title, phrases):
 
 
 def _claude_runthrough(phrases, title, genre):
-    """Claude 生成「过一遍剧本」——演员读完能顺下来的连贯口播文字。
+    """DeepSeek 生成「过一遍剧本」——演员读完能顺下来的连贯口播文字。
     失败返回空串，不阻塞主流程。
     """
-    key = os.environ.get("ANTHROPIC_API_KEY", "")
+    key = os.environ.get("DEEPSEEK_API_KEY", "")
     if not key:
         return ""
     is_guofeng = "guofeng" in genre or "古" in genre or "国风" in genre
@@ -296,20 +295,19 @@ def _claude_runthrough(phrases, title, genre):
 只输出剧本文字，不要标题不要解释。"""
 
     body = json.dumps({
-        "model": CLAUDE_MODEL,
+        "model": DEEPSEEK_CHAT_MODEL,
         "max_tokens": 512,
         "messages": [{"role": "user", "content": prompt}]
     }).encode()
-    req = urllib.request.Request(CLAUDE_URL, data=body, headers={
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
+    req = urllib.request.Request(DEEPSEEK_URL, data=body, headers={
+        "Authorization": f"Bearer {key}",
         "content-type": "application/json"
     })
     try:
         r = json.loads(urllib.request.urlopen(req, timeout=30).read())
-        return r["content"][0]["text"].strip()
+        return r["choices"][0]["message"]["content"].strip()
     except Exception as e:
-        print(f"[claude_runthrough] failed: {e}")
+        print(f"[runthrough] failed: {e}")
         return ""
 
 
