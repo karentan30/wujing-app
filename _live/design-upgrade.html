@@ -93,7 +93,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .entry-info{flex:1}
 .entry-title{font-size:var(--fs-h4);font-weight:600;color:var(--ink)}
 .entry-desc{font-size:var(--fs-body-sm);color:var(--silver-deep);margin-top:2px;line-height:var(--lh-normal)}
-.entry-arrow{flex-shrink:0;color:var(--gold)}
+.entry-arrow{flex-shrink:0;color:var(--gold-text)}
 
 /* prefers reduced motion */
 @media(prefers-reduced-motion:reduce){
@@ -116,7 +116,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .upload-card-info{flex:1}
 .upload-card-title{font-size:15px;font-weight:600;color:var(--ink)}
 .upload-card-desc{font-size:12px;color:var(--mute);margin-top:2px}
-.upload-card-arrow{font-size:18px;color:var(--gold);flex-shrink:0}
+.upload-card-arrow{font-size:18px;color:var(--gold-text);flex-shrink:0}
 
 .piece-card{
   border-radius:16px;overflow:hidden;margin-bottom:14px;cursor:pointer;position:relative;
@@ -242,6 +242,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
   will-change:transform;
   box-shadow:0 1px 12px rgba(0,0,0,.04), 0 0 20px rgba(181,146,42,.06);
 }
+@keyframes gradFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes ringSpin{
   from{transform:rotate(0deg)}to{transform:rotate(360deg)}
 }
@@ -1828,7 +1829,7 @@ function loadWorks(){
               '<circle cx="40" cy="30" r="2.5" fill="#E9B872" opacity="0.5"/><circle cx="80" cy="24" r="2.5" fill="#E9B872" opacity="0.5"/>'+
               '<circle cx="120" cy="18" r="2.5" fill="#E9B872" opacity="0.5"/><circle cx="160" cy="12" r="2.5" fill="#E9B872" opacity="0.5"/>'+
             '</svg>'+
-            '<div class="cl" onclick="window.DC_ID=\''+w.id+'\';dcLoading();pollDecompose(\''+w.id+'\')" style="cursor:pointer;color:var(--gold)">▷ 去跟练 · 解锁进步曲线</div></div>';
+            '<div class="cl" onclick="window.DC_ID=\''+w.id+'\';dcLoading();pollDecompose(\''+w.id+'\')" style="cursor:pointer;color:var(--gold-text)">▷ 去跟练 · 解锁进步曲线</div></div>';
         }
         var tags = (w.genre ? '<span class="wc-tag">'+_esc(w.genre==='guofeng'?'国风':w.genre)+'</span>' : '') +
           (w.n_phrases ? '<span class="wc-tag">'+(w.n_phrases)+' 句</span>' : '') +
@@ -3339,7 +3340,7 @@ function renderDetailArchive(p){
 .dc-story .chain b{color:#B5922A;letter-spacing:.1em;font-weight:700}
 .dc-story .shr{text-align:right;font-size:11px;color:#B5922A;font-weight:600;margin-top:13px;cursor:pointer}
 .dc-story .runthrough{margin-top:16px;padding:14px 16px;background:#FDFAF4;border:1px solid #EBE1CB;border-radius:12px}
-.dc-story .runthrough .rt-label{font-size:11px;font-weight:700;color:#B5922A;letter-spacing:.1em;margin-bottom:8px}
+.dc-story .runthrough .rt-label{font-size:11px;font-weight:700;color:var(--gold-text);letter-spacing:.1em;margin-bottom:8px}
 .dc-story .runthrough .rt-body{font-size:13px;color:#4A3820;line-height:1.9}
 /* ===== 记忆卡 ===== */
 .dc-mem{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;overflow:hidden;box-shadow:0 4px 20px rgba(120,92,30,.07)}
