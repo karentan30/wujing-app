@@ -840,6 +840,21 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
   .upload-card{padding:clamp(12px,2.5vw,20px);gap:clamp(10px,2vw,14px)}
   .sctrl{gap:12px;margin-top:6px}
 }
+/* 移动端触控优化：所有按钮和可点击元素 ≥44px高 */
+@media (max-width:425px){
+  button, .hero-cta, [role="button"], .btn, .cta, input[type="submit"]{
+    min-height:44px !important;
+    padding:12px 16px !important;
+  }
+  /* 字号最小12px */
+  .tag, .subtitle, .label, .card-type, .subtitle-small{
+    font-size:12px !important;
+  }
+  /* 底部安全区 */
+  footer, .footer-zone{
+    padding-bottom:60px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -876,6 +891,10 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
     <div class="hero-brand">舞镜</div>
     <div class="hero-tagline" data-i18n="heroTitle" style="font-size:var(--fs-h4);font-weight:700;color:var(--ink);letter-spacing:.02em">学一支舞，从 2 小时到 20 分钟</div>
     <div class="hero-desc" data-i18n="heroSub">AI 自动拆解每一句动作 · 镜面跟练 · 记忆口诀 · 生成卡片</div>
+    <div style="background:linear-gradient(135deg,#FFF9F0,#FFF5E6);border:1.5px solid #E8D4B8;border-radius:12px;padding:12px 20px;margin-top:16px;margin-bottom:8px;display:inline-block">
+      <div style="font-size:var(--fs-body-sm);color:var(--ink);font-weight:700;letter-spacing:.02em">完整拆解 <span style="color:var(--gold-soft,#B5922A);font-size:1.2em">¥9.9</span>/支</div>
+      <div style="font-size:var(--fs-label);color:var(--mute);margin-top:4px;line-height:1.4">✓ 动作拆解卡 ✓ 记忆口诀 ✓ 故事卡 ✓ AI点评</div>
+    </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:4px">
       <div class="hero-cta" onclick="var el=document.getElementById('demo-library');if(el)el.scrollIntoView({behavior:'smooth'});else showView('detail')" tabindex="0" role="button" aria-label="选热门舞蹈跟练">
         <span class="hero-cta-icon">▶</span>
@@ -4504,12 +4523,14 @@ function payCreate(channel){
   var _tEl=document.getElementById('dcTitle');
   var _tName=_tEl?(_tEl.value||'我的舞'):'我的舞';
   var _ref=''; try{ _ref=localStorage.getItem('wj_ref')||''; }catch(e){}
+  var _abort=new AbortController();
+  var _timeout=setTimeout(function(){_abort.abort()},30000);
   fetch('api/pay/'+channel+'/create',{
-    method:'POST', headers:hdrs,
+    method:'POST', headers:hdrs, signal:_abort.signal,
     body:JSON.stringify({dance_id:DC_ID, title:_tName, genre:'guofeng',
       discount:!!WJ_DISCOUNT, ref_code:_ref||undefined})
   })
-  .then(function(r){return r.json();})
+  .then(function(r){clearTimeout(_timeout);return r.json();})
   .then(function(d){
     if(d.out_trade_no){
       PAY_OUT_TRADE_NO=d.out_trade_no;
@@ -4538,7 +4559,18 @@ function payCreate(channel){
       document.getElementById('payStripe').style.display='none';
     }
   })
-  .catch(function(){ PAY_BUSY=false; toast('网络错误'); payClose(); });
+  .catch(function(err){
+    clearTimeout(_timeout);
+    PAY_BUSY=false;
+    if(err.name==='AbortError'){
+      toast('请求超时（>30秒），请检查网络后重试');
+    } else {
+      toast('网络错误，请重试');
+    }
+    document.getElementById('payChannels').style.display='block';
+    document.getElementById('payQr').style.display='none';
+    payClose();
+  });
 }
 function showPaymentSuccess(){
   var m=document.createElement('div');
