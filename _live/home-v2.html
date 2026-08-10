@@ -105,6 +105,12 @@
   }
   .cta.block{display:block;text-align:center;padding:17px;font-size:17px;}
   .cta-sub{font-size:12px;color:var(--mute);margin-top:12px;}
+  .pk-card{background:rgba(201,160,126,0.12);border:1px solid rgba(201,160,126,0.3);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin:16px 0}
+  .pk-icon{font-size:24px}
+  .pk-content{flex:1}
+  .pk-title{font-size:13px;font-weight:700;color:#c9a07e;margin-bottom:2px}
+  .pk-desc{font-size:12px;color:#9a8878}
+  .pk-btn{background:#c9a07e;color:#1a1015;border:none;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 
   /* 全链路小条 */
   .fulllink{margin:24px auto 0;display:flex;flex-wrap:wrap;
@@ -423,6 +429,14 @@
     <h1>把你想学的那支舞，<br><em>逐句拆开、量化到拍点</em>，<br>照着练就行</h1>
     <p>上传任意一支舞，AI 帮你拆成八拍卡、歌词记忆卡、舞曲故事卡，还能慢放逐句跟练。</p>
     <a class="cta" href="/app?upload=true">上传你的舞</a>
+    <div class="pk-card">
+      <div class="pk-icon">⚔️</div>
+      <div class="pk-content">
+        <div class="pk-title">和朋友比一比</div>
+        <div class="pk-desc">上传同一支舞的视频，AI对比打分</div>
+      </div>
+      <button class="pk-btn" onclick="startPK()">发起PK →</button>
+    </div>
     <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap">
       <span style="font-size:12px;color:var(--accent);opacity:.85">上传视频</span>
       <span style="font-size:11px;color:var(--mute)">→</span>
@@ -686,6 +700,11 @@
     const el = document.getElementById('danceCount');
     if(el) el.textContent = '30+';
   });
+
+  // PK 功能（占位：跳到上传页，等后端PK功能上线再接口）
+  function startPK(){
+    window.location.href = '/app?upload=true&mode=pk';
+  }
 </script>
 <script src="https://www.mylumee.app/support-widget.js" data-product="wujing"></script>
 </body>

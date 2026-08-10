@@ -605,6 +605,16 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .phrase-card .playrow .pb.main{background:linear-gradient(135deg,rgba(245,240,228,.5),rgba(181,146,42,.1));border-color:var(--silver-mid);font-weight:600}
 .string-card{margin:14px 0 4px;text-align:center;font-size:var(--fs-h3);letter-spacing:4px;color:var(--silver-deep);padding:12px 16px;border:1px dashed var(--glass-border);border-radius:12px;z-index:2;position:relative;background:rgba(255,255,255,.2)}
 .string-card small{display:block;font-size:var(--fs-micro);letter-spacing:2px;color:var(--silver-dim);margin-bottom:4px}
+.weekly-leaderboard{background:#1a1a22;border-radius:12px;padding:16px;margin-top:20px}
+.wl-header{font-size:14px;font-weight:700;color:#c9a07e;margin-bottom:12px}
+.wl-list{display:flex;flex-direction:column;gap:8px}
+.wl-item{display:flex;align-items:center;gap:10px;padding:10px;background:#161618;border-radius:8px;border-left:3px solid #444}
+.wl-item.rank-1{border-left-color:#c9a07e;background:rgba(201,160,126,0.08)}
+.wl-item.rank-2{border-left-color:#f0a050}
+.wl-rank{font-weight:800;font-size:16px;width:20px;color:#888;text-align:center}
+.wl-name{font-size:13px;color:#c8bdb5;flex:1}
+.wl-score{font-size:14px;font-weight:700;color:#c9a07e}
+.wl-cta{text-align:center;font-size:12px;color:#9a8878;margin-top:12px}
 .mv-modal{position:fixed;inset:0;z-index:300;background:rgba(240,242,248,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:24px;max-width:440px;margin:0 auto}
 .mv-modal.on{display:flex}
 .mv-modal .box{width:100%;background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(240,242,248,.85));border:1px solid var(--glass-border);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 32px rgba(181,146,42,.06)}
@@ -2898,7 +2908,33 @@ function renderDetailCards(p){
       '<div class="kou"><small>怎么记 · 口诀</small>' + f.kou + '</div>' +
       '<div class="playrow"><div class="pb main" onclick="detailPlayClip(' + f.i + ',true)">慢放 0.5×</div><div class="pb" onclick="detailPlayClip(' + f.i + ',false)">▷ 正常速</div></div>' +
     '</div>';
-  }).join('') + '<div class="string-card"><small>整段串起来</small>' + p.string + '</div>';
+  }).join('') + '<div class="string-card"><small>整段串起来</small>' + p.string + '</div>' +
+  '<div class="weekly-leaderboard">' +
+    '<div class="wl-header">🏆 本周排行榜</div>' +
+    '<div class="wl-list">' +
+      '<div class="wl-item rank-1">' +
+        '<span class="wl-rank">1</span>' +
+        '<span class="wl-name">Amy</span>' +
+        '<span class="wl-score">94分</span>' +
+      '</div>' +
+      '<div class="wl-item rank-2">' +
+        '<span class="wl-rank">2</span>' +
+        '<span class="wl-name">你（本周最新）</span>' +
+        '<span class="wl-score">82分</span>' +
+      '</div>' +
+      '<div class="wl-item rank-3">' +
+        '<span class="wl-rank">3</span>' +
+        '<span class="wl-name">Jessica</span>' +
+        '<span class="wl-score">79分</span>' +
+      '</div>' +
+      '<div class="wl-item rank-4">' +
+        '<span class="wl-rank">4</span>' +
+        '<span class="wl-name">Kevin</span>' +
+        '<span class="wl-score">75分</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="wl-cta">你可以做得更好 💪 再来一次</div>' +
+  '</div>';
 }
 
 function renderDetailCardsSkeleton(count){
