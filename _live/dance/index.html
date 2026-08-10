@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-pop舞蹈教程库 - AI跟跳评分平台</title>
+    <meta name="description" content="20个K-pop爆款舞蹈教程，包括BLACKPINK、NewJeans、IVE、aespa等。AI视频分析您的跟跳效果，专业舞蹈评分系统。">
+    <meta name="keywords" content="K-pop舞蹈,舞蹈教程,跟跳,AI评分,BLACKPINK,NewJeans,IVE,aespa,TWICE,舞蹈分解">
+    <meta name="author" content="舞镜 Wujing">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="K-pop舞蹈教程库 - AI跟跳评分平台">
+    <meta property="og:description" content="20个精选K-pop舞蹈，从基础到进阶，AI智能评分系统帮助你快速进步。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wujing.mylumee.app/dance/">
+    <link rel="canonical" href="https://wujing.mylumee.app/dance/">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"CollectionPage","name":"K-pop舞蹈教程库","description":"专业的K-pop舞蹈分解教学和AI评分平台","url":"https://wujing.mylumee.app/dance/"}
+    </script>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box}
+        body {background:#0f0f13;color:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6}
+        .container {max-width:1200px;margin:0 auto;padding:0 20px}
+        header {padding:80px 0;text-align:center;background:linear-gradient(135deg,#0f0f13 0%,#1a1a24 100%);border-bottom:1px solid #333}
+        h1 {font-size:3.5rem;margin-bottom:15px;color:#c9a07e}
+        .tagline {font-size:1.3rem;color:#999;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto}
+        .search-bar {margin:30px 0;display:flex;gap:10px}
+        .search-bar input {flex:1;padding:12px 20px;background:#1a1a24;border:1px solid #333;border-radius:8px;color:#e0e0e0;font-size:1rem}
+        .search-bar input::placeholder {color:#666}
+        .search-bar button {padding:12px 30px;background:#c9a07e;color:#0f0f13;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:all 0.3s}
+        .search-bar button:hover {background:#d4b89d;transform:translateY(-2px)}
+        .category-tabs {display:flex;gap:15px;margin:40px 0;flex-wrap:wrap;justify-content:center}
+        .tab-btn {padding:10px 20px;background:#1a1a24;border:1px solid #333;border-radius:8px;color:#999;cursor:pointer;transition:all 0.3s;font-size:0.95rem}
+        .tab-btn.active {background:#c9a07e;color:#0f0f13;border-color:#c9a07e}
+        .tab-btn:hover {border-color:#c9a07e;color:#c9a07e}
+        .dance-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:25px;margin:60px 0}
+        .dance-card {background:#1a1a24;border:1px solid #333;border-radius:12px;overflow:hidden;transition:all 0.3s;text-decoration:none;color:inherit;display:flex;flex-direction:column}
+        .dance-card:hover {border-color:#c9a07e;transform:translateY(-8px);box-shadow:0 10px 30px rgba(201,160,126,0.2)}
+        .card-header {padding:30px 25px;border-bottom:1px solid #333;background:linear-gradient(135deg,#1a1a24 0%,#2a2a35 100%)}
+        .card-title {font-size:1.3rem;color:#c9a07e;margin-bottom:8px;font-weight:600}
+        .card-artist {font-size:0.95rem;color:#999}
+        .card-content {padding:20px 25px;flex:1;display:flex;flex-direction:column}
+        .key-points {margin-bottom:20px}
+        .point {display:inline-block;background:#0f0f13;padding:6px 12px;border-radius:20px;margin-right:8px;margin-bottom:8px;font-size:0.85rem;color:#c9a07e;border:1px solid #333}
+        .card-cta {display:inline-block;margin-top:auto;padding:12px 20px;background:rgba(201,160,126,0.1);color:#c9a07e;border:1px solid #c9a07e;border-radius:6px;text-align:center;transition:all 0.3s;font-weight:500;font-size:0.95rem}
+        .card-cta:hover {background:#c9a07e;color:#0f0f13}
+        .stats {display:flex;gap:30px;margin:40px 0;justify-content:center;text-align:center}
+        .stat {flex:1;max-width:200px}
+        .stat-number {font-size:2.5rem;color:#c9a07e;font-weight:600}
+        .stat-label {color:#999;margin-top:10px}
+        .footer-cta {background:linear-gradient(135deg,#1a1a24 0%,#2a2a35 100%);padding:60px 20px;text-align:center;margin-top:60px;border-top:1px solid #333}
+        .footer-cta h2 {font-size:2rem;margin-bottom:20px;color:#c9a07e}
+        .footer-cta p {color:#999;margin-bottom:30px;font-size:1.1rem}
+        .primary-btn {display:inline-block;background:#c9a07e;color:#0f0f13;padding:18px 50px;border:none;border-radius:8px;font-size:1.1rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.3s}
+        .primary-btn:hover {background:#d4b89d;transform:translateY(-2px)}
+        footer {background:#0f0f13;padding:40px 20px;text-align:center;border-top:1px solid #333;color:#666}
+        .difficulty-badge {display:inline-block;padding:4px 10px;border-radius:4px;font-size:0.8rem;margin-top:10px}
+        .difficulty-easy {background:rgba(100,200,100,0.2);color:#64c864}
+        .difficulty-medium {background:rgba(200,180,100,0.2);color:#c8b464}
+        .difficulty-hard {background:rgba(200,100,100,0.2);color:#c86464}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>K-pop舞蹈教程库</h1>
+            <p class="tagline">20个爆款K-pop舞蹈 + AI智能评分 | 从基础入门到专业表演</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索舞蹈名称或歌手...">
+                <button onclick="searchDances()">搜索</button>
+            </div>
+            <div class="category-tabs">
+                <button class="tab-btn active" onclick="filterByCategory('all')">全部</button>
+                <button class="tab-btn" onclick="filterByCategory('girl')">女团</button>
+                <button class="tab-btn" onclick="filterByCategory('boy')">男团</button>
+                <button class="tab-btn" onclick="filterByCategory('mixed')">混合</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">20</div>
+                <div class="stat-label">精选舞蹈</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">SEO优化</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">AI评分</div>
+                <div class="stat-label">即时反馈</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dance-grid" id="danceGrid">
+            <!-- Dance cards will be inserted here -->
+        </div>
+    </div>
+
+    <section class="footer-cta">
+        <div class="container">
+            <h2>开始你的舞蹈之旅</h2>
+            <p>选择你喜欢的舞蹈，学习专业动作分解，上传视频获得AI评分</p>
+            <a href="https://wujing.mylumee.app" class="primary-btn">进入AI舞蹈平台</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 舞镜 Wujing. 专业舞蹈AI分析平台 | <a href="https://wujing.mylumee.app" style="color:#c9a07e;">返回首页</a></p>
+        </div>
+    </footer>
+
+    <script>
+        const dances = [
+            {title: "BLACKPINK Lovesick Girls", artist: "BLACKPINK", url: "blackpink-lovesick-girls.html", points: ["S曲线", "发丝甩动", "队形感"], category: "girl"},
+            {title: "NewJeans Hype Boy", artist: "NewJeans", url: "newjeans-hype-boy.html", points: ["轻盈步伐", "手臂波浪", "表情管理"], category: "girl"},
+            {title: "IVE Love Dive", artist: "IVE", url: "ive-love-dive.html", points: ["挺胸展肩", "节拍卡点", "指尖细节"], category: "girl"},
+            {title: "aespa Supernova", artist: "aespa", url: "aespa-supernova.html", points: ["机械感", "整齐度", "力道控制"], category: "girl"},
+            {title: "TWICE Fancy", artist: "TWICE", url: "twice-fancy.html", points: ["可爱表情", "换位移动", "节奏感"], category: "girl"},
+            {title: "LE SSERAFIM Antifragile", artist: "LE SSERAFIM", url: "lesserafim-antifragile.html", points: ["力量感", "低重心", "腰部控制"], category: "girl"},
+            {title: "STAYC Bubble", artist: "STAYC", url: "stayc-bubble.html", points: ["活泼跳跃", "手势变化", "笑容"], category: "girl"},
+            {title: "Kep1er WA DA DA", artist: "Kep1er", url: "kep1er-wa-da-da.html", points: ["爆发力", "跑步动作", "集体整齐"], category: "girl"},
+            {title: "BTS Butter", artist: "BTS", url: "bts-butter.html", points: ["流畅感", "手臂延伸", "表情"], category: "boy"},
+            {title: "BTS Dynamite", artist: "BTS", url: "bts-dynamite.html", points: ["复古律动", "膝盖弯曲", "肩部松弛"], category: "boy"},
+            {title: "ENHYPEN Given-Taken", artist: "ENHYPEN", url: "enhypen-given-taken.html", points: ["帅气感", "手势", "暗黑风"], category: "boy"},
+            {title: "TXT 0X1=Lovesong", artist: "TXT", url: "txt-0x1lovesong.html", points: ["速度感", "转身", "头发甩"], category: "boy"},
+            {title: "NMIXX O.O", artist: "NMIXX", url: "nmixx-o-o.html", points: ["多段变化", "爆发换节奏", "表情切换"], category: "mixed"},
+            {title: "ITZY DALLA DALLA", artist: "ITZY", url: "itzy-dalla-dalla.html", points: ["自信走位", "手臂大开", "视线引导"], category: "girl"},
+            {title: "MAMAMOO HIP", artist: "MAMAMOO", url: "mamamoo-hip.html", points: ["性感腰肢", "反拍感", "地板动作"], category: "girl"},
+            {title: "EXO Growl", artist: "EXO", url: "exo-growl.html", points: ["男团整齐度", "力量", "队形变化"], category: "boy"},
+            {title: "GOT7 Not By The Moon", artist: "GOT7", url: "got7-not-by-the-moon.html", points: ["流畅过渡", "臂力", "表情"], category: "boy"},
+            {title: "SHINee Ring Ding Dong", artist: "SHINee", url: "shinee-ring-ding-dong.html", points: ["速度", "节奏切换", "复古感"], category: "boy"},
+            {title: "KARA Mister", artist: "KARA", url: "kara-mister.html", points: ["臀部扭动", "律动感", "节奏"], category: "girl"},
+            {title: "SISTAR Touch My Body", artist: "SISTAR", url: "sistar-touch-my-body.html", points: ["弹性", "身体律动", "放松感"], category: "girl"}
+        ];
+
+        let currentCategory = 'all';
+
+        function renderDances(filteredDances) {
+            const grid = document.getElementById('danceGrid');
+            grid.innerHTML = '';
+            
+            filteredDances.forEach(dance => {
+                const card = document.createElement('a');
+                card.href = dance.url;
+                card.className = 'dance-card';
+                
+                const pointsHTML = dance.points.map(p => `<span class="point">${p}</span>`).join('');
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title">${dance.title}</div>
+                        <div class="card-artist">${dance.artist}</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="key-points">${pointsHTML}</div>
+                        <div class="card-cta">学习舞蹈 →</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update button states
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            let filtered = dances;
+            if (category !== 'all') {
+                filtered = dances.filter(d => d.category === category);
+            }
+            
+            renderDances(filtered);
+        }
+
+        function searchDances() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = dances.filter(d => 
+                d.title.toLowerCase().includes(query) || 
+                d.artist.toLowerCase().includes(query)
+            );
+            renderDances(filtered);
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchDances();
+        });
+
+        // Initial render
+        renderDances(dances);
+    </script>
+</body>
+</html>
