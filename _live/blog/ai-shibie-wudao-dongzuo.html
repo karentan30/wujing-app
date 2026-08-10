@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI如何识别舞蹈动作？舞镜背后的技术原理 | 舞镜AI舞蹈教练</title>
+<meta name="description" content="AI是如何"看懂"你的舞蹈动作的？本文用通俗语言解释姿态估计、骨骼关键点检测和动作评分背后的技术原理。">
+<meta name="keywords" content="AI舞蹈识别, 姿态估计技术, 舞蹈AI原理, 骨骼关键点检测, 舞镜技术">
+<link rel="canonical" href="https://wujing.mylumee.app/blog/ai-shibie-wudao-dongzuo.html">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0f0f13; color: #e8e0d5; font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; line-height: 1.9; }
+  .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+  header { background: #1a1a22; padding: 1rem 1.5rem; border-bottom: 1px solid #c9a07e33; }
+  header a { color: #c9a07e; text-decoration: none; font-weight: 600; font-size: 1.1rem; }
+  h1 { font-size: 1.8rem; color: #c9a07e; margin: 2rem 0 1rem; line-height: 1.4; }
+  h2 { font-size: 1.3rem; color: #c9a07e; margin: 2rem 0 0.8rem; }
+  h3 { font-size: 1.1rem; color: #d4b48a; margin: 1.5rem 0 0.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.4rem; }
+  .meta { color: #9a9090; font-size: 0.9rem; margin-bottom: 2rem; }
+  .cta { background: linear-gradient(135deg, #1e1a2e, #2a1f3d); border: 1px solid #c9a07e44; border-radius: 12px; padding: 2rem; margin-top: 3rem; text-align: center; }
+  .cta h3 { color: #c9a07e; margin-bottom: 0.8rem; }
+  .cta p { color: #b8a898; margin-bottom: 1.2rem; }
+  .cta a { display: inline-block; background: #c9a07e; color: #0f0f13; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1rem; }
+  .cta a:hover { background: #d4b48a; }
+  footer { text-align: center; padding: 2rem; color: #6a6060; font-size: 0.85rem; border-top: 1px solid #ffffff11; margin-top: 3rem; }
+  footer a { color: #c9a07e88; text-decoration: none; }
+</style>
+</head>
+<body>
+<header>
+  <a href="https://wujing.mylumee.app">← 舞镜AI舞蹈教练</a>
+</header>
+<div class="container">
+  <h1>AI如何识别舞蹈动作？舞镜背后的技术原理</h1>
+  <p class="meta">舞镜团队 · 2026年 · 阅读约6分钟</p>
+
+  <p>你把手机架好，对着镜头跳一段K-pop舞蹈，舞镜给你打了一个分数，还告诉你"左臂上抬角度差了15度"。这背后发生了什么？AI是怎么"看懂"你的动作的？这篇文章用不需要技术背景的语言，解释清楚舞蹈AI识别的完整链路。</p>
+
+  <h2>第一步：从视频中提取人体位置</h2>
+
+  <h3>姿态估计（Pose Estimation）</h3>
+  <p>AI首先要解决的问题是：你的身体在画面的哪里？每个关节点在哪里？这个技术叫做姿态估计。AI会在你的视频画面里，实时标注出17-33个关键身体点，包括：头部、颈部、双肩、手肘、手腕、髋关节、膝盖、脚踝等。</p>
+
+  <p>这些点不是靠你穿特殊服装标记的，而是AI从普通摄像头画面里，通过深度学习直接推断出来的。现代姿态估计模型（如Google的MediaPipe、Meta的SAM系列）在普通光线、普通服装下准确率已经很高，能做到实时处理。</p>
+
+  <h3>骨骼关键点连接成"骨架"</h3>
+  <p>把这些关键点连线，就得到一个"骨骼图"——你的身体轮廓被简化成一个线条人。这个骨架图比原始视频信息更精炼，也更容易用数学来计算。AI后续所有的分析都基于这个骨架，而不是原始像素。</p>
+
+  <h2>第二步：量化动作参数</h2>
+
+  <h3>角度计算</h3>
+  <p>有了骨架坐标，AI就能计算各种关节角度：手臂张开是多少度、膝盖弯曲是多少度、躯干倾斜是多少度。这些都是精确的数字，不是"感觉上差不多"的主观判断。</p>
+
+  <h3>时序对齐</h3>
+  <p>动作不只是一帧一帧的姿势，更重要的是时间节奏。AI会把你的动作帧序列和标准动作帧序列进行时间轴对齐，找出"你比标准动作慢了多少拍"或者"你在第X拍提前了多少毫秒"。</p>
+
+  <h2>第三步：和标准动作对比评分</h2>
+
+  <h3>标准模板的建立</h3>
+  <p>舞镜的数据库里存储了标准动作的骨骼数据——通常来自舞蹈老师或者专业舞者的示范录像，经过姿态估计处理后得到的关键点坐标序列。</p>
+
+  <h3>相似度计算</h3>
+  <p>你的骨骼数据和标准骨骼数据进行逐帧、逐关节的数值比对，计算出一个整体相似度分数。差异最大的关节点，就是AI给你标注的"需要改进"的部位。</p>
+
+  <h2>AI识别的局限性</h2>
+  <p>AI目前最擅长评估的是几何精度：角度、位置、时序。对于"力度感"、"情绪表达"、"气场"这些主观感受，AI的判断还不如有经验的舞蹈老师准确。这也是为什么AI评分和真人老师的评分有时会有差异——两者衡量的维度不完全相同。</p>
+
+  <div class="cta">
+    <h3>用AI加速你的舞蹈进步</h3>
+    <p>舞镜AI舞蹈教练实时分析你的动作，给出精准反馈，让你每次练习都有收获。</p>
+    <a href="https://wujing.mylumee.app">立即免费体验舞镜</a>
+  </div>
+</div>
+<footer>
+  <p>© 2026 舞镜AI舞蹈教练 · <a href="https://wujing.mylumee.app">wujing.mylumee.app</a></p>
+</footer>
+</body>
+</html>

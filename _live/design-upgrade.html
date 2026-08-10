@@ -433,6 +433,9 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
   box-shadow:0 1px 6px rgba(181,146,42,.05);
 }
 .btn-out:active{transform:scale(.97)}
+.share-result-area{background:rgba(201,160,126,0.08);border:1px solid rgba(201,160,126,0.2);border-radius:12px;padding:16px;text-align:center;margin:16px 0}
+.share-result-text{font-size:13px;color:#9a8878;margin-bottom:12px}
+.share-result-btn{background:linear-gradient(135deg,#c9a07e,#e8c09e);color:#1a1015;border:none;border-radius:24px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;width:100%}
 
 /* ═══ PLAN ═══ */
 .plan-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;position:relative;z-index:2}
@@ -2237,7 +2240,8 @@ function renderReview(d) {
     buildRadarCard(d) +
     '<div class="section-title">'+problems.length+' 处需改正 · 点击展开慢放</div>' + probHtml +
     (goodHtml ? '<div class="section-title extra-top">你的亮点</div><div class="good-card">'+goodHtml+'</div>' : '') +
-    '<div class="action-grid"><button class="btn-silver" onclick="showPracticePlan(\'' + d.id + '\')">按问题定制练习计划</button><div style="margin-top:8px"><button class="btn-silver" style="background:linear-gradient(135deg,#b8972a,#e8c94a);color:#1a1208;border:none" onclick="reviewShareCard(currentReview)">分享成绩</button></div><div style="margin-top:8px"><button class="btn-out" onclick="showUploadView()">上传另一支舞</button></div></div>';
+    '<div class="action-grid"><button class="btn-silver" onclick="showPracticePlan(\'' + d.id + '\')">按问题定制练习计划</button><div style="margin-top:8px"><button class="btn-silver" style="background:linear-gradient(135deg,#b8972a,#e8c94a);color:#1a1208;border:none" onclick="reviewShareCard(currentReview)">分享成绩</button></div><div style="margin-top:8px"><button class="btn-out" onclick="showUploadView()">上传另一支舞</button></div></div>' +
+    '<div class="share-result-area"><div class="share-result-text">把你的分析结果发给同学，让他/她也来试试 💃</div><button class="share-result-btn" onclick="shareDanceResult(' + score + ')">分享我的分析结果</button></div>';
   setTimeout(function() {
     document.querySelectorAll('.dim-fill').forEach(function(el){ el.style.animation = 'none'; el.offsetHeight; el.style.animation = ''; });
   }, 100);
@@ -2338,6 +2342,27 @@ function reviewShareCard(d) {
     showToast('成绩卡已保存！可发微信 / 小红书 🎉');
   }, 'image/png');
   }); // fonts.ready
+}
+
+/* ═══ SHARE DANCE RESULT ═══ */
+function shareDanceResult(score) {
+  var text = score
+    ? '我用舞镜AI分析了我的舞蹈，得了' + score + '分！你也来挑战一下？🎵'
+    : '我用舞镜AI分析了我的舞蹈动作，超准的！你也来试试？🎵';
+  var url = 'https://wujing.mylumee.app';
+  var shareData = { title: '舞镜AI舞蹈分析', text: text, url: url };
+  if (navigator.share) {
+    navigator.share(shareData).catch(function(){});
+  } else {
+    var combined = text + '\n' + url;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(combined)
+        .then(function(){ showToast('已复制！粘贴发给朋友吧 🎉'); })
+        .catch(function(){ prompt('复制发给朋友：', combined); });
+    } else {
+      prompt('复制发给朋友：', combined);
+    }
+  }
 }
 
 /* ═══ PRACTICE PLAN ═══ */
