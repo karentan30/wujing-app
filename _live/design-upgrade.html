@@ -1900,17 +1900,24 @@ function openClassTeacher(){
   window.open('/class_teacher.html', '_blank');
 }
 function openClassJoin(){
-  var code = prompt('请输入班级邀请码','');
-  if(!code) return;
-  var c = String(code).trim().toUpperCase();
-  if(!c) return;
-  window.location.href = '/j/'+c;
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(10,12,20,.65);backdrop-filter:blur(8px);z-index:10001;display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.innerHTML='<div style="background:#FFFDF6;border:1px solid #EDE4CF;border-radius:20px;padding:28px 24px;width:100%;max-width:320px;text-align:center"><div style="font-size:var(--fs-h3);font-weight:900;color:#1F1A14;margin-bottom:8px">输入班级邀请码</div><div style="font-size:var(--fs-body-sm);color:#8C857A;margin-bottom:18px">老师把邀请码发给你，输入后加入班级测评</div><input id="_cjInput" type="text" placeholder="班级邀请码（大小写均可）" style="width:100%;border:1px solid #EDE4CF;border-radius:12px;padding:12px 16px;font-size:var(--fs-sm);outline:none;font-family:inherit;margin-bottom:14px;box-sizing:border-box"><div style="display:flex;gap:10px"><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="flex:1;background:none;border:1px solid #EDE4CF;border-radius:12px;padding:12px;cursor:pointer;font-size:var(--fs-sm);color:#8C857A;font-family:inherit">取消</button><button onclick="(function(){var c=document.getElementById(\'_cjInput\').value.trim().toUpperCase();if(!c)return;document.getElementById(\'_cjInput\').closest(\'div[style*=fixed]\').remove();window.location.href=\'/j/\'+c;})()" style="flex:1;background:linear-gradient(135deg,#E9B872,#B5922A);border:none;border-radius:12px;padding:12px;cursor:pointer;font-size:var(--fs-sm);font-weight:700;color:#fff;font-family:inherit">加入班级</button></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  setTimeout(function(){var inp=document.getElementById('_cjInput');if(inp)inp.focus();},100);
 }
 
 var AUTH_FROM_TAB = null;
 function showAuth() {
   if (AUTH_TOKEN) {
-    if (confirm('退出登录？')) {
+    var _logoutOv=document.createElement('div');
+    _logoutOv.style.cssText='position:fixed;inset:0;background:rgba(10,12,20,.65);backdrop-filter:blur(8px);z-index:10001;display:flex;align-items:center;justify-content:center;padding:24px';
+    _logoutOv.innerHTML='<div style="background:#FFFDF6;border:1px solid #EDE4CF;border-radius:20px;padding:28px 24px;width:100%;max-width:300px;text-align:center"><div style="font-size:var(--fs-h3);font-weight:900;color:#1F1A14;margin-bottom:8px">退出登录</div><div style="font-size:var(--fs-body-sm);color:#8C857A;margin-bottom:20px">确定退出当前账号？</div><div style="display:flex;gap:10px"><button id="_logoutCancelBtn" style="flex:1;background:none;border:1px solid #EDE4CF;border-radius:12px;padding:12px;cursor:pointer;font-size:var(--fs-sm);color:#8C857A;font-family:inherit">取消</button><button id="_logoutConfirmBtn" style="flex:1;background:#e55;border:none;border-radius:12px;padding:12px;cursor:pointer;font-size:var(--fs-sm);font-weight:700;color:#fff;font-family:inherit">退出</button></div></div>';
+    document.body.appendChild(_logoutOv);
+    _logoutOv.querySelector('#_logoutCancelBtn').onclick=function(){_logoutOv.remove();};
+    _logoutOv.querySelector('#_logoutConfirmBtn').onclick=function(){
+      _logoutOv.remove();
       localStorage.removeItem('wujing_token');
       AUTH_TOKEN = null; CURRENT_USER = null;
       var at = document.getElementById('authAvatarText');
@@ -1918,7 +1925,9 @@ function showAuth() {
       var aa = document.getElementById('authAvatar');
       if (aa) aa.classList.remove('logged-in');
       showView('home');
-    }
+      toast('已退出登录');
+    };
+    _logoutOv.addEventListener('click',function(e){if(e.target===_logoutOv)_logoutOv.remove();});
     return;
   }
   AUTH_FROM_TAB = _currentTab();
@@ -4722,7 +4731,7 @@ function dcShareCard(){
       var link=document.createElement('a');
       link.download='舞镜分享卡-第'+p.i+'句.png';
       link.href=canvas.toDataURL('image/png');link.click();
-    }catch(e){alert('请长按图片保存分享卡');}
+    }catch(e){toast('请长按图片保存分享卡');}
   }
   for(var fi=0;fi<total;fi++){
     (function(i){
@@ -4834,17 +4843,34 @@ function dcShowTeacherModal(){
   ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
 }
 function dcTeacherSignup(){
-  var wx=prompt('请留下你的微信号，我们会第一时间联系你开通内测：');
-  if(wx&&wx.trim()){
-    fetch('api/teacher/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact:wx.trim(),ts:Date.now()})}).catch(function(){});
-    alert('✅ 已收到！我们会在24小时内联系你。感谢你的支持 🙏');
-  }
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(10,12,20,.8);backdrop-filter:blur(8px);z-index:10002;display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.innerHTML='<div style="background:#0f1220;border:1px solid rgba(90,150,255,.3);border-radius:20px;padding:28px 24px;width:100%;max-width:320px"><div style="font-size:var(--fs-h3);font-weight:900;color:#fff;margin-bottom:8px;text-align:center">留下微信号</div><div style="font-size:var(--fs-body-sm);color:rgba(255,255,255,0.5);margin-bottom:18px;text-align:center">我们会在24小时内联系你开通内测</div><input id="_wxInput" type="text" placeholder="你的微信号" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 16px;font-size:var(--fs-sm);outline:none;font-family:inherit;margin-bottom:14px;box-sizing:border-box;color:#fff"><div style="display:flex;gap:10px"><button id="_wxCancelBtn" style="flex:1;background:none;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px;cursor:pointer;font-size:var(--fs-sm);color:rgba(255,255,255,.5);font-family:inherit">取消</button><button id="_wxSubmitBtn" style="flex:1;background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;border-radius:12px;padding:12px;cursor:pointer;font-size:var(--fs-sm);font-weight:700;color:#fff;font-family:inherit">提交</button></div></div>';
+  document.body.appendChild(ov);
+  ov.querySelector('#_wxCancelBtn').onclick=function(){ov.remove();};
+  ov.querySelector('#_wxSubmitBtn').onclick=function(){
+    var wx=document.getElementById('_wxInput').value.trim();
+    if(!wx){toast('请输入微信号');return;}
+    fetch('api/teacher/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact:wx,ts:Date.now()})}).catch(function(){});
+    ov.remove();
+    dcShowToast('✅ 已收到！我们会在24小时内联系你 🙏');
+  };
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  setTimeout(function(){var inp=document.getElementById('_wxInput');if(inp)inp.focus();},100);
 }
 function dcGenHomeworkLink(did,from,to){
   var link='https://wujing.mylumee.app/?homework='+did+'&from='+from+'&to='+to;
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(link).then(function(){dcShowToast('✅ 作业链接已复制！发到微信群让学员点开跟练');}).catch(function(){prompt('复制这个链接发给学员：',link);});
-  } else { prompt('复制这个链接发给学员：',link); }
+    navigator.clipboard.writeText(link).then(function(){dcShowToast('✅ 作业链接已复制！发到微信群让学员点开跟练');}).catch(function(){_showCopyFallback(link);});
+  } else { _showCopyFallback(link); }
+}
+function _showCopyFallback(link){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(10,12,20,.65);backdrop-filter:blur(8px);z-index:10002;display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.innerHTML='<div style="background:#FFFDF6;border:1px solid #EDE4CF;border-radius:20px;padding:24px;width:100%;max-width:320px"><div style="font-size:var(--fs-sm);font-weight:700;color:#1F1A14;margin-bottom:10px">复制链接发给学员</div><textarea readonly style="width:100%;border:1px solid #EDE4CF;border-radius:10px;padding:10px;font-size:var(--fs-body-sm);font-family:inherit;resize:none;height:64px;box-sizing:border-box;color:#555;background:#fafaf8">'+link+'</textarea><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="width:100%;background:linear-gradient(135deg,#E9B872,#B5922A);border:none;border-radius:12px;padding:11px;cursor:pointer;font-size:var(--fs-sm);font-weight:700;color:#fff;font-family:inherit;margin-top:12px">关闭</button></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  var ta=ov.querySelector('textarea');if(ta){ta.focus();ta.select();}
 }
 function dcShowToast(msg){
   var t=document.createElement('div');
@@ -5076,16 +5102,16 @@ function _soloStart() {
   xhr.onload = function() {
     try {
       var d = JSON.parse(xhr.responseText);
-      if (!d.review_id) { alert(d.detail||'上传失败，请重试'); _soloRenderUpload(); return; }
+      if (!d.review_id) { toast(d.detail||'上传失败，请重试'); _soloRenderUpload(); return; }
       _soloReviewId = d.review_id;
       _soloRenderAnalyzing();
       fetch('api/solo/review/' + d.review_id + '/run', { method: 'POST' })
         .then(function(){ _soloPoll(); })
         .catch(function(){ _soloPoll(); });
-    } catch(e) { alert('上传失败，请重试'); _soloRenderUpload(); }
+    } catch(e) { toast('上传失败，请重试'); _soloRenderUpload(); }
   };
   xhr.onerror = function() {
-    alert('网络错误，请重试');
+    toast('网络错误，请重试');
     _soloRenderUpload();
   };
   xhr.send(fd);
