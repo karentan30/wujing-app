@@ -3740,7 +3740,7 @@ function showDecomposeUpload(discount){
   _dcEnter(_currentTab());
   // 上传免费·无需登录—游客也能传（后端 get_optional_user）。有 token 则绑账号。
   DC_FILE=null;
-  var priceLabel = WJ_DISCOUNT ? (_isZH()?'开始拆解 · ¥7.9（8折）':'Start breakdown · $1.59') : (_isZH()?'开始拆解 · ¥9.9':'Start breakdown · $1.99');
+  var priceLabel = WJ_DISCOUNT ? (_isZH()?'¥7.9 解锁完整分解卡（8折）':'Unlock full breakdown · $1.59') : (_isZH()?'¥9.9 解锁完整分解卡':'Unlock full breakdown · $1.99');
   var priceNote  = WJ_DISCOUNT ? (_isZH()?'8折限时优惠 · 上传免费 · 不成功退款':'20% off · free upload · refund on failure') : (_isZH()?'拆解结果¥9.9 · 上传免费 · 不成功退款':'Result $1.99 · free upload · refund on failure');
   var discountBanner = WJ_DISCOUNT ? '<div style="text-align:center;margin-bottom:10px;padding:8px 16px;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border-radius:12px;border:1px solid #E9B872;font-size:var(--fs-body);color:#8C7A4A">🎁 <b style="color:#B5922A">老用户8折</b> · 这支只要 ¥7.9</div>' : '';
   _dcView().innerHTML =
@@ -3797,7 +3797,7 @@ function startDecompose(){
     .then(function(d){
       if(d.status==='awaiting_payment'){
         DC_ID=d.decompose_id;
-        btn.disabled=false; btn.textContent=_isZH()?'¥9.9 拆开这支舞':'Unlock for $1.99';
+        btn.disabled=false; btn.textContent=_isZH()?'¥9.9 解锁完整分解卡':'Unlock full breakdown · $1.99';
         btn.onclick=function(){ showPayment(DC_ID, d.price_cny); }; // 不重复上传，改弹支付
         showPayment(d.decompose_id, d.price_cny);
       } else if(d.decompose_id){
@@ -4494,7 +4494,7 @@ function payCreate(channel){
     document.getElementById('payQr').style.display='block';
     document.getElementById('payQrImg').style.display='none';
     document.getElementById('payQrLoad').classList.remove('hide');
-    document.getElementById('payQrHint').innerHTML='正在生成二维码…';
+    document.getElementById('payQrHint').innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite;transform-origin:center">⟳</span> 正在生成二维码…';
     document.getElementById('payQrStatus').textContent='';
   }
   PAY_BUSY = true;
@@ -4540,6 +4540,13 @@ function payCreate(channel){
   })
   .catch(function(){ PAY_BUSY=false; toast('网络错误'); payClose(); });
 }
+function showPaymentSuccess(){
+  var m=document.createElement('div');
+  m.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:32px;border-radius:12px;box-shadow:0 12px 48px rgba(0,0,0,0.15);z-index:10000;text-align:center;min-width:320px;font-family:inherit';
+  m.innerHTML='<div style="font-size:48px;margin-bottom:16px">✅</div><h2 style="margin:0 0 12px;font-size:22px;color:#1a1a1a">支付成功！</h2><p style="margin:0 0 24px;color:#666;font-size:14px;line-height:1.6">您的拆解已解锁，正在生成完整分解卡…</p><button onclick="this.parentElement.remove()" style="width:100%;padding:12px;background:#3d9e82;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">知道了</button>';
+  document.body.appendChild(m);
+  setTimeout(function(){if(m.parentElement)m.remove()},3500);
+}
 function payPoll(outTradeNo){
   if(PAY_POLL_TIMER){clearInterval(PAY_POLL_TIMER);}
   var tries=0;
@@ -4561,13 +4568,14 @@ function payPoll(outTradeNo){
           WJ.track('pay_success', {out_trade_no: outTradeNo||''});
           var qs=document.getElementById('payQrStatus');
           if(qs){qs.innerHTML='<span style="color:#4CAF50;font-size:var(--fs-h3)">✓</span> <span style="color:#4CAF50;font-weight:600">'+(_isZH()?'支付成功':'Payment confirmed')+'</span>';}
+          showPaymentSuccess();
           setTimeout(function(){
             payClose();
             var did = DC_ID;
             if(!did){ try{ did = localStorage.getItem('wj_dc_id'); }catch(e){} }
             dcLoading();
             if(did) pollDecompose(did);
-          },600);
+          },1200);
         } else if(d.status==='failed'){
           clearInterval(PAY_POLL_TIMER); PAY_POLL_TIMER=null;
           toast('支付失败，请重试');
