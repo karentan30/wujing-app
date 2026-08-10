@@ -28,18 +28,53 @@ ANGLE_CN = {"right_elbow": "右肘", "left_elbow": "左肘", "right_shoulder": "
 _KOU_CLASSICAL = set("提沉冲靠含腆拧旋仰俯摆荡甩扬收落开展拢顿绷勾遮抬转点踏")
 _KOU_KPOP     = set("弹锁定波隔爆指滑摇转钉推甩踏闪抖踢跳合交探拉稳冻踩")
 _KOU_VOCAB    = _KOU_CLASSICAL | _KOU_KPOP
+# 非动词黑名单（形容词/副词/名词误入kou时拦截）
+_KOU_BLACKLIST = set("垂缓慢快轻重柔刚美丽优雅稳定流畅平顺自然舒展")
+
+
+def _kou_words(kou):
+    """解析kou字符串为单字列表，兼容—/-/--分隔符。"""
+    return [w.strip() for w in kou.replace("—", "-").replace("--", "-").split("-") if w.strip()]
+
+
+def _kou_format_ok(kou):
+    """格式检查：必须用—，不能用-或--，每词单字，无黑名单词。"""
+    if not kou:
+        return False
+    if "-" in kou and "—" not in kou:
+        return False          # 纯连字符
+    if "--" in kou:
+        return False          # 双连字符
+    words = _kou_words(kou)
+    if any(len(w) > 1 for w in words):
+        return False          # 复合词
+    if any(w in _KOU_BLACKLIST for w in words):
+        return False          # 非动词混入
+    return True
 
 
 def _kou_quality(phrases):
-    """检查全视频口诀质量：key去重 + 词库命中率。返回问题列表。"""
+    """检查全视频口诀质量：格式/key去重/kou词重复/词库命中率。"""
     from collections import Counter
     issues = []
+    # 1. 格式问题（-/--/复合词/非动词）
+    for p in phrases:
+        if not _kou_format_ok(p.get("kou", "")):
+            issues.append(("bad_format", p["i"], p.get("kou", "")))
+    # 2. key字在整支舞重复>2次
     key_counts = Counter(p.get("key", "") for p in phrases if p.get("key"))
     for k, cnt in key_counts.items():
         if cnt > 2:
             issues.append(("dup_key", k, cnt))
+    # 3. kou字在整支舞重复>3次（整体多样性）
+    all_kou_words = [w for p in phrases for w in _kou_words(p.get("kou", ""))]
+    kou_counts = Counter(all_kou_words)
+    for w, cnt in kou_counts.items():
+        if cnt > 3:
+            issues.append(("dup_kou_word", w, cnt))
+    # 4. 词库命中率<50%
     for p in phrases:
-        words = [w for w in p.get("kou", "").replace("—", "-").split("-") if w]
+        words = _kou_words(p.get("kou", ""))
         if not words:
             continue
         hit = sum(1 for w in words if w in _KOU_VOCAB)
@@ -238,17 +273,20 @@ def _vision_describe(frame_path, idx, t0, t1):
         if out.lstrip().lower().startswith("json"):
             out = out.lstrip()[4:]
     d = json.loads(out.strip())
-    # 口诀质量 loop：格式/内容不达标 → 自动重试一次
+    # 口诀质量 loop：格式/内容不达标 → 自动重试一次（复用_kou_format_ok统一检测）
     kou_val = d.get("kou", "")
     key_val = d.get("key", "")
-    words = [w for w in kou_val.replace("—", "-").split("-") if w]
-    has_hyphen = "-" in kou_val and "—" not in kou_val
-    has_compound = any(len(w) > 1 for w in words)
+    words = _kou_words(kou_val)
+    fmt_ok = _kou_format_ok(kou_val)
     key_missing = key_val and "—" in kou_val and key_val not in kou_val
-    if has_hyphen or has_compound or key_missing or len(kou_val) < 4:
+    if not fmt_ok or key_missing or len(kou_val) < 4:
         reasons = []
-        if has_hyphen: reasons.append("用了连字符-而非破折号—")
-        if has_compound: reasons.append("口诀含多字词(%s)必须改成单字" % [w for w in words if len(w)>1])
+        if "-" in kou_val and "—" not in kou_val: reasons.append("用了连字符-而非破折号—")
+        if "--" in kou_val: reasons.append("用了--双连字符")
+        bad_words = [w for w in words if len(w) > 1]
+        if bad_words: reasons.append("含复合词%s必须改成单字" % bad_words)
+        blacklisted = [w for w in words if w in _KOU_BLACKLIST]
+        if blacklisted: reasons.append("含非动词%s（形容词/副词不能入口诀）" % blacklisted)
         if key_missing: reasons.append("key=%s不在口诀里" % key_val)
         try:
             retry_note = "上次不合格原因：%s。请重新生成，严格遵守：1)每词单字 2)用「—」连接 3)key必须是kou中的某个字" % "、".join(reasons)
@@ -568,6 +606,16 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         if q_issues:
             ark_key_env = os.environ.get("ARK_API_KEY", "")
             from collections import Counter
+            # 1. 格式问题：-/--/复合词/非动词 → 重试
+            if ark_key_env:
+                for p in phrases:
+                    if not _kou_format_ok(p.get("kou", "")):
+                        frame_path = os.path.join(ddir, "frames", f"p{p['i']}.jpg")
+                        if os.path.exists(frame_path):
+                            used_set = set(p.get("key", "") for p in phrases if p.get("key"))
+                            _retry_phrase_for_uniqueness(frame_path, p, used_set, ark_key_env)
+                            print(f"[harness fmt] p{p['i']} fixed: {p.get('kou','')}")
+            # 2. key字重复>2次 → 换字
             key_counts = Counter(p.get("key", "") for p in phrases if p.get("key"))
             dup_keys = {k for k, cnt in key_counts.items() if cnt > 2}
             if dup_keys and ark_key_env:
@@ -579,8 +627,11 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
                         if os.path.exists(frame_path):
                             _retry_phrase_for_uniqueness(frame_path, p, used_set, ark_key_env)
                         used_set.add(p.get("key", ""))
+            # 3. kou词全视频重复>3次 → log（不自动修，代价太高）
             for issue in q_issues:
-                if issue[0] == "low_vocab":
+                if issue[0] == "dup_kou_word":
+                    print(f"[harness] kou字「{issue[1]}」全视频出现{issue[2]}次，多样性偏低")
+                elif issue[0] == "low_vocab":
                     print(f"[harness] p{issue[1]} kou={issue[2]} 词库命中{issue[3]}/{issue[4]}")
         # ─────────────────────────────────────────────────────────────────
 
