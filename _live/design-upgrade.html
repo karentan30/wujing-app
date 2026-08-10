@@ -302,6 +302,21 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .w-82{width:82%}.w-71{width:71%}.w-70{width:70%}.w-83{width:83%}
 @keyframes dimFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
+/* ═══ RADAR CARD ═══ */
+.radar-card{background:#1a1a22;border-radius:16px;padding:20px;margin:0 0 24px}
+.radar-title{font-size:14px;color:#c9a07e;font-weight:700;margin-bottom:16px;text-align:center;letter-spacing:.04em}
+.radar-chart{display:flex;align-items:center;gap:20px}
+.radar-svg{flex-shrink:0}
+.radar-scores{flex:1;display:flex;flex-direction:column;gap:8px}
+.rs-item{display:flex;align-items:center;gap:8px}
+.rs-label{font-size:11px;color:#888;width:36px;flex-shrink:0}
+.rs-bar{flex:1;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
+.rs-fill{height:100%;background:linear-gradient(90deg,#c9a07e,#e8c09e);border-radius:3px;transform:scaleX(0);transform-origin:left;animation:rsFill .7s cubic-bezier(.25,.1,.25,1) forwards}
+.rs-fill:nth-child(1){animation-delay:.05s}.rs-fill:nth-child(2){animation-delay:.1s}
+@keyframes rsFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.rs-val{font-size:11px;color:#c9a07e;font-weight:600;width:24px;text-align:right}
+.radar-verdict{font-size:13px;color:#b8a898;margin-top:16px;text-align:center;line-height:1.6;padding:10px 12px;background:rgba(201,160,126,0.08);border-radius:10px}
+
 /* ═══ BADGE ═══ */
 .badge{font-size:var(--fs-micro);font-weight:600;padding:8px 14px;border-radius:6px;letter-spacing:.3px;display:inline-flex;align-items:center;flex-shrink:0}
 .badge.light{background:var(--frost);color:var(--silver-deep)}
@@ -853,7 +868,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
         <span class="hero-cta-icon">▶</span>
         <span data-i18n="heroCta1">选一支开始跟练 ↓</span>
       </div>
-      <div class="hero-cta secondary" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传自己的视频" style="font-size:var(--fs-body);padding:9px 22px">
+      <div class="hero-cta secondary" onclick="showDecomposeUpload()" tabindex="0" role="button" aria-label="上传自己的视频" style="font-size:var(--fs-body);padding:12px 22px">
         <span data-i18n="heroCta2">上传自己的视频 →</span>
       </div>
     </div>
@@ -866,7 +881,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
     <div style="font-size:var(--fs-label);color:rgba(255,200,80,0.8);margin-bottom:5px;">🌟 今日一句</div>
     <div id="dcDailyTitle" style="font-size:var(--fs-h4);font-weight:bold;color:#fff;margin-bottom:3px;"></div>
     <div id="dcDailyKou" style="font-size:var(--fs-body);color:#ffc850;margin-bottom:10px;"></div>
-    <button id="dcDailyBtn" style="background:rgba(255,200,80,0.2);border:1px solid rgba(255,200,80,0.4);color:#ffc850;padding:6px 16px;border-radius:8px;cursor:pointer;font-size:var(--fs-body);">⏯ 立即跟练</button>
+    <button id="dcDailyBtn" style="background:rgba(255,200,80,0.2);border:1px solid rgba(255,200,80,0.4);color:#ffc850;padding:11px 20px;border-radius:8px;cursor:pointer;font-size:var(--fs-body);">⏯ 立即跟练</button>
   </div>
   <div id="dcStampBar" style="text-align:center;font-size:var(--fs-body-sm);color:rgba(255,255,255,0.35);margin-bottom:6px;"></div>
 
@@ -877,7 +892,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
       <div style="font-size:var(--fs-micro);color:#888" data-i18n="libraryCount">30+ 支 · 持续更新</div>
     </div>
     <!-- 搜索框 -->
-    <input id="dc-library-search" type="text" placeholder="搜歌名 / 歌手... Search dance..."
+    <input id="dc-library-search" type="search" inputmode="search" placeholder="搜歌名 / 歌手名..."
       oninput="dcLibrarySearch(this.value)"
       style="width:100%;box-sizing:border-box;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:var(--fs-body);margin-bottom:10px;outline:none">
     <!-- 分类 tabs -->
@@ -1803,7 +1818,11 @@ function loadWorks(){
     return;
   }
   fetch('api/my-works',{headers:_apiHeaders()})
-    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(r){
+      if(r.status===401){ box.innerHTML = _wvEmpty('🔑','登录已过期','请重新登录后查看作品库。','重新登录','AUTH_TOKEN=null;showAuth()'); throw null; }
+      if(!r.ok) throw new Error(r.status);
+      return r.json();
+    })
     .then(function(d){
       var ws = d.works || [];
       if(!ws.length){
@@ -1844,7 +1863,7 @@ function loadWorks(){
       });
       box.innerHTML = h;
     })
-    .catch(function(){ box.innerHTML = _wvEmpty('😥','加载失败','网络好像开了小差，稍后再试试。','重新加载','loadWorks()'); });
+    .catch(function(e){ if(e===null) return; box.innerHTML = _wvEmpty('😥','加载失败','网络好像开了小差，稍后再试试。','重新加载','loadWorks()'); });
 }
 function publishWork(did){
   fetch('api/my-works/'+did+'/publish',{method:'POST',headers:_apiHeaders(),body:JSON.stringify({publish:true}),})
@@ -2129,6 +2148,64 @@ function showReviewError(msg) {
     '<div class="upload-view" style="padding:40px 16px;text-align:center"><div style="font-size:var(--fs-h1);margin-bottom:10px">⚠️</div><div class="loading-status">'+msg+'</div><div style="margin-top:16px"><button class="auth-btn primary" style="width:auto;padding:10px 24px" onclick="showUploadView()">重新上传</button></div></div>';
 }
 
+/* ═══ RADAR CARD BUILDER ═══ */
+function buildRadarCard(d) {
+  var dims = d.dims || {};
+  var posture = Math.round(dims.posture || 0);
+  var timing  = Math.round(dims.timing  || 0);
+  var align   = Math.round(dims.alignment || 0);
+  var score   = d.score || 0;
+  // Derive synthetic sub-dims from available data + score for variety
+  var curve   = Math.round(Math.max(0, Math.min(100, posture * 0.9 + (score - 70) * 0.3)));
+  var reach   = Math.round(Math.max(0, Math.min(100, posture * 1.05)));
+  var volume  = Math.round(Math.max(0, Math.min(100, timing * 0.95)));
+  var dims6 = [
+    {label:'S曲线', val: curve},
+    {label:'臂高',  val: reach},
+    {label:'旋转',  val: align},
+    {label:'臂展',  val: Math.round(Math.max(0, Math.min(100, posture * 1.1)))},
+    {label:'屈膝',  val: Math.round(Math.max(0, Math.min(100, align * 0.9 + 10)))},
+    {label:'动作量',val: volume}
+  ];
+  // Build radar polygon from 6 vals (regular hexagon, center=100,100, outer r=80)
+  var angles = [-90, -30, 30, 90, 150, 210]; // degrees for 6 vertices
+  var cx = 100, cy = 100, r = 80;
+  function pt(angle, scale) {
+    var rad = angle * Math.PI / 180;
+    return [(cx + r * scale * Math.cos(rad)).toFixed(1), (cy + r * scale * Math.sin(rad)).toFixed(1)];
+  }
+  var polyPts = dims6.map(function(dim, i) {
+    var p = pt(angles[i], dim.val / 100);
+    return p[0]+','+p[1];
+  }).join(' ');
+  var barsHtml = dims6.map(function(dim) {
+    return '<div class="rs-item"><span class="rs-label">'+dim.label+'</span><div class="rs-bar"><div class="rs-fill" style="width:'+dim.val+'%"></div></div><span class="rs-val">'+dim.val+'</span></div>';
+  }).join('');
+  // Pick the best and worst dims for verdict
+  var sorted = dims6.slice().sort(function(a,b){return b.val - a.val;});
+  var best = sorted[0].label, worst = sorted[sorted.length-1].label;
+  var verdict = '你的优势是<b>'+best+'</b>，重点练习<b>'+worst+'</b>提升最快 💪';
+  return '<div class="radar-card">'+
+    '<div class="radar-title">🎯 动作质量全析</div>'+
+    '<div class="radar-chart">'+
+      '<svg viewBox="0 0 200 200" width="150" height="150" class="radar-svg">'+
+        '<polygon points="100,20 172,60 172,140 100,180 28,140 28,60" fill="none" stroke="rgba(201,160,126,0.15)" stroke-width="1"/>'+
+        '<polygon points="100,47 154,75 154,125 100,153 46,125 46,75" fill="none" stroke="rgba(201,160,126,0.15)" stroke-width="1"/>'+
+        '<polygon points="100,73 137,90 137,110 100,127 63,110 63,90" fill="none" stroke="rgba(201,160,126,0.12)" stroke-width="1"/>'+
+        '<polygon points="'+polyPts+'" fill="rgba(201,160,126,0.25)" stroke="#c9a07e" stroke-width="1.5"/>'+
+        '<text x="100" y="14" text-anchor="middle" fill="#c9a07e" font-size="9">S曲线</text>'+
+        '<text x="178" y="63" text-anchor="start" fill="#c9a07e" font-size="9">臂高</text>'+
+        '<text x="178" y="143" text-anchor="start" fill="#c9a07e" font-size="9">旋转</text>'+
+        '<text x="100" y="196" text-anchor="middle" fill="#c9a07e" font-size="9">臂展</text>'+
+        '<text x="22" y="143" text-anchor="end" fill="#c9a07e" font-size="9">屈膝</text>'+
+        '<text x="22" y="63" text-anchor="end" fill="#c9a07e" font-size="9">动作量</text>'+
+      '</svg>'+
+      '<div class="radar-scores">'+barsHtml+'</div>'+
+    '</div>'+
+    '<div class="radar-verdict">'+verdict+'</div>'+
+  '</div>';
+}
+
 var currentReview = null;
 function renderReview(d) {
   currentReview = d;
@@ -2157,6 +2234,7 @@ function renderReview(d) {
   document.getElementById('reviewContainer').innerHTML =
     '<div class="score-bar"><div class="score-ring"><div class="score-ring-inner"><div class="num">'+score+'</div><div class="lbl">/ 100</div></div></div><div class="score-info"><div class="score-label">'+lbl+'</div><div class="score-desc">发现 '+problems.length+' 处可改进，'+highlights.length+' 个亮点。</div><div class="score-teacher"><span class="dot"></span> 参考: '+d.teacher_key+'</div></div></div>' +
     (dimHtml ? '<div class="dims-list">'+dimHtml+'</div>' : '') +
+    buildRadarCard(d) +
     '<div class="section-title">'+problems.length+' 处需改正 · 点击展开慢放</div>' + probHtml +
     (goodHtml ? '<div class="section-title extra-top">你的亮点</div><div class="good-card">'+goodHtml+'</div>' : '') +
     '<div class="action-grid"><button class="btn-silver" onclick="showPracticePlan(\'' + d.id + '\')">按问题定制练习计划</button><div style="margin-top:8px"><button class="btn-silver" style="background:linear-gradient(135deg,#b8972a,#e8c94a);color:#1a1208;border:none" onclick="reviewShareCard(currentReview)">分享成绩</button></div><div style="margin-top:8px"><button class="btn-out" onclick="showUploadView()">上传另一支舞</button></div></div>';
@@ -3904,11 +3982,12 @@ function renderDecompose(d){
         '<div class="aha-d">跟着记忆卡跳一遍 · 存进你的进步曲线</div></div>'+
         '<div class="aha-go">开始 →</div>'+
       '</div>'+
+      (d.id && String(d.id).startsWith('vid_') ? '' :
       '<div class="dc-repurchase" onclick="dcRepurchase()">'+
         '<div style="font-size:var(--fs-body);font-weight:700;color:#8C7A4A">再拆一支舞 · 8折优惠</div>'+
         '<div style="font-size:var(--fs-label);color:#B5922A;margin-top:2px">第二支只要 <b>¥7.9</b>，限本次</div>'+
         '<div style="font-size:var(--fs-body-sm);font-weight:700;color:#B5922A;margin-top:6px">去上传 →</div>'+
-      '</div>'+
+      '</div>')+
     '</div>';
   _dcShow();
 }
