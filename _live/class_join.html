@@ -117,6 +117,7 @@ input[type=text]:focus{border-color:var(--gold);background:#fff}
     </div>
     <input type="file" id="fileInput" accept="video/*" class="hidden">
     <button class="btn" id="btnUpload" disabled>上传</button>
+    <p id="uploadHint" style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;margin-top:6px">← 先选择视频文件</p>
     <div class="err" id="uploadErr"></div>
   </div>
 
@@ -207,7 +208,7 @@ function enterAfterJoin(dance){
 $('fileDrop').onclick = () => $('fileInput').click();
 $('fileInput').onchange = () => {
   const f = $('fileInput').files[0];
-  if(f){ $('fileName').textContent = f.name; $('fileName').classList.remove('hidden'); $('btnUpload').disabled=false; }
+  if(f){ $('fileName').textContent = f.name; $('fileName').classList.remove('hidden'); $('btnUpload').disabled=false; const hint=$('uploadHint'); if(hint) hint.style.display='none'; }
 };
 
 $('btnUpload').onclick = async () => {
@@ -255,6 +256,14 @@ function renderResult(d){
   if(d.rank && d.rank.my_rank){ $('rRank').textContent = '班级第 '+d.rank.my_rank+' 名 / 共 '+d.rank.total+' 人'; }
   $('rScore').textContent = s.score || '–';
   $('rComment').textContent = s.comment || '动作已完成分析，见下方针对建议。';
+  const dimTips = {
+    'S曲线':'身体曲线流畅度，影响舞姿美感',
+    '臂高':'手臂延伸高度是否到位',
+    '旋转':'转圈时重心稳定性',
+    '臂展':'手臂展开幅度与对称性',
+    '屈膝':'膝盖弯曲角度的准确度',
+    '动作量':'动作幅度是否充分饱满'
+  };
   const dims = [
     ['S曲线', s.sc.v+'%', '目标≥6%'],
     ['臂高', s.ah.v+'%', '目标≥80%'],
@@ -264,7 +273,7 @@ function renderResult(d){
     ['动作量', (s.mv.v||0).toFixed(3), '目标≥0.18'],
   ];
   let fbHtml = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
-  dims.forEach(d=>{ fbHtml += `<div style="background:var(--cream);border-radius:10px;padding:10px 8px;text-align:center">
+  dims.forEach(d=>{ fbHtml += `<div style="background:var(--cream);border-radius:10px;padding:10px 8px;text-align:center;cursor:help" title="${dimTips[d[0]]||''}">
     <div style="font-size:11px;color:var(--ink-40)">${d[0]}</div>
     <div style="font-size:16px;font-weight:700;color:var(--ink)">${d[1]}</div>
     <div style="font-size:9px;color:var(--ink-20)">${d[2]}</div></div>`; });

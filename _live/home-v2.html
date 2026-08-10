@@ -41,8 +41,8 @@
     --bg:#f0f2f8;           /* 冷灰蓝背景 */
     --card:rgba(228,234,252,.68);  /* 玻璃卡片·蓝灰调 */
     --edge:rgba(180,192,218,.4);   /* 银边 */
-    --accent:#6b7fa8;       /* 钢蓝强调色 */
-    --accent-soft:#8a9abb;  /* 软钢蓝 */
+    --accent:#c9a07e;       /* 暖金强调色 */
+    --accent-soft:#d4b595;  /* 软暖金 */
     --ink:#1a1f2e;          /* 冷深墨 */
     --mute:#6a7391;         /* 辅助蓝灰 */
     --dark:#0d1020;         /* 成果暗区（舞台） */
@@ -76,8 +76,8 @@
   }
   .brand .moon{
     width:13px;height:13px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#e8ecf5,#8a9abb);
-    box-shadow:0 0 14px rgba(107,127,168,.4);
+    background:radial-gradient(circle at 35% 30%,#e8ecf5,#d4b595);
+    box-shadow:0 0 14px rgba(201,160,126,.4);
   }
   .brand-en{font-size:11px;letter-spacing:.42em;color:var(--accent);
     margin-top:8px;font-weight:700;}
@@ -89,10 +89,10 @@
   .hero p{font-size:14px;color:var(--mute);max-width:340px;margin:0 auto;}
   .cta{
     display:inline-block;margin-top:26px;
-    background:linear-gradient(135deg,#8a9abb,#6b7fa8);
+    background:linear-gradient(135deg,#d4b595,#c9a07e);
     color:#fff;font-weight:700;font-size:16px;
     padding:15px 42px;border-radius:40px;text-decoration:none;
-    box-shadow:0 8px 22px rgba(107,127,168,.3);
+    box-shadow:0 8px 22px rgba(201,160,126,.3);
     letter-spacing:.04em;
   }
   .cta.block{display:block;text-align:center;padding:17px;font-size:17px;}
@@ -148,7 +148,7 @@
   .rtitle{font-family:"Noto Serif SC",serif;font-weight:700;font-size:18px;}
   .rauto{
     font-size:11px;color:var(--accent);font-weight:700;
-    border:1px solid rgba(107,127,168,.25);background:rgba(107,127,168,.08);
+    border:1px solid rgba(201,160,126,.25);background:rgba(201,160,126,.08);
     padding:2px 9px;border-radius:20px;margin-left:auto;flex:0 0 auto;
   }
   .rdesc{font-size:12.5px;color:var(--mute);margin:2px 0 14px 36px;}
@@ -200,7 +200,7 @@
     display:flex;align-items:center;gap:6px;user-select:none;
     font-family:"Noto Sans SC",sans-serif;
   }
-  .mirror-btn.on{background:rgba(107,127,168,.9);color:#fff;
+  .mirror-btn.on{background:rgba(201,160,126,.9);color:#fff;
     border-color:rgba(180,192,218,.55);}
   .mirror-btn .m-ic{font-size:13px;line-height:1;}
   .slow-note{
@@ -220,7 +220,7 @@
   }
   .full-head .fh-badge{
     font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.02em;
-    border:1px solid rgba(107,127,168,.25);background:rgba(107,127,168,.08);
+    border:1px solid rgba(201,160,126,.25);background:rgba(201,160,126,.08);
     padding:2px 10px;border-radius:20px;
   }
   .full-head .fh-line{flex:1;height:1px;background:var(--edge);}
@@ -268,8 +268,8 @@
     display:flex;align-items:center;justify-content:center;
   }
   .verse-tab.active{
-    background:linear-gradient(135deg,#8a9abb,#6b7fa8);color:#fff;
-    border-color:var(--accent);box-shadow:0 6px 14px rgba(107,127,168,.28);
+    background:linear-gradient(135deg,#d4b595,#c9a07e);color:#fff;
+    border-color:var(--accent);box-shadow:0 6px 14px rgba(201,160,126,.28);
   }
   .verse-tab.active .vn{color:var(--accent);border-color:var(--accent-soft);
     background:#f0f4fb;}
@@ -286,7 +286,7 @@
     border:1px solid rgba(200,212,238,.55);border-radius:22px;
     padding:26px 22px 22px;margin-top:22px;
     box-shadow:0 14px 34px rgba(90,110,160,.1),
-      0 0 0 4px rgba(107,127,168,.05),
+      0 0 0 4px rgba(201,160,126,.05),
       inset 0 1px 0 rgba(255,255,255,.85);
     text-align:center;
   }
@@ -320,7 +320,7 @@
   .pay-item{display:flex;gap:13px;align-items:flex-start;}
   .pay-ic{
     width:30px;height:30px;border-radius:50%;flex:0 0 auto;
-    background:rgba(107,127,168,.08);border:1px solid rgba(107,127,168,.25);color:var(--accent);
+    background:rgba(201,160,126,.08);border:1px solid rgba(201,160,126,.25);color:var(--accent);
     font-family:"Noto Serif SC",serif;font-weight:900;font-size:15px;
     display:flex;align-items:center;justify-content:center;
   }
@@ -337,7 +337,7 @@
   }
   .step-n{
     width:34px;height:34px;border-radius:50%;flex:0 0 auto;z-index:1;
-    background:linear-gradient(135deg,#8a9abb,#6b7fa8);color:#fff;
+    background:linear-gradient(135deg,#d4b595,#c9a07e);color:#fff;
     font-family:"Noto Serif SC",serif;font-weight:900;font-size:16px;
     display:flex;align-items:center;justify-content:center;
   }
@@ -380,8 +380,8 @@
   }
   .final .moon-big{
     width:60px;height:60px;border-radius:50%;margin:0 auto 18px;
-    background:radial-gradient(circle at 36% 30%,#e8ecf8,#8a9abb);
-    box-shadow:0 0 34px rgba(107,127,168,.4);
+    background:radial-gradient(circle at 36% 30%,#e8ecf8,#d4b595);
+    box-shadow:0 0 34px rgba(201,160,126,.4);
   }
   .final h2{font-family:"Noto Serif SC",serif;font-weight:700;font-size:22px;
     line-height:1.4;margin-bottom:10px;}
@@ -402,6 +402,15 @@
     <h1>把你想学的那支舞，<br><em>逐句拆开、量化到拍点</em>，<br>照着练就行</h1>
     <p>上传任意一支舞，AI 帮你拆成八拍卡、歌词记忆卡、舞曲故事卡，还能慢放逐句跟练。</p>
     <a class="cta" href="/app?upload=true">上传你的舞</a>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--accent);opacity:.85">上传视频</span>
+      <span style="font-size:11px;color:var(--mute)">→</span>
+      <span style="font-size:12px;color:var(--accent);opacity:.85">AI 逐句拆解</span>
+      <span style="font-size:11px;color:var(--mute)">→</span>
+      <span style="font-size:12px;color:var(--accent);opacity:.85">标注动作要点</span>
+      <span style="font-size:11px;color:var(--mute)">→</span>
+      <span style="font-size:12px;color:var(--accent);opacity:.85">对比原版练习</span>
+    </div>
     <div class="fulllink">
       <span>课前预习</span><i>·</i><span>课上跟</span><i>·</i><span>课后复盘</span>
       <em>学一支舞的全程，舞镜都替你拆好了</em>
@@ -493,10 +502,10 @@
       <!-- 逐句 tab：起 探 游 放 收 -->
       <div class="verse-tabs" id="verseTabs">
         <div class="verse-tab active" data-src="assets/slow.mp4" data-verse="起" data-i="1"><span class="vn">1</span>起</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">2</span>探</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">3</span>游</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">4</span>放</div>
-        <div class="verse-tab" style="opacity:.35;cursor:not-allowed"><span class="vn">5</span>收</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed" title="上传你自己的舞蹈后解锁"><span class="vn">2</span>探 🔒</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed" title="上传你自己的舞蹈后解锁"><span class="vn">3</span>游 🔒</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed" title="上传你自己的舞蹈后解锁"><span class="vn">4</span>放 🔒</div>
+        <div class="verse-tab" style="opacity:.35;cursor:not-allowed" title="上传你自己的舞蹈后解锁"><span class="vn">5</span>收 🔒</div>
       </div>
 
       <div class="video-wrap" style="margin-top:14px;">
@@ -523,8 +532,9 @@
         <li>八拍卡 · 歌词记忆卡 · 舞曲故事卡 全套高清</li>
         <li>可下载保存，永久收藏</li>
       </ul>
-      <a class="cta block" href="/app?upload=true">立即免费体验</a>
-      <div class="price-foot">测试期间完全免费 · 上传无需登录</div>
+      <a class="cta block" href="/app?upload=true">上传免费体验 · ¥9.9 解锁完整</a>
+      <div class="price-foot">上传无需登录 · 前3句免费预览</div>
+      <div style="font-size:12px;color:var(--mute);text-align:center;margin-top:8px">支持 MP4 / MOV &nbsp;·&nbsp; 建议 15-60 秒 &nbsp;·&nbsp; 全身入镜效果最佳</div>
     </div>
   </section>
 
@@ -532,7 +542,7 @@
   <section class="how-pay">
     <div class="kicker">很简单，先看后买</div>
     <h2 class="sec-title">怎么用</h2>
-    <p class="sec-sub">上传免费、无需登录，测试期间拆解结果完全免费获取。</p>
+    <p class="sec-sub">上传免费、无需登录，前3句AI反馈免费体验，¥9.9 解锁完整拆解报告。</p>
     <div class="steps" style="margin-top:8px;">
       <div class="step">
         <div class="step-n">1</div>
@@ -566,13 +576,14 @@
   <section class="final">
     <div class="moon-big"></div>
     <h2>想学的那支舞，<br>现在就拆给你看</h2>
-    <p>测试期间免费体验 · 上传无需登录</p>
+    <p>上传免费 · 前3句免费预览 · ¥9.9 解锁完整拆解</p>
     <a class="cta block" href="/app?upload=true">上传你的舞</a>
   </section>
 
   <div class="footer">
     <div class="wm">舞镜 WUJING</div>
     <div style="margin-top:6px;">wujing.mylumee.app · 成果均为真实拆解示例《清别欢》</div>
+    <p style="text-align:center;margin-top:20px;opacity:0.5;font-size:13px">我是舞蹈老师？<a href="/class_teacher.html" style="color:#c9a07e;text-decoration:underline">点这里管理班级</a> &nbsp;·&nbsp; <a href="/blog/" style="color:#c9a07e;text-decoration:underline">📝 舞蹈博客</a></p>
   </div>
 
 </div>
@@ -627,7 +638,11 @@
     const n = d.decompose_count || d.total || 38;
     const el = document.getElementById('danceCount');
     if(el) el.textContent = n;
-  }).catch(()=>{});
+  }).catch(()=>{
+    const el = document.getElementById('danceCount');
+    if(el) el.textContent = '30+';
+  });
 </script>
+<script src="https://www.mylumee.app/support-widget.js" data-product="wujing"></script>
 </body>
 </html>

@@ -66,9 +66,50 @@ input:focus,select:focus{border-color:var(--gold);background:#fff}
 .err{color:var(--red);font-size:13px;margin-top:8px}
 .disclaimer{font-size:10.5px;color:var(--ink-20);text-align:center;margin-top:8px;line-height:1.6}
 .queue-info{font-size:11px;color:var(--ink-40);text-align:right;margin-top:-6px;margin-bottom:8px}
+/* ── 教师版付费墙 ── */
+#teacherPaywall{position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#teacherPaywall .pw-card{background:#fff;border-radius:20px;padding:32px 24px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(120,90,40,.12);border:1px solid rgba(200,164,92,.2);text-align:center}
+#teacherPaywall .pw-icon{font-size:44px;margin-bottom:12px}
+#teacherPaywall .pw-title{font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px}
+#teacherPaywall .pw-sub{font-size:13px;color:var(--ink-60);line-height:1.7;margin-bottom:20px}
+#teacherPaywall .pw-plans{display:flex;gap:10px;margin-bottom:20px}
+#teacherPaywall .plan{flex:1;border:1.5px solid rgba(200,164,92,.3);border-radius:12px;padding:14px 10px;cursor:pointer;transition:.2s}
+#teacherPaywall .plan.active{border-color:var(--gold);background:var(--gold-ghost)}
+#teacherPaywall .plan-price{font-size:22px;font-weight:800;color:var(--gold)}
+#teacherPaywall .plan-unit{font-size:11px;color:var(--ink-40)}
+#teacherPaywall .plan-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
+#teacherPaywall .plan-feat{font-size:11px;color:var(--ink-60);line-height:1.6}
+#teacherPaywall .pw-cta{display:block;width:100%;padding:14px;background:var(--gold-foil);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;margin-bottom:10px}
+#teacherPaywall .pw-note{font-size:11px;color:var(--ink-40)}
 </style>
 </head>
 <body>
+
+<!-- 教师版付费墙（未付费用户看到） -->
+<div id="teacherPaywall">
+  <div class="pw-card">
+    <div class="pw-icon">🎓</div>
+    <div class="pw-title">舞镜教师版</div>
+    <div class="pw-sub">为舞蹈老师和培训机构设计<br>AI辅助批量评分 · 班级管理 · 学员报告</div>
+    <div class="pw-plans">
+      <div class="plan active" onclick="selectPlan(this,'teacher')">
+        <div class="plan-name">教师版</div>
+        <div class="plan-price">¥39</div>
+        <div class="plan-unit">/月</div>
+        <div class="plan-feat">30次AI拆解<br>班级管理<br>学员报告</div>
+      </div>
+      <div class="plan" onclick="selectPlan(this,'school')">
+        <div class="plan-name">机构版</div>
+        <div class="plan-price">¥99</div>
+        <div class="plan-unit">/月</div>
+        <div class="plan-feat">无限次拆解<br>多班级管理<br>数据导出</div>
+      </div>
+    </div>
+    <a class="pw-cta" href="/teacher-partner.html">联系购买 → 24小时内回复</a>
+    <div class="pw-note">已购买？<a href="/app" style="color:var(--gold)">登录后返回此页</a></div>
+  </div>
+</div>
+
 <div class="topbar"><div class="logo">舞镜<span>WuJing</span></div> <span class="badge">班级管理台</span></div>
 
 <div class="wrap">
@@ -115,6 +156,11 @@ input:focus,select:focus{border-color:var(--gold);background:#fff}
     <div class="summary" id="summary"></div>
     <div class="progress-bar"><div id="progFill" style="width:0%"></div></div>
     <div class="queue-info" id="queueInfo"></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button onclick="filterStudents('all')" id="fAll" style="font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border,#ddd);background:var(--accent,#c9a07e);color:#fff;cursor:pointer">全部</button>
+      <button onclick="filterStudents('scored')" id="fDone" style="font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border,#ddd);background:transparent;cursor:pointer">已完成</button>
+      <button onclick="filterStudents('waiting')" id="fWait" style="font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border,#ddd);background:transparent;cursor:pointer">等待中</button>
+    </div>
     <div id="memberList"></div>
     <div class="row" style="margin-top:14px">
       <button class="btn" id="btnScore" style="flex:2">开始评分（缺席不阻塞）</button>
@@ -137,6 +183,22 @@ let CODE = null, POLL = null;
 // 老师若已登录单人线，token 复用（可选，游客也能试建体验版）
 const AUTH = localStorage.getItem('wujing_token') || localStorage.getItem('AUTH_TOKEN') || '';
 const authHdr = () => AUTH ? {'Authorization':'Bearer '+AUTH} : {};
+
+// ── 付费墙：未付费用户看不到班级管理台 ──
+function selectPlan(el, plan){ document.querySelectorAll('#teacherPaywall .plan').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
+(async()=>{
+  const pw = document.getElementById('teacherPaywall');
+  if(!AUTH){ return; } // 未登录 → 保持paywall显示
+  try{
+    const r = await fetch('/api/me', {headers:{'Authorization':'Bearer '+AUTH}});
+    if(!r.ok){ return; }
+    const u = await r.json();
+    // 有付费记录的老师隐藏paywall（is_paid 或 teacher_plan 字段）
+    if(u.is_paid || u.teacher_plan || u.plan === 'teacher' || u.plan === 'school'){
+      pw.style.display='none';
+    }
+  }catch(e){ /* 网络错误 → 保持paywall */ }
+})();
 
 function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 
@@ -214,6 +276,28 @@ function renderBoard(p){
       <span class="m-name">${_esc(m.nickname)||'学员'}${real}</span>
       ${score}<span class="m-status st-${m.status}">${STATUS_CN[m.status]||m.status}</span>${rescore}</div>`;
   }).join('') || '<div style="text-align:center;color:var(--ink-40);font-size:13px;padding:16px">还没有学员加入，把邀请码发出去吧</div>';
+  // Re-apply active filter after re-render
+  if(typeof _activeFilter !== 'undefined' && _activeFilter !== 'all') filterStudents(_activeFilter);
+}
+
+var _activeFilter = 'all';
+function filterStudents(status){
+  _activeFilter = status;
+  // Update button styles
+  ['fAll','fDone','fWait'].forEach(function(id){ var btn=document.getElementById(id); if(btn){ btn.style.background='transparent'; btn.style.color=''; } });
+  var activeBtn = status==='all' ? 'fAll' : status==='scored' ? 'fDone' : 'fWait';
+  var ab = document.getElementById(activeBtn);
+  if(ab){ ab.style.background='var(--accent,#c9a07e)'; ab.style.color='#fff'; }
+  // Filter rows
+  var rows = document.querySelectorAll('#memberList .member');
+  rows.forEach(function(row){
+    if(status==='all'){ row.style.display=''; return; }
+    var badge = row.querySelector('.m-status');
+    if(!badge){ row.style.display='none'; return; }
+    var cls = badge.className;
+    if(status==='scored'){ row.style.display = cls.includes('st-scored') ? '' : 'none'; }
+    else { row.style.display = (cls.includes('st-joined')||cls.includes('st-uploaded')||cls.includes('st-scoring')) ? '' : 'none'; }
+  });
 }
 
 $('btnScore').onclick = async () => {
