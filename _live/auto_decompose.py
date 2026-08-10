@@ -219,8 +219,8 @@ def _vision_describe(frame_path, idx, t0, t1):
             "key": d.get("key", "")}
 
 
-def _vision_coach(frame_paths, title, measured=None):
-    """无参考点评：看关键帧+MediaPipe实测角度，给精准技术点评。禁空泛套话。失败抛异常上层兜底。"""
+def _vision_coach(frame_paths, title, measured=None, phrases=None):
+    """无参考点评：看关键帧+MediaPipe实测角度+口诀key字，给精准技术点评。禁空泛套话。失败抛异常上层兜底。"""
     key = os.environ["ARK_API_KEY"]
     imgs = [{"type": "input_image", "image_url": _b64(p)} for p in frame_paths[:5]]
     meas_txt = ""
@@ -233,10 +233,20 @@ def _vision_coach(frame_paths, title, measured=None):
         if rows:
             meas_txt = ("\n【MediaPipe 实测关节角度·这是客观测量值，点评必须引用这些真实数字】\n"
                         + "\n".join(rows) + "\n")
+    kou_txt = ""
+    if phrases:
+        kou_lines = [
+            f"第{p['i']}段「{p.get('name','')}」：口诀={p.get('kou','')}，key字=【{p.get('key','')}】（最难/最易跳错）"
+            for p in phrases if p.get("kou")
+        ]
+        if kou_lines:
+            kou_txt = ("\n【本视频各段口诀和key字·点评时对照这些字找问题】\n"
+                       + "\n".join(kou_lines) + "\n")
     prompt = (
         f"这几张是一位学员跳《{title}》的定格画面（按先后顺序）。你是极其挑剔的资深舞蹈老师，"
-        "给精准技术点评。\n" + meas_txt +
+        "给精准技术点评。\n" + meas_txt + kou_txt +
         "【铁律】必须具体：指名部位 + 当前位置/角度(尽量引用上面实测角度) + 应该到哪里 + 怎么改。"
+        "点评时优先检查各段key字对应的动作是否到位（key字是最容易软掉/跳错的那个）。"
         "严禁空泛套话（如'身形舒展''很有美感''继续加油''加强核心力量'这类一律不许出现）。\n"
         "好点评示例：\n"
         "· '右臂现在抬到约肩平（90°），应再上送到斜上约45°，指尖领着延伸，肩别耸'\n"
@@ -269,11 +279,17 @@ def _vision_coach(frame_paths, title, measured=None):
 
 def _deepseek_story(title, phrases):
     key = os.environ["DEEPSEEK_API_KEY"]
-    ctx = "\n".join(f"{p['i']}.{p['name']}｜{p['action']}｜意境:{p['intent']}" for p in phrases)
-    prompt = (f"你是资深舞蹈老师。下面是《{title}》按八拍自动拆的分段：\n{ctx}\n\n"
+    ctx = "\n".join(
+        f"{p['i']}.{p['name']}｜口诀:{p.get('kou','')}｜key字:{p.get('key','')}｜意境:{p['intent']}"
+        for p in phrases
+    )
+    prompt = (f"你是资深舞蹈老师。下面是《{title}》按八拍自动拆的分段（含每段口诀和key字）：\n{ctx}\n\n"
               "请生成一张故事卡帮舞者跳出感觉。只输出严格JSON不要markdown：\n"
               '{"title":"故事标题(8字以内)","body":"150字以内情感叙事，讲这支舞的意境和该跳出的眼神状态，不被截断",'
-              '"chain":"用歌谣体把整支舞口诀编成押韵短歌，每段动作对应一句3-4字，句句押韵，朗朗上口，跳舞时能在心里默念。示例：举臂望天探身沉/旋风回眸展袖云/扬手如鸟仰面笑/五式连贯自然成。段数和分段口诀一一对应，押同一个韵脚"}')
+              '"chain":"把每段的kou口诀字串成一首押韵短歌，每段对应一句，句句押同一韵脚，朗朗上口跳舞时能默念。'
+              '必须用各段已有的kou字（如「提—冲—仰—落」→ 提冲仰落），不要另造新词。'
+              '示例格式：提冲仰落气贯通/含拧展沉意从容/弹锁甩定一拍停/波隔爆钉力到终。'
+              '段数和口诀一一对应，押同一个韵脚"}')
     body = json.dumps({"model": "deepseek-chat", "messages": [{"role": "user", "content": prompt}],
                        "max_tokens": 1600, "temperature": 0.7}).encode()
     req = urllib.request.Request(DEEPSEEK_URL, data=body,
@@ -296,7 +312,7 @@ def _claude_runthrough(phrases, title, genre):
     is_guofeng = "guofeng" in genre or "古" in genre or "国风" in genre
     style_hint = "古典/国风舞，语言优美有意境" if is_guofeng else "K-pop/流行舞，语言简洁有节奏感"
     ctx = "\n".join(
-        f"{p['i']}. {p['name']}：{p['action']}  脚下：{p['feet']}"
+        f"{p['i']}. {p['name']}｜口诀:{p.get('kou','')}｜key字【{p.get('key','')}】｜{p['action']}  脚下：{p['feet']}"
         for p in phrases
     )
     prompt = f"""这是《{title}》的动作拆解（{style_hint}）：
@@ -309,7 +325,8 @@ def _claude_runthrough(phrases, title, genre):
 - 一段话，不分段，不加序号
 - 用「接着」「随之」「紧接着」「同时」「然后」把每个动作自然连起来
 - 写出身体在空间中的方向和流动感，不只是动作名
-- 古典舞用意象语言（如"如柳枝随风"），K-pop用节奏语言（如"卡在第3拍"）
+- 每段的key字【】是这段最难/最容易跳错的动作，在对应位置用口语点出来（如"——这里「沉」要真的落下去，别浮着"）
+- 古典舞用意象语言（如"如柳枝随风"），K-pop用节奏语言（如"卡在第3拍，钉住！"）
 - 150-220字，不截断
 
 只输出剧本文字，不要标题不要解释。"""
@@ -522,7 +539,7 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
             pick = sorted(set(max(1, round(1 + i * (n - 1) / 4)) for i in range(5)))
             key_frames = [os.path.join(ddir, "frames", f"p{k}.jpg") for k in pick]
             measured = [(k, pose.get(f"p{k}")) for k in pick]
-            coach = _vision_coach(key_frames, title, measured)
+            coach = _vision_coach(key_frames, title, measured, phrases)
         except Exception:
             # Coach 失败降级：显示"未检出"而不是隐藏卡片
             coach = {"title": "AI 点评", "tips": "暂无检测结果", "fallback": True}
