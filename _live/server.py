@@ -76,7 +76,7 @@ def _run_decompose_with_hooks(did, video_path, user_id, title, genre,
                       {"dance_id": did, "title": title})
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://karentan30.github.io","https://wj-clean.vercel.app","https://wj-clean-a83qqjigf-fabulousslim.vercel.app","https://wujing-mfgqx7z03-fabulousslim.vercel.app","https://wujing.vercel.app","https://wujing.mylumee.cn", "https://wujing.mylumee.app", "https://api-wujing.mylumee.app"],
+    allow_origins=["https://karentan30.github.io","https://wj-clean.vercel.app","https://wj-clean-a83qqjigf-fabulousslim.vercel.app","https://wujing-mfgqx7z03-fabulousslim.vercel.app","https://wujing.vercel.app","https://wujing.mylumee.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

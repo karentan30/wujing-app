@@ -32,6 +32,14 @@
   };
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta property="og:title" content="舞镜 — AI舞蹈教练，找到你的问题点">
+<meta property="og:description" content="上传跟跳视频，AI在30秒内分析6个维度：S曲线/臂高/旋转/臂展/屈膝/动作量，精准找到改进点。">
+<meta property="og:image" content="https://wujing.mylumee.app/og-dance.jpg">
+<meta property="og:url" content="https://wujing.mylumee.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="舞镜 — AI舞蹈教练">
+<meta name="twitter:description" content="上传跟跳视频，AI找到你的问题点，快3倍进步">
 <title>舞镜 · 把你想学的舞逐句拆开</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -279,6 +287,19 @@
   }
   .verse-caption b{color:var(--accent);font-weight:700;}
 
+  /* ---------- AI vs 自学 ---------- */
+  .ai-vs-self{display:flex;align-items:stretch;gap:0;border-radius:14px;overflow:hidden;margin:0 0 16px}
+  .avs-col{flex:1;padding:16px 14px}
+  .avs-other{background:#f2f2f5}
+  .avs-ours{background:rgba(201,160,126,0.12);border:1px solid rgba(201,160,126,0.25);border-radius:0 14px 14px 0}
+  .avs-vs{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:11px;font-weight:700;padding:0 6px;flex-shrink:0;background:#f2f2f5}
+  .avs-label{font-size:13px;font-weight:700;margin-bottom:10px;color:#aaa}
+  .avs-ours .avs-label{color:var(--accent)}
+  .avs-col ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:7px;font-size:12px;color:#aaa}
+  .avs-ours ul{color:#7a6050}
+  .avs-other ul li::before{content:"✗ ";color:#ccc}
+  .avs-ours ul li::before{content:"✓ ";color:var(--accent)}
+
   /* ---------- 价格锚点 ---------- */
   .price-sec{padding-bottom:30px;}
   .price-card{
@@ -516,6 +537,29 @@
         <div class="slow-note"><span id="verseNote">第 1 句「起」</span> · <b>0.5× 慢放</b>，看清每个转身与收势</div>
       </div>
       <div class="verse-caption">演示第 1 句「起」· 上传你的舞后，<b>每一句</b>都有自己的慢放片段 · 一键 <b>镜像跟练</b></div>
+    </div>
+  </section>
+
+  <!-- AI vs 自学对比锚定 -->
+  <section style="padding:0 0 8px">
+    <div class="ai-vs-self">
+      <div class="avs-col avs-other">
+        <div class="avs-label">自己对镜练</div>
+        <ul>
+          <li>看不出哪里不对</li>
+          <li>重复同样的错误</li>
+          <li>进步缓慢</li>
+        </ul>
+      </div>
+      <div class="avs-vs">VS</div>
+      <div class="avs-col avs-ours">
+        <div class="avs-label">✦ 舞镜AI分析</div>
+        <ul>
+          <li>6维度精准评分</li>
+          <li>逐句找到问题点</li>
+          <li>快3倍提升速度</li>
+        </ul>
+      </div>
     </div>
   </section>
 
