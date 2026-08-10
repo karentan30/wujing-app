@@ -24,6 +24,68 @@ ANGLE_CN = {"right_elbow": "右肘", "left_elbow": "左肘", "right_shoulder": "
             "left_shoulder": "左肩(抬臂)", "right_knee": "右膝", "left_knee": "左膝",
             "right_hip": "右髋", "left_hip": "左髋", "torso_tilt": "躯干倾斜"}
 
+# 口诀词库（身韵八元素 + 延伸 + K-pop街舞）
+_KOU_CLASSICAL = set("提沉冲靠含腆拧旋仰俯摆荡甩扬收落开展拢顿绷勾遮抬转点踏")
+_KOU_KPOP     = set("弹锁定波隔爆指滑摇转钉推甩踏闪抖踢跳合交探拉稳冻踩")
+_KOU_VOCAB    = _KOU_CLASSICAL | _KOU_KPOP
+
+
+def _kou_quality(phrases):
+    """检查全视频口诀质量：key去重 + 词库命中率。返回问题列表。"""
+    from collections import Counter
+    issues = []
+    key_counts = Counter(p.get("key", "") for p in phrases if p.get("key"))
+    for k, cnt in key_counts.items():
+        if cnt > 2:
+            issues.append(("dup_key", k, cnt))
+    for p in phrases:
+        words = [w for w in p.get("kou", "").replace("—", "-").split("-") if w]
+        if not words:
+            continue
+        hit = sum(1 for w in words if w in _KOU_VOCAB)
+        if hit / len(words) < 0.5:
+            issues.append(("low_vocab", p["i"], p.get("kou", ""), hit, len(words)))
+    return issues
+
+
+def _retry_phrase_for_uniqueness(frame_path, p, used_keys, ark_key):
+    """key字重复时重调vision，要求换一个不同的key字。"""
+    idx, t0, t1 = p["i"], p.get("t0", 0), p.get("t1", 3)
+    avoid = "、".join(sorted(used_keys))
+    note = (f"这段当前key字「{p.get('key','')}」在整支舞里重复太多次了。"
+            f"请重新生成，key字必须换一个不在以下列表里的字：{avoid}。"
+            f"kou也尽量换不同的字，增加整支舞的多样性。")
+    try:
+        from urllib.request import Request
+        key = ark_key
+        prompt = (
+            f"这是一支舞蹈第{idx}段(约{t0:.1f}-{t1:.1f}秒)的定格画面。你是专业舞蹈老师，"
+            "用中文描述动作帮学员跟练。只输出JSON不要解释：\n"
+            '{"name":"2-3字段名","action":"一句话带方向词","feet":"脚下和重心","intent":"意境一句话",'
+            '"kou":"3-5个单字动词破折号连接，词库：提/沉/冲/靠/含/腆/拧/旋/仰/落/展/开/弹/锁/定/波/甩/踏",'
+            '"key":"1个汉字，必须是kou里的字，且不在避免列表里"}'
+            f"\n\n{note}"
+        )
+        body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 320,
+                "input": [{"role": "user", "content": [
+                    {"type": "input_image", "image_url": _b64(frame_path)},
+                    {"type": "input_text", "text": prompt}]}]}
+        req = Request(ARK_URL, data=json.dumps(body).encode(),
+            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
+        r = json.loads(urllib.request.urlopen(req, timeout=60).read())
+        out = "".join(c.get("text", "") for o in r.get("output", []) if o.get("type") == "message"
+                      for c in o.get("content", [])).strip()
+        if out.startswith("```"):
+            out = out.split("```")[1]
+            if out.lstrip().lower().startswith("json"):
+                out = out.lstrip()[4:]
+        d2 = json.loads(out.strip())
+        if d2.get("kou") and d2.get("key") and d2["key"] not in used_keys:
+            p.update({k: d2[k] for k in ("kou", "key", "name", "action", "feet", "intent") if d2.get(k)})
+            print(f"[dup_key fix] p{idx}: key→{d2['key']} kou→{d2['kou']}")
+    except Exception as e:
+        print(f"[dup_key fix] p{idx} failed: {e}")
+
 
 def _user_friendly_error(exc_type, exc_msg):
     """异常 → 用户友好的中文错误消息（带改进建议）"""
@@ -499,6 +561,29 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         for p in phrases:
             p["angles"] = pose.get(f"p{p['i']}")
 
+        # ── Harness：全视频口诀质量检查 ──────────────────────────────────
+        result["progress"] = "口诀质量检查..."
+        _write(did, result)
+        q_issues = _kou_quality(phrases)
+        if q_issues:
+            ark_key_env = os.environ.get("ARK_API_KEY", "")
+            from collections import Counter
+            key_counts = Counter(p.get("key", "") for p in phrases if p.get("key"))
+            dup_keys = {k for k, cnt in key_counts.items() if cnt > 2}
+            if dup_keys and ark_key_env:
+                used_set = set(p.get("key", "") for p in phrases)
+                for p in phrases:
+                    if p.get("key") in dup_keys:
+                        used_set.discard(p.get("key", ""))
+                        frame_path = os.path.join(ddir, "frames", f"p{p['i']}.jpg")
+                        if os.path.exists(frame_path):
+                            _retry_phrase_for_uniqueness(frame_path, p, used_set, ark_key_env)
+                        used_set.add(p.get("key", ""))
+            for issue in q_issues:
+                if issue[0] == "low_vocab":
+                    print(f"[harness] p{issue[1]} kou={issue[2]} 词库命中{issue[3]}/{issue[4]}")
+        # ─────────────────────────────────────────────────────────────────
+
         # 歌词对齐：whisper 优先，fallback DeepSeek
         if song or lyric_first:
             aligned = whisper_align_lyrics(video_path, phrases, song, lyric_first, lyric_last)
@@ -524,6 +609,18 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         _write(did, result)
         try:
             story = _deepseek_story(title, phrases)
+            # Harness：验证chain是否真的用了kou字，不合格重试一次
+            chain = story.get("chain", "")
+            kou_words_all = [w for p in phrases
+                             for w in p.get("kou", "").replace("—", "-").split("-") if w]
+            chain_hits = sum(1 for w in kou_words_all if w in chain)
+            if kou_words_all and chain_hits / len(kou_words_all) < 0.4:
+                print(f"[harness] chain kou命中率低({chain_hits}/{len(kou_words_all)})，重试")
+                story2 = _deepseek_story(title, phrases)
+                chain2 = story2.get("chain", "")
+                hits2 = sum(1 for w in kou_words_all if w in chain2)
+                if hits2 > chain_hits:
+                    story = story2
         except Exception:
             story = {"title": title, "body": "", "chain": ""}
 
