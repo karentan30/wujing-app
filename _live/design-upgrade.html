@@ -840,6 +840,23 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
   .upload-card{padding:clamp(12px,2.5vw,20px);gap:clamp(10px,2vw,14px)}
   .sctrl{gap:12px;margin-top:6px}
 }
+/* P1优化：全局行距+过渡+Modal */
+body, p, span, .text, .desc{
+  line-height:1.5;
+}
+h1, h2, h3{
+  line-height:1.4;
+}
+.hero-cta, button{
+  transition:all 0.3s ease-out;
+}
+.pay-sheet{
+  animation:slideUp 0.3s ease-out;
+}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
 /* 移动端触控优化：所有按钮和可点击元素 ≥44px高 */
 @media (max-width:425px){
   button, .hero-cta, [role="button"], .btn, .cta, input[type="submit"]{
@@ -4503,6 +4520,7 @@ document.addEventListener('click', function(e){
   if(m && m.getAttribute('aria-hidden')==='false' && !e.target.closest('.pay-sheet') && !PAY_BUSY){ payClose(); }
 });
 function payCreate(channel){
+  if(PAY_BUSY){ toast('正在处理中，请稍候…'); return; }
   if(!DC_ID){ toast('未找到拆解记录，请重新上传'); return; }
   // Stripe跳转前保存DC_ID到localStorage，防止跳转回来丢失状态
   try{ localStorage.setItem('wj_dc_id', DC_ID); }catch(e){}
@@ -4553,7 +4571,11 @@ function payCreate(channel){
       }
     } else {
       PAY_BUSY = false;
-      toast(d.detail||'下单失败');
+      var errMsg = d.detail || '下单失败';
+      if(d.code === '401') errMsg = '登录已过期，请重新登录';
+      else if(d.code === '402') errMsg = '账户额度不足，请检查账户余额';
+      else if(d.code === '502') errMsg = '服务器繁忙，请稍后重试';
+      toast(errMsg);
       document.getElementById('payChannels').style.display='block';
       document.getElementById('payQr').style.display='none';
       document.getElementById('payStripe').style.display='none';
