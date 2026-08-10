@@ -1,110 +1,84 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IVE Love Dive舞蹈教程 | AI分析你的跟跳 | 舞镜</title>
-<meta name="description" content="学跳IVE Love Dive，掌握挺胸展肩、节拍卡点、指尖细节三大核心动作，上传视频让舞镜AI即时评分。">
-<meta name="keywords" content="IVE舞蹈教程,Love Dive跟跳,kpop舞蹈学习,AI舞蹈分析,舞镜">
-<link rel="canonical" href="https://wujing.mylumee.app/dance/ive-love-dive">
-<meta property="og:title" content="学跳IVE Love Dive — AI帮你分析动作">
-<meta property="og:description" content="3个核心动作要点 + AI即时评分，跟跳进步更快">
-<meta property="og:image" content="https://wujing.mylumee.app/og-dance.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"学跳IVE Love Dive舞蹈","description":"IVE Love Dive舞蹈核心动作教程","step":[{"@type":"HowToStep","name":"挺胸展肩","text":"肩胛骨向下沉，胸腔向前推，形成高级感的贵族仪态，这是IVE整体气质的基础"},{"@type":"HowToStep","name":"节拍卡点","text":"每个卡点动作要在正拍前一拍完成预备，这样在正拍上停顿才会有冲击力"},{"@type":"HowToStep","name":"指尖细节","text":"手指轻微弯曲而非完全张开或握拳，延伸时想象手指在抚摸空气"}]}</script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0f0f13;color:#e8e0d8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
-.hero{background:linear-gradient(180deg,#1a1015 0%,#0f0f13 100%);padding:60px 20px 40px;text-align:center}
-.hero-tag{display:inline-block;background:rgba(201,160,126,0.15);border:1px solid rgba(201,160,126,0.3);border-radius:20px;padding:5px 14px;font-size:12px;color:#c9a07e;margin-bottom:16px;letter-spacing:1px}
-.hero-title{font-size:28px;font-weight:800;line-height:1.2;margin-bottom:8px}
-.hero-subtitle{font-size:15px;color:#9a8878;margin-bottom:28px}
-.cta-btn{display:inline-block;background:linear-gradient(135deg,#c9a07e,#e8c09e);color:#1a1015;font-size:16px;font-weight:700;padding:16px 36px;border-radius:50px;text-decoration:none;box-shadow:0 4px 20px rgba(201,160,126,0.4)}
-.section{padding:32px 20px;max-width:500px;margin:0 auto}
-.section-title{font-size:16px;font-weight:700;color:#c9a07e;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.steps{display:flex;flex-direction:column;gap:16px}
-.step{background:#1a1a22;border-radius:12px;padding:18px;border-left:3px solid #c9a07e}
-.step-num{font-size:12px;color:#c9a07e;font-weight:700;margin-bottom:6px}
-.step-name{font-size:15px;font-weight:700;margin-bottom:6px;color:#e8e0d8}
-.step-desc{font-size:13px;color:#9a8878;line-height:1.5}
-.ai-cta-card{background:linear-gradient(135deg,rgba(201,160,126,0.15),rgba(201,160,126,0.05));border:1px solid rgba(201,160,126,0.3);border-radius:16px;padding:28px 20px;text-align:center;margin:0 20px}
-.ai-cta-title{font-size:18px;font-weight:800;margin-bottom:8px}
-.ai-cta-desc{font-size:13px;color:#9a8878;margin-bottom:20px}
-.ai-features{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
-.ai-feat{background:#1a1a22;border-radius:20px;padding:6px 14px;font-size:12px;color:#c9a07e}
-.related{padding:32px 20px;max-width:500px;margin:0 auto}
-.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.related-card{background:#1a1a22;border-radius:12px;padding:14px;text-decoration:none;display:block;border:1px solid rgba(255,255,255,0.05)}
-.related-card:hover{border-color:rgba(201,160,126,0.3)}
-.rc-name{font-size:13px;font-weight:600;color:#e8e0d8;margin-bottom:4px}
-.rc-artist{font-size:11px;color:#9a8878}
-footer{text-align:center;padding:32px 20px;color:#555;font-size:12px;border-top:1px solid rgba(255,255,255,0.05)}
-footer a{color:#c9a07e;text-decoration:none}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IVE Love Dive舞蹈教程 - AI跟跳评分</title>
+    <meta name="description" content="IVE Love Dive舞蹈分解教学，AI视频分析您的跟跳效果。学习挺胸展肩、节拍卡点、指尖细节等核心动作要点。">
+    <meta name="keywords" content="IVE,Love Dive,舞蹈教程,K-pop舞蹈,跟跳,AI评分">
+    <meta name="author" content="舞镜 Wujing">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="IVE Love Dive舞蹈教程 - AI跟跳评分">
+    <meta property="og:description" content="专业舞蹈分解 + AI智能评分。上传你的跟跳视频，立即获得详细反馈。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wujing.mylumee.app/dance/ive-love-dive.html">
+    <link rel="canonical" href="https://wujing.mylumee.app/dance/ive-love-dive.html">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"HowTo","name":"IVE Love Dive舞蹈教程","description":"学习IVE Love Dive的舞蹈动作分解","step":[{"@type": "HowToStep", "name": "\u633a\u80f8\u5c55\u80a9\u7684\u59ff\u6001", "text": "Love Dive\u5f3a\u8c03\u80a9\u8180\u7684\u5c55\u5f00\u3002\u7ad9\u76f4\u65f6\u8981\u6709\u610f\u8bc6\u5730\u633a\u80f8\uff0c\u80a9\u8180\u5411\u540e\u6253\u5f00\u3002\u8fd9\u6837\u80fd\u5c55\u73b0\u51fa\u821e\u8e48\u7684\u529b\u91cf\u611f\u548c\u6c14\u573a\u3002\u5728\u505a\u4fa7\u8eab\u52a8\u4f5c\u65f6\uff0c\u8981\u5145\u5206\u5c55\u73b0\u80a9\u8180\u7ebf\u6761\u3002\u8fd9\u4e2a\u57fa\u7840\u59ff\u6001\u8d2f\u7a7f\u6574\u4e2a\u821e\u8e48\u3002"}, {"@type": "HowToStep", "name": "\u8282\u62cd\u5361\u70b9\u7684\u7cbe\u51c6\u5ea6", "text": "Love Dive\u7684\u7279\u8272\u5c31\u662f\u6bcf\u4e2a\u52a8\u4f5c\u90fd\u8981\u7cbe\u51c6\u5730\u843d\u5728\u8282\u62cd\u4e0a\u3002\u8fd9\u9700\u8981\u53cd\u590d\u542c\u97f3\u4e50\uff0c\u627e\u5230\u6bcf\u4e00\u4e2a\u5f3a\u62cd\u548c\u5f31\u62cd\u3002\u5728\u7ec3\u4e60\u65f6\u7528\u955c\u5b50\u5bf9\u7167\uff0c\u786e\u4fdd\u4f60\u7684\u52a8\u4f5c\u548c\u97f3\u4e50\u5b8c\u5168\u540c\u6b65\u3002\u4e00\u65e6\u5361\u51c6\u4e86\uff0c\u6574\u652f\u821e\u8e48\u5c31\u4f1a\u663e\u5f97\u975e\u5e38\u4e13\u4e1a\u3002"}, {"@type": "HowToStep", "name": "\u624b\u6307\u4e0e\u624b\u8155\u7684\u7ec6\u8282", "text": "\u4e0d\u8981\u5ffd\u89c6\u6307\u5c16\u7684\u52a8\u4f5c\u3002\u6bcf\u4e00\u4e2a\u624b\u90e8\u52a8\u4f5c\u90fd\u8981\u7ec6\u81f4\u5230\u624b\u6307\u3002\u624b\u8155\u8981\u6709\u610f\u8bc6\u5730\u8f6c\u52a8\uff0c\u6307\u5c16\u8981\u6709\u5f20\u529b\u3002\u8fd9\u4e9b\u5c0f\u7ec6\u8282\u80fd\u5927\u5e45\u63d0\u5347\u821e\u8e48\u7684\u8d28\u611f\uff0c\u8ba9\u4f60\u770b\u8d77\u6765\u66f4\u4e13\u4e1a\u3002\u5728\u505a\u6307\u5411\u6027\u52a8\u4f5c\u65f6\u5c24\u5176\u8981\u6ce8\u610f\u3002"}]}
+    </script>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box}body{background:#0f0f13;color:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6}.container{max-width:1200px;margin:0 auto;padding:0 20px}header{padding:60px 0;text-align:center;background:linear-gradient(135deg,#0f0f13 0%,#1a1a24 100%)}h1{font-size:3rem;margin-bottom:10px;color:#c9a07e}.subtitle{font-size:1.2rem;color:#999;margin-bottom:30px}.artist-name{color:#c9a07e;font-weight:600}.cta-button{background:#c9a07e;color:#0f0f13;padding:16px 40px;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.3s ease}.cta-button:hover{background:#d4b89d;transform:translateY(-2px)}.tutorial-section{padding:60px 0}.section-title{font-size:2rem;margin-bottom:40px;color:#c9a07e;text-align:center}.step{background:#1a1a24;padding:30px;margin-bottom:30px;border-radius:12px;border-left:4px solid #c9a07e}.step-number{display:inline-block;width:40px;height:40px;background:#c9a07e;color:#0f0f13;border-radius:50%;text-align:center;line-height:40px;font-weight:600;margin-bottom:15px}.step h3{font-size:1.4rem;margin-bottom:15px;color:#e0e0e0}.step p{color:#999;line-height:1.8}.ai-analysis{background:linear-gradient(135deg,#1a1a24 0%,#2a2a35 100%);padding:50px;text-align:center;border-radius:12px;margin:60px 0;border:1px solid #333}.ai-analysis h2{font-size:1.8rem;margin-bottom:20px;color:#c9a07e}.ai-analysis p{font-size:1.1rem;margin-bottom:30px;color:#999}.upload-btn{background:#c9a07e;color:#0f0f13;padding:18px 50px;border:none;border-radius:8px;font-size:1.1rem;font-weight:600;cursor:pointer;transition:all 0.3s}.upload-btn:hover{background:#d4b89d;transform:scale(1.05)}.related-dances{padding:60px 20px;background:#1a1a24;margin-top:60px}.related-title{font-size:2rem;margin-bottom:40px;color:#c9a07e;text-align:center}.dance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}.dance-card{background:#0f0f13;padding:30px;border-radius:8px;text-align:center;border:1px solid #333;transition:all 0.3s;text-decoration:none}.dance-card:hover{border-color:#c9a07e;transform:translateY(-5px)}.dance-card h4{color:#c9a07e;margin-bottom:10px;font-size:1.1rem}.dance-card p{color:#999;font-size:0.95rem}footer{background:#0f0f13;padding:40px 20px;text-align:center;border-top:1px solid #333;color:#666;margin-top:60px}
+    </style>
 </head>
 <body>
-<div class="hero">
-  <div class="hero-tag">🎵 KPOP舞蹈教程</div>
-  <h1 class="hero-title">IVE<br>Love Dive</h1>
-  <p class="hero-subtitle">3个核心动作 · AI即时评分 · 快速进步</p>
-  <a href="https://wujing.mylumee.app" class="cta-btn">上传视频让AI分析 →</a>
-</div>
+    <header>
+        <div class="container">
+            <h1>IVE Love Dive</h1>
+            <p class="subtitle">舞蹈分解教学 | 专业AI视频分析</p>
+            <p class="artist-name">IVE</p>
+            <button class="cta-button" onclick="window.location.href='https://wujing.mylumee.app'">上传视频分析我的跟跳</button>
+        </div>
+    </header>
+    <div class="container">
+        <section class="tutorial-section">
+            <h2 class="section-title">核心动作分解</h2>
+                        <div class="step">
+                <div class="step-number">1</div>
+                <h3>挺胸展肩的姿态</h3>
+                <p>Love Dive强调肩膀的展开。站直时要有意识地挺胸，肩膀向后打开。这样能展现出舞蹈的力量感和气场。在做侧身动作时，要充分展现肩膀线条。这个基础姿态贯穿整个舞蹈。</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>节拍卡点的精准度</h3>
+                <p>Love Dive的特色就是每个动作都要精准地落在节拍上。这需要反复听音乐，找到每一个强拍和弱拍。在练习时用镜子对照，确保你的动作和音乐完全同步。一旦卡准了，整支舞蹈就会显得非常专业。</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>手指与手腕的细节</h3>
+                <p>不要忽视指尖的动作。每一个手部动作都要细致到手指。手腕要有意识地转动，指尖要有张力。这些小细节能大幅提升舞蹈的质感，让你看起来更专业。在做指向性动作时尤其要注意。</p>
+            </div>
 
-<div class="section">
-  <div class="section-title">💃 核心动作要点</div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">动作1</div>
-      <div class="step-name">挺胸展肩</div>
-      <div class="step-desc">肩胛骨向下沉，胸腔向前推，形成高级感的贵族仪态，这是IVE整体气质的基础。很多人跳爱豆舞时肩膀会不自觉地向前驼，导致整体看起来没有精神气。每次练习开始时先做一个深呼吸，把胸腔打开，然后保持这个状态贯穿整个练习。</div>
+        </section>
+        <section class="ai-analysis">
+            <h2>AI智能评分系统</h2>
+            <p>上传你的舞蹈视频，获得详细的跟跳分析反馈</p>
+            <button class="upload-btn" onclick="window.location.href='https://wujing.mylumee.app'">立即上传视频分析</button>
+        </section>
     </div>
-    <div class="step">
-      <div class="step-num">动作2</div>
-      <div class="step-name">节拍卡点</div>
-      <div class="step-desc">每个卡点动作要在正拍前一拍完成预备，这样在正拍上停顿才会有冲击力。很多初学者的问题是在正拍才开始做动作，导致动作总是慢半拍。Love Dive的卡点是这首歌最有记忆点的地方，提前预备是做出专业感的关键。</div>
-    </div>
-    <div class="step">
-      <div class="step-num">动作3</div>
-      <div class="step-name">指尖细节</div>
-      <div class="step-desc">手指轻微弯曲而非完全张开或握拳，延伸时想象手指在抚摸空气。IVE的手部细节非常精致，完全张开的手显得用力过度，而自然微弯的手指更有优雅感。可以对着镜子单独练习手型，直到找到那个刚好的弯曲程度。</div>
-    </div>
-  </div>
-</div>
+    <section class="related-dances">
+        <div class="container">
+            <h2 class="related-title">相关K-pop舞蹈</h2>
+            <div class="dance-grid">
+                                <a href="/dance/newjeans-hype-boy.html" class="dance-card">
+                    <h4>NewJeans - Hype Boy</h4>
+                    <p>轻盈步伐 · 手臂波浪 · 表情管理</p>
+                </a>
+                <a href="/dance/aespa-supernova.html" class="dance-card">
+                    <h4>aespa - Supernova</h4>
+                    <p>机械感 · 整齐度 · 力道控制</p>
+                </a>
+                <a href="/dance/lesserafim-antifragile.html" class="dance-card">
+                    <h4>LE SSERAFIM - Antifragile</h4>
+                    <p>力量感 · 低重心 · 腰部控制</p>
+                </a>
 
-<div class="ai-cta-card">
-  <div class="ai-cta-title">📱 让AI帮你找问题</div>
-  <div class="ai-cta-desc">上传你的跟跳视频，舞镜AI在30秒内分析你的动作，告诉你哪里需要改</div>
-  <div class="ai-features">
-    <span class="ai-feat">6维度评分</span>
-    <span class="ai-feat">逐拍对比</span>
-    <span class="ai-feat">文字点评</span>
-  </div>
-  <a href="https://wujing.mylumee.app" class="cta-btn" style="font-size:14px;padding:14px 28px">免费上传分析</a>
-</div>
-
-<div class="related">
-  <div class="section-title">🎵 相关舞蹈</div>
-  <div class="related-grid">
-    <a href="blackpink-lovesick-girls.html" class="related-card">
-      <div class="rc-name">Lovesick Girls</div>
-      <div class="rc-artist">BLACKPINK</div>
-    </a>
-    <a href="aespa-supernova.html" class="related-card">
-      <div class="rc-name">Supernova</div>
-      <div class="rc-artist">aespa</div>
-    </a>
-    <a href="lesserafim-antifragile.html" class="related-card">
-      <div class="rc-name">Antifragile</div>
-      <div class="rc-artist">LE SSERAFIM</div>
-    </a>
-    <a href="nmixx-o-o.html" class="related-card">
-      <div class="rc-name">O.O</div>
-      <div class="rc-artist">NMIXX</div>
-    </a>
-  </div>
-</div>
-
-<footer>
-  <p>© 2026 舞镜 · AI舞蹈教练 · <a href="https://wujing.mylumee.app">wujing.mylumee.app</a></p>
-</footer>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 舞镜 Wujing. 专业舞蹈AI分析平台 | <a href="https://wujing.mylumee.app" style="color:#c9a07e;">返回首页</a></p>
+        </div>
+    </footer>
 </body>
 </html>
