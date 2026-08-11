@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舞镜 · 登录 & 付款 样图 0730</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF7F0;
+    --card:#ffffff;
+    --edge:#EDE4CF;
+    --gold:#B5922A;
+    --gold-soft:#C9A94A;
+    --ink:#1F1A14;
+    --mute:#8C857A;
+    --dark:#0E0B14;
+    --wechat:#1AAD19;
+    --alipay:#1677FF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:#e9e2d3;}
+  body{
+    font-family:"Noto Sans SC",system-ui,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  .serif{font-family:"Noto Serif SC",serif;}
+  .stage{display:flex;flex-wrap:wrap;gap:34px;justify-content:center;padding:34px 12px;}
+  .phone{
+    width:440px;background:var(--bg);
+    border-radius:26px;overflow:hidden;position:relative;
+    box-shadow:0 24px 60px rgba(30,26,20,.16),0 0 0 1px var(--edge);
+  }
+  .page-label{
+    text-align:center;font-family:"Noto Serif SC",serif;font-weight:700;
+    font-size:14px;color:var(--gold);letter-spacing:.14em;margin-bottom:14px;
+  }
+  .col{display:flex;flex-direction:column;align-items:center;}
+
+  /* ---------- 顶栏 ---------- */
+  .topbar{
+    display:flex;align-items:center;gap:10px;
+    padding:18px 22px 14px;position:relative;
+  }
+  .back{
+    width:34px;height:34px;border-radius:50%;flex:0 0 auto;
+    border:1px solid var(--edge);background:var(--card);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink);font-size:17px;
+  }
+  .brand-mini{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:19px;
+    letter-spacing:.1em;display:inline-flex;align-items:center;gap:8px;
+  }
+  .brand-mini .moon{
+    width:11px;height:11px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#F3E3AE,var(--gold));
+    box-shadow:0 0 12px rgba(181,146,42,.5);
+  }
+  .topbar .skip{
+    margin-left:auto;font-size:13px;color:var(--mute);text-decoration:none;
+    font-weight:500;
+  }
+
+  section{padding:8px 26px 30px;}
+
+  /* ---------- 登录 头部 ---------- */
+  .auth-head{text-align:center;padding:14px 26px 4px;}
+  .auth-head .kicker{
+    font-size:11px;letter-spacing:.28em;color:var(--gold);
+    font-weight:700;margin-bottom:10px;
+  }
+  .auth-head h1{
+    font-family:"Noto Serif SC",serif;font-weight:700;
+    font-size:24px;line-height:1.42;margin-bottom:12px;
+  }
+  .auth-head h1 em{font-style:normal;color:var(--gold);}
+  .value-card{
+    background:linear-gradient(180deg,#FFFDF6,var(--card));
+    border:1px solid var(--edge);border-radius:16px;
+    padding:14px 16px;margin:2px 0 4px;text-align:left;
+    display:flex;gap:11px;align-items:flex-start;
+  }
+  .value-card .vi{
+    width:30px;height:30px;border-radius:9px;flex:0 0 auto;
+    background:#FBF6E8;border:1px solid var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .value-card .vi svg{width:16px;height:16px;}
+  .value-card .vt{font-size:13px;color:var(--ink);line-height:1.5;}
+  .value-card .vt b{color:var(--ink);font-weight:700;}
+
+  /* ---------- 表单 ---------- */
+  .field{margin-top:18px;}
+  .field label{
+    display:block;font-size:12.5px;font-weight:700;color:var(--ink);
+    margin-bottom:8px;letter-spacing:.02em;
+  }
+  .input{
+    width:100%;background:var(--card);border:1.5px solid var(--edge);
+    border-radius:13px;padding:15px 16px;font-size:15px;color:var(--ink);
+    font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .input::placeholder{color:#BDB5A6;}
+  .input:focus{border-color:var(--gold-soft);box-shadow:0 0 0 3px rgba(201,169,74,.14);}
+  .input.filled{border-color:var(--gold-soft);}
+
+  /* 验证码 6 格 */
+  .otp-row{display:flex;gap:10px;justify-content:space-between;}
+  .otp-cell{
+    flex:1;aspect-ratio:1/1.12;background:var(--card);
+    border:1.5px solid var(--edge);border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:24px;color:var(--ink);
+  }
+  .otp-cell.on{border-color:var(--gold);box-shadow:0 0 0 3px rgba(181,146,42,.12);}
+  .otp-cell.cursor{border-color:var(--gold);position:relative;}
+  .otp-cell.cursor::after{
+    content:"";width:2px;height:24px;background:var(--gold);
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .otp-cell.err{border-color:#C0392B;background:#FDF3F2;}
+
+  .sent-to{font-size:12.5px;color:var(--mute);margin-top:12px;text-align:center;}
+  .sent-to b{color:var(--ink);font-weight:700;}
+  .resend{
+    text-align:center;margin-top:12px;font-size:12.5px;color:var(--mute);
+  }
+  .resend a{color:var(--gold);font-weight:700;text-decoration:none;}
+  .resend .wait{color:#BDB5A6;}
+
+  .err-msg{
+    display:flex;align-items:center;gap:7px;justify-content:center;
+    font-size:12.5px;color:#C0392B;font-weight:500;margin-top:12px;
+  }
+  .err-msg svg{width:14px;height:14px;flex:0 0 auto;}
+
+  /* CTA */
+  .cta{
+    display:block;width:100%;text-align:center;margin-top:20px;
+    background:linear-gradient(135deg,#C9A94A,#B5922A);
+    color:#fff;font-weight:700;font-size:16px;
+    padding:16px;border-radius:40px;text-decoration:none;border:none;
+    box-shadow:0 8px 22px rgba(181,146,42,.3);letter-spacing:.04em;
+    cursor:pointer;font-family:inherit;
+  }
+  .cta.loading{
+    background:linear-gradient(135deg,#D4C089,#BFA24F);
+    color:#fff;pointer-events:none;
+  }
+  .cta .spin{
+    display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-right:8px;
+    border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;
+    animation:rot .7s linear infinite;
+  }
+  @keyframes rot{to{transform:rotate(360deg);}}
+
+  /* 分隔 + 第三方 */
+  .divider{
+    display:flex;align-items:center;gap:12px;margin:24px 0 18px;
+    color:#BDB5A6;font-size:11.5px;letter-spacing:.1em;
+  }
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--edge);}
+  .third-row{display:flex;gap:12px;}
+  .third{
+    flex:1;background:var(--card);border:1.5px solid var(--edge);border-radius:13px;
+    padding:13px;display:flex;align-items:center;justify-content:center;gap:8px;
+    font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:none;
+  }
+  .third svg{width:19px;height:19px;flex:0 0 auto;}
+  .third .ph{font-size:10px;color:#BDB5A6;margin-left:2px;}
+
+  .legal{
+    font-size:11px;color:var(--mute);text-align:center;margin-top:22px;
+    line-height:1.6;
+  }
+  .legal a{color:var(--gold);text-decoration:none;}
+
+  /* ---------- 付款页 ---------- */
+  .pay-head{text-align:center;padding:16px 26px 2px;}
+  .pay-head .kicker{
+    font-size:11px;letter-spacing:.28em;color:var(--gold);font-weight:700;margin-bottom:8px;
+  }
+  .pay-head h1{font-family:"Noto Serif SC",serif;font-weight:700;font-size:22px;line-height:1.4;}
+  .pay-head .song{font-size:13px;color:var(--mute);margin-top:6px;}
+  .pay-head .song b{color:var(--ink);font-weight:700;}
+
+  .price-card{
+    background:linear-gradient(180deg,#FFFDF6,var(--card));
+    border:1px solid var(--gold-soft);border-radius:22px;
+    padding:24px 22px 20px;margin:18px 0 0;
+    box-shadow:0 14px 34px rgba(181,146,42,.14),0 0 0 4px rgba(201,169,74,.08);
+    text-align:center;
+  }
+  .price-top{display:flex;align-items:flex-end;justify-content:center;gap:6px;}
+  .price-num{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:54px;
+    line-height:1;color:var(--gold);letter-spacing:-.01em;
+  }
+  .price-num .cur{font-size:26px;font-weight:700;vertical-align:top;
+    margin-right:1px;position:relative;top:3px;}
+  .price-per{font-size:14px;color:var(--mute);font-weight:500;padding-bottom:8px;}
+  .price-note{font-size:12px;color:var(--gold);font-weight:700;margin-top:8px;letter-spacing:.02em;}
+  .price-feat{list-style:none;margin:18px 0 0;text-align:left;display:inline-block;}
+  .price-feat li{
+    font-size:13px;color:var(--ink);padding:6px 0 6px 24px;position:relative;line-height:1.45;
+  }
+  .price-feat li::before{
+    content:"✓";position:absolute;left:0;top:6px;color:var(--gold);font-weight:900;font-size:13px;
+  }
+
+  /* 支付方式 */
+  .pay-methods{margin-top:22px;}
+  .pm-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:12px;letter-spacing:.02em;}
+  .pm{
+    display:flex;align-items:center;gap:13px;background:var(--card);
+    border:1.5px solid var(--edge);border-radius:14px;padding:14px 16px;
+    margin-bottom:11px;cursor:pointer;transition:border-color .15s,box-shadow .15s;
+  }
+  .pm.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(181,146,42,.1);}
+  .pm-ic{width:30px;height:30px;border-radius:8px;flex:0 0 auto;display:flex;
+    align-items:center;justify-content:center;}
+  .pm-ic svg{width:22px;height:22px;}
+  .pm .nm{font-size:14.5px;font-weight:700;color:var(--ink);}
+  .pm .sub{font-size:11.5px;color:var(--mute);}
+  .pm .radio{
+    margin-left:auto;width:20px;height:20px;border-radius:50%;flex:0 0 auto;
+    border:2px solid var(--edge);position:relative;
+  }
+  .pm.sel .radio{border-color:var(--gold);}
+  .pm.sel .radio::after{
+    content:"";position:absolute;inset:3px;border-radius:50%;background:var(--gold);
+  }
+
+  .assure{
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+    margin-top:18px;
+  }
+  .assure span{
+    font-size:11.5px;color:var(--mute);background:var(--card);
+    border:1px solid var(--edge);padding:6px 12px;border-radius:20px;font-weight:500;
+    display:inline-flex;align-items:center;gap:5px;
+  }
+  .assure span svg{width:12px;height:12px;color:var(--gold);}
+
+  .pay-btn-wrap{margin-top:20px;}
+  .pay-foot{font-size:11.5px;color:var(--mute);text-align:center;margin-top:12px;line-height:1.6;}
+
+  /* 成功态 */
+  .success{text-align:center;padding:44px 26px 40px;}
+  .succ-ring{
+    width:74px;height:74px;border-radius:50%;margin:0 auto 20px;
+    background:radial-gradient(circle at 38% 32%,#FBF0C8,var(--gold));
+    box-shadow:0 0 34px rgba(181,146,42,.36);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .succ-ring svg{width:34px;height:34px;color:#fff;}
+  .success h2{font-family:"Noto Serif SC",serif;font-weight:700;font-size:22px;margin-bottom:8px;}
+  .success p{font-size:13px;color:var(--mute);margin-bottom:22px;}
+  .gen-bar{
+    background:var(--card);border:1px solid var(--edge);border-radius:14px;
+    padding:16px;text-align:left;margin-bottom:20px;
+  }
+  .gen-row{display:flex;align-items:center;gap:11px;padding:7px 0;font-size:13px;color:var(--ink);}
+  .gen-row .gi{width:22px;height:22px;border-radius:50%;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .gi.done{background:var(--gold);color:#fff;}
+  .gi.doing{border:2px solid var(--gold);}
+  .gi.doing .spin{width:12px;height:12px;border:2px solid rgba(181,146,42,.3);
+    border-top-color:var(--gold);border-radius:50%;animation:rot .7s linear infinite;}
+  .gi.wait{border:2px solid var(--edge);color:#BDB5A6;font-weight:700;}
+  .gen-row.pending{color:var(--mute);}
+  .cta.ghost{
+    background:var(--card);color:var(--gold);border:1.5px solid var(--gold-soft);
+    box-shadow:none;margin-top:12px;
+  }
+
+  .footer{padding:22px 24px 30px;text-align:center;color:#B8AE97;font-size:11px;background:var(--bg);
+    border-top:1px solid var(--edge);}
+  .footer .wm{color:var(--gold);font-weight:700;letter-spacing:.1em;}
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- ========== 页面 ① 登录（发码前） ========== -->
+  <div class="col">
+    <div class="page-label">① 登录 · 输入邮箱</div>
+    <div class="phone">
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="brand-mini"><span class="moon"></span>舞镜</div>
+        <a class="skip" href="#">先逛逛 ›</a>
+      </div>
+
+      <div class="auth-head">
+        <div class="kicker">保存你拆过的舞</div>
+        <h1>登录后，<em>你拆过的每支舞</em><br>都存进「我的练习库」</h1>
+      </div>
+
+      <section>
+        <div class="value-card">
+          <div class="vi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#B5922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="vt">拆过的舞<b>随时回来看</b>，练习库帮你攒起来，进步曲线看得见——不是为登录而登录。</div>
+        </div>
+
+        <div class="field">
+          <label>邮箱</label>
+          <input class="input" type="email" placeholder="输入你的邮箱，接收 6 位验证码">
+        </div>
+
+        <button class="cta">发送验证码</button>
+
+        <div class="divider">其他方式登录</div>
+        <div class="third-row">
+          <a class="third" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#8C857A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.94.37 1.86.7 2.75a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.89.33 1.81.57 2.75.7A2 2 0 0 1 22 16.92z"/></svg>
+            手机号 <span class="ph">占位</span>
+          </a>
+          <a class="third" href="#">
+            <svg viewBox="0 0 24 24" fill="#1AAD19"><path d="M8.5 4C4.9 4 2 6.5 2 9.6c0 1.8 1 3.4 2.6 4.4l-.6 1.9 2.2-1.1c.7.2 1.5.3 2.3.3h.5a4.7 4.7 0 0 1-.2-1.3c0-2.9 2.8-5.2 6.3-5.2h.4C15 6.2 12 4 8.5 4z"/><path d="M22 13.7c0-2.5-2.5-4.5-5.5-4.5s-5.5 2-5.5 4.5 2.5 4.5 5.5 4.5c.6 0 1.2-.1 1.8-.3l1.7.9-.5-1.5c1.5-.8 2.5-2.1 2.5-3.6z"/></svg>
+            微信 <span class="ph">占位</span>
+          </a>
+        </div>
+
+        <div class="legal">
+          登录即代表同意舞镜 <a href="#">用户协议</a> 与 <a href="#">隐私政策</a>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div class="wm">舞镜 WUJING</div>
+        <div style="margin-top:6px;">邮箱验证码登录 · 复用 Lumee OTP 基建</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 页面 ①b 登录（输验证码 + 各交互态） ========== -->
+  <div class="col">
+    <div class="page-label">①b 输验证码 · 交互态示意</div>
+    <div class="phone">
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="brand-mini"><span class="moon"></span>舞镜</div>
+      </div>
+
+      <div class="auth-head">
+        <div class="kicker">验证码已发送</div>
+        <h1>输入邮箱里的<br><em>6 位验证码</em></h1>
+      </div>
+
+      <section>
+        <div class="sent-to">已发送到 <b>dancer@example.com</b></div>
+
+        <!-- 正常输入态：前3位已填，第4格光标 -->
+        <div class="field" style="margin-top:18px;">
+          <div class="otp-row">
+            <div class="otp-cell on">3</div>
+            <div class="otp-cell on">8</div>
+            <div class="otp-cell on">1</div>
+            <div class="otp-cell cursor"></div>
+            <div class="otp-cell"></div>
+            <div class="otp-cell"></div>
+          </div>
+        </div>
+
+        <div class="resend">
+          没收到？<span class="wait">重新发送（52s）</span>
+        </div>
+
+        <!-- 验证中：加载态 -->
+        <button class="cta loading"><span class="spin"></span>验证中…</button>
+
+        <!-- 分隔说明这是另一状态 -->
+        <div class="divider">— 错误态示意 —</div>
+
+        <!-- 错误态：整行红 + 提示 -->
+        <div class="otp-row">
+          <div class="otp-cell err">3</div>
+          <div class="otp-cell err">8</div>
+          <div class="otp-cell err">1</div>
+          <div class="otp-cell err">9</div>
+          <div class="otp-cell err">0</div>
+          <div class="otp-cell err">2</div>
+        </div>
+        <div class="err-msg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          验证码不对，再看看邮箱里的最新一封
+        </div>
+        <div class="resend" style="margin-top:14px;">
+          没收到？<a href="#">重新发送</a>（倒计时结束可点）
+        </div>
+
+        <div class="legal">
+          验证码 10 分钟内有效 · 换邮箱请返回上一步
+        </div>
+      </section>
+
+      <div class="footer">
+        <div class="wm">舞镜 WUJING</div>
+        <div style="margin-top:6px;">发码中 / 验证中转圈 · 码错红框 · 重发倒计时</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 页面 ② 付款（9.9） ========== -->
+  <div class="col">
+    <div class="page-label">② 付款 · ¥9.9 一支舞</div>
+    <div class="phone">
+      <div class="topbar">
+        <div class="back">‹</div>
+        <div class="brand-mini"><span class="moon"></span>舞镜</div>
+      </div>
+
+      <div class="pay-head">
+        <div class="kicker">看完满意，再决定</div>
+        <h1>生成这支舞的完整拆解</h1>
+        <div class="song">当前拆解 · <b>《清别欢》</b></div>
+      </div>
+
+      <section style="padding-top:0;">
+        <div class="price-card">
+          <div class="price-top">
+            <div class="price-num"><span class="cur">¥</span>9.9</div>
+            <div class="price-per">/ 一支舞</div>
+          </div>
+          <div class="price-note">一杯奶茶钱 · 这支舞永久收藏</div>
+          <ul class="price-feat">
+            <li>八拍卡 · 歌词记忆卡 · 舞曲故事卡 全套高清</li>
+            <li>可下载保存，永久收藏</li>
+            <li>带舞镜水印，发朋友圈发群随你分享</li>
+          </ul>
+        </div>
+
+        <div class="pay-methods">
+          <div class="pm-title">选择支付方式</div>
+          <div class="pm sel">
+            <div class="pm-ic" style="background:#EAF9EA;">
+              <svg viewBox="0 0 24 24" fill="#1AAD19"><path d="M8.7 3C4.5 3 1 6 1 9.6c0 2 1.1 3.8 2.9 5l-.7 2.2 2.6-1.3c.6.2 1.3.3 2 .3.3-3.6 3.7-6.4 7.8-6.4h.4C15.4 5.4 12.4 3 8.7 3z"/><path d="M23 14.5c0-2.9-2.9-5.2-6.4-5.2s-6.4 2.3-6.4 5.2 2.9 5.2 6.4 5.2c.7 0 1.4-.1 2.1-.3l2 1-.6-1.8c1.7-1 2.9-2.5 2.9-4.1z" opacity=".92"/></svg>
+            </div>
+            <div>
+              <div class="nm">微信支付</div>
+              <div class="sub">跳转微信完成付款</div>
+            </div>
+            <div class="radio"></div>
+          </div>
+          <div class="pm">
+            <div class="pm-ic" style="background:#EAF2FF;">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="4" fill="#1677FF"/><path d="M6 8.5h7M9.2 6.2v6.4c0 .9-.5 1.4-1.5 1.4s-1.6-.6-1.6-1.4c0-.9.8-1.4 2-1.4 2.4 0 4.6 1 6.4 2.4" stroke="#fff" stroke-width="1.35" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="nm">支付宝</div>
+              <div class="sub">跳转支付宝完成付款</div>
+            </div>
+            <div class="radio"></div>
+          </div>
+        </div>
+
+        <div class="assure">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>先免费看拆解</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>满意再付</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>不满意不花钱</span>
+        </div>
+
+        <div class="pay-btn-wrap">
+          <button class="cta">¥9.9 微信支付</button>
+          <div class="pay-foot">
+            付款后立即生成完整拆解，可下载 · 由舞镜境内支付商户提供收款
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div class="wm">舞镜 WUJING</div>
+        <div style="margin-top:6px;">微信 / 支付宝 · 复用 Lumee 境内支付商户</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 页面 ②b 付款成功 → 生成中 → 去下载 ========== -->
+  <div class="col">
+    <div class="page-label">②b 付款成功 · 生成中示意</div>
+    <div class="phone">
+      <div class="topbar">
+        <div class="brand-mini" style="margin:0 auto;"><span class="moon"></span>舞镜</div>
+      </div>
+
+      <div class="success">
+        <div class="succ-ring">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>付款成功</h2>
+        <p>正在为《清别欢》生成完整拆解，别走开</p>
+
+        <div class="gen-bar">
+          <div class="gen-row">
+            <div class="gi done">✓</div>
+            <div>八拍卡 · 已生成</div>
+          </div>
+          <div class="gen-row">
+            <div class="gi done">✓</div>
+            <div>歌词记忆卡 · 已生成</div>
+          </div>
+          <div class="gen-row">
+            <div class="gi doing"><span class="spin"></span></div>
+            <div>舞曲故事卡 · 生成中…</div>
+          </div>
+          <div class="gen-row pending">
+            <div class="gi wait">4</div>
+            <div>打包高清可下载版</div>
+          </div>
+        </div>
+
+        <button class="cta">去看完整拆解</button>
+        <button class="cta ghost">下载全套高清卡</button>
+      </div>
+
+      <div class="footer">
+        <div class="wm">舞镜 WUJING</div>
+        <div style="margin-top:6px;">生成中 → 完成 → 去下载 / 看拆解</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
