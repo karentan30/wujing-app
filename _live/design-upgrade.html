@@ -2,15 +2,18 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta property="og:title" content="Wujing — Learn Any Dance, Move by Move">
-<meta property="og:description" content="AI breaks down any dance video into frame-by-frame cards. Learn K-pop, Chinese dance, and more — move by move.">
+<meta property="og:title" content="舞镜 · AI 把任意舞拆成一帧一帧的分解卡">
+<meta property="og:description" content="上传舞蹈视频，AI 自动切八拍、出分解卡+记忆口诀+慢放跟练。K-pop、古典舞、抖音热舞，一个动作一个动作学会。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://wujing.mylumee.app">
 <meta property="og:image" content="https://wujing.mylumee.app/static/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Wujing · AI Dance Breakdown">
-<meta name="twitter:description" content="AI splits every dance into frame-by-frame cards. Practice with slow-motion and mirror mode.">
-<meta name="description" content="AI breaks down any dance video into frame-by-frame cards. Learn K-pop, Chinese dance, and more — move by move.">
+<meta name="twitter:title" content="舞镜 · AI 舞蹈拆解跟练">
+<meta name="twitter:description" content="AI 把每支舞拆成分解卡，配慢放和镜面模式，一帧一帧学。">
+<meta name="twitter:image" content="https://wujing.mylumee.app/static/og-cover.png">
+<meta name="description" content="舞镜：AI 把任意舞蹈拆成一帧一帧的分解卡，配记忆口诀+慢放+镜面跟练。K-pop、古典舞、抖音热舞，一个动作一个动作学会。">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>舞镜 · AI 舞蹈拆解跟练</title>
@@ -1657,6 +1660,9 @@ function toast(msg){
   var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 2500);
 }
+// showToast 是 toast 的别名：全站有 9 处 showToast() 调用（支付成功/卡片保存/分享/战报），
+// 之前从未定义 → ReferenceError 使这些提示静默失效。别名兜底，保证反馈可见。
+var showToast = toast;
 // Add error handling for slow-mo review videos (hardcoded paths may 404)
 document.querySelectorAll('.svid').forEach(function(el){
   el.onerror = function(){
@@ -2401,12 +2407,21 @@ function shareDanceResult(score) {
     navigator.share(shareData).catch(function(){});
   } else {
     var combined = text + '\n' + url;
+    var _fallbackCopy = function(){
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = combined; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        var ok = document.execCommand('copy'); document.body.removeChild(ta);
+        showToast(ok ? '已复制！粘贴发给朋友吧 🎉' : '请长按上方链接复制发给朋友');
+      } catch(e){ showToast('请长按上方链接复制发给朋友'); }
+    };
     if (navigator.clipboard) {
       navigator.clipboard.writeText(combined)
         .then(function(){ showToast('已复制！粘贴发给朋友吧 🎉'); })
-        .catch(function(){ prompt('复制发给朋友：', combined); });
+        .catch(_fallbackCopy);
     } else {
-      prompt('复制发给朋友：', combined);
+      _fallbackCopy();
     }
   }
 }
