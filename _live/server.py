@@ -788,6 +788,16 @@ def serve_teacher_partner():
     _p = os.path.join(BASE_DIR, "static", "teacher-partner.html")
     return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
 
+@app.get("/privacy.html")
+def serve_privacy():
+    _p = os.path.join(BASE_DIR, "static", "privacy.html")
+    return FileResponse(_p, media_type="text/html") if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
+
+@app.get("/terms.html")
+def serve_terms():
+    _p = os.path.join(BASE_DIR, "static", "terms.html")
+    return FileResponse(_p, media_type="text/html") if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
+
 @app.get("/j/{code}")
 def join_page(code: str):
     """班级码短链 → 重写到学员加入页。group_review 建班返回的 join_url 即 /j/{code}。"""
