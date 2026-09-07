@@ -231,6 +231,11 @@ body::after{
   display:flex;justify-content:center;box-shadow:var(--shadow);
 }
 .chart-wrap svg{width:100%;max-width:280px;height:auto}
+.radar-legend{display:flex;justify-content:center;gap:20px;margin-top:2px;font-size:11px;color:var(--ink-60)}
+.radar-legend span{display:inline-flex;align-items:center;gap:6px}
+.radar-legend i{width:16px;height:0;border-top:2.5px solid;display:inline-block}
+.radar-legend .lg-you{border-color:#C8A45C}
+.radar-legend .lg-avg{border-top-style:dashed;border-color:#b3a88f}
 
 /* ═══ BG SWITCHER ═══ */
 .bg-section{margin-bottom:22px}
@@ -743,7 +748,7 @@ function showToast(msg){
 }
 
 // ═══ Radar Chart ═══
-function createRadar(data,w=280,h=280){
+function createRadar(data,avg,w=280,h=280){
   const cx=w/2, cy=h/2, R=Math.min(w,h)/2-30;
   const n=data.length;
   const labels=['S曲线','臂高','旋转','臂展','屈膝','动作量'];
@@ -765,7 +770,13 @@ function createRadar(data,w=280,h=280){
     const lx=cx+(R+19)*Math.cos(a), ly=cy-(R+19)*Math.sin(a);
     svg.push(`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#6a5a42" font-family="PingFang SC,sans-serif" font-weight="500">${labels[i]}</text>`);
   }
-  // Data fill
+  // 班级均值对比层(灰色虚线·画在你的下面·"你 vs 全班"一眼见=截图理由)
+  if(avg && avg.length===n){
+    const ap=[];
+    for(let i=0;i<n;i++){const a=Math.PI/2-i*2*Math.PI/n;const v=Math.max(0,Math.min(100,avg[i]))/100;ap.push(`${cx+R*v*Math.cos(a)},${cy-R*v*Math.sin(a)}`);}
+    svg.push(`<polygon points="${ap.join(' ')}" fill="rgba(150,140,120,0.06)" stroke="#b3a88f" stroke-width="1.5" stroke-dasharray="4 3"/>`);
+  }
+  // Data fill（你的·金色·带微光）
   const pts=[], dots=[];
   for(let i=0;i<n;i++){
     const a=Math.PI/2-i*2*Math.PI/n;
@@ -775,7 +786,7 @@ function createRadar(data,w=280,h=280){
     pts.push(`${x},${y}`);
     dots.push(`<circle cx="${x}" cy="${y}" r="3.5" fill="#C8A45C" stroke="#fff" stroke-width="1.5"/>`);
   }
-  svg.push(`<polygon points="${pts.join(' ')}" fill="rgba(200,164,92,0.12)" stroke="url(#goldGrad)" stroke-width="2.5"/>`);
+  svg.push(`<polygon points="${pts.join(' ')}" fill="rgba(200,164,92,0.14)" stroke="url(#goldGrad)" stroke-width="2.5" style="filter:drop-shadow(0 0 4px rgba(200,164,92,.4))"/>`);
   svg.push(dots.join(''));
   // Gradient def
   svg.push(`<defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8D5A0"/><stop offset="100%" stop-color="#C8A45C"/></linearGradient></defs>`);
@@ -791,6 +802,14 @@ tabWrap = document.getElementById('tabWrap');
 pagesWrap = document.getElementById('pages');
 // 幂等：重渲染前清空（正常只跑一次）
 tabWrap.innerHTML = ''; pagesWrap.innerHTML = '';
+// 班级均值雷达(6维)供个人页对比层"你 vs 全班"
+window.CLASS_AVG_RADAR = (function(){
+  try{ var n=DATA.length; if(!n) return null;
+    var sum=[0,0,0,0,0,0];
+    DATA.forEach(function(s){ (s.radar||[]).forEach(function(v,i){ sum[i]+=(+v||0); }); });
+    return sum.map(function(x){ return Math.round(x/n); });
+  }catch(e){ return null; }
+})();
 
 // -- Action Bar --
 const actionBar = document.createElement('div');
@@ -957,8 +976,9 @@ DATA.forEach((s,i)=>{
 
     <!-- Radar -->
     <div class="chart-section">
-      <h3 class="section-title"><span class="accent"></span>能力雷达图 <small style="font-weight:400;color:var(--ink-40);font-size:11px">外圈=满分 · 金色=你的水平</small></h3>
-      <div class="chart-wrap">${createRadar(s.radar)}</div>
+      <h3 class="section-title"><span class="accent"></span>能力雷达图 <small style="font-weight:400;color:var(--ink-40);font-size:11px;font-family:var(--font-sans)">外圈=满分</small></h3>
+      <div class="chart-wrap">${createRadar(s.radar, (typeof CLASS_AVG_RADAR!=='undefined'?CLASS_AVG_RADAR:null))}</div>
+      <div class="radar-legend"><span><i class="lg-you"></i>你的水平</span><span><i class="lg-avg"></i>班级均值</span></div>
     </div>
 
     <!-- Background Switcher -->
@@ -1022,6 +1042,15 @@ function wjAnimateFills(root){
       requestAnimationFrame(function(){ f.style.transition=''; f.style.width=t; });
     });
   });
+  (root||document).querySelectorAll('.sh-score[data-score]').forEach(function(el){
+    if(el.dataset.counted || !el.childNodes.length) return; el.dataset.counted='1';
+    var target=parseFloat(el.dataset.score); if(isNaN(target)) return;
+    var node=el.childNodes[0], t0=null;
+    node.nodeValue='0.0';
+    function step(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/700,1);
+      node.nodeValue=(p>=1?target.toFixed(1):(target*p).toFixed(1)); if(p<1)requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  });
   (root||document).querySelectorAll('.chart-wrap svg').forEach(function(sv){
     if(sv.dataset.anim) return; sv.dataset.anim='1';
     sv.style.transformOrigin='center'; sv.style.transform='scale(.9)'; sv.style.opacity='0';
@@ -1033,7 +1062,7 @@ var _wjMIO = ('IntersectionObserver' in window) ? new IntersectionObserver(funct
   es.forEach(function(e){ if(e.isIntersecting){ wjAnimateFills(e.target); _wjMIO.unobserve(e.target); } });
 },{threshold:.18}) : null;
 setTimeout(function(){
-  if(_wjMIO){ document.querySelectorAll('.meter-grid,.chart-wrap').forEach(function(el){ _wjMIO.observe(el); }); }
+  if(_wjMIO){ document.querySelectorAll('.meter-grid,.chart-wrap,.student-header').forEach(function(el){ _wjMIO.observe(el); }); }
   else { wjAnimateFills(document); }
 }, 140);
 
@@ -1061,7 +1090,7 @@ function switchTab(pageId, btn){
   btn.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const target = document.getElementById(pageId);
-  if(target){target.classList.add('active'); try{ target.querySelectorAll('.chart-wrap svg').forEach(function(sv){sv.dataset.anim='';}); wjAnimateFills(target); }catch(e){} }
+  if(target){target.classList.add('active'); try{ target.querySelectorAll('.chart-wrap svg').forEach(function(sv){sv.dataset.anim='';}); target.querySelectorAll('.sh-score,.fill').forEach(function(el){el.dataset.counted='';el.dataset.anim='';}); wjAnimateFills(target); }catch(e){} }
   // Scroll to top
   window.scrollTo({top:0,behavior:'smooth'});
 }
