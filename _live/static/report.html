@@ -886,17 +886,17 @@ DATA.forEach((s,i)=>{
     <!-- Video -->
     <div class="video-row">
       <div class="video-card" id="vc-${i}-0">
-        <img class="poster-frame" src="${s.poster}" alt="预览" onerror="this.style.display='none'">
-        <video src="${s.v1}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
+        <img class="poster-frame" src="${(s.poster&&s.poster.indexOf('学员')<0)?s.poster:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/frame/p1'}" alt="预览" onerror="this.style.display='none';var e=this.parentNode.querySelector('.video-error');if(e)e.style.display='flex'">
+        <video src="${(s.v1&&s.v1.indexOf('_h264')<0)?s.v1:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/clip/full'}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
         <div class="play-overlay">&#9654;</div>
-        <div class="video-error"><span class="err-icon">&#9888;</span> 视频加载失败<br><span style="font-size:10px">请检查文件路径</span></div>
+        <div class="video-error"><span class="err-icon">&#127916;</span> 跟练视频<br><span style="font-size:10px">暂无法加载</span></div>
         <div class="video-label"><span class="name">东非大裂谷 · AI生成背景</span><span class="tag" id="vc-tag-${i}-0">点击播放</span></div>
       </div>
       <div class="video-card" id="vc-${i}-1">
-        <img class="poster-frame" src="${s.poster}" alt="预览" onerror="this.style.display='none'">
-        <video src="${s.v2}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
+        <img class="poster-frame" src="${(s.poster&&s.poster.indexOf('学员')<0)?s.poster:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/frame/p1'}" alt="预览" onerror="this.style.display='none';var e=this.parentNode.querySelector('.video-error');if(e)e.style.display='flex'">
+        <video src="${(s.v2&&s.v2.indexOf('_h264')<0)?s.v2:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/clip/full'}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
         <div class="play-overlay">&#9654;</div>
-        <div class="video-error"><span class="err-icon">&#9888;</span> 视频加载失败<br><span style="font-size:10px">请检查文件路径</span></div>
+        <div class="video-error"><span class="err-icon">&#127916;</span> 跟练视频<br><span style="font-size:10px">暂无法加载</span></div>
         <div class="video-label"><span class="name">故宫紫禁城 · AI生成背景</span><span class="tag" id="vc-tag-${i}-1">点击播放</span></div>
       </div>
     </div>
