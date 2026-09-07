@@ -712,27 +712,29 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         if q_issues:
             ark_key_env = os.environ.get("ARK_API_KEY", "")
             from collections import Counter
-            # 1. 格式问题：-/--/复合词/非动词 → 重试
+            # 1+2. 收集需重试的段(格式坏 或 key重复>2次)→ 并行重调vision
+            #      (原两个串行循环~31s是最大瓶颈·改并行4线程·用同一avoid快照·
+            #       残留极小重复风险可接受,harness本就best-effort多样性)
             if ark_key_env:
-                for p in phrases:
-                    if not _kou_format_ok(p.get("kou", "")):
-                        frame_path = os.path.join(ddir, "frames", f"p{p['i']}.jpg")
-                        if os.path.exists(frame_path):
-                            used_set = set(p.get("key", "") for p in phrases if p.get("key"))
-                            _retry_phrase_for_uniqueness(frame_path, p, used_set, ark_key_env)
-                            print(f"[harness fmt] p{p['i']} fixed: {p.get('kou','')}")
-            # 2. key字重复>2次 → 换字
-            key_counts = Counter(p.get("key", "") for p in phrases if p.get("key"))
-            dup_keys = {k for k, cnt in key_counts.items() if cnt > 2}
-            if dup_keys and ark_key_env:
-                used_set = set(p.get("key", "") for p in phrases)
-                for p in phrases:
-                    if p.get("key") in dup_keys:
-                        used_set.discard(p.get("key", ""))
-                        frame_path = os.path.join(ddir, "frames", f"p{p['i']}.jpg")
-                        if os.path.exists(frame_path):
-                            _retry_phrase_for_uniqueness(frame_path, p, used_set, ark_key_env)
-                        used_set.add(p.get("key", ""))
+                key_counts = Counter(p.get("key", "") for p in phrases if p.get("key"))
+                dup_keys = {k for k, cnt in key_counts.items() if cnt > 2}
+                to_retry = [p for p in phrases
+                            if (not _kou_format_ok(p.get("kou", "")) or p.get("key") in dup_keys)
+                            and os.path.exists(os.path.join(ddir, "frames", f"p{p['i']}.jpg"))]
+                if to_retry:
+                    used_set = set(p.get("key", "") for p in phrases if p.get("key"))
+
+                    def _fix_kou(p):
+                        try:
+                            _retry_phrase_for_uniqueness(
+                                os.path.join(ddir, "frames", f"p{p['i']}.jpg"),
+                                p, used_set, ark_key_env)
+                            print(f"[harness] p{p['i']} fixed: {p.get('kou','')}")
+                        except Exception as _e:
+                            print(f"[harness] p{p['i']} retry skip: {_e}")
+
+                    with cf.ThreadPoolExecutor(max_workers=4) as ex:
+                        list(ex.map(_fix_kou, to_retry))
             # 3. kou词全视频重复>3次 → log（不自动修，代价太高）
             for issue in q_issues:
                 if issue[0] == "dup_kou_word":
