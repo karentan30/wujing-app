@@ -3572,6 +3572,19 @@ function renderDetailArchive(p){
 @keyframes cardSlideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .dc-coach .shr{text-align:right;font-size:var(--fs-label);color:#B5922A;font-weight:600;margin-top:11px;cursor:pointer}
+/* ===== 专家评审团 ===== */
+.dc-panel{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:18px;box-shadow:0 4px 20px rgba(120,92,30,.07)}
+.dc-panel .ep-hl{font-size:13.5px;color:#5C8A3E;background:#F3F7EC;border:1px solid #E1EBD2;border-radius:12px;padding:11px 14px;margin-bottom:14px;font-weight:600;line-height:1.7}
+.dc-panel .ep-h{font-size:10px;letter-spacing:.14em;font-weight:800;margin:14px 0 8px}
+.dc-panel .ep-h.meas{color:#B5922A}
+.dc-panel .ep-h.obs{color:#8A6EA8}
+.dc-panel .ep-item{font-size:var(--fs-body);line-height:1.72;padding:10px 13px;margin-bottom:7px;border-radius:10px}
+.dc-panel .ep-item.meas{background:#FBF6E9;color:#6E5622;border:1px solid #EFE4C9}
+.dc-panel .ep-item.obs{background:#F6F3FA;color:#4A3F58;border:1px solid #E6DFF0}
+.dc-panel .ep-item b{color:#8A6EA8;font-weight:800;margin-right:5px}
+.dc-panel .ep-item.meas b{color:#B5892A}
+.dc-panel .ep-prio{font-size:13.5px;color:#2E2416;background:linear-gradient(135deg,#FBF4E1,#F8F0DB);border-left:3px solid #E9B872;border-radius:12px;padding:11px 14px;margin-top:14px;font-weight:700;line-height:1.7}
+.dc-panel .ep-note{font-size:10px;color:#9a8f7a;margin-top:12px;line-height:1.6;text-align:center}
 /* ===== 故事卡 ===== */
 .dc-story{background:#fff;border:1px solid #EBE1CB;border-radius:18px;margin:0 16px;padding:22px 21px 19px;box-shadow:0 4px 20px rgba(120,92,30,.07);position:relative;overflow:hidden}
 .dc-story::before{content:"”";position:absolute;top:2px;right:16px;font-size:80px;color:rgba(199,158,59,.1);font-family:Georgia,serif;line-height:1;pointer-events:none}
@@ -4097,6 +4110,18 @@ function renderDecompose(d){
         '<div class="dc-sec">老师点评 · AI 逐帧测角</div>'+
         '<div class="dc-coach"><div class="cm" style="color:#8C7A4A;font-style:italic;font-weight:500">'+
           ((_isZH)?'AI 正在对这支舞做逐帧测角分析，点评稍后生成 — 刷新页面可查看':'AI analysis is in progress. Refresh to see your full coaching feedback.')+'</div></div>')+
+      (d.expert_panel?'<div class="dc-sec">专家评审团 · AI 多视角</div>'+
+        '<div class="dc-panel">'+
+        (d.expert_panel.highlight?'<div class="ep-hl">✨ '+_esc(d.expert_panel.highlight)+'</div>':'')+
+        ((d.expert_panel.measured||[]).length?'<div class="ep-h meas">📐 测量区 · 逐关节实测</div>'+(d.expert_panel.measured||[]).map(function(m){return '<div class="ep-item meas">'+_beatTag(m)+'</div>';}).join(''):'')+
+        ((d.expert_panel.dance_note||d.expert_panel.shenyun_note||d.expert_panel.exam_note||d.expert_panel.director_note)?'<div class="ep-h obs">🎭 观察区 · AI 观察·不打分</div>':'')+
+        (d.expert_panel.dance_note?'<div class="ep-item obs"><b>舞蹈老师</b> '+_esc(d.expert_panel.dance_note)+'</div>':'')+
+        (d.expert_panel.shenyun_note?'<div class="ep-item obs"><b>身韵</b> '+_esc(d.expert_panel.shenyun_note)+'</div>':'')+
+        (d.expert_panel.exam_note?'<div class="ep-item obs"><b>艺考评委</b> '+_esc(d.expert_panel.exam_note)+'</div>':'')+
+        (d.expert_panel.director_note?'<div class="ep-item obs"><b>演出导演</b> '+_esc(d.expert_panel.director_note)+'</div>':'')+
+        (d.expert_panel.priority?'<div class="ep-prio">🎯 现在最该练：'+_esc(d.expert_panel.priority)+'</div>':'')+
+        '<div class="ep-note">🎭 观察区为 AI 多视角观察建议·非量化评分·仅供训练参考</div>'+
+        '</div>':'')+
       '<div class="dc-sec">下载卡片</div>'+
       '<div class="dc-cards-row">'+
         '<a class="dc-card-dl" href="api/decompose/'+d.id+'/card/八拍卡v3.png" download="八拍卡-'+_esc(d.title)+'.png" onclick="setTimeout(function(){showToast(\'八拍卡已保存 🩰 快去小红书发吧！\')},400)">'+
@@ -5182,10 +5207,11 @@ document.addEventListener('keydown',function(e){
 // ══════════════════════════════════════════════════════════
 
 // 1. Fetch 超时保护 (10s 硬超时)
-var _origFetch = window.fetch;
+// ⚠️独立变量名 _origFetch2:不能和上面设备头包装的 _origFetch 重名(全局var会互相覆盖→自引用无限递归)
+var _origFetch2 = window.fetch;
 window.fetch = function(url, opts) {
   return Promise.race([
-    _origFetch.apply(this, arguments),
+    _origFetch2.apply(this, arguments),
     new Promise((_, rej) => setTimeout(() => rej(new Error('网络超时(>10s)')), 10000))
   ]).catch(e => {
     console.error('[fetch] timeout or error:', url, e.message);
