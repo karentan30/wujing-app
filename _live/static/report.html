@@ -550,6 +550,7 @@ body::after{
   .meter-grid{gap:8px}
   .meter{padding:12px}
   .meter .v{font-size:20px}
+  .video-card video,.video-card .poster-frame{aspect-ratio:auto;height:300px}
   .student-header{flex-direction:column;align-items:flex-start;gap:6px}
   .student-header .sh-left h2{font-size:16px}
   .student-header .sh-right{text-align:left;width:100%;margin-top:2px;display:flex;align-items:baseline;gap:12px}
@@ -961,14 +962,14 @@ DATA.forEach((s,i)=>{
         <video src="${(s.v1&&s.v1.indexOf('_h264')<0)?s.v1:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/clip/full'}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
         <div class="play-overlay">&#9654;</div>
         <div class="video-error"><span class="err-icon">&#127916;</span> 跟练视频<br><span style="font-size:10px">暂无法加载</span></div>
-        <div class="video-label"><span class="name">东非大裂谷 · AI生成背景</span><span class="tag" id="vc-tag-${i}-0">点击播放</span></div>
+        <div class="video-label"><span class="name">跟练视频 · 慢放 0.5×</span><span class="tag" id="vc-tag-${i}-0">点击播放</span></div>
       </div>
       <div class="video-card" id="vc-${i}-1">
         <img class="poster-frame" src="${(s.poster&&s.poster.indexOf('学员')<0)?s.poster:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/frame/p1'}" alt="预览" onerror="this.style.display='none';var e=this.parentNode.querySelector('.video-error');if(e)e.style.display='flex'">
         <video src="${(s.v2&&s.v2.indexOf('_h264')<0)?s.v2:'api/decompose/d355e63e-185f-41ad-83af-b38ee8dd8f21/clip/full'}" preload="metadata" playsinline loop muted onerror="handleVideoErr(this)" onplay="onVideoPlay(this)" onpause="onVideoPause(this)" onended="onVideoEnd(this)"></video>
         <div class="play-overlay">&#9654;</div>
         <div class="video-error"><span class="err-icon">&#127916;</span> 跟练视频<br><span style="font-size:10px">暂无法加载</span></div>
-        <div class="video-label"><span class="name">故宫紫禁城 · AI生成背景</span><span class="tag" id="vc-tag-${i}-1">点击播放</span></div>
+        <div class="video-label"><span class="name">跟练视频 · 🪞镜像</span><span class="tag" id="vc-tag-${i}-1">点击播放</span></div>
       </div>
     </div>
 
