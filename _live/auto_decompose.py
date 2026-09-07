@@ -528,6 +528,44 @@ def whisper_align_lyrics(video_path, phrases, song="", lyric_first="", lyric_las
             pass
 
 
+def _vision_outfit(frame_path):
+    """豆包 vision 从一帧识别舞者整套穿搭(演出服/妆容/头饰配饰)→ 结构化关键词,
+    供淘宝联盟找同款带货(上传舞→认穿搭→找同款→一键买)。失败返回 None,不阻塞。~¥0.007。"""
+    key = os.environ.get("ARK_API_KEY", "")
+    if not key or not os.path.exists(frame_path):
+        return None
+    prompt = (
+        "看这张舞蹈定格画面，识别舞者的整套穿搭，用于电商找同款。只输出JSON不要解释：\n"
+        '{"costume":"演出服：类型+颜色+风格，如 红色敦煌飞天演出服带水袖",'
+        '"makeup":"妆容风格一句话，如 敦煌飞天妆·额间花钿",'
+        '"accessory":"头饰/配饰一句话，如 金色璎珞头饰+臂环",'
+        '"keywords":["3-6个可直接淘宝搜索的关键词，如 敦煌舞演出服/水袖/飞天头饰"]}'
+    )
+    body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 260,
+            "input": [{"role": "user", "content": [
+                {"type": "input_image", "image_url": _b64(frame_path)},
+                {"type": "input_text", "text": prompt}]}]}
+    try:
+        req = urllib.request.Request(ARK_URL, data=json.dumps(body).encode(),
+            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
+        r = json.loads(urllib.request.urlopen(req, timeout=45).read())
+        out = "".join(c.get("text", "") for o in r.get("output", []) if o.get("type") == "message"
+                      for c in o.get("content", [])).strip()
+        if out.startswith("```"):
+            out = out.split("```")[1]
+            if out.lstrip().lower().startswith("json"):
+                out = out.lstrip()[4:]
+        d = json.loads(out.strip())
+        kws = d.get("keywords") or []
+        if isinstance(kws, str):
+            kws = [kws]
+        return {"costume": str(d.get("costume", "")), "makeup": str(d.get("makeup", "")),
+                "accessory": str(d.get("accessory", "")), "keywords": [str(k) for k in kws][:6]}
+    except Exception as e:
+        print(f"[outfit] 识别失败(降级): {e}")
+        return None
+
+
 _MEM_JOINTS = ["right_elbow", "left_elbow", "right_shoulder", "left_shoulder",
                "right_knee", "left_knee", "right_hip", "left_hip", "torso_tilt"]
 
@@ -705,6 +743,10 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         for p in phrases:
             p["angles"] = pose.get(f"p{p['i']}")
 
+        # 带货:识别整套穿搭(与后续故事卡/点评并行跑,几乎不加墙钟)
+        _outfit_ex = cf.ThreadPoolExecutor(max_workers=1)
+        _outfit_future = _outfit_ex.submit(_vision_outfit, os.path.join(ddir, "frames", "p1.jpg"))
+
         # ── Harness：全视频口诀质量检查 ──────────────────────────────────
         result["progress"] = "口诀质量检查..."
         _write(did, result)
@@ -815,8 +857,15 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
             result["genre"] = det_genre
 
         result["progress"] = "保存卡片..."
+        try:
+            outfit = _outfit_future.result(timeout=45)
+        except Exception:
+            outfit = None
+        finally:
+            _outfit_ex.shutdown(wait=False)
         result.update({"bpm": result.get("bpm"), "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
-                       "story": story, "runthrough": runthrough, "memory": memory, "coach": coach, "status": "completed"})
+                       "story": story, "runthrough": runthrough, "memory": memory, "coach": coach,
+                       "outfit": outfit, "status": "completed"})
         _write(did, result)
         if _alarm_on:
             signal.alarm(0)  # 取消全局超时
