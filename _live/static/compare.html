@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>舞镜 · 对比原舞</title>
+<style>
+:root{--gold:#C8A45C;--gold-deep:#A6822E;--ink:#1F1A14;--ink-60:#6a5c46;--paper:#FDF8F0;--line:#ECE0C8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Noto Sans CJK SC",sans-serif;background:var(--paper);color:var(--ink);
+  -webkit-font-smoothing:antialiased;line-height:1.6;padding:0 0 60px}
+.wrap{max-width:520px;margin:0 auto;padding:22px 18px}
+.brand{display:flex;align-items:center;gap:9px;padding:6px 0 14px}
+.brand .logo{width:34px;height:34px;border-radius:9px;background:var(--gold-deep);color:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:700;font-size:18px;font-family:"Songti SC",serif}
+.brand b{font-size:18px;letter-spacing:.04em}
+.brand span{font-size:12px;color:var(--ink-60);margin-left:2px}
+.hero{margin:8px 0 20px}
+.hero h1{font-family:"Songti SC",serif;font-size:25px;font-weight:700;letter-spacing:.02em;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--ink-60)}
+.honest{margin:14px 0 22px;padding:12px 14px;border-radius:12px;background:#FBF3E0;border:1px solid var(--line);
+  font-size:12.5px;color:#7a6842;line-height:1.75}
+.honest b{color:var(--gold-deep)}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.slot{position:relative;border:1.5px dashed #D9C69A;border-radius:16px;background:#fff;overflow:hidden;
+  aspect-ratio:9/12;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:border-color .2s,box-shadow .2s;text-align:center;padding:14px}
+.slot:active{transform:scale(.99)}
+.slot.filled{border-style:solid;border-color:var(--gold)}
+.slot .tag{position:absolute;top:10px;left:10px;font-size:12px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);
+  padding:3px 10px;border-radius:20px;z-index:2}
+.slot .tag.std{background:var(--gold-deep)}
+.slot .icon{font-size:32px;margin-bottom:8px;opacity:.7}
+.slot .hint{font-size:13px;color:var(--ink-60);font-weight:600}
+.slot .sub{font-size:11px;color:#a89a80;margin-top:4px}
+.slot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.slot .badge-ok{position:absolute;bottom:8px;right:8px;background:var(--gold);color:#fff;font-size:11px;
+  padding:3px 9px;border-radius:20px;z-index:2;font-weight:600}
+.slot input{display:none}
+.go{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#E9B872,#B5922A);
+  color:#fff;font-size:16px;font-weight:700;letter-spacing:.04em;cursor:pointer;
+  box-shadow:0 6px 22px rgba(181,146,42,.32);transition:opacity .2s,transform .1s}
+.go:disabled{opacity:.4;box-shadow:none;cursor:not-allowed}
+.go:active:not(:disabled){transform:translateY(1px)}
+.tip{text-align:center;font-size:11.5px;color:#a89a80;margin-top:12px;line-height:1.7}
+/* 结果 */
+.result{display:none;margin-top:8px}
+.result.show{display:block}
+.result h2{font-family:"Songti SC",serif;font-size:20px;margin-bottom:12px;text-align:center}
+.player{border-radius:16px;overflow:hidden;background:#000;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.player video{width:100%;display:block}
+.res-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.res-actions a,.res-actions button{display:block;text-align:center;padding:13px;border-radius:12px;font-size:14px;
+  font-weight:700;text-decoration:none;cursor:pointer;border:none}
+.btn-dl{background:var(--gold-deep);color:#fff}
+.btn-again{background:#fff;color:var(--gold-deep);border:1.5px solid var(--gold)!important}
+.res-note{text-align:center;font-size:12px;color:var(--ink-60);margin-top:14px;line-height:1.8}
+/* 加载 */
+.loading{display:none;text-align:center;padding:40px 0}
+.loading.show{display:block}
+.spin{width:44px;height:44px;border:4px solid #EEE3C8;border-top-color:var(--gold);border-radius:50%;
+  margin:0 auto 16px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.loading p{font-size:14px;color:var(--ink-60)}
+.err{display:none;text-align:center;color:#c0392b;font-size:13px;margin-top:14px}
+.err.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="logo">镜</div><b>舞镜</b><span>· 对比原舞</span></div>
+
+  <div id="form-view">
+    <div class="hero">
+      <h1>你跳的，和原舞差在哪</h1>
+      <p>传两支视频，左右并排同步播放，一眼看出每个动作的差别。</p>
+    </div>
+    <div class="honest">
+      🩶 <b>诚实说明：</b>我们只做最真实的<b>左右并排对照</b>——两支同步放一起，你自己的眼睛最准。
+      至于「第几段差几度」这种精确评分，我们还在打磨（不想给你不准的数字误导你），做好了第一时间加上。
+    </div>
+
+    <div class="slots">
+      <label class="slot" id="slot-mine">
+        <span class="tag">你跳的</span>
+        <span class="icon">🎬</span>
+        <span class="hint">上传你的视频</span>
+        <span class="sub">全身入镜 · 竖屏最佳</span>
+        <input type="file" accept="video/*" id="in-mine">
+      </label>
+      <label class="slot" id="slot-std">
+        <span class="tag std">原舞</span>
+        <span class="icon">💃</span>
+        <span class="hint">上传原舞视频</span>
+        <span class="sub">博主/老师的那支</span>
+        <input type="file" accept="video/*" id="in-std">
+      </label>
+    </div>
+
+    <button class="go" id="go" disabled>生成并排对比</button>
+    <div class="tip">建议每支 15–60 秒 · 尽量同一段舞 · 全身清晰</div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spin"></div>
+    <p id="load-text">正在把两支舞并排同步…<br>约需 20–40 秒，别关页面</p>
+  </div>
+
+  <div class="result" id="result">
+    <h2>🩰 你 vs 原舞</h2>
+    <div class="player"><video id="res-video" controls playsinline></video></div>
+    <div class="res-actions">
+      <a class="btn-dl" id="res-dl" download>⬇ 保存视频</a>
+      <button class="btn-again" id="res-again">再对比一支</button>
+    </div>
+    <div class="res-note">对着并排慢慢看，哪个动作没到位、哪里手脚方向不一样，一目了然。<br>存下来发小红书，帮更多人对照练。</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var API = 'api/sbs';
+  var files = {mine:null, std:null};
+  var go = document.getElementById('go');
+  var err = document.getElementById('err');
+
+  function bindSlot(key, inputId, slotId){
+    var input = document.getElementById(inputId);
+    var slot = document.getElementById(slotId);
+    input.addEventListener('change', function(){
+      var f = input.files && input.files[0];
+      if(!f) return;
+      files[key] = f;
+      // 预览
+      var old = slot.querySelector('video'); if(old) old.remove();
+      var v = document.createElement('video');
+      v.src = URL.createObjectURL(f); v.muted=true; v.playsInline=true; v.loop=true;
+      v.play().catch(function(){});
+      slot.appendChild(v);
+      slot.classList.add('filled');
+      if(!slot.querySelector('.badge-ok')){
+        var b=document.createElement('span'); b.className='badge-ok'; b.textContent='✓ 已选'; slot.appendChild(b);
+      }
+      refresh();
+    });
+  }
+  function refresh(){ go.disabled = !(files.mine && files.std); err.classList.remove('show'); }
+  bindSlot('mine','in-mine','slot-mine');
+  bindSlot('std','in-std','slot-std');
+
+  function show(id){ ['form-view','loading','result'].forEach(function(x){
+    document.getElementById(x).classList.toggle('show', x===id);
+    if(x==='form-view') document.getElementById(x).style.display = (x===id)?'block':'none';
+  }); }
+  // form-view 用 display 控制(非.show)
+  document.getElementById('form-view').style.display='block';
+
+  function fail(msg){
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('form-view').style.display='block';
+    err.textContent = msg || '出了点问题，请重试'; err.classList.add('show');
+  }
+
+  go.addEventListener('click', function(){
+    if(!(files.mine && files.std)) return;
+    var fd = new FormData();
+    fd.append('my_video', files.mine);
+    fd.append('standard_video', files.std);
+    document.getElementById('form-view').style.display='none';
+    document.getElementById('loading').classList.add('show');
+    err.classList.remove('show');
+    fetch(API, {method:'POST', body:fd})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+      .then(function(res){
+        if(!res.ok || !res.j.id){ throw new Error(res.j.detail || '上传失败'); }
+        poll(res.j.id, 0);
+      })
+      .catch(function(e){ fail(String(e.message||e)); });
+  });
+
+  function poll(id, n){
+    if(n > 120){ fail('生成超时，请重试或换更短的视频'); return; }
+    fetch(API + '/' + id)
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(j.status === 'completed'){ done(id, j); }
+        else if(j.status === 'failed'){ fail(j.error || '视频合成失败，请重试'); }
+        else { setTimeout(function(){ poll(id, n+1); }, 1500); }
+      })
+      .catch(function(){ setTimeout(function(){ poll(id, n+1); }, 2000); });
+  }
+
+  function done(id, j){
+    document.getElementById('loading').classList.remove('show');
+    var vurl = j.video || (API + '/' + id + '/video');
+    var durl = j.download || (API + '/' + id + '/download');
+    document.getElementById('res-video').src = vurl;
+    document.getElementById('res-dl').href = durl;
+    document.getElementById('result').classList.add('show');
+  }
+
+  document.getElementById('res-again').addEventListener('click', function(){
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('form-view').style.display='block';
+  });
+})();
+</script>
+</body>
+</html>

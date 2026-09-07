@@ -19,6 +19,7 @@ from auth import hash_password, verify_password, create_token, decode_token
 from pay import router as pay_router, init_orders_table, get_db as _pay_get_db
 from auto_decompose import run_decompose, get_decompose
 from review_compare import router as solo_router
+from compare_sbs import router as sbs_router
 from group_review import router as group_router, init_group_tables, set_decompose_runner, set_optional_user_resolver
 from my_works import router as my_works_router, init_library_tables, upsert_my_work
 from analytics import track as analytics_track
@@ -789,6 +790,13 @@ def serve_report():
     _p = os.path.join(BASE_DIR, "static", "report.html")
     return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "report not deployed"}, 404)
 
+@app.get("/compare")
+@app.get("/compare.html")
+def serve_compare():
+    # 对比页(传你的舞+原舞→并排同步视频·诚实版无假分数)
+    _p = os.path.join(BASE_DIR, "static", "compare.html")
+    return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "compare not deployed"}, 404)
+
 @app.get("/teacher-partner")
 @app.get("/teacher-partner.html")
 def serve_teacher_partner():
@@ -818,6 +826,8 @@ app.post("/stripe/webhook")(_pay_stripe_webhook)
 app.include_router(hub_router)
 # ---------- Solo / Group / My Works routes ----------
 app.include_router(solo_router)
+if sbs_router is not None:
+    app.include_router(sbs_router)
 app.include_router(group_router)
 app.include_router(my_works_router)
 # ---------- Teacher Signup ----------
