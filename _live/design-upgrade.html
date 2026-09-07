@@ -893,7 +893,12 @@ h1, h2, h3{
   }
 }
 </style>
-</head>
+<style id="dc-shelf-cleanup-0817">
+/* 0817 CEO+CXO评审:空货架止血——默认只展示可跟练舞,藏「即将上线」占位卡+空分类tab(流行/爵士/拉丁/广场) */
+.dc-coming-card{display:none!important}
+#dc-cat-pop,#dc-cat-jazz,#dc-cat-latin,#dc-cat-guangchang{display:none!important}
+</style>
+<!--锚定0817--></head>
 <body>
 <div id="app">
 
@@ -929,7 +934,8 @@ h1, h2, h3{
     <div class="hero-tagline" data-i18n="heroTitle" style="font-size:var(--fs-h4);font-weight:700;color:var(--ink);letter-spacing:.02em">上传舞蹈视频 → AI秒级反馈</div>
     <div class="hero-desc" data-i18n="heroSub">看清每个转身 · 快速改进 · 永久保存</div>
     <div style="background:linear-gradient(135deg,#FFF9F0,#FFF5E6);border:1.5px solid #E8D4B8;border-radius:12px;padding:12px 20px;margin-top:16px;margin-bottom:8px;display:inline-block">
-      <div style="font-size:var(--fs-body-sm);color:var(--ink);font-weight:700;letter-spacing:.02em">完整拆解 <span style="color:var(--gold-soft,#B5922A);font-size:1.2em">¥9.9</span>/支</div>
+      <div style="font-size:var(--fs-body-sm);color:var(--ink);font-weight:700;letter-spacing:.02em">完整拆解 <span style="color:#B5922A;font-size:1.2em">¥9.9</span>/支</div>
+      <div style="font-size:var(--fs-micro,11px);color:#9a8f7a;margin-top:3px;letter-spacing:.01em">线下私教 ¥200+/节 · 网课 ¥68 起 —— 舞镜逐帧 AI 私教一支只要 ¥9.9</div>
       <div style="font-size:var(--fs-label);color:var(--mute);margin-top:4px;line-height:1.4">✓ 动作拆解卡 ✓ 记忆口诀 ✓ 故事卡 ✓ AI点评</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:4px">
@@ -942,7 +948,7 @@ h1, h2, h3{
       </div>
     </div>
     <div class="hero-trust">不留存视频 · 结果仅你可见 · AI 生成标识</div>
-    <div style="font-size:var(--fs-body-sm);color:var(--gold-soft,#B5922A);margin-top:6px;font-weight:600;letter-spacing:.03em">上传免费 · 拆解结果 ¥9.9</div>
+    <div style="font-size:var(--fs-body-sm);color:#B5922A;margin-top:6px;font-weight:600;letter-spacing:.03em">上传免费 · 拆解结果 ¥9.9</div>
   </div>
 
   <!-- 今日一句 + 印章栏 -->
@@ -2199,7 +2205,7 @@ function startUpload() {
 
 function showLoadingView() {
   document.getElementById('reviewContainer').innerHTML =
-    '<div class="loading-view"><div class="loading-spinner"></div><div class="loading-status">AI 正在分析你的舞蹈...</div><div class="loading-detail">抽帧对比 → DeepSeek 视觉分析 → 生成慢放</div></div>';
+    '<div class="loading-view"><div class="loading-spinner"></div><div class="loading-status">AI 正在分析你的舞蹈…</div><div class="loading-detail">抽帧对比 → AI 视觉分析 → 生成慢放(约1分钟)</div></div>';
 }
 
 function pollReview(reviewId) {
@@ -3585,7 +3591,7 @@ function renderDetailArchive(p){
 .dc-share-all{margin:26px 16px 12px;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#E9B872,#E9B872);color:#fff;font-size:var(--fs-h4);font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 22px rgba(181,146,42,.28)}
 .dc-share-all.ghost{background:#fff;color:#8C7A4A;border:1.5px solid #EDE4CF;box-shadow:none;margin-top:-4px}
 /* ── Solo Compare Review ── */
-.dc-compare-btn{margin:10px 16px 0;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#1A2A3A,#0E1A2A);color:#E8D5A0;font-size:var(--fs-sm);font-weight:700;letter-spacing:.04em;cursor:pointer;border:1px solid rgba(181,146,42,.3);}
+.dc-compare-btn{margin:10px 16px 0;padding:16px;text-align:center;border-radius:14px;background:linear-gradient(135deg,#3A2E1C,#1F1A14);color:#E9B872;font-size:var(--fs-sm);font-weight:700;letter-spacing:.04em;cursor:pointer;border:1px solid rgba(233,184,114,.4);}
 .dc-compare-btn:active{opacity:.85}
 #soloModal{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-end;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);}
 #soloModal.hidden{display:none}
@@ -3695,13 +3701,13 @@ function renderDetailArchive(p){
 .pay-stripe-hint{font-size:var(--fs-body);color:#8C857A;margin-top:8px}
 .pay-foot{text-align:center;font-size:var(--fs-label);color:#B8AE97;margin-top:16px;letter-spacing:.02em}
 /* ── 付费墙 ── */
-.dc-paywall{margin:16px;padding:32px 20px;background:linear-gradient(135deg,#1a1f35,#0f1220);border:1px solid rgba(90,150,255,.25);border-radius:14px;text-align:center}
+.dc-paywall{margin:16px;padding:32px 20px;background:linear-gradient(135deg,#FBF4E1,#F6ECCF);border:1.5px solid #E9B872;border-radius:14px;text-align:center}
 .dc-paywall-icon{font-size:36px;margin-bottom:10px}
-.dc-paywall-title{font-size:var(--fs-h3);font-weight:bold;color:#fff;margin-bottom:6px}
-.dc-paywall-sub{font-size:var(--fs-sm);color:rgba(255,255,255,.5);margin-bottom:20px;line-height:1.6}
-.dc-paywall-btn{background:linear-gradient(90deg,#5a96ff,#7c6fff);border:none;color:#fff;font-size:var(--fs-h3);font-weight:bold;padding:14px 36px;border-radius:30px;cursor:pointer;display:block;width:100%;max-width:240px;margin:0 auto 10px}
-.dc-paywall-note{font-size:var(--fs-body-sm);color:rgba(255,255,255,.3)}
-.dc-paywall-progress{font-size:var(--fs-body);color:rgba(255,255,255,.35);margin-bottom:6px;letter-spacing:.5px}
+.dc-paywall-title{font-size:var(--fs-h3);font-weight:bold;color:#1F1A14;margin-bottom:6px}
+.dc-paywall-sub{font-size:var(--fs-sm);color:#8C7A4A;margin-bottom:20px;line-height:1.6}
+.dc-paywall-btn{background:linear-gradient(135deg,#E9B872,#B5922A);border:none;color:#fff;font-size:var(--fs-h3);font-weight:bold;padding:14px 36px;border-radius:30px;cursor:pointer;display:block;width:100%;max-width:240px;margin:0 auto 10px;box-shadow:0 6px 22px rgba(181,146,42,.35)}
+.dc-paywall-note{font-size:var(--fs-body-sm);color:#B5922A}
+.dc-paywall-progress{font-size:var(--fs-body);color:#8C7A4A;margin-bottom:6px;letter-spacing:.5px}
 /* ── 跟练模式 overlay ── */
 .dc-practice-overlay{display:none;position:fixed;inset:0;background:#07090f;z-index:9999;flex-direction:column;align-items:center}
 .dc-practice-overlay.active{display:flex}
@@ -3898,7 +3904,7 @@ var DC_LOAD_TIMER=null;
 var DC_STEPS=[];
 function dcLoading(){
   DC_STEPS=_isZH()?
-    ['读取视频 · 识别八拍节奏','识别每段动作 · 分析脚下路线','MediaPipe 测量关节角度','生成八拍卡 · 老师点评 · 口诀']:
+    ['读取视频 · 识别八拍节奏','识别每段动作 · 分析脚下路线','逐帧测量关节角度','生成八拍卡 · 老师点评 · 口诀']:
     ['Reading video · detecting 8-beat rhythm','Analyzing movements · footwork','Measuring joint angles','Generating beat cards · coach notes'];
   var steps=DC_STEPS.map(function(s,i){return '<div class="dc-step'+(i===0?' on':'')+'" id="dcstep'+i+'"><span class="dot">'+(i+1)+'</span><span class="tx">'+s+'</span><span class="spin"></span></div>';}).join('');
   _dcView().innerHTML='<div class="dc-load"><div class="dc-mirror">舞</div><div class="dc-load-t">'+(_isZH()?'AI 正在拆解你的舞…':'Analyzing your dance...')+'</div><div class="dc-load-d" id="dcCountdown">'+(_isZH()?'AI 分析中 · 请别退出':'AI analyzing · please stay')+'</div><div class="dc-steps">'+steps+'</div></div>';
@@ -4515,7 +4521,7 @@ function showMemberSuccess(){
     var benefits=[
       '✓ '+(_isZH()?'无限拆解 · 每支舞直接开始':'Unlimited breakdowns, no per-dance fee'),
       '✓ '+(_isZH()?'历史作品永久保存':'All past breakdowns saved forever'),
-      '✓ '+(_isZH()?'AI 点评 · MediaPipe 精确关节测量':'AI coach with MediaPipe joint angles')
+      '✓ '+(_isZH()?'AI 点评 · 精确关节角度测量':'AI coach with precise joint-angle measurement')
     ];
     var html='<div class="sheet-overlay" id="memberSuccessSheet" onclick="this.remove()">'
       +'<div class="sheet-panel" onclick="event.stopPropagation()" style="padding:0;overflow:hidden;border-radius:20px 20px 0 0;animation:slideUp .35s cubic-bezier(.34,1.56,.64,1)">'
