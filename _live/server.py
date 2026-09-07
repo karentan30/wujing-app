@@ -782,6 +782,13 @@ def serve_class_join():
     _p = os.path.join(BASE_DIR, "static", "class_join.html")
     return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "not found"}, 404)
 
+@app.get("/report")
+@app.get("/report.html")
+def serve_report():
+    # 班级/个人评分报告页(带 ?class=<id> 拉真实数据·无则内置demo)
+    _p = os.path.join(BASE_DIR, "static", "report.html")
+    return FileResponse(_p) if os.path.exists(_p) else JSONResponse({"error": "report not deployed"}, 404)
+
 @app.get("/teacher-partner")
 @app.get("/teacher-partner.html")
 def serve_teacher_partner():

@@ -601,6 +601,23 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .phrase-card .row .lb{flex:0 0 32px;color:var(--silver-dim);font-weight:600;font-size:var(--fs-label)}
 .phrase-card .row .vl{color:var(--silver-deep);flex:1}
 .phrase-card .kou{margin-top:9px;background:linear-gradient(135deg,rgba(245,240,228,.4),rgba(181,146,42,.08));border:1px solid var(--glass-border);border-radius:8px;padding:7px 11px;letter-spacing:2px;font-size:var(--fs-sm);color:var(--silver-deep)}
+.phrase-card .rep-mark{margin-top:8px;font-size:var(--fs-sm);color:#8a6d1f;background:rgba(245,220,120,.18);border:1px solid rgba(200,160,60,.4);border-radius:8px;padding:6px 10px;letter-spacing:.5px}
+.phrase-card .solo-mark{margin-top:8px;font-size:var(--fs-sm);color:#b3541e;background:rgba(255,150,80,.12);border:1px solid rgba(200,110,50,.4);border-radius:8px;padding:6px 10px;letter-spacing:.5px}
+.dc-tips{margin:0 16px;display:flex;flex-direction:column;gap:8px}
+.dc-tips .tip{background:#fff;border:1px solid #EBE1CB;border-radius:12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#3A2E1C}
+.dc-tips .tip.hi{background:linear-gradient(135deg,#fff9e8,#fff);border-color:#E7C86A}
+.dc-tips .tip.hi b{color:#B5922A}
+.dc-tips .tip.warn{background:linear-gradient(135deg,#fff2ea,#fff);border-color:#E9A97E}
+.dc-tips .tip .ti{display:inline-block;font-weight:700;color:#B5922A;margin-right:8px}
+.dc-tips .tip.warn .ti{color:#C4611F}
+.mv-vwrap{position:relative;width:100%;line-height:0}
+.mv-vwrap video{width:100%;display:block}
+.mv-ov{position:absolute;left:0;right:0;bottom:0;padding:14px 14px 16px;line-height:1.4;text-align:left;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,.32) 60%,transparent);border-radius:0 0 12px 12px}
+.mv-ov .ov-nm{color:#fff;font-size:16px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.mv-ov .ov-kou{color:#ffe9a8;font-size:13px;letter-spacing:1px;margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.mv-ov .ov-tag{display:inline-block;margin-top:6px;font-size:12px;padding:3px 9px;border-radius:20px;font-weight:700}
+.mv-ov .ov-tag.rep{background:rgba(245,220,120,.92);color:#5a4410}
+.mv-ov .ov-tag.solo{background:rgba(255,150,80,.92);color:#4a1f08}
 .phrase-card .kou small{display:block;font-size:var(--fs-nano);letter-spacing:1px;color:var(--silver-dim);margin-bottom:2px}
 .phrase-card .playrow{display:flex;gap:7px;margin-top:9px}
 .phrase-card .playrow .pb{flex:1;text-align:center;font-size:var(--fs-body-sm);border:1px solid var(--glass-border);border-radius:8px;padding:11px 8px;color:var(--silver-deep);cursor:pointer;background:rgba(255,255,255,.35);transition:all .2s}
@@ -1479,7 +1496,10 @@ h1, h2, h3{
 <!-- Video Modal -->
 <div class="mv-modal" id="mvModal">
   <div class="box">
-    <video id="mvDetailVideo" playsinline controls loop></video>
+    <div class="mv-vwrap">
+      <video id="mvDetailVideo" playsinline controls loop></video>
+      <div class="mv-ov" id="detailVideoOverlay"></div>
+    </div>
     <div class="mt" id="detailModalTitle">探</div>
     <div class="mk" id="detailModalKou">沉 · 跪探 · 起</div>
     <div class="mrow">
@@ -2963,6 +2983,8 @@ function renderDetailCards(p){
       '<div class="row feet"><span class="lb">脚下</span><span class="vl">' + f.feet + '</span></div>' +
       '<div class="row intent"><span class="lb">意图</span><span class="vl">' + f.intent + '</span></div>' +
       '<div class="kou"><small>怎么记 · 口诀</small>' + f.kou + '</div>' +
+      (f.rep ? '<div class="rep-mark">★ 起手和' + f.rep + '相近 · 可对照着记（留意方向/脚下可能不同）</div>' : '') +
+      (f.rep_solo ? '<div class="solo-mark">⚠️ 独立难点 · 没有相近段可借，单独多练几遍</div>' : '') +
       '<div class="playrow"><div class="pb main" onclick="detailPlayClip(' + f.i + ',true)">慢放 0.5×</div><div class="pb" onclick="detailPlayClip(' + f.i + ',false)">▷ 正常速</div></div>' +
     '</div>';
   }).join('') + '<div class="string-card"><small>整段串起来</small>' + p.string + '</div>' +
@@ -3023,8 +3045,15 @@ function detailPlayClip(i, slow){
   if(!f) return;
   detailCurrentPhrase = f;
   detailSetClip(slow);
-  document.getElementById('detailModalTitle').textContent = f.name;
-  document.getElementById('detailModalKou').textContent = f.kou;
+  document.getElementById('detailModalTitle').textContent = f.name + (f.rep ? '　★起手和' + f.rep + '相近·可对照' : (f.rep_solo ? '　⚠️独立难点·单独多练' : ''));
+  document.getElementById('detailModalKou').textContent = '怎么记：' + (f.kou || '') + (f.key ? '　（盯住「' + f.key + '」——最容易软掉/跳错的字）' : '');
+  // 视频画面上的记忆浮层("在视频上告诉怎么记忆每个动作")
+  var ov = document.getElementById('detailVideoOverlay');
+  if(ov){
+    ov.innerHTML = '<div class="ov-nm">' + (f.name||'') + '</div>' +
+      (f.kou ? '<div class="ov-kou">' + f.kou + (f.key ? '　🔑' + f.key : '') + '</div>' : '') +
+      (f.rep ? '<div class="ov-tag rep">★ 起手和' + f.rep + '相近</div>' : (f.rep_solo ? '<div class="ov-tag solo">⚠️ 独立难点</div>' : ''));
+  }
   document.getElementById('mvModal').classList.add('on');
 }
 
@@ -4091,6 +4120,21 @@ function renderDecompose(d){
           '<div class="hint">'+_esc(mem.hint||'看整支 → 慢速看清 → 镜像版对着跟跳（左右和你一致）')+'</div>'+
           '<div class="ctrl"><span id="dcMemNorm" class="on" onclick="dcMemMode(\'norm\')">正常速</span><span id="dcMemSlow" onclick="dcMemMode(\'slow\')">慢速 0.5×</span><span id="dcMemMir" onclick="dcMemMirror()">🪞 镜像版</span></div>'+
         '</div></div>'+
+      ((mem.rep_groups&&mem.rep_groups.length)||(mem.isolated&&mem.isolated.length)||(mem.anchors&&mem.anchors.high)?
+        (function(){
+          var reps=mem.rep_groups||[], iso=mem.isolated||[], an=mem.anchors||{}, N=mem.n8||(p.phrases?p.phrases.length:0);
+          var isoHeavy = N && iso.length > N*0.6 && reps.length===0;  // 相近动作少:不逐条吓人
+          var html='<div class="dc-sec">速记攻略 · 别硬背整支</div><div class="dc-tips">';
+          if(mem.save_count) html+='<div class="tip hi"><b>有 '+mem.save_count+' 处起手相近</b>：可以对照着记，少从头背几段（注意方向/脚下可能不同）</div>';
+          if(reps.length) html+=reps.map(function(g){return '<div class="tip"><span class="ti">★ 起手相近</span>八拍 '+g.join('、')+' 起手姿势接近 · 对照着记，别忘了各段方向/脚下可能不同</div>';}).join('');
+          if(isoHeavy){
+            html+='<div class="tip">这支舞相近动作少，重点是<b>记顺序</b> · 跟着下面的高低点路标走</div>';
+          } else if(iso.length){
+            html+='<div class="tip warn"><span class="ti">⚠️ 独立难点</span>八拍 '+iso.join('、')+' 没有相近段可借，最容易忘 · 单独多练几遍</div>';
+          }
+          if(an.high) html+='<div class="tip"><span class="ti">📍 高低点路标</span>手举最高在八拍 '+an.high+(an.low?('，下沉最低在八拍 '+an.low):'')+' · 记住"先冲最高再沉最低"，中段就不乱</div>';
+          return html+'</div>';
+        })():'')+
       '<div class="dc-compare-btn" onclick="showSoloCompare(\''+d.id+'\',\''+_esc(d.title||'我的舞')+'\')">📐 AI 比对点评 · 量出你和原视频的差距</div>'+
 '<div class="dc-share-all" onclick="dcShare(\'all\')">↗ 一键分享这支拆解</div>'+
       '<div class="dc-share-all ghost" onclick="dcSaveCard()">🖼 保存战报图（带水印）</div>'+

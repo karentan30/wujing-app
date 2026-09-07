@@ -168,7 +168,7 @@ def _standard_segments(standard_ref):
 
     if kind == "video":
         path = standard_ref["path"]
-        segs = _measure_video_segments(path, tag="std")
+        segs, _bounds, _n = _measure_video_segments(path, tag="std")  # 解包三元组(否则上层.get崩)
         return segs
 
     raise RuntimeError(f"未知标准来源 kind={kind}")

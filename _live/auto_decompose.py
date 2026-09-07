@@ -378,7 +378,7 @@ def _vision_coach(frame_paths, title, measured=None, phrases=None):
 
 
 def _deepseek_story(title, phrases):
-    key = os.environ["DEEPSEEK_API_KEY"]
+    key = os.environ.get("DS_KEY") or os.environ.get("DEEPSEEK_API_KEY", "")
     ctx = "\n".join(
         f"{p['i']}.{p['name']}｜口诀:{p.get('kou','')}｜key字:{p.get('key','')}｜意境:{p['intent']}"
         for p in phrases
@@ -527,16 +527,122 @@ def whisper_align_lyrics(video_path, phrases, song="", lyric_first="", lyric_las
         except Exception:
             pass
 
+
+_MEM_JOINTS = ["right_elbow", "left_elbow", "right_shoulder", "left_shoulder",
+               "right_knee", "left_knee", "right_hip", "left_hip", "torso_tilt"]
+
+
+def _analyze_memory(phrases, pose):
+    """纯几何记忆分析:用每段中点姿态的关节角度,按'平均每关节角度差'找起手相近的段。
+    绝对尺度(不受离群段影响) + complete-linkage(组内两两都相近) + 有效维守卫。
+    副作用:给 phrases[i] 写 'rep'(≈八拍j) / 'rep_solo'(独立难点)。
+    返回富记忆卡 dict;数据不足或聚类不可信→保守不标重复。零 AI 成本。
+    ⚠️ 只看每段中点单帧的静态姿态,不含运动轨迹/朝向,故措辞只说"起手相近可对照",不断言"同一个动作"。"""
+    try:
+        n = len(phrases)
+        if n < 2:
+            return None
+        MIN_VALID = 5     # 有效关节<5的段不参与判定(测不准→诚实不标)
+        MEAN_DEG = 12.0   # 平均每关节角度差 < 12°
+        MAX_DEG = 30.0    # 且 任一关节角度差 < 30°(防"腿一样但一条手臂差很多"被误判相近)
+        segs = []
+        for p in phrases:
+            a = (pose or {}).get(f"p{p.get('i')}") or p.get("angles") or {}
+            segs.append({j: (None if a.get(j) is None else float(a.get(j))) for j in _MEM_JOINTS})
+
+        def valid_ct(s):
+            return sum(1 for j in _MEM_JOINTS if s[j] is not None)
+
+        def similar(a, b):
+            ds = [abs(a[j] - b[j]) for j in _MEM_JOINTS if a[j] is not None and b[j] is not None]
+            if len(ds) < MIN_VALID:
+                return False
+            return (sum(ds) / len(ds)) < MEAN_DEG and max(ds) < MAX_DEG
+
+        # complete-linkage 分组:一段只能加入"与组内全体都相近"的组
+        groups = []  # [[idx,...], ...]
+        for k in range(n):
+            if valid_ct(segs[k]) < MIN_VALID:
+                continue
+            placed = False
+            for g in groups:
+                if all(similar(segs[k], segs[m]) for m in g):
+                    g.append(k)
+                    placed = True
+                    break
+            if not placed:
+                groups.append([k])
+        rep_idx = [g for g in groups if len(g) > 1]
+        # 兜底:整支被并成一组(覆盖全部有效段)→ 聚类不可信,不标重复
+        valid_n = sum(1 for s in segs if valid_ct(s) >= MIN_VALID)
+        if len(rep_idx) == 1 and valid_n and len(rep_idx[0]) >= valid_n:
+            rep_idx = []
+        in_group = set(m for g in rep_idx for m in g)
+
+        # 逐段标记:组内非首段→≈组首;有效但不在任何组→独立难点;测不准→不标
+        for k, p in enumerate(phrases):
+            p["rep"] = ""
+            p.pop("rep_solo", None)
+            if valid_ct(segs[k]) < MIN_VALID:
+                continue
+            grp = next((g for g in rep_idx if k in g), None)
+            if grp:
+                if k != grp[0]:
+                    p["rep"] = f"≈八拍{grp[0] + 1}"
+            else:
+                p["rep_solo"] = True
+
+        rep_groups = [[m + 1 for m in g] for g in rep_idx]
+        isolated = [k + 1 for k, p in enumerate(phrases) if p.get("rep_solo")]
+        save_count = sum(len(g) - 1 for g in rep_idx)
+
+        # 锚点:肩外展角最大=手举最高;屈膝角最小=下沉最低(措辞只说"手举/下沉",不说"身体")
+        def seg_avg(i, joints):
+            vals = [segs[i][j] for j in joints if segs[i][j] is not None]
+            return sum(vals) / len(vals) if vals else None
+
+        sh = [(i, seg_avg(i, ["right_shoulder", "left_shoulder"])) for i in range(n)]
+        kn = [(i, seg_avg(i, ["right_knee", "left_knee"])) for i in range(n)]
+        sh = [(i, v) for i, v in sh if v is not None]
+        kn = [(i, v) for i, v in kn if v is not None]
+        high = max(sh, key=lambda t: t[1])[0] + 1 if sh else None
+        low = min(kn, key=lambda t: t[1])[0] + 1 if kn else None
+        return {
+            "title": "记忆卡 · 速记攻略",
+            "hint": "先记骨架 → 起手相近的对照着记 → 独立难点单独练 → 用高低点记顺序",
+            "n8": n,
+            "rep_groups": rep_groups,      # 组内起手姿势相近,可对照记,如 [[1,3]]
+            "isolated": isolated,          # 独立难点·没有相近段可借
+            "anchors": {"high": high, "low": low},
+            "save_count": save_count,      # 有几处起手相近可对照
+            "features": ["正常速", "慢速 0.5×", "镜像版"],
+        }
+    except Exception as e:
+        print(f"[memory] 记忆分析失败(降级): {e}")
+        return None
+
+
 def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
                   song="", lyric_first="", lyric_last=""):
     """后台任务：拆解一支任意上传的舞。全程兜底，绝不留半成品。
     ✨ 改进：中间进度反馈 + user-friendly错误消息 + 全局15分钟超时保护
     """
-    # 全局超时保护：15分钟兜底
+    # 全局超时保护：15分钟兜底。⚠️ signal 只能在主线程装，而生产所有调用方
+    # (server.py/pay.py) 都在 threading.Thread 里跑 → 非主线程装 signal 会抛
+    # "signal only works in main thread" 直接崩掉整支拆解。故仅主线程启用，
+    # 子线程优雅跳过(不崩;各外部调用本身有 urllib/ffmpeg 超时兜底)。
+    import threading as _threading
+    _alarm_on = False
+
     def _timeout_handler(signum, frame):
         raise TimeoutError("AI 处理超时（>15分钟）")
-    signal.signal(signal.SIGALRM, _timeout_handler)
-    signal.alarm(900)  # 900秒 = 15分钟
+    if _threading.current_thread() is _threading.main_thread():
+        try:
+            signal.signal(signal.SIGALRM, _timeout_handler)
+            signal.alarm(900)  # 900秒 = 15分钟
+            _alarm_on = True
+        except (ValueError, OSError):
+            _alarm_on = False
 
     ddir = os.path.join(DATA_DIR, did)
     os.makedirs(os.path.join(ddir, "frames"), exist_ok=True)
@@ -692,11 +798,14 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
             # Coach 失败降级：显示"未检出"而不是隐藏卡片
             coach = {"title": "AI 点评", "tips": "暂无检测结果", "fallback": True}
 
-        # 记忆卡 = 整支视频卡（前端支持 慢速/镜像 跟练）
-        memory = {"title": "记忆卡 · 整支跟练",
-                  "hint": "看整支 → 慢速逐帧看清 → 镜像版对着跟跳（左右和你一致）",
-                  "video": f"api/decompose/{did}/clip/full",
-                  "features": ["正常速", "慢速 0.5×", "镜像版"]}
+        # 记忆卡 = 速记攻略(重复组/独立难点/高低点) + 整支跟练视频
+        result["progress"] = "生成记忆卡..."
+        _write(did, result)
+        memory = _analyze_memory(phrases, pose) or {
+            "title": "记忆卡 · 整支跟练",
+            "hint": "看整支 → 慢速逐帧看清 → 镜像版对着跟跳（左右和你一致）",
+            "features": ["正常速", "慢速 0.5×", "镜像版"]}
+        memory["video"] = f"api/decompose/{did}/clip/full"
 
         # vision 自动判定的风格覆盖默认（修复 genre 一律 guofeng 的坑）
         det_genre = (coach or {}).get("genre")
@@ -707,9 +816,11 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         result.update({"bpm": result.get("bpm"), "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
                        "story": story, "runthrough": runthrough, "memory": memory, "coach": coach, "status": "completed"})
         _write(did, result)
-        signal.alarm(0)  # 取消全局超时
+        if _alarm_on:
+            signal.alarm(0)  # 取消全局超时
     except Exception as e:
-        signal.alarm(0)  # 取消全局超时
+        if _alarm_on:
+            signal.alarm(0)  # 取消全局超时
         result["status"] = "failed"
         exc_type, exc_val = type(e).__name__, str(e)
         user_msg = _user_friendly_error(type(e), exc_val)
