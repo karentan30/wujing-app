@@ -146,10 +146,10 @@ def _peak_time_of_segment(std_ang, mine_ang):
 
 # ------------------------------------------------------------------ 标准取角度
 
-def _standard_segments(standard_ref):
-    """取标准的分段角度。
+def _standard_segments(standard_ref, review_id=None):
+    """取标准的分段角度。review_id 给定时(B入口)把标准帧存到 review 目录(std{i}.jpg),供报告并排显原帧。
     A/C 入口：standard_ref={"kind":"decompose_id","id":<did>} → 直接读缓存 decompose.json 的 phrases[].angles。
-    B   入口：standard_ref={"kind":"video","path":<mp4>}       → 现拆标准视频，逐段测角度。
+    B   入口：standard_ref={"kind":"video","path":<mp4>}       → 现拆标准视频，逐段测角度+存标准帧。
     返回 [{"i":int,"t0":float,"t1":float,"angles":dict|None}, ...]（i 从 1 起）。测不到的段 angles=None。
     """
     kind = standard_ref.get("kind")
@@ -168,7 +168,9 @@ def _standard_segments(standard_ref):
 
     if kind == "video":
         path = standard_ref["path"]
-        segs, _bounds, _n = _measure_video_segments(path, tag="std")  # 解包三元组(否则上层.get崩)
+        # save_frames=True 存标准帧到 review/frames/std{i}.jpg(供报告并排显原帧)
+        segs, _bounds, _n = _measure_video_segments(path, tag="std", review_id=review_id,
+                                                    save_frames=bool(review_id))
         return segs
 
     raise RuntimeError(f"未知标准来源 kind={kind}")
@@ -222,6 +224,50 @@ def _measure_video_segments(video_path, tag, n_hint=None, review_id=None, save_f
 
 # ------------------------------------------------------------------ 核心比对
 
+_CMP_JOINTS = ["right_elbow", "left_elbow", "right_shoulder", "left_shoulder",
+               "right_knee", "left_knee", "right_hip", "left_hip", "torso_tilt"]
+
+
+def _seg_dist(a, b):
+    """两段角度向量的平均每关节角度差(只用双侧都有的关节)。数据不足→大值。"""
+    if not a or not b:
+        return 999.0
+    ds = [abs(a[j] - b[j]) for j in _CMP_JOINTS
+          if a.get(j) is not None and b.get(j) is not None]
+    if len(ds) < 4:
+        return 999.0
+    return sum(ds) / len(ds)
+
+
+def _dtw_align(std_segs, my_segs):
+    """DTW 把「我的」每段对齐到「标准」最匹配的段(单调保序)。返回 {my_i: std_seg}。
+    解决"按段号硬比→两支节奏不同步→错位假差距"。数据不足则退回同段号。"""
+    S, M = list(std_segs), list(my_segs)
+    n, m = len(S), len(M)
+    if n == 0 or m == 0:
+        return {}
+    INF = float("inf")
+    D = [[INF] * (m + 1) for _ in range(n + 1)]
+    D[0][0] = 0.0
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            c = _seg_dist(S[i - 1].get("angles"), M[j - 1].get("angles"))
+            D[i][j] = c + min(D[i - 1][j], D[i][j - 1], D[i - 1][j - 1])
+    i, j = n, m
+    align = {}
+    while i > 0 and j > 0:
+        align[M[j - 1]["i"]] = S[i - 1]
+        best = min(D[i - 1][j - 1], D[i - 1][j], D[i][j - 1])
+        if best == D[i - 1][j - 1]:
+            i -= 1
+            j -= 1
+        elif best == D[i - 1][j]:
+            i -= 1
+        else:
+            j -= 1
+    return align
+
+
 def compare_segments(std_segs, my_segs):
     """标准段 × 我的段逐段逐关节做差 → 每段偏差 + 维度分素材。
     返回 {
@@ -230,18 +276,21 @@ def compare_segments(std_segs, my_segs):
     }
     诚实：任一侧该段测不到 → measurable=False，该段不产分（不用邻段/模板顶）。
     """
+    # DTW 时间对齐:把我的每段对到标准最匹配的动作(而非同段号·解决错位假差距)
+    aligned = _dtw_align(std_segs, my_segs)
     std_by_i = {s["i"]: s for s in std_segs}
     per_seg = []
     measurable = 0
     total = 0
     for my in my_segs:
         i = my["i"]
-        std = std_by_i.get(i)
+        std = aligned.get(i) or std_by_i.get(i)
         total += 1
         my_ang = my.get("angles")
         std_ang = std.get("angles") if std else None
 
         row = {"i": i, "t0": my.get("t0"), "t1": my.get("t1"),
+               "std_i": std.get("i") if std else None,  # 对齐到的标准段号(供帧对比)
                "measurable": False, "ext_score": None, "mirror_score": None,
                "joint_diffs": {}, "worst_joint": None, "worst_delta": None,
                "beat_offset": None}
@@ -417,8 +466,8 @@ def run_solo_review(review_id, my_video, standard_ref, title="我的舞", mode="
               "mode": mode, "title": title, "status": "processing"}
     _write(review_id, result)
     try:
-        # 1) 标准分段角度（A/C 读缓存免测；B 现拆标准）
-        std_segs = _standard_segments(standard_ref)
+        # 1) 标准分段角度（A/C 读缓存免测；B 现拆标准+存标准帧供并排对比）
+        std_segs = _standard_segments(standard_ref, review_id)
         n_std = len(std_segs)
 
         # 无角度数据时降级为纯 vision 点评（诚实：不假装能对比）
