@@ -14,8 +14,9 @@
   --ink:#2c2418; --ink-80:#4a3f30; --ink-60:#6a5a42; --ink-40:#9a8a72; --ink-20:#c0b8a8;
   --cream:#fdf8f0; --cream-dim:#f5f0e6; --cream-border:#e8e0d4; --cream-warm:#faf3e4;
   --green:#5a8a5c; --green-light:#8ab88a; --yellow:#c49028; --red:#c43a30;
-  --shadow:0 2px 8px rgba(44,36,24,0.06),0 1px 3px rgba(44,36,24,0.04);
-  --shadow-lg:0 8px 30px rgba(44,36,24,0.08),0 2px 8px rgba(44,36,24,0.04);
+  --shadow-sm:0 1px 2px rgba(44,36,24,0.04);
+  --shadow:0 2px 8px rgba(44,36,24,0.06),0 1px 2px rgba(44,36,24,0.03);
+  --shadow-lg:0 12px 32px rgba(44,36,24,0.10),0 4px 8px rgba(44,36,24,0.05);
   --radius:10px; --radius-sm:6px;
   --font-serif:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif;
   --font-sans:"PingFang SC","SF Pro Display","Helvetica Neue",Arial,sans-serif;
@@ -28,6 +29,8 @@ html{font-size:16px;-webkit-text-size-adjust:100%}
 body{
   font-family:var(--font-sans);
   background:var(--cream);
+  /* 宣纸质感:极淡噪点纹理(敦煌题材该有的材质·把"网页感"拉成"作品感") */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
   line-height:1.6;
@@ -147,11 +150,12 @@ body::after{
 
 /* ═══ SECTION TITLES ═══ */
 .section-title{
-  font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px;
-  letter-spacing:.02em;display:flex;align-items:center;gap:8px;
+  font-size:16px;font-weight:700;color:var(--ink);margin-bottom:13px;
+  letter-spacing:.01em;display:flex;align-items:center;gap:9px;
+  font-family:var(--font-serif);
 }
 .section-title .accent{
-  display:inline-block;width:3px;height:14px;border-radius:2px;background:var(--gold-foil);flex-shrink:0;
+  display:inline-block;width:3px;height:15px;border-radius:2px;background:var(--gold-deep);flex-shrink:0;
 }
 
 /* ═══ VIDEO CARDS ═══ */
@@ -359,27 +363,38 @@ body::after{
 
 /* ═══ STUDENT HEADER ═══ */
 .student-header{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  margin-bottom:18px;flex-wrap:wrap;gap:8px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:22px;flex-wrap:wrap;gap:10px 8px;
+}
+.student-header .sh-left{flex:1;min-width:60%}
+.student-header .sh-badge{
+  display:inline-block;font-family:var(--font-serif);font-size:12px;font-weight:700;
+  letter-spacing:.18em;color:#8a6d2e;background:linear-gradient(135deg,#FBF4E1,#F3E7C2);
+  border:1px solid #E7C86A;border-radius:20px;padding:4px 14px;margin-bottom:9px;
 }
 .student-header .sh-left h2{
-  font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.01em;
-  font-family:var(--font-serif);
+  font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.01em;
+  font-family:var(--font-serif);line-height:1.25;
 }
 .student-header .sh-left h2 small{
-  font-weight:400;color:var(--ink-40);font-size:13px;margin-left:8px;
-  font-family:var(--font-sans);
+  font-weight:400;color:var(--ink-40);font-size:12.5px;margin-left:8px;
+  font-family:var(--font-sans);letter-spacing:0;
 }
-.student-header .sh-right{text-align:right}
+.student-header .sh-encourage{
+  font-size:13px;color:var(--ink-60);margin-top:8px;line-height:1.6;max-width:24em;
+}
+.student-header .sh-encourage b{color:#B5922A;font-weight:700}
+.student-header .sh-right{text-align:right;flex-shrink:0}
 .student-header .sh-score{
-  font-size:32px;font-weight:600;color:var(--gold);line-height:1;
-  font-family:var(--font-serif);
+  font-size:56px;font-weight:700;color:var(--gold-deep);line-height:.95;
+  font-family:var(--font-serif);letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
 }
 .student-header .sh-score small{
-  font-size:14px;font-weight:400;color:var(--ink-40);margin-left:4px;
-  font-family:var(--font-sans);
+  font-size:17px;font-weight:400;color:var(--ink-40);margin-left:3px;
+  font-family:var(--font-sans);letter-spacing:0;
 }
-.student-header .sh-rank{font-size:12px;color:var(--ink-40);margin-top:2px}
+.student-header .sh-rank{font-size:12px;color:var(--ink-40);margin-top:4px}
 
 /* ═══ FOOTER ═══ */
 .footer{
@@ -875,10 +890,12 @@ DATA.forEach((s,i)=>{
   div.innerHTML = `
     <div class="student-header">
       <div class="sh-left">
-        <h2>${s.name} · 个人评分报告 <small>班级第${s.rank}名</small></h2>
+        <div class="sh-badge">${(+s.score>=8)?'飞天 · 惊鸿':(+s.score>=6)?'渐入 · 风起':'初绽 · 含苞'}</div>
+        <h2>${s.name}<small>· 个人评分报告 · 班级第${s.rank}名</small></h2>
+        <div class="sh-encourage">${s.ah.v>=80?'你的臂高已是全班标杆':s.sp.v>=12?'你的旋转基础扎实':'你的动作框架已有雏形'}，只差 <b>S曲线推到 6%</b> 就是质变。</div>
       </div>
       <div class="sh-right">
-        <div class="sh-score">${s.score}<small>/10</small></div>
+        <div class="sh-score" data-score="${s.score}">${s.score}<small>/10</small></div>
         <div class="sh-rank">S曲线 ${s.sc.v}% · 目标≥6%</div>
       </div>
     </div>
@@ -995,6 +1012,31 @@ DATA.forEach((s,i)=>{
 });
 } // ← 结束 __wjRenderAll()
 
+// ═══ 独角兽级动效：量表从0生长(内联width首帧就满→transition从未触发·这里强制从0) ═══
+function wjAnimateFills(root){
+  (root||document).querySelectorAll('.fill').forEach(function(f){
+    var t = f.style.width;
+    if(!t || parseFloat(t)===0) return;
+    f.style.transition='none'; f.style.width='0';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ f.style.transition=''; f.style.width=t; });
+    });
+  });
+  (root||document).querySelectorAll('.chart-wrap svg').forEach(function(sv){
+    if(sv.dataset.anim) return; sv.dataset.anim='1';
+    sv.style.transformOrigin='center'; sv.style.transform='scale(.9)'; sv.style.opacity='0';
+    sv.style.transition='transform .6s cubic-bezier(.34,1.56,.64,1),opacity .5s ease';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ sv.style.transform='scale(1)'; sv.style.opacity='1'; }); });
+  });
+}
+var _wjMIO = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ wjAnimateFills(e.target); _wjMIO.unobserve(e.target); } });
+},{threshold:.18}) : null;
+setTimeout(function(){
+  if(_wjMIO){ document.querySelectorAll('.meter-grid,.chart-wrap').forEach(function(el){ _wjMIO.observe(el); }); }
+  else { wjAnimateFills(document); }
+}, 140);
+
 // ═══ TAB GENERATION ═══
 function buildTabs(){
   const tabs = [
@@ -1019,7 +1061,7 @@ function switchTab(pageId, btn){
   btn.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const target = document.getElementById(pageId);
-  if(target){target.classList.add('active')}
+  if(target){target.classList.add('active'); try{ target.querySelectorAll('.chart-wrap svg').forEach(function(sv){sv.dataset.anim='';}); wjAnimateFills(target); }catch(e){} }
   // Scroll to top
   window.scrollTo({top:0,behavior:'smooth'});
 }
