@@ -123,7 +123,7 @@ body::after{
 }
 .school-logo-img{width:100%;height:100%;object-fit:cover;display:none}
 .school-logo-placeholder{
-  width:100%;height:100%;background:var(--gold-foil);display:flex;
+  width:100%;height:100%;background:var(--gold-deep);display:flex;
   align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;
 }
 .school-info .sname{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:.02em}
@@ -144,7 +144,7 @@ body::after{
 }
 .insight-card::before{
   content:'';position:absolute;top:0;left:0;width:3px;height:100%;
-  background:var(--gold-foil);border-radius:0 2px 2px 0;
+  background:var(--gold-deep);border-radius:0 2px 2px 0;
 }
 .insight-card strong{color:var(--ink);font-weight:600}
 
@@ -215,7 +215,7 @@ body::after{
   overflow:hidden;position:relative;
 }
 .meter .fill{height:100%;border-radius:2px;transition:width .8s ease}
-.meter .fill.gold{background:var(--gold-foil)}
+.meter .fill.gold{background:var(--gold-deep)}
 .meter .fill.green{background:linear-gradient(90deg,var(--green-light),var(--green))}
 .meter .fill.yellow{background:linear-gradient(90deg,#e8c878,var(--yellow))}
 .meter .fill.red{background:linear-gradient(90deg,#e87868,var(--red))}
@@ -397,6 +397,26 @@ body::after{
 }
 .share-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(181,146,42,.4)}
 .share-cta:active{transform:translateY(0)}
+/* 夸夸·成就卡(结尾给成就感) */
+.praise-section{margin:26px 0 8px}
+.praise-card{
+  position:relative;text-align:center;padding:30px 26px 28px;border-radius:20px;overflow:hidden;
+  background:radial-gradient(120% 100% at 50% 0%,#FFF9EE 0%,#FBEFD3 60%,#F6E6BE 100%);
+  border:1px solid #ECD8A6;box-shadow:0 8px 30px rgba(181,146,42,.18),inset 0 1px 0 rgba(255,255,255,.7);
+}
+.praise-card::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 50% at 12% 12%,rgba(231,200,106,.20),transparent 60%),
+  radial-gradient(50% 40% at 90% 20%,rgba(231,200,106,.16),transparent 60%);pointer-events:none}
+.praise-emoji{font-size:38px;line-height:1;margin-bottom:8px}
+.praise-title{font-family:var(--font-serif);font-size:22px;font-weight:700;color:#8a6d2e;letter-spacing:.04em;margin-bottom:12px}
+.praise-body{font-size:15px;line-height:1.85;color:#5a4a2e;max-width:600px;margin:0 auto 14px}
+.praise-foot{font-size:12.5px;line-height:1.9;color:#9a8358;max-width:600px;margin:0 auto;
+  padding-top:12px;border-top:1px dashed #E4CE97}
+@media(max-width:600px){
+  .praise-card{padding:26px 18px}
+  .praise-title{font-size:19px}
+  .praise-body{font-size:14px;line-height:1.8}
+}
 .student-header .sh-right{text-align:right;flex-shrink:0}
 .student-header .sh-score{
   font-size:56px;font-weight:700;color:var(--gold-deep);line-height:.95;
@@ -470,7 +490,7 @@ body::after{
   flex:1;padding:10px;border:none;border-radius:var(--radius-sm);font-size:13px;
   font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s;
 }
-.modal-actions .btn-save{background:var(--gold-foil);color:#fff}
+.modal-actions .btn-save{background:var(--gold-deep);color:#fff}
 .modal-actions .btn-save:hover{opacity:.9}
 .modal-actions .btn-cancel{background:var(--cream-dim);color:var(--ink-60)}
 .modal-actions .btn-cancel:hover{background:var(--cream-border)}
@@ -531,7 +551,9 @@ body::after{
   .meter{padding:12px}
   .meter .v{font-size:20px}
   .student-header .sh-left h2{font-size:16px}
-  .student-header .sh-score{font-size:26px}
+  .student-header .sh-score{font-size:46px}
+  .student-header .sh-score small{font-size:18px}
+  .section-title{letter-spacing:.5px}
   .fb-item{padding:12px 14px}
   .modal-panel{padding:20px;margin:10px}
   .plan-card{padding:16px}
@@ -919,7 +941,7 @@ DATA.forEach((s,i)=>{
       <div class="sh-left">
         <div class="sh-badge">${(+s.score>=8)?'飞天 · 惊鸿':(+s.score>=6)?'渐入 · 风起':'初绽 · 含苞'}</div>
         <h2>${s.name}<small>· 个人评分报告 · 班级第${s.rank}名</small></h2>
-        <div class="sh-encourage">${s.ah.v>=80?'你的臂高已是全班标杆':s.sp.v>=12?'你的旋转基础扎实':'你的动作框架已有雏形'}，只差 <b>S曲线推到 6%</b> 就是质变。</div>
+        <div class="sh-encourage">${_wjEncourage(s)}</div>
       </div>
       <div class="sh-right">
         <div class="sh-score" data-score="${s.score}">${s.score}<small>/10</small></div>
@@ -1037,6 +1059,16 @@ DATA.forEach((s,i)=>{
         <button class="reset-note" onclick="resetNote(${i})">清空</button>
       </div>
     </div>
+
+    <!-- 夸夸·成就感(跳完真的很累·结尾一定要被夸到) -->
+    <div class="praise-section">
+      <div class="praise-card">
+        <div class="praise-emoji">🌸</div>
+        <div class="praise-title">今天，你已经很了不起</div>
+        <div class="praise-body">${_wjPraise(s)}</div>
+        <div class="praise-foot">练舞从来不容易——两个小时，也许只为跳好这 20 秒。<br>你愿意把它跳完、还敢让 AI 逐帧看，这份认真本身，就值得被好好记住。🩰</div>
+      </div>
+    </div>
   `;
   pagesWrap.appendChild(div);
 });
@@ -1076,6 +1108,30 @@ setTimeout(function(){
   else { wjAnimateFills(document); }
 }, 140);
 
+// 因人而异的鼓励文案(按分数段·不再一句套全班·避免'低分也说只差一步质变'的矛盾)
+function _wjEncourage(s){
+  var sc=s.sc.v, sco=+s.score;
+  // 先找出ta实际最强的一维·真诚夸这一项(不硬夸)
+  var dims=[['身姿S曲线',Math.min(s.sc.v/6*100,100)],['臂高延伸',s.ah.v],['旋转控制',Math.min(s.sp.v/12*100,100)],
+            ['臂展舒展',s.as_.v/0.5*100],['屈膝稳定',(1-s.kn.v)/0.15*100],['动作完成度',s.mv.v/0.3*100]];
+  var best=dims.slice().sort(function(a,b){return b[1]-a[1];})[0][0];
+  if(sco>=8) return '太漂亮了！你已是全班标杆，'+best+'尤其出色——把 S曲线从 '+sc+'% 推到 6%，就是封神的临门一脚。';
+  if(sco>=6) return '跳得很有样子了！'+best+'很稳、框架也到位——重点补 S曲线（现 '+sc+'% → 目标 6%），马上上一个台阶。';
+  return '已经是很棒的开始啦！你的'+best+'已经有底子——先把 S曲线从 '+sc+'% 稳稳练起，你会进步得很快。';
+}
+
+// 结尾夸夸·给成就感(练舞很累·2小时才学会20秒·结束一定要被真诚夸到)
+function _wjPraise(s){
+  var sco=+s.score;
+  var dims=[['身姿的 S 曲线',Math.min(s.sc.v/6*100,100)],['过肩的臂高',s.ah.v],['旋转的控制',Math.min(s.sp.v/12*100,100)],
+            ['舒展的臂展',s.as_.v/0.5*100],['沉稳的屈膝',(1-s.kn.v)/0.15*100],['饱满的动作',s.mv.v/0.3*100]];
+  var sorted=dims.slice().sort(function(a,b){return b[1]-a[1];});
+  var head = sco>=8 ? '台上一分钟的功夫，你是真的练出来了。'
+           : sco>=6 ? '看得出你下了功夫，动作已经很有模有样。'
+                    : '能跳到这一步，你已经比昨天的自己强太多。';
+  return head+'尤其是'+sorted[0][0]+'和'+sorted[1][0]+'，是今天最打动人的地方——继续跳下去，你会越来越好看。';
+}
+
 // ═══ 生成分享卡(9:16金缮卡·canvas自绘·发小红书增长入口) ═══
 function genShareCard(idx){
   var s = DATA[idx]; if(!s) return;
@@ -1086,6 +1142,23 @@ function genShareCard(idx){
   var g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,'#FDF8F0'); g.addColorStop(1,'#F5EDD0'); c.fillStyle=g; c.fillRect(0,0,W,H);
   c.fillStyle='#C8A45C'; c.fillRect(0,0,W,10);
   var cx=W/2;
+  // 敦煌飞天飘带(自绘·低透明度·当大分背景·给"画面感")
+  (function(){
+    c.save(); c.globalAlpha=0.13; c.strokeStyle='#C8A45C'; c.lineCap='round';
+    var bands=[[240,480,26],[300,600,18],[180,560,14]];
+    for(var b=0;b<bands.length;b++){
+      var y0=bands[b][0], y1=bands[b][1], lw=bands[b][2]; c.lineWidth=lw;
+      c.beginPath(); c.moveTo(-40,y0);
+      c.bezierCurveTo(W*0.25,y0-90, W*0.45,y1+90, W*0.62,y1-30);
+      c.bezierCurveTo(W*0.8,y1-140, W*0.95,y0+40, W+40,y0-40);
+      c.stroke();
+    }
+    // 莲花点缀
+    c.globalAlpha=0.16; c.fillStyle='#E7C86A';
+    for(var p=0;p<3;p++){ var px=[200,880,cx][p], py=[300,340,700][p], pr=[9,7,11][p];
+      c.beginPath(); c.arc(px,py,pr,0,6.29); c.fill(); }
+    c.restore();
+  })();
   function txt(t,x,y,f,col,al){c.font=f;c.fillStyle=col;c.textAlign=al||'center';c.fillText(t,x,y);}
   // 品牌
   txt('舞 镜',cx,150,'700 46px "Songti SC",serif','#1F1A14');
@@ -1098,13 +1171,14 @@ function genShareCard(idx){
   txt(title,cx,312,'700 30px "Songti SC",serif','#8a6d2e');
   // 名字
   txt(s.name+' · 班级第'+s.rank+'名',cx,410,'600 34px "Songti SC",serif','#2c2418');
-  // 大分
-  c.textAlign='center'; c.font='700 220px "Songti SC",serif'; c.fillStyle='#A6822E';
-  c.fillText(String(s.score), cx-30, 640);
-  c.font='400 60px sans-serif'; c.fillStyle='#9a8a72'; c.textAlign='left';
-  c.fillText('/10', cx+ (String(s.score).length*70), 640);
-  // 金句
-  var enc=(s.ah.v>=80?'你的臂高已是全班标杆':s.sp.v>=12?'你的旋转基础扎实':'你的动作框架已有雏形')+'，只差 S 曲线推到 6% 就是质变。';
+  // 大分(测量宽度居中·/10紧贴其后·不再靠字数硬算偏移)
+  c.font='700 220px "Songti SC",serif'; var numW=c.measureText(String(s.score)).width;
+  var suffW=110; var blockL=cx-(numW+suffW)/2;
+  c.textAlign='left'; c.fillStyle='#A6822E'; c.fillText(String(s.score), blockL, 640);
+  c.font='400 60px sans-serif'; c.fillStyle='#9a8a72';
+  c.fillText('/10', blockL+numW+16, 640);
+  // 金句(因人而异·与报告页同源)
+  var enc=_wjEncourage(s);
   c.textAlign='center'; c.font='400 32px sans-serif'; c.fillStyle='#6a5a42';
   var words=enc.split(''), line='', y=730, max=W-160;
   for(var wi=0;wi<words.length;wi++){var test=line+words[wi]; if(c.measureText(test).width>max){c.fillText(line,cx,y);line=words[wi];y+=48;}else line=test;}
