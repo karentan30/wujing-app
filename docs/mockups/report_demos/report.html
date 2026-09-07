@@ -389,6 +389,14 @@ body::after{
   font-size:13px;color:var(--ink-60);margin-top:8px;line-height:1.6;max-width:24em;
 }
 .student-header .sh-encourage b{color:#B5922A;font-weight:700}
+.share-cta{
+  text-align:center;margin:0 0 22px;padding:14px;border-radius:var(--radius);cursor:pointer;
+  font-size:14px;font-weight:700;color:#fff;letter-spacing:.03em;
+  background:linear-gradient(135deg,#E9B872,#B5922A);
+  box-shadow:0 6px 22px rgba(181,146,42,.32);transition:transform .2s,box-shadow .2s;
+}
+.share-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(181,146,42,.4)}
+.share-cta:active{transform:translateY(0)}
 .student-header .sh-right{text-align:right;flex-shrink:0}
 .student-header .sh-score{
   font-size:56px;font-weight:700;color:var(--gold-deep);line-height:.95;
@@ -919,6 +927,8 @@ DATA.forEach((s,i)=>{
       </div>
     </div>
 
+    <div class="share-cta" onclick="genShareCard(${i})">🖼 生成分享卡 · 发小红书</div>
+
     <!-- Video -->
     <div class="video-row">
       <div class="video-card" id="vc-${i}-0">
@@ -1065,6 +1075,60 @@ setTimeout(function(){
   if(_wjMIO){ document.querySelectorAll('.meter-grid,.chart-wrap,.student-header').forEach(function(el){ _wjMIO.observe(el); }); }
   else { wjAnimateFills(document); }
 }, 140);
+
+// ═══ 生成分享卡(9:16金缮卡·canvas自绘·发小红书增长入口) ═══
+function genShareCard(idx){
+  var s = DATA[idx]; if(!s) return;
+  showToast && showToast('生成分享卡…');
+  var W=1080, H=1920, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  var c=cv.getContext('2d');
+  // 背景
+  var g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,'#FDF8F0'); g.addColorStop(1,'#F5EDD0'); c.fillStyle=g; c.fillRect(0,0,W,H);
+  c.fillStyle='#C8A45C'; c.fillRect(0,0,W,10);
+  var cx=W/2;
+  function txt(t,x,y,f,col,al){c.font=f;c.fillStyle=col;c.textAlign=al||'center';c.fillText(t,x,y);}
+  // 品牌
+  txt('舞 镜',cx,150,'700 46px "Songti SC",serif','#1F1A14');
+  txt('DANCE MIRROR · AI 舞蹈评分',cx,196,'500 24px sans-serif','#B5922A');
+  // 称号
+  var title=(+s.score>=8)?'飞天 · 惊鸿':(+s.score>=6)?'渐入 · 风起':'初绽 · 含苞';
+  c.fillStyle='#F3E7C2'; var bw=300,bh=64; c.beginPath();
+  if(c.roundRect)c.roundRect(cx-bw/2,270,bw,bh,32);else c.rect(cx-bw/2,270,bw,bh); c.fill();
+  c.strokeStyle='#E7C86A';c.lineWidth=2;c.stroke();
+  txt(title,cx,312,'700 30px "Songti SC",serif','#8a6d2e');
+  // 名字
+  txt(s.name+' · 班级第'+s.rank+'名',cx,410,'600 34px "Songti SC",serif','#2c2418');
+  // 大分
+  c.textAlign='center'; c.font='700 220px "Songti SC",serif'; c.fillStyle='#A6822E';
+  c.fillText(String(s.score), cx-30, 640);
+  c.font='400 60px sans-serif'; c.fillStyle='#9a8a72'; c.textAlign='left';
+  c.fillText('/10', cx+ (String(s.score).length*70), 640);
+  // 金句
+  var enc=(s.ah.v>=80?'你的臂高已是全班标杆':s.sp.v>=12?'你的旋转基础扎实':'你的动作框架已有雏形')+'，只差 S 曲线推到 6% 就是质变。';
+  c.textAlign='center'; c.font='400 32px sans-serif'; c.fillStyle='#6a5a42';
+  var words=enc.split(''), line='', y=730, max=W-160;
+  for(var wi=0;wi<words.length;wi++){var test=line+words[wi]; if(c.measureText(test).width>max){c.fillText(line,cx,y);line=words[wi];y+=48;}else line=test;}
+  c.fillText(line,cx,y);
+  // 六维
+  var dims=[['S曲线',s.sc.v+'%'],['臂高',s.ah.v+'%'],['旋转',s.sp.v+'次'],['臂展',s.as_.v],['屈膝',s.kn.v],['动作量',s.mv.v]];
+  var pcts=[Math.min(s.sc.v/10*100,100),s.ah.v,s.sp.v/20*100,s.as_.v/0.5*100,(1-s.kn.v)/0.15*100,s.mv.v/0.3*100];
+  var by=y+90;
+  for(var di=0;di<6;di++){
+    var ry=by+di*118;
+    txt(dims[di][0],140,ry,'600 30px "Songti SC",serif','#2c2418','left');
+    txt(String(dims[di][1]),W-140,ry+2,'700 32px sans-serif','#B5922A','right');
+    c.fillStyle='#EDE4CF'; c.beginPath(); if(c.roundRect)c.roundRect(140,ry+22,W-280,14,7);else c.rect(140,ry+22,W-280,14); c.fill();
+    c.fillStyle='#C8A45C'; var fw=(W-280)*Math.max(0,Math.min(100,pcts[di]))/100; c.beginPath(); if(c.roundRect)c.roundRect(140,ry+22,fw,14,7);else c.rect(140,ry+22,fw,14); c.fill();
+  }
+  // 页脚
+  txt('舞镜 · AI 逐帧测量 · wujing.mylumee.app',cx,H-70,'500 26px sans-serif','#9a8a72');
+  // 下载
+  try{
+    var url=cv.toDataURL('image/png');
+    var a=document.createElement('a'); a.href=url; a.download='舞镜分享卡-'+s.name+'.png'; document.body.appendChild(a); a.click(); a.remove();
+    showToast && showToast('分享卡已保存 🩰 发小红书吧！');
+  }catch(e){ showToast && showToast('生成失败，请重试'); }
+}
 
 // ═══ TAB GENERATION ═══
 function buildTabs(){
