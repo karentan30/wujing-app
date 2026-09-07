@@ -528,6 +528,64 @@ def whisper_align_lyrics(video_path, phrases, song="", lyric_first="", lyric_las
             pass
 
 
+def _expert_panel(frame_paths, title, measured=None, phrases=None):
+    """专家评审团:一次豆包vision看关键帧+喂真实测量角度→三专家视角(舞蹈老师/艺考评委/演出导演)。
+    铁律:📐测量(角度真度数)与🎭观察(身韵/情感/表现力)彻底分开;身韵/情感/表现力只观察不打分;
+    测不到就说测不到;不编录取概率/不碰身材容貌。失败返回None,不阻塞。~¥0.008。
+    评分标准见 docs/评分标准-专家评审团-0907.md。"""
+    key = os.environ.get("ARK_API_KEY", "")
+    if not key or not frame_paths:
+        return None
+    imgs = [{"type": "input_image", "image_url": _b64(p)} for p in frame_paths[:5] if os.path.exists(p)]
+    if not imgs:
+        return None
+    meas_txt = ""
+    if measured:
+        rows = [f"第{k}段实测：{_fmt_angles(a)}" for k, a in measured if _fmt_angles(a)]
+        if rows:
+            meas_txt = "\n【MediaPipe实测关节角度·客观测量值·📐测量区必须引用这些真数字】\n" + "\n".join(rows) + "\n"
+    prompt = (
+        f"这几张是一位学员跳《{title}》的定格画面(按先后)。你是舞镜AI评审团,同时以三位专家视角点评。\n"
+        + meas_txt +
+        "【最高铁律】📐测量与🎭观察彻底分开:\n"
+        "- 只给『角度能支撑的』打分/说度数:动作规格到位度、软开度、控制稳定、左右对称。引用上面实测角度,说清差X度往哪修。\n"
+        "- 身韵(提沉冲靠含腆拧旋)、情感、表现力、神韵→只观察不打分!三档定性(可观察/不明显/角度受限看不清)。腰的旋拧/气息/眼神2D测不出,禁止编『身韵X分』。\n"
+        "- 测不到/画面看不清的→老实说『这部分看不清,无法判断,建议换角度重拍』,绝不脑补。\n"
+        "- 🔴禁:录取概率、保证考上、胖瘦腿长脸型身材。先肯定一个真亮点,结尾给最高优先级练什么。不制造焦虑。\n"
+        "只输出JSON不要解释:\n"
+        '{"highlight":"先肯定的一个真实亮点(带部位/度数)",'
+        '"measured":["📐可测点评2-4条·指名部位+当前度数+应到哪+怎么改·只写角度能支撑的"],'
+        '"dance_note":"舞蹈老师视角:基本功/体态/规格到位/软开度/稳定 一句总评",'
+        '"shenyun_note":"身韵观察(定性不打分):能观察到什么/不明显/看不清·给方向建议不给分",'
+        '"exam_note":"艺考评委视角:分档定位(入门/联考中等/中上/接近院校·非概率非承诺)+主要差什么+优先补什么",'
+        '"director_note":"演出导演视角:表现力/情感/舞台呈现(纯观察不打分·每条挂具体第几段动作)+1条上台好看建议",'
+        '"priority":"结尾一句:现在最该练的一个动作(最高优先级)"}'
+    )
+    body = {"model": EP, "thinking": {"type": "disabled"}, "max_output_tokens": 900,
+            "input": [{"role": "user", "content": imgs + [{"type": "input_text", "text": prompt}]}]}
+    try:
+        req = urllib.request.Request(ARK_URL, data=json.dumps(body).encode(),
+            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
+        r = json.loads(urllib.request.urlopen(req, timeout=70).read())
+        out = "".join(c.get("text", "") for o in r.get("output", []) if o.get("type") == "message"
+                      for c in o.get("content", [])).strip()
+        if out.startswith("```"):
+            out = out.split("```")[1]
+            if out.lstrip().lower().startswith("json"):
+                out = out.lstrip()[4:]
+        d = json.loads(out.strip())
+        m = d.get("measured") or []
+        if isinstance(m, str):
+            m = [m]
+        return {"highlight": str(d.get("highlight", "")), "measured": [str(x) for x in m][:5],
+                "dance_note": str(d.get("dance_note", "")), "shenyun_note": str(d.get("shenyun_note", "")),
+                "exam_note": str(d.get("exam_note", "")), "director_note": str(d.get("director_note", "")),
+                "priority": str(d.get("priority", ""))}
+    except Exception as e:
+        print(f"[expert_panel] 失败(降级): {e}")
+        return None
+
+
 def _vision_outfit(frame_path):
     """豆包 vision 从一帧识别舞者整套穿搭(演出服/妆容/头饰配饰)→ 结构化关键词,
     供淘宝联盟找同款带货(上传舞→认穿搭→找同款→一键买)。失败返回 None,不阻塞。~¥0.007。"""
@@ -832,12 +890,22 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
         # 无参考 AI 点评（看首/中/尾帧直接评价用户跳得怎样）
         result["progress"] = "生成点评卡..."
         _write(did, result)
+        expert_panel = None
         try:
             # 均匀取最多5帧覆盖全程，点评更全更准
             pick = sorted(set(max(1, round(1 + i * (n - 1) / 4)) for i in range(5)))
             key_frames = [os.path.join(ddir, "frames", f"p{k}.jpg") for k in pick]
             measured = [(k, pose.get(f"p{k}")) for k in pick]
+            # coach 与专家评审团并发(同输入·各一次vision·不加墙钟)
+            _panel_ex = cf.ThreadPoolExecutor(max_workers=1)
+            _panel_future = _panel_ex.submit(_expert_panel, key_frames, title, measured, phrases)
             coach = _vision_coach(key_frames, title, measured, phrases)
+            try:
+                expert_panel = _panel_future.result(timeout=75)
+            except Exception:
+                expert_panel = None
+            finally:
+                _panel_ex.shutdown(wait=False)
         except Exception:
             # Coach 失败降级：显示"未检出"而不是隐藏卡片
             coach = {"title": "AI 点评", "tips": "暂无检测结果", "fallback": True}
@@ -865,7 +933,7 @@ def run_decompose(did, video_path, user_id, title="我的舞", genre="guofeng",
             _outfit_ex.shutdown(wait=False)
         result.update({"bpm": result.get("bpm"), "dur": round(dur, 1), "phrases": phrases, "strip": STRIP,
                        "story": story, "runthrough": runthrough, "memory": memory, "coach": coach,
-                       "outfit": outfit, "status": "completed"})
+                       "outfit": outfit, "expert_panel": expert_panel, "status": "completed"})
         _write(did, result)
         if _alarm_on:
             signal.alarm(0)  # 取消全局超时
