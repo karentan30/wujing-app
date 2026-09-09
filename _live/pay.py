@@ -1105,7 +1105,31 @@ async def subscribe_wechat(payload: dict, authorization: str = Header(None),
     """微信 ¥39/月卡（30天会员，非自动续费）"""
     user_id = _user_id_optional(authorization, x_device_id)
     if not _wechat_ready():
-        raise HTTPException(status_code=503, detail="微信支付暂未开放")
+        if not _hub_ready():
+            raise HTTPException(status_code=503, detail="微信支付暂未开放")
+        # 中台兜底 —— 和 /wechat/create 同一套路子：
+        # 本机 微信 商户 env 没配时，改用 Lumee 收款中台下单。
+        # 下游全是现成的：查单轮询命中 channel="hub_wechat" → _mark_paid_and_fulfill
+        # → 读 product="monthly" → _fulfill_membership 开 30 天会员。
+        # 不加这段的话月卡三条通道全 503，会员一分钱卖不出去。
+        try:
+            _order = _hp.create("wechat", "舞镜月会员·30天无限拆", PRICE_CNY_MONTHLY,
+                                out_ref="subscription")
+        except RuntimeError as _e:
+            raise HTTPException(status_code=502, detail=f"发起支付失败：{_e}")
+        _hub_oid = _order.get("order_no") or _new_oid("WJHWXSUB")
+        _con = get_db()
+        try:
+            _con.execute(
+                "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,"
+                "breakdown_status,created_at,product) VALUES(?,?,?,?,'pending','hub_wechat','CNY','',?,?)",
+                (_hub_oid, user_id, "subscription", ("%.2f" % PRICE_CNY_MONTHLY), _now_iso(), "monthly"))
+            _con.commit()
+        finally:
+            _con.close()
+        return {"ok": True, "out_trade_no": _hub_oid,
+                "code_url": _order.get("code_url", ""), "qr_code": _order.get("qr_code", ""),
+                "amount": PRICE_CNY_MONTHLY}
     oid = _new_oid("WJWXSUB")
     con = get_db()
     try:
@@ -1218,7 +1242,31 @@ async def subscribe_alipay(payload: dict, authorization: str = Header(None),
     user_id = _user_id_optional(authorization, x_device_id)
     client = get_alipay()
     if not client:
-        raise HTTPException(status_code=503, detail="支付宝暂未开放")
+        if not _hub_ready():
+            raise HTTPException(status_code=503, detail="支付宝暂未开放")
+        # 中台兜底 —— 和 /wechat/create 同一套路子：
+        # 本机 支付宝 商户 env 没配时，改用 Lumee 收款中台下单。
+        # 下游全是现成的：查单轮询命中 channel="hub_alipay" → _mark_paid_and_fulfill
+        # → 读 product="monthly" → _fulfill_membership 开 30 天会员。
+        # 不加这段的话月卡三条通道全 503，会员一分钱卖不出去。
+        try:
+            _order = _hp.create("alipay", "舞镜月会员·30天无限拆", PRICE_CNY_MONTHLY,
+                                out_ref="subscription")
+        except RuntimeError as _e:
+            raise HTTPException(status_code=502, detail=f"发起支付失败：{_e}")
+        _hub_oid = _order.get("order_no") or _new_oid("WJHALSUB")
+        _con = get_db()
+        try:
+            _con.execute(
+                "INSERT INTO orders(out_trade_no,user_id,dance_id,amount,status,channel,currency,"
+                "breakdown_status,created_at,product) VALUES(?,?,?,?,'pending','hub_alipay','CNY','',?,?)",
+                (_hub_oid, user_id, "subscription", ("%.2f" % PRICE_CNY_MONTHLY), _now_iso(), "monthly"))
+            _con.commit()
+        finally:
+            _con.close()
+        return {"ok": True, "out_trade_no": _hub_oid,
+                "code_url": _order.get("code_url", ""), "qr_code": _order.get("qr_code", ""),
+                "amount": PRICE_CNY_MONTHLY}
     oid = _new_oid("WJALSUB")
     con = get_db()
     try:
